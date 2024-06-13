@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptMRI_QualifiedRenew" pageWidth="752" pageHeight="792" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.5937424601000028"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="batch_no" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="phase" class="java.lang.String"/>
+	<field name="block" class="java.lang.String"/>
+	<field name="lot" class="java.lang.String"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="loan_amt" class="java.math.BigDecimal"/>
+	<field name="amt_insured" class="java.math.BigDecimal"/>
+	<field name="term" class="java.lang.String"/>
+	<field name="premium" class="java.math.BigDecimal"/>
+	<field name="date_insurance" class="java.util.Date"/>
+	<field name="certificate_no" class="java.lang.String"/>
+	<field name="invoice_no" class="java.lang.String"/>
+	<field name="business_class" class="java.lang.String"/>
+	<variable name="subTotalLoanAmt" class="java.math.BigDecimal" resetType="Group" resetGroup="grpBusinessClass" calculation="Sum">
+		<variableExpression><![CDATA[$F{loan_amt}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="subTotalAmtInsured" class="java.math.BigDecimal" resetType="Group" resetGroup="grpBusinessClass" calculation="Sum">
+		<variableExpression><![CDATA[$F{amt_insured}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="subTotalPremium" class="java.math.BigDecimal" resetType="Group" resetGroup="grpBusinessClass" calculation="Sum">
+		<variableExpression><![CDATA[$F{premium}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="totalLoanAmt" class="java.math.BigDecimal" incrementType="Group" incrementGroup="grpBusinessClass" calculation="Sum">
+		<variableExpression><![CDATA[$V{subTotalLoanAmt}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="totalAmtInsured" class="java.math.BigDecimal" incrementType="Group" incrementGroup="grpBusinessClass" calculation="Sum">
+		<variableExpression><![CDATA[$V{subTotalAmtInsured}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="totalPremium" class="java.math.BigDecimal" incrementType="Group" incrementGroup="grpBusinessClass" calculation="Sum">
+		<variableExpression><![CDATA[$V{subTotalPremium}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<group name="grpBusinessClass">
+		<groupExpression><![CDATA[$F{business_class}]]></groupExpression>
+		<groupHeader>
+			<band height="14">
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="100" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font size="7" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{business_class}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<line>
+					<reportElement x="0" y="1" width="752" height="1"/>
+				</line>
+				<line>
+					<reportElement x="0" y="13" width="752" height="1"/>
+				</line>
+				<textField evaluationTime="Group" evaluationGroup="grpBusinessClass" pattern="#,##0.00">
+					<reportElement isPrintRepeatedValues="false" x="318" y="1" width="69" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{subTotalLoanAmt}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="grpBusinessClass" pattern="#,##0.00">
+					<reportElement isPrintRepeatedValues="false" x="387" y="1" width="69" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{subTotalAmtInsured}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="grpBusinessClass" pattern="#,##0.00">
+					<reportElement isPrintRepeatedValues="false" x="509" y="1" width="53" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{subTotalPremium}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="1" width="100" height="13"/>
+					<textElement verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Sub - Total:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="29" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="29" y="0" width="41" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{batch_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="70" y="0" width="41" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{phase}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="111" y="0" width="41" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{block}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="152" y="0" width="41" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{lot}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="193" y="0" width="125" height="13"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="318" y="0" width="69" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{loan_amt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="387" y="0" width="69" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amt_insured}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="456" y="0" width="53" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{term}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="509" y="0" width="53" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{premium}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="562" y="0" width="66" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_insurance}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="686" y="0" width="66" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="628" y="0" width="58" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{certificate_no}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="13">
+			<line>
+				<reportElement x="0" y="11" width="752" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<textField evaluationTime="Report" pattern="#,##0.00">
+				<reportElement isPrintRepeatedValues="false" x="318" y="0" width="69" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalLoanAmt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement isPrintRepeatedValues="false" x="387" y="0" width="69" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalAmtInsured}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement isPrintRepeatedValues="false" x="509" y="0" width="53" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalPremium}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

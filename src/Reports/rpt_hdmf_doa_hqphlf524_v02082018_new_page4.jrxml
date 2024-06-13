@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="936" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e8ccff38-74e0-46ea-985e-9828f5b4571e">
+	<property name="ireport.zoom" value="1.3310000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.background.image.properties" value="true,true,0.25,-8,-8,0,0,2566,4216"/>
+	<style name="style1"/>
+	<parameter name="01_clientID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="02_projID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="03_pblID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="04_seqno" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select a.*, a.technical_desc as tech_desc, (case when a.coborrower_full_name is not null and (coalesce(a.coborrower_full_name, '') = coalesce(a.client_spouse_full_name, '')) then client_full_name else coborrower_spouse_full_name end) as spocospo,
+
+
+(case when loanable_amount::numeric(19, 2) <= 750000::numeric(19, 2) then '' when loanable_amount::numeric(19, 2) >= 751000::numeric(19, 2) and loanable_amount::numeric(19, 2) <= 1700000::numeric(19, 2)
+then 'PRISCILA A. VALENZUELA' when loanable_amount::numeric(19, 2) >= 1701000::numeric(19, 2) and loanable_amount::numeric(19, 2) <= 3000000::numeric(19, 2) then 'PRISCILA A. VALENZUELA' end) as signatory,
+
+(case when loanable_amount::numeric(19, 2) <= 750000::numeric(19, 2) then '' when loanable_amount::numeric(19, 2) >= 751000::numeric(19, 2) and loanable_amount::numeric(19, 2) <= 1700000::numeric(19, 2)
+then 'ASSISTANT MANAGER - LOANS EVALUATION DEPT. II' when loanable_amount::numeric(19, 2) >= 1701000::numeric(19, 2) and loanable_amount::numeric(19, 2) <= 3000000::numeric(19, 2) then 'OIC DEPT. MANAGER - LOANS EVALUTAION DEPT II' end) as position
+
+from view_hdmf_doa_flh2502a($P{01_clientID}, $P{02_projID}, $P{03_pblID}, $P{04_seqno}) a
+left join mf_unit_info b on a.proj_id = b.proj_id and a.pbl_id = b.pbl_id]]>
+	</queryString>
+	<field name="developer" class="java.lang.String"/>
+	<field name="developer_address_1" class="java.lang.String"/>
+	<field name="developer_address_2" class="java.lang.String"/>
+	<field name="vp_tin" class="java.lang.String"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="spouse_name" class="java.lang.String"/>
+	<field name="co_borrower_name" class="java.lang.String"/>
+	<field name="client_address_1" class="java.lang.String"/>
+	<field name="client_address_2" class="java.lang.String"/>
+	<field name="memo_agreement_date" class="java.sql.Date"/>
+	<field name="memo_agreement_doc_no" class="java.lang.String"/>
+	<field name="memo_agreement_page_no" class="java.lang.String"/>
+	<field name="memo_agreement_book_no" class="java.lang.String"/>
+	<field name="memo_agreement_series_no" class="java.lang.String"/>
+	<field name="memo_agreement_atty" class="java.lang.String"/>
+	<field name="project_name" class="java.lang.String"/>
+	<field name="loanable_amount" class="java.math.BigDecimal"/>
+	<field name="loanable_words" class="java.lang.String"/>
+	<field name="cts_agreement_date" class="java.sql.Date"/>
+	<field name="cts_agreement_doc_no" class="java.lang.String"/>
+	<field name="cts_agreement_page_no" class="java.lang.String"/>
+	<field name="cts_agreement_book_no" class="java.lang.String"/>
+	<field name="cts_agreement_series_no" class="java.lang.String"/>
+	<field name="cts_agreement_atty" class="java.lang.String"/>
+	<field name="technical_description" class="java.lang.String"/>
+	<field name="client_tin" class="java.lang.String"/>
+	<field name="spouse_tin" class="java.lang.String"/>
+	<field name="co_borrower_tin" class="java.lang.String"/>
+	<field name="tct_no" class="java.lang.String"/>
+	<field name="proj_id" class="java.lang.String"/>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="client_full_name" class="java.lang.String"/>
+	<field name="client_spouse_full_name" class="java.lang.String"/>
+	<field name="coborrower_full_name" class="java.lang.String"/>
+	<field name="coborrower_spouse_full_name" class="java.lang.String"/>
+	<field name="other_lot" class="java.lang.String"/>
+	<field name="other_tct_no" class="java.lang.String"/>
+	<field name="technical_desc" class="java.lang.String"/>
+	<field name="tech_desc" class="java.lang.String"/>
+	<field name="spocospo" class="java.lang.String"/>
+	<field name="signatory" class="java.lang.String"/>
+	<field name="position" class="java.lang.String"/>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="936" splitType="Stretch">
+			<textField>
+				<reportElement x="43" y="86" width="205" height="13" uuid="facd1023-3235-4afa-b72e-dc9e9161993f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{client_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="43" y="138" width="205" height="13" uuid="ce079524-b7ad-4c07-a551-38223bc36e9a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{spouse_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

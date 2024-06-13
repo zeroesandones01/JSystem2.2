@@ -1,0 +1,1968 @@
+package Buyers.LoansManagement;
+
+import interfaces._GUI;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.Border;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
+import org.jdesktop.swingx.JXFormattedTextField;
+import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.JXTextField;
+
+import Database.pgSelect;
+import Database.pgUpdate;
+import tablemodel.modelBankInfo_BankLedger;
+import tablemodel.modelBankInfo_Buyback;
+import tablemodel.modelBankInfo_Payments;
+import tablemodel.modelBankInfo_Schedule;
+import tablemodel.modelInsuranceInfo;
+import DateChooser._JDateChooser;
+import FormattedTextField._JXFormattedTextField;
+import Functions.FncReport;
+import Functions.FncTables;
+import Functions.UserInfo;
+import Lookup.LookupEvent;
+import Lookup.LookupListener;
+import Lookup._JLookup;
+import components.JTBorderFactory;
+import components._JInternalFrame;
+import components._JTabbedPane;
+import components._JTableMain;
+import components._JXTextField;
+
+public class BankInformation extends _JInternalFrame implements _GUI, ActionListener, MouseListener{
+
+	/**
+	 * @author John Lester Fatallo
+	 */
+	private static final long serialVersionUID = 2614798161941904171L;
+	
+	private static String title = "Bank/Insurance Information"; 
+	static Dimension SIZE = new Dimension(800, 500);
+	Border lineBorder = BorderFactory.createLineBorder(Color.GRAY);
+	
+	private JPanel pnlNorth;
+	private JPanel pnlClientDetails;
+	private JPanel pnlCDNorth;
+	private JPanel pnlCDNLabel;
+	private JLabel lblCDClient;
+	private JPanel pnlCDNComponent;
+	private _JLookup lookupCDClient;
+	private _JXTextField txtCDClient;
+	
+	private JPanel pnlCDCenter;
+	private JPanel pnlCDCWest;
+	private JPanel pnlCDCWLabel;
+	private JLabel lblCDTRDate;
+	private JLabel lblCDORDate;
+	private JLabel lblCDCurrentStatus;
+	private JLabel lblCDProject;
+	private JPanel pnlCDCWComponent;
+	private _JDateChooser dteCDTRDate;
+	private _JDateChooser dteCDORDate;
+	private _JXTextField txtCDCurrentStatus;
+	private _JXTextField txtCDProject;
+	
+	private JPanel pnlCDCCenter;
+	private JPanel pnlCDCCLabel;
+	private JLabel lblCDPhBlkLt;
+	private JLabel lblCDHouseModel;
+	private JLabel lblCDLotArea;
+	private JLabel lblCDFloorArea;
+	private JPanel pnlCDCCComponent;
+	private _JXTextField txtCDPhBlkLt;
+	private _JXTextField txtCDHouseModel;
+	private _JXTextField txtCDLotArea;
+	private _JXTextField txtCDFloorArea;
+	
+	private JPanel pnlCDCEast;
+	private JPanel pnlCDCELabel;
+	private JLabel lblCDGSP;
+	private JLabel lblCDDiscount;
+	private JLabel lblCDVat;
+	private JLabel lblCDNSP;
+	private JPanel pnlCDCEComponent;
+	private _JXFormattedTextField txtCDGSP;
+	private _JXFormattedTextField txtCDDiscount;
+	private _JXFormattedTextField txtCDVat;
+	private _JXFormattedTextField txtCDNSP;
+	
+	private _JTabbedPane tabCenter;
+	
+	private JPanel pnlBankInfo;
+	private JPanel pnlBankInfoNorth;
+	
+	private JPanel pnlBankInfoBatchNo;
+	private JPanel pnlBankInfoBatchLabel;
+	private JLabel lblBIBatchNo;
+	private JLabel lblBIBank;
+	private JLabel lblBIPNNo;
+	private JPanel pnlBankInfoBatchComponent;
+	private _JXTextField txtBIBatchNo;
+	private _JXTextField txtBIBank;
+	private _JXTextField txtBIPNNo;
+	
+	private JPanel pnlBankInfoAcctNo;
+	private JPanel pnlBankInfoAcctNoLabel;
+	private JLabel lblBIAccountNo;
+	private JLabel lblBITerm;
+	private JLabel lblBIAvailed;
+	private JPanel pnlBankInfoAcctNoComp;
+	private _JXTextField txtBIAccountNo;
+	private JPanel pnlBITerm;
+	private _JXTextField txtBITerm;
+	private JLabel lblBIIntRate;
+	private _JXFormattedTextField txtBIIntRate;
+	private _JXFormattedTextField txtBIAvailedAmt;
+	
+	private JPanel pnlBankInfoSoldAmt;
+	private JPanel pnlBISoldAmtLabel;
+	private JLabel lblBISoldAmt;
+	private JLabel lblBIMADate;
+	private JLabel lblBIMAAmount;
+	private JPanel pnlBISoldAmtComponent;
+	private _JXFormattedTextField txtBISoldAmt;
+	private _JDateChooser dteMADate;
+	private _JXFormattedTextField txtBIMAAmt;
+	
+	private _JTabbedPane tabBankInfoCenter;
+	private JPanel pnlSchedule;
+	private JScrollPane scrollSchedule;
+	private _JTableMain tblSchedule;
+	private JList rowHeaderSchedule;
+	private modelBankInfo_Schedule modelSchedule;
+	
+	private JPanel pnlBankLedger;
+	private JScrollPane scrollBankLedger;
+	private _JTableMain tblBankLedger;
+	private JList rowHeaderBankLedger;
+	private modelBankInfo_BankLedger modelBankLedger;
+	
+	private JPanel pnlPayments;
+	private JScrollPane scrollPayments;
+	private _JTableMain tblPayments;
+	private JList rowHeaderPayments;
+	private modelBankInfo_Payments modelPayments;
+	
+	private JPanel pnlInsuranceInfo; 
+	private JPanel pnlInsuranceInfoNorth;
+	
+	private JPanel pnlReferenceNo;
+	
+	private JPanel pnlRefNoLabel;
+	private JLabel lblReferenceNo;
+	private JLabel lblAmtInsured;
+	
+	private JPanel pnlRefNoComponent;
+	private _JXTextField txtRefNo;
+	private _JXFormattedTextField txtAmtInsured;
+	
+	private JPanel pnlInsuranceTerm;
+	
+	private JPanel pnlInsuranceTermLabel;
+	private JLabel lblInsuranceTerm;
+	private JLabel lblPremium;
+	
+	private JPanel pnlInsuranceTermComponent;
+	private _JXTextField txtInsuranceTerm;
+	private _JXFormattedTextField txtPremium;
+	
+	private JPanel pnlInsurancePolicyNo;
+	
+	private JPanel pnlInsurancePolicyLabel;
+	private JLabel lblInsurancePolicy;
+	private JLabel lblInsuranceDate;
+	
+	private JPanel pnlInsurancePolicyComponent;
+	private _JXTextField txtInsurancePolicyNo;
+	private _JDateChooser dteInsuranceApproved;
+	
+	private JPanel pnlInsuranceCoverage;
+	
+	private JPanel pnlInsuranceCoverageLabel;
+	private JLabel lblDateFrom;
+	private JLabel lblDateTo;
+	
+	private JPanel pnlInsuranceCoverageComponent;
+	private _JDateChooser dteFrom;
+	private _JDateChooser dteTo;
+	
+	private JScrollPane scrollInsuranceInfo;
+	private _JTableMain tblInsuranceInfo;
+	private JList rowHeaderInsuranceInfo;
+	private modelInsuranceInfo modelInsuranceInfo;
+	
+	private JPanel pnlInsuranceInfoSouth;
+	private JButton btnInsuranceInfoNew;
+	private JButton btnInsuranceInfoSave;
+	private JButton btnInsuranceInfoCancel;
+	private JButton btnInsuranceInfoDelete;
+	private JButton btnInsuranceInfoEdit;
+	
+	private JPopupMenu menuRightClick;
+	private JMenuItem menuItemBankLedger;
+	
+	private String entity_id;
+	private String proj_id;
+	private String pbl_id;
+	private Integer seq_no;
+	private String unit_id;
+
+	private JPanel pnlBuyback;
+
+	private _JLookup lookupBuyback;
+
+	private JPanel pnlBuyback_main;
+	
+	private modelBankInfo_Buyback modelBuyback;
+	
+	private _JXTextField txtBuyback_date;
+
+	private _JXTextField txtBuyback_remarks;
+
+	private _JXTextField txtBuyback_rplf;
+
+	private _JXTextField txtBuyback_tran_type;
+
+	private BigDecimal pnlBuyback_rplf_no;
+
+	private JScrollPane scrollBuybackHistory;
+
+	private JList rowHeaderBuybackHistory;
+
+	private _JTableMain tblBuyback;
+
+	protected String buyback_date;
+
+	private String company_id;
+	
+	public BankInformation() {
+		super(title, true, true, true, true);
+		initGUI();
+	}
+
+	public BankInformation(String title) {
+		super(title, true, true, true, true);
+		initGUI();
+	}
+
+	public BankInformation(String title, boolean resizable, boolean closable,
+			boolean maximizable, boolean iconifiable) {
+		super(title, true, true, true, true);
+		initGUI();
+	}
+
+	@Override
+	public void initGUI() {
+		this.setSize(SIZE);
+		this.setPreferredSize(SIZE);
+		
+		JXPanel pnlMain = new JXPanel(new BorderLayout(5, 5));
+		getContentPane().add(pnlMain, BorderLayout.CENTER);
+		pnlMain.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		
+		/*
+		{
+			menuRightClick = new JPopupMenu("Popup");
+			menuItemBankLedger = new JMenuItem("Preview Bank Ledger");
+			menuRightClick.add(menuItemBankLedger);
+			menuItemBankLedger.addActionListener(new ActionListener() {
+				
+				public void actionPerformed(ActionEvent arg0) {
+					//System.out.println("Dumaan dito sa menu right click");
+					if(lookupCDClient.getValue() == null){
+						JOptionPane.showMessageDialog(pnlClientDetails, "Please select client", "Preview Report", JOptionPane.WARNING_MESSAGE);
+					}else{
+						generateBankLedgerReport();
+					}
+				}
+			});
+		}
+		*/
+		{
+			pnlNorth = new JPanel(new BorderLayout(3, 3));
+			pnlMain.add(pnlNorth, BorderLayout.NORTH);
+			{
+				pnlClientDetails = new JPanel(new BorderLayout(3, 3));
+				pnlNorth.add(pnlClientDetails, BorderLayout.CENTER);
+				pnlClientDetails.setBorder(JTBorderFactory.createTitleBorder("Client Details"));
+				pnlClientDetails.addMouseListener(new PopupTriggerListener_panel());
+				pnlClientDetails.setName("Client");
+				{
+					pnlCDNorth = new JPanel(new BorderLayout(3, 3));
+					pnlClientDetails.add(pnlCDNorth, BorderLayout.NORTH);
+					{
+						pnlCDNLabel = new JPanel(new BorderLayout(3, 3));
+						pnlCDNorth.add(pnlCDNLabel, BorderLayout.WEST);
+						{
+							lblCDClient = new JLabel("Client    ", JLabel.TRAILING);
+							pnlCDNLabel.add(lblCDClient);
+						}
+					}
+					{
+						pnlCDNComponent = new JPanel(new BorderLayout(3, 3));
+						pnlCDNorth.add(pnlCDNComponent, BorderLayout.CENTER);
+						{
+							lookupCDClient = new _JLookup(null, "Select Client", 0);
+							pnlCDNComponent.add(lookupCDClient, BorderLayout.WEST);
+							lookupCDClient.setPreferredSize(new Dimension(100, 0));
+							lookupCDClient.setLookupSQL(sqlClient());
+							lookupCDClient.addLookupListener(new LookupListener() {
+								
+								public void lookupPerformed(LookupEvent event) {
+									//FncSystem.out("Display sql for lookup of client", lookupCDClient.getValue());
+									
+									Object [] data = ((_JLookup) event.getSource()).getDataSet();
+									
+									if(data != null){
+										
+										entity_id = (String) data[0];
+										proj_id = (String) data[6];
+										pbl_id = (String) data[3];
+										seq_no = (Integer) data[4];
+										unit_id = (String) data[7];
+										
+										displayClientInfo(entity_id, proj_id, pbl_id, seq_no);
+										displayBankInfo(entity_id, proj_id, pbl_id, seq_no);
+										displaySchedule(entity_id, proj_id, pbl_id, seq_no);
+										displayBankLedger(entity_id, proj_id, pbl_id, seq_no);
+										displayPayments(entity_id, proj_id, pbl_id, seq_no);
+										lookupBuyback.setLookupSQL(sqlBuyback(entity_id, proj_id, pbl_id, seq_no));
+										
+										clearInsuranceInfo();
+										
+										displayInsuranceInfo(entity_id, proj_id, pbl_id, seq_no);
+									}
+								}
+							});
+						}
+						{
+							txtCDClient = new _JXTextField();
+							pnlCDNComponent.add(txtCDClient, BorderLayout.CENTER);
+						}
+					}
+				}
+				{
+					pnlCDCenter = new JPanel(new GridLayout(1, 3, 3, 3));
+					pnlClientDetails.add(pnlCDCenter, BorderLayout.CENTER);
+					{
+						pnlCDCWest = new JPanel(new BorderLayout(3, 3));
+						pnlCDCenter.add(pnlCDCWest);
+						{
+							pnlCDCWLabel = new JPanel(new GridLayout(4, 1, 3, 3));
+							pnlCDCWest.add(pnlCDCWLabel, BorderLayout.WEST);
+							{
+								lblCDTRDate = new JLabel("TR Date", JLabel.TRAILING);
+								pnlCDCWLabel.add(lblCDTRDate);
+							}
+							{
+								lblCDORDate = new JLabel("OR Date");
+								pnlCDCWLabel.add(lblCDORDate);
+							}
+							{
+								lblCDCurrentStatus = new JLabel("Status");
+								pnlCDCWLabel.add(lblCDCurrentStatus);
+							}
+							{
+								lblCDProject = new JLabel("Project");
+								pnlCDCWLabel.add(lblCDProject);
+							}
+						}
+						{
+							pnlCDCWComponent = new JPanel(new GridLayout(4, 1, 3, 3));
+							pnlCDCWest.add(pnlCDCWComponent, BorderLayout.CENTER);
+							{
+								dteCDORDate = new _JDateChooser();
+								pnlCDCWComponent.add(dteCDORDate);
+								dteCDORDate.getCalendarButton().setEnabled(false);
+							}
+							{
+								dteCDTRDate = new _JDateChooser();
+								pnlCDCWComponent.add(dteCDTRDate);
+								dteCDTRDate.getCalendarButton().setEnabled(false);
+							}
+							{
+								txtCDCurrentStatus = new _JXTextField();
+								pnlCDCWComponent.add(txtCDCurrentStatus);
+							}
+							{
+								txtCDProject = new _JXTextField();
+								pnlCDCWComponent.add(txtCDProject);
+							}
+						}
+					}
+					{
+						pnlCDCCenter = new JPanel(new BorderLayout(3, 3));
+						pnlCDCenter.add(pnlCDCCenter);
+						{
+							pnlCDCCLabel = new JPanel(new GridLayout(4, 1, 3, 3));
+							pnlCDCCenter.add(pnlCDCCLabel, BorderLayout.WEST);
+							{
+								lblCDPhBlkLt = new JLabel("Ph/Blk/Lt");
+								pnlCDCCLabel.add(lblCDPhBlkLt);
+							}
+							{
+								lblCDHouseModel = new JLabel("House Model");
+								pnlCDCCLabel.add(lblCDHouseModel);
+							}
+							{
+								lblCDLotArea = new JLabel("Lot Area");
+								pnlCDCCLabel.add(lblCDLotArea);
+							}
+							{
+								lblCDFloorArea = new JLabel("Floor Area");
+								pnlCDCCLabel.add(lblCDFloorArea);
+							}
+						}
+						{
+							pnlCDCCComponent = new JPanel(new GridLayout(4, 1, 3, 3));
+							pnlCDCCenter.add(pnlCDCCComponent, BorderLayout.CENTER);
+							{
+								txtCDPhBlkLt = new _JXTextField();
+								pnlCDCCComponent.add(txtCDPhBlkLt);
+							}
+							{
+								txtCDHouseModel = new _JXTextField();
+								pnlCDCCComponent.add(txtCDHouseModel);
+							}
+							{
+								txtCDLotArea = new _JXTextField();
+								pnlCDCCComponent.add(txtCDLotArea);
+								txtCDLotArea.setHorizontalAlignment(JXTextField.CENTER);
+							}
+							{
+								txtCDFloorArea = new _JXTextField();
+								pnlCDCCComponent.add(txtCDFloorArea);
+								txtCDFloorArea.setHorizontalAlignment(JXTextField.CENTER);
+							}
+						}
+					}
+					{
+						pnlCDCEast = new JPanel(new BorderLayout(3, 3));
+						pnlCDCenter.add(pnlCDCEast);
+						{
+							pnlCDCELabel = new JPanel(new GridLayout(4, 1, 3, 3));
+							pnlCDCEast.add(pnlCDCELabel, BorderLayout.WEST);
+							{
+								lblCDGSP = new JLabel("GSP");
+								pnlCDCELabel.add(lblCDGSP);
+							}
+							{
+								lblCDDiscount = new JLabel("Discount");
+								pnlCDCELabel.add(lblCDDiscount);
+							}
+							{
+								lblCDVat = new JLabel("VAT");
+								pnlCDCELabel.add(lblCDVat);
+							}
+							{
+								lblCDNSP = new JLabel("NSP");
+								pnlCDCELabel.add(lblCDNSP);
+							}
+						}
+						{
+							pnlCDCEComponent = new JPanel(new GridLayout(4, 1, 3, 3));
+							pnlCDCEast.add(pnlCDCEComponent, BorderLayout.CENTER);
+							{	
+								txtCDGSP = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+								pnlCDCEComponent.add(txtCDGSP);
+								txtCDGSP.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+							}
+							{
+								txtCDDiscount = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+								pnlCDCEComponent.add(txtCDDiscount);
+								txtCDDiscount.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+							}
+							{
+								txtCDVat = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+								pnlCDCEComponent.add(txtCDVat);
+								txtCDVat.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+							}
+							{
+								txtCDNSP = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+								pnlCDCEComponent.add(txtCDNSP);
+								txtCDNSP.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+							}
+						}
+					}
+				}
+			}
+			/*{
+				pnlBankInfo = new JPanel(new GridLayout(1, 3, 3, 3));
+				pnlNorth.add(pnlBankInfo, BorderLayout.SOUTH);
+				pnlBankInfo.setBorder(JTBorderFactory.createTitleBorder("Bank Info"));
+				{
+					pnlBankInfoWest = new JPanel(new BorderLayout(3, 3));
+					pnlBankInfo.add(pnlBankInfoWest);
+					{
+						pnlBIWLabel = new JPanel(new GridLayout(3, 1, 3, 3));
+						pnlBankInfoWest.add(pnlBIWLabel, BorderLayout.WEST);
+						{
+							lblBIBatchNo = new JLabel("Batch No");
+							pnlBIWLabel.add(lblBIBatchNo);
+						}
+						{
+							lblBIBank = new JLabel("Bank");
+							pnlBIWLabel.add(lblBIBank);
+						}
+						{
+							lblBIPNNo = new JLabel("PN No");
+							pnlBIWLabel.add(lblBIPNNo);
+						}
+					}
+					{
+						pnlBIWComponent = new JPanel(new GridLayout(3, 1, 3, 3));
+						pnlBankInfoWest.add(pnlBIWComponent, BorderLayout.CENTER);
+						{
+							txtBIBatchNo = new _JXTextField();
+							pnlBIWComponent.add(txtBIBatchNo);
+						}
+						{
+							txtBIBank = new _JXTextField();
+							pnlBIWComponent.add(txtBIBank);
+						}
+						{
+							txtBIPNNo = new _JXTextField();
+							pnlBIWComponent.add(txtBIPNNo);
+						}
+					}
+				}
+				{
+					pnlBankInfoCenter = new JPanel(new BorderLayout(3, 3));
+					pnlBankInfo.add(pnlBankInfoCenter);
+					{
+						pnlBICLabel = new JPanel(new GridLayout(3, 1, 3, 3));
+						pnlBankInfoCenter.add(pnlBICLabel, BorderLayout.WEST);
+						{
+							lblBIAccountNo = new JLabel("Account No");
+							pnlBICLabel.add(lblBIAccountNo);
+						}
+						{
+							lblBITerm = new JLabel("Term");
+							pnlBICLabel.add(lblBITerm);
+						}
+						{
+							lblBIAvailed = new JLabel("Availed");
+							pnlBICLabel.add(lblBIAvailed);
+						}
+					}
+					{
+						pnlBICComponent = new JPanel(new GridLayout(3, 1, 3, 3));
+						pnlBankInfoCenter.add(pnlBICComponent, BorderLayout.CENTER);
+						{
+							txtBIAccountNo = new _JXTextField();
+							pnlBICComponent.add(txtBIAccountNo);
+						}
+						{
+							pnlBITerm = new JPanel(new BorderLayout(3, 3));
+							pnlBICComponent.add(pnlBITerm);
+							{
+								txtBITerm = new _JXTextField();
+								pnlBITerm.add(txtBITerm, BorderLayout.WEST);
+								txtBITerm.setPreferredSize(new Dimension(50, 0));
+								txtBITerm.setHorizontalAlignment(JXTextField.CENTER);
+							}
+							{
+								lblBIIntRate = new JLabel("Int Rate", JLabel.TRAILING);
+								pnlBITerm.add(lblBIIntRate);
+							}
+							{
+								txtBIIntRate = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+								pnlBITerm.add(txtBIIntRate, BorderLayout.EAST);
+								txtBIIntRate.setPreferredSize(new Dimension(50, 0));
+								txtBIIntRate.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+							}
+						}
+						{
+							txtBIAvailedAmt = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+							pnlBICComponent.add(txtBIAvailedAmt);
+							txtBIAvailedAmt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+						}
+					}
+				}
+				{
+					pnlBankInfoEast = new JPanel(new BorderLayout(3, 3));
+					pnlBankInfo.add(pnlBankInfoEast);
+					{
+						pnlBIELabel = new JPanel(new GridLayout(3, 1, 3, 3));
+						pnlBankInfoEast.add(pnlBIELabel, BorderLayout.WEST);
+						{
+							lblBISoldAmt = new JLabel("Sold Amt");
+							pnlBIELabel.add(lblBISoldAmt);
+						}
+						{
+							lblBIMADate = new JLabel("MA Date");
+							pnlBIELabel.add(lblBIMADate);
+						}
+						{
+							lblBIMAAmount = new JLabel("MA Amt");
+							pnlBIELabel.add(lblBIMAAmount);
+						}
+					}
+					{
+						pnlBIEComponent = new JPanel(new GridLayout(3, 1, 3, 3));
+						pnlBankInfoEast.add(pnlBIEComponent, BorderLayout.CENTER);
+						{
+							txtBISoldAmt = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+							pnlBIEComponent.add(txtBISoldAmt);
+							txtBISoldAmt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+						}
+						{
+							dteMADate = new _JDateChooser();
+							pnlBIEComponent.add(dteMADate);
+							dteMADate.getCalendarButton().setEnabled(false);
+						}
+						{
+							txtBIMAAmt = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+							pnlBIEComponent.add(txtBIMAAmt);
+							txtBIMAAmt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+						}
+					}
+				}
+			}*/
+		}
+		
+		{
+			tabCenter = new _JTabbedPane();
+			pnlMain.add(tabCenter, BorderLayout.CENTER);
+			{
+				pnlBankInfo = new JPanel(new BorderLayout(3, 3));
+				tabCenter.add("Bank Information", pnlBankInfo);
+				pnlBankInfo.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+				{
+					pnlBankInfoNorth = new JPanel(new GridLayout(1, 3, 3, 3));
+					pnlBankInfo.add(pnlBankInfoNorth, BorderLayout.NORTH);
+					{
+						pnlBankInfoBatchNo = new JPanel(new BorderLayout(3, 3));
+						pnlBankInfoNorth.add(pnlBankInfoBatchNo);
+						{
+							pnlBankInfoBatchLabel = new JPanel(new GridLayout(3, 1, 3, 3));
+							pnlBankInfoBatchNo.add(pnlBankInfoBatchLabel, BorderLayout.WEST);
+							{
+								lblBIBatchNo = new JLabel("Batch No");
+								pnlBankInfoBatchLabel.add(lblBIBatchNo);
+							}
+							{
+								lblBIBank = new JLabel("Bank");
+								pnlBankInfoBatchLabel.add(lblBIBank);
+							}
+							{
+								lblBIPNNo = new JLabel("PN No");
+								pnlBankInfoBatchLabel.add(lblBIPNNo);
+							}
+						}
+						{
+							pnlBankInfoBatchComponent = new JPanel(new GridLayout(3, 1, 3, 3));
+							pnlBankInfoBatchNo.add(pnlBankInfoBatchComponent);
+							{
+								txtBIBatchNo = new _JXTextField();
+								pnlBankInfoBatchComponent.add(txtBIBatchNo);
+							}
+							{
+								txtBIBank = new _JXTextField();
+								pnlBankInfoBatchComponent.add(txtBIBank);
+							}
+							{
+								txtBIPNNo = new _JXTextField();
+								pnlBankInfoBatchComponent.add(txtBIPNNo);
+							}
+						}
+					}
+					{
+						pnlBankInfoAcctNo = new JPanel(new BorderLayout(3, 3));
+						pnlBankInfoNorth.add(pnlBankInfoAcctNo);
+						{
+							pnlBankInfoAcctNoLabel = new JPanel(new GridLayout(3, 1, 3, 3));
+							pnlBankInfoAcctNo.add(pnlBankInfoAcctNoLabel, BorderLayout.WEST);
+							{
+								lblBIAccountNo = new JLabel("Account No");
+								pnlBankInfoAcctNoLabel.add(lblBIAccountNo);
+							}
+							{
+								lblBITerm = new JLabel("Term");
+								pnlBankInfoAcctNoLabel.add(lblBITerm);
+							}
+							{
+								lblBIAvailed = new JLabel("Availed");
+								pnlBankInfoAcctNoLabel.add(lblBIAvailed);
+							}
+						}
+						{
+							pnlBankInfoAcctNoComp = new JPanel(new GridLayout(3, 1, 3, 3));
+							pnlBankInfoAcctNo.add(pnlBankInfoAcctNoComp, BorderLayout.CENTER);
+							{
+								txtBIAccountNo = new _JXTextField();
+								pnlBankInfoAcctNoComp.add(txtBIAccountNo);
+							}
+							{
+								pnlBITerm = new JPanel(new BorderLayout(3, 3));
+								pnlBankInfoAcctNoComp.add(pnlBITerm);
+								{
+									txtBITerm = new _JXTextField();
+									pnlBITerm.add(txtBITerm, BorderLayout.WEST);
+									txtBITerm.setPreferredSize(new Dimension(50, 0));
+								}
+								{
+									lblBIIntRate = new JLabel("Int Rate", JLabel.TRAILING);
+									pnlBITerm.add(lblBIIntRate);
+								}
+								{
+									txtBIIntRate = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+									pnlBITerm.add(txtBIIntRate, BorderLayout.EAST);
+									txtBIIntRate.setPreferredSize(new Dimension(50, 0));
+									txtBIIntRate.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+								}
+							}
+							{	
+								txtBIAvailedAmt = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+								pnlBankInfoAcctNoComp.add(txtBIAvailedAmt);
+								txtBIAvailedAmt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+							}
+						}
+					}
+					{
+						pnlBankInfoSoldAmt = new JPanel(new BorderLayout(3, 3));
+						pnlBankInfoNorth.add(pnlBankInfoSoldAmt);
+						{
+							pnlBISoldAmtLabel = new JPanel(new GridLayout(3, 1, 3, 3));
+							pnlBankInfoSoldAmt.add(pnlBISoldAmtLabel, BorderLayout.WEST);
+							{
+								lblBISoldAmt = new JLabel("Sold Amt");
+								pnlBISoldAmtLabel.add(lblBISoldAmt);
+							}
+							{
+								lblBIMADate = new JLabel("MA Date");
+								pnlBISoldAmtLabel.add(lblBIMADate);
+							}
+							{
+								lblBIMAAmount = new JLabel("MA Amount");
+								pnlBISoldAmtLabel.add(lblBIMAAmount);
+							}
+						}
+						{
+							pnlBISoldAmtComponent = new JPanel(new GridLayout(3, 1, 3, 3));
+							pnlBankInfoSoldAmt.add(pnlBISoldAmtComponent, BorderLayout.CENTER);
+							{
+								txtBISoldAmt = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+								pnlBISoldAmtComponent.add(txtBISoldAmt);
+								txtBISoldAmt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+							}
+							{
+								dteMADate = new _JDateChooser();
+								pnlBISoldAmtComponent.add(dteMADate);
+							}
+							{
+								txtBIMAAmt = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+								pnlBISoldAmtComponent.add(txtBIMAAmt);
+								txtBIMAAmt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+							}
+						}
+					}
+				}
+				{
+
+					tabBankInfoCenter = new _JTabbedPane();
+					pnlBankInfo.add(tabBankInfoCenter, BorderLayout.CENTER);
+					{
+						pnlSchedule = new JPanel(new BorderLayout(3, 3));
+						tabBankInfoCenter.add("Schedule", pnlSchedule);
+						{
+							scrollSchedule = new JScrollPane();
+							pnlSchedule.add(scrollSchedule, BorderLayout.CENTER);
+							{
+								modelSchedule = new modelBankInfo_Schedule();
+								tblSchedule = new _JTableMain(modelSchedule);
+								scrollSchedule.setViewportView(tblSchedule);
+								scrollSchedule.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+								modelSchedule.addTableModelListener(new TableModelListener() {
+									
+									public void tableChanged(TableModelEvent e) {
+										
+										if(modelSchedule.getRowCount() == 0){
+											rowHeaderSchedule.setModel(new DefaultListModel());
+										}else{
+											((DefaultListModel)rowHeaderSchedule.getModel()).addElement(modelSchedule.getRowCount());
+										}
+										
+									}
+								});
+							}
+							{
+								rowHeaderSchedule = tblSchedule.getRowHeader();
+								rowHeaderSchedule.setModel(new DefaultListModel());
+								scrollSchedule.setRowHeaderView(rowHeaderSchedule);
+								scrollSchedule.setCorner(JScrollPane.UPPER_LEFT_CORNER, FncTables.getRowHeader_Header());
+							}
+						}
+						
+					}
+					{
+						pnlBankLedger = new JPanel(new BorderLayout(3, 3));
+						tabBankInfoCenter.add("Bank Ledger", pnlBankLedger);
+						{
+							scrollBankLedger = new JScrollPane();
+							pnlBankLedger.add(scrollBankLedger, BorderLayout.CENTER);
+							{
+								modelBankLedger = new modelBankInfo_BankLedger();
+								tblBankLedger = new _JTableMain(modelBankLedger);
+								scrollBankLedger.setViewportView(tblBankLedger);
+								scrollBankLedger.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+								modelBankLedger.addTableModelListener(new TableModelListener() {
+									
+									public void tableChanged(TableModelEvent e) {
+										
+										if(modelBankLedger.getRowCount() == 0){
+											rowHeaderBankLedger.setModel(new DefaultListModel());
+										}else{
+											((DefaultListModel) rowHeaderBankLedger.getModel()).addElement(modelBankLedger.getRowCount());
+										}
+									}
+								});
+							}
+							{
+								rowHeaderBankLedger = tblBankLedger.getRowHeader();
+								rowHeaderBankLedger.setModel(new DefaultListModel());
+								scrollBankLedger.setRowHeaderView(rowHeaderBankLedger);
+								scrollBankLedger.setCorner(JScrollPane.UPPER_LEFT_CORNER, FncTables.getRowHeader_Header());
+							}
+						}
+					}
+					{
+						pnlPayments = new JPanel(new BorderLayout(3, 3));
+						tabBankInfoCenter.add("Payments", pnlPayments);
+						{
+							scrollPayments = new JScrollPane();
+							pnlPayments.add(scrollPayments, BorderLayout.CENTER);
+							{
+								modelPayments = new modelBankInfo_Payments();
+								tblPayments = new _JTableMain(modelPayments);
+								scrollPayments.setViewportView(tblPayments);
+								scrollPayments.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+								modelPayments.addTableModelListener(new TableModelListener() {
+									
+									public void tableChanged(TableModelEvent e) {
+										
+										if(modelPayments.getRowCount() == 0){
+											rowHeaderPayments.setModel(new DefaultListModel());
+										}else{
+											((DefaultListModel) rowHeaderPayments.getModel()).addElement(modelPayments.getRowCount());
+										}
+									}
+								});
+							}
+							{
+								rowHeaderPayments = tblPayments.getRowHeader();
+								rowHeaderPayments.setModel(new DefaultListModel());
+								scrollPayments.setRowHeaderView(rowHeaderPayments);
+								scrollPayments.setCorner(JScrollPane.UPPER_LEFT_CORNER, FncTables.getRowHeader_Header());
+							}
+						}
+					}
+					{
+						pnlBuyback_main = new JPanel(new BorderLayout(5, 5));
+						tabBankInfoCenter.add("Buyback", pnlBuyback_main);
+						pnlBuyback_main.addMouseListener(new PopupTriggerListener_panel());
+						pnlBuyback_main.setName("Buyback");
+						{
+							pnlBuyback = new JPanel(new BorderLayout(5, 5));
+							pnlBuyback_main.add(pnlBuyback, BORDER_LAYOUT.NORTH);
+							pnlBuyback.setPreferredSize(new Dimension(0, 25));
+							{
+								JPanel pnlBuyback_north = new JPanel(new GridLayout(1, 4, 5, 5));
+								pnlBuyback_north.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+								pnlBuyback.add(pnlBuyback_north, BORDER_LAYOUT.NORTH);
+								
+								{
+									JPanel pnlBuyback_date = new JPanel(new BorderLayout(5, 5));
+									pnlBuyback_north.add(pnlBuyback_date);
+									pnlBuyback_date.add(new JLabel("Buyback Date"), BORDER_LAYOUT.WEST);
+									
+									{
+										lookupBuyback = new _JLookup(null, "Select Buyback Date", 0);
+										pnlBuyback_date.add(lookupBuyback, BorderLayout.EAST);
+										lookupBuyback.setPreferredSize(new Dimension(100, 0));
+										lookupBuyback.addLookupListener(new LookupListener() {
+											
+											public void lookupPerformed(LookupEvent event) {
+												
+												Object [] data = ((_JLookup) event.getSource()).getDataSet();
+												
+												if(data != null){
+													buyback_date = (String) data[0];
+													txtBuyback_tran_type.setText((String) data[1]);
+													txtBuyback_rplf.setText((String) data[2]);
+													txtBuyback_remarks.setText((String) data[3]);
+
+													displayBuybackHistory(entity_id, proj_id, pbl_id, seq_no, buyback_date);
+												}
+											}
+										});
+									}
+								}
+								
+								{
+									JPanel pnlBuyback_tran_type = new JPanel(new BorderLayout(5, 5));
+									pnlBuyback_north.add(pnlBuyback_tran_type);
+									pnlBuyback_tran_type.add(new JLabel("Tran Type"), BORDER_LAYOUT.WEST);
+									
+									{
+										txtBuyback_tran_type = new _JXTextField();
+										pnlBuyback_tran_type.add(txtBuyback_tran_type);
+									}
+								}
+								
+								{
+									JPanel pnlBuyback_rplf_no = new JPanel(new BorderLayout(5, 5));
+									pnlBuyback_north.add(pnlBuyback_rplf_no);
+									pnlBuyback_rplf_no.add(new JLabel("RPLF NO"), BORDER_LAYOUT.WEST);
+									
+									{
+										txtBuyback_rplf = new _JXTextField();
+										pnlBuyback_rplf_no.add(txtBuyback_rplf);
+									}
+								}
+								
+								{
+									JPanel pnlBuyback_remarks = new JPanel(new BorderLayout(5, 5));
+									pnlBuyback_north.add(pnlBuyback_remarks);
+									pnlBuyback_remarks.add(new JLabel("Remarks"), BORDER_LAYOUT.WEST);
+									
+									{
+										txtBuyback_remarks = new _JXTextField();
+										pnlBuyback_remarks.add(txtBuyback_remarks);
+									}
+								}
+							}
+							
+							scrollBuybackHistory = new JScrollPane();
+							pnlBuyback_main.add(scrollBuybackHistory, BorderLayout.CENTER);
+							{
+								modelBuyback = new modelBankInfo_Buyback();
+								tblBuyback = new _JTableMain(modelBuyback);
+								scrollBuybackHistory.setViewportView(tblBuyback);
+								scrollBuybackHistory.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+								modelBuyback.addTableModelListener(new TableModelListener() {
+									
+									public void tableChanged(TableModelEvent e) {
+										
+										if(modelBuyback.getRowCount() == 0){
+											rowHeaderBuybackHistory.setModel(new DefaultListModel());
+										}else{
+											((DefaultListModel) rowHeaderBuybackHistory.getModel()).addElement(modelBuyback.getRowCount());
+										}
+									}
+								});
+							}
+							{
+								rowHeaderBuybackHistory = tblPayments.getRowHeader();
+								rowHeaderBuybackHistory.setModel(new DefaultListModel());
+								scrollBuybackHistory.setRowHeaderView(rowHeaderBuybackHistory);
+								scrollBuybackHistory.setCorner(JScrollPane.UPPER_LEFT_CORNER, FncTables.getRowHeader_Header());
+							}
+						}
+					}
+				}
+			}
+			
+			{
+				pnlInsuranceInfo = new JPanel(new BorderLayout(3, 3));
+				tabCenter.add("Insurance Information", pnlInsuranceInfo);
+				pnlInsuranceInfo.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+				{
+					pnlInsuranceInfoNorth = new JPanel(new GridLayout(1, 3, 3, 3));
+					pnlInsuranceInfo.add(pnlInsuranceInfoNorth, BorderLayout.NORTH);
+					{
+						pnlReferenceNo = new JPanel(new BorderLayout(3, 3));
+						pnlInsuranceInfoNorth.add(pnlReferenceNo);
+						{
+							pnlRefNoLabel = new JPanel(new GridLayout(2, 1, 3, 3));
+							pnlReferenceNo.add(pnlRefNoLabel, BorderLayout.WEST);
+							{
+								lblReferenceNo = new JLabel("Reference No");
+								pnlRefNoLabel.add(lblReferenceNo);
+							}
+							{
+								lblAmtInsured = new JLabel("Amt Insured");
+								pnlRefNoLabel.add(lblAmtInsured);
+							}
+						}
+						{
+							pnlRefNoComponent = new JPanel(new GridLayout(2, 1, 3, 3));
+							pnlReferenceNo.add(pnlRefNoComponent, BorderLayout.CENTER);
+							{
+								txtRefNo = new _JXTextField();
+								pnlRefNoComponent.add(txtRefNo);
+								txtRefNo.setHorizontalAlignment(JXTextField.CENTER);
+							}
+							{
+								txtAmtInsured = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+								pnlRefNoComponent.add(txtAmtInsured);
+								txtAmtInsured.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+							}
+						}
+					}
+					{
+						pnlInsuranceTerm = new JPanel(new BorderLayout(3, 3));
+						pnlInsuranceInfoNorth.add(pnlInsuranceTerm);
+						{
+							pnlInsuranceTermLabel = new JPanel(new GridLayout(2, 1, 3, 3));
+							pnlInsuranceTerm.add(pnlInsuranceTermLabel, BorderLayout.WEST);
+							{
+								lblInsuranceTerm = new JLabel("Insurance Term");
+								pnlInsuranceTermLabel.add(lblInsuranceTerm);
+							}
+							{
+								lblPremium = new JLabel("Premium");
+								pnlInsuranceTermLabel.add(lblPremium);
+							}
+						}
+						{
+							pnlInsuranceTermComponent = new JPanel(new GridLayout(2, 1, 3, 3));
+							pnlInsuranceTerm.add(pnlInsuranceTermComponent, BorderLayout.CENTER);
+							{
+								txtInsuranceTerm = new _JXTextField();
+								pnlInsuranceTermComponent.add(txtInsuranceTerm);
+								txtInsuranceTerm.setHorizontalAlignment(JXTextField.CENTER);
+							}
+							{
+								txtPremium = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+								pnlInsuranceTermComponent.add(txtPremium);
+								txtPremium.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+								/*txtPremium.addKeyListener(new KeyAdapter() {
+									
+									public void keyReleased(KeyEvent e){
+										BigDecimal premium_amt = (BigDecimal) ((_JXFormattedTextField) e.getSource()).getValued();
+										
+										if(premium_amt.equals(new BigDecimal("0.00"))){
+											for(int x = 0; x<modelInsuranceInfo.getRowCount(); x++){
+												modelInsuranceInfo.setValueAt(premium_amt, x, 7);
+												
+												
+											}
+										}
+									}
+								});*/
+							}
+						}
+					}
+					{
+						pnlInsurancePolicyNo = new JPanel(new BorderLayout(3, 3));
+						pnlInsuranceInfoNorth.add(pnlInsurancePolicyNo);
+						{
+							pnlInsurancePolicyLabel = new JPanel(new GridLayout(2, 1, 3, 3));
+							pnlInsurancePolicyNo.add(pnlInsurancePolicyLabel, BorderLayout.WEST);
+							{
+								lblInsurancePolicy = new JLabel("Policy No");
+								pnlInsurancePolicyLabel.add(lblInsurancePolicy);
+							}
+							{
+								lblInsuranceDate = new JLabel("Date Approved");
+								pnlInsurancePolicyLabel.add(lblInsuranceDate);
+							}
+						}
+						{
+							pnlInsurancePolicyComponent = new JPanel(new GridLayout(2, 1, 3, 3));
+							pnlInsurancePolicyNo.add(pnlInsurancePolicyComponent, BorderLayout.CENTER);
+							{
+								txtInsurancePolicyNo = new _JXTextField();
+								pnlInsurancePolicyComponent.add(txtInsurancePolicyNo);
+								txtInsurancePolicyNo.setHorizontalAlignment(JXTextField.CENTER);
+							}
+							{
+								dteInsuranceApproved = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
+								pnlInsurancePolicyComponent.add(dteInsuranceApproved);
+							}
+						}
+					}
+					{
+						pnlInsuranceCoverage = new JPanel(new BorderLayout(3, 3));
+						pnlInsuranceInfoNorth.add(pnlInsuranceCoverage);
+						{
+							pnlInsuranceCoverageLabel = new JPanel(new GridLayout(2, 1, 3, 3));
+							pnlInsuranceCoverage.add(pnlInsuranceCoverageLabel, BorderLayout.WEST);
+							{
+								lblDateFrom = new JLabel("Date From");
+								pnlInsuranceCoverageLabel.add(lblDateFrom);
+							}
+							{
+								lblDateTo = new JLabel("Date To");
+								pnlInsuranceCoverageLabel.add(lblDateTo);
+							}
+						}
+						{
+							pnlInsuranceCoverageComponent = new JPanel(new GridLayout(2, 1, 3, 3));
+							pnlInsuranceCoverage.add(pnlInsuranceCoverageComponent, BorderLayout.CENTER);
+							{
+								dteFrom = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
+								pnlInsuranceCoverageComponent.add(dteFrom);
+							}
+							{
+								dteTo = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
+								pnlInsuranceCoverageComponent.add(dteTo);
+							}
+						}
+					}
+				}
+				{
+					scrollInsuranceInfo = new JScrollPane();
+					pnlInsuranceInfo.add(scrollInsuranceInfo, BorderLayout.CENTER);
+					{
+						modelInsuranceInfo = new modelInsuranceInfo();
+						tblInsuranceInfo = new _JTableMain(modelInsuranceInfo);
+						scrollInsuranceInfo.setViewportView(tblInsuranceInfo);
+						scrollInsuranceInfo.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+						tblInsuranceInfo.hideColumns("Insurance Co ID", "Insurance Broker ID", "Insurance Line", "Rec. ID", "Applicant No", "Part ID");
+						tblInsuranceInfo.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+						tblInsuranceInfo.setSortable(false);
+						
+						modelInsuranceInfo.addTableModelListener(new TableModelListener() {
+							
+							@Override
+							public void tableChanged(TableModelEvent arg0) {
+								if(modelInsuranceInfo.getRowCount() == 0){
+									rowHeaderInsuranceInfo.setModel(new DefaultListModel());
+								}/*else{
+									((DefaultListModel) rowHeaderInsuranceInfo.getModel()).addElement(modelInsuranceInfo.getRowCount());
+								}*/
+							}
+						});
+						{
+							tblInsuranceInfo.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+								
+								@Override
+								public void valueChanged(ListSelectionEvent arg0) {
+									if(!arg0.getValueIsAdjusting()){
+										
+										if(tblInsuranceInfo.getSelectedRows().length == 1){
+											int row = tblInsuranceInfo.getSelectedRow(); 
+											
+											String reference_no = (String) modelInsuranceInfo.getValueAt(row, 0);
+											BigDecimal amt_insured = (BigDecimal) modelInsuranceInfo.getValueAt(row, 1);
+											Integer term = (Integer) modelInsuranceInfo.getValueAt(row, 2);
+											BigDecimal premium = (BigDecimal) modelInsuranceInfo.getValueAt(row, 3);
+											String policy_no = (String) modelInsuranceInfo.getValueAt(row, 4);
+											Date date_approved = (Date) modelInsuranceInfo.getValueAt(row, 6);
+											Date date_from = (Date) modelInsuranceInfo.getValueAt(row, 7);
+											Date date_to = (Date) modelInsuranceInfo.getValueAt(row, 8);
+											
+											txtRefNo.setText(reference_no);
+											txtAmtInsured.setValue(amt_insured);
+											txtInsuranceTerm.setText(term.toString());
+											txtPremium.setValue(premium);
+											txtInsurancePolicyNo.setText(policy_no);
+											dteInsuranceApproved.setDate(date_approved);
+											dteFrom.setDate(date_from);
+											dteTo.setDate(date_to);
+											
+										}
+									}
+								}
+							});
+						}
+					}
+					{
+						rowHeaderInsuranceInfo = tblInsuranceInfo.getRowHeader();
+						rowHeaderInsuranceInfo.setModel(new DefaultListModel());
+						scrollInsuranceInfo.setRowHeaderView(rowHeaderInsuranceInfo);
+						scrollInsuranceInfo.setCorner(JScrollPane.UPPER_LEFT_CORNER, FncTables.getRowHeader_Header());
+					}
+				}
+				{
+					pnlInsuranceInfoSouth = new JPanel(new GridLayout(1, 5, 3, 3));
+					pnlInsuranceInfo.add(pnlInsuranceInfoSouth, BorderLayout.SOUTH);
+					pnlInsuranceInfoSouth.setPreferredSize(new Dimension(0, 35));
+					/*{
+						pnlInsuranceInfoSouth.add(Box.createHorizontalBox());
+					}*/
+					{
+						btnInsuranceInfoNew = new JButton("New");
+						pnlInsuranceInfoSouth.add(btnInsuranceInfoNew);
+						btnInsuranceInfoNew.setActionCommand(btnInsuranceInfoNew.getText());
+						btnInsuranceInfoNew.addActionListener(this);
+					}
+					{
+						btnInsuranceInfoEdit = new JButton("Edit");
+						pnlInsuranceInfoSouth.add(btnInsuranceInfoEdit);
+						btnInsuranceInfoEdit.setActionCommand(btnInsuranceInfoEdit.getText());
+						btnInsuranceInfoEdit.addActionListener(this);
+					}
+					{
+						btnInsuranceInfoSave = new JButton("Save");
+						pnlInsuranceInfoSouth.add(btnInsuranceInfoSave);
+						btnInsuranceInfoSave.setActionCommand(btnInsuranceInfoSave.getText());
+						btnInsuranceInfoSave.addActionListener(this);
+					}
+					{
+						btnInsuranceInfoCancel = new JButton("Cancel");
+						pnlInsuranceInfoSouth.add(btnInsuranceInfoCancel);
+						btnInsuranceInfoCancel.setActionCommand(btnInsuranceInfoCancel.getText());
+						btnInsuranceInfoCancel.addActionListener(this);
+					}
+					{
+						btnInsuranceInfoDelete = new JButton("Delete");
+						pnlInsuranceInfoSouth.add(btnInsuranceInfoDelete);
+						btnInsuranceInfoDelete.setActionCommand(btnInsuranceInfoDelete.getText());
+						btnInsuranceInfoDelete.addActionListener(this);
+					}
+				}
+			}
+		}
+		//this.setComponentsEditable(pnlCDCenter, false);
+		//this.setComponentsEditable(pnlBankInfo, false);
+		clearInsuranceInfo();
+	}//XXX END OF INIT GUI
+	
+	//CLEAR INSURANCE INFO
+	private void newInsuranceInfo(){
+		clearInsuranceInfo();
+		txtRefNo.setText(setReferenceNo());
+		
+		txtAmtInsured.setEditable(true);
+		txtInsuranceTerm.setEditable(true);
+		txtPremium.setEditable(true);
+		txtInsurancePolicyNo.setEditable(true);
+		
+		dteInsuranceApproved.getCalendarButton().setEnabled(true);
+		dteInsuranceApproved.setEditable(true);
+		
+		dteFrom.getCalendarButton().setEnabled(true);
+		dteFrom.setEditable(true);
+		
+		dteTo.getCalendarButton().setEnabled(true);
+		dteTo.setEditable(true);
+		
+		tblInsuranceInfo.clearSelection();
+		tblInsuranceInfo.setEnabled(false);
+		
+		//btnState(false, true, true, false);
+		btnState(false, true, true, false, false);
+		pnlState(false, true);
+	}
+	
+	private void clearInsuranceInfo(){
+		
+		txtRefNo.setText("");
+		txtAmtInsured.setValue(new BigDecimal("0.00"));
+		txtAmtInsured.setEditable(false);
+		
+		txtInsuranceTerm.setText("");
+		txtInsuranceTerm.setEditable(false);
+		
+		txtPremium.setValue(new BigDecimal("0.00"));
+		txtPremium.setEditable(false);
+		
+		txtInsurancePolicyNo.setText("");
+		txtInsurancePolicyNo.setEditable(false);
+		
+		dteInsuranceApproved.setDate(null);
+		dteInsuranceApproved.getCalendarButton().setEnabled(false);
+		dteInsuranceApproved.setEditable(false);
+		
+		dteFrom.setDate(null);
+		dteFrom.getCalendarButton().setEnabled(false);
+		dteFrom.setEditable(false);
+		
+		dteTo.setDate(null);
+		dteTo.getCalendarButton().setEnabled(false);
+		dteTo.setEditable(false);
+		
+		tblInsuranceInfo.setEnabled(true);
+		rowHeaderInsuranceInfo.setEnabled(true);
+		/*modelInsuranceInfo.clear();
+		rowHeaderInsuranceInfo.setModel(new DefaultListModel());
+		scrollInsuranceInfo.setCorner(JScrollPane.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer(""));*/
+		
+		btnState(true, false, false, true, true);
+		pnlState(true, true);
+	}
+	
+	//DELETE INSURANCE INFO
+	private void deleteInsuranceInfo(){
+		if(tblInsuranceInfo.getSelectedRows().length == 0){
+			JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Please select row to delete", "Delete", JOptionPane.WARNING_MESSAGE);
+		}else{
+			if(JOptionPane.showConfirmDialog(this.getTopLevelAncestor(), "Are you sure to delete?", "Delete", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+				int selected_row = tblInsuranceInfo.getSelectedRow();
+				System.out.printf("Display selected row: %s%n", selected_row);
+				
+				rowHeaderInsuranceInfo.setModel(new DefaultListModel());
+				modelInsuranceInfo.removeRow(selected_row);
+				
+				for(int x= 1; x<=modelInsuranceInfo.getRowCount(); x++){
+					((DefaultListModel) rowHeaderInsuranceInfo.getModel()).addElement(x);
+				}
+				
+				tblInsuranceInfo.packAll();
+				scrollInsuranceInfo.setCorner(JScrollPane.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer(Integer.toString(tblInsuranceInfo.getRowCount())));
+			}
+		}
+	}
+	
+	//DELETE FROM TABLE 
+	private void deleteInsurance(){
+		if(tblInsuranceInfo.getSelectedRows().length == 0){
+			JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Please select row to delete", "Delete", JOptionPane.WARNING_MESSAGE);
+		}else{
+
+			pgUpdate db = new pgUpdate();
+
+			int selected_row = tblInsuranceInfo.getSelectedRow();
+			Integer rec_id = (Integer) modelInsuranceInfo.getValueAt(selected_row, 13);
+			String applicant_no = (String) modelInsuranceInfo.getValueAt(selected_row, 16);
+
+			String sql = "DELETE FROM rf_mri_header WHERE rec_id = "+rec_id+" AND applicant_no = '"+applicant_no+"'";
+			db.executeUpdate(sql, true);
+		}
+	}
+	
+	//EDIT INSURANCE INFO
+	private void editInsuranceInfo(){
+		if(tblInsuranceInfo.getSelectedRows().length == 0){
+			JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Please select row to edit", "Edit", JOptionPane.WARNING_MESSAGE);
+		}else{
+			tblInsuranceInfo.setEnabled(false);
+			rowHeaderInsuranceInfo.setEnabled(false);
+			
+			//btnState(false, true, true, false, false);
+			txtAmtInsured.setEditable(true);
+			txtInsuranceTerm.setEditable(true);
+			txtPremium.setEditable(true);
+			txtInsurancePolicyNo.setEditable(true);
+			dteInsuranceApproved.getCalendarButton().setEnabled(true);
+			dteInsuranceApproved.setEditable(true);
+			dteFrom.getCalendarButton().setEnabled(true);
+			dteFrom.setEditable(true);
+			dteTo.getCalendarButton().setEnabled(true);
+			dteTo.setEditable(true);
+			
+			btnState(false, true, true, false, false);
+			pnlState(false, true);
+		}
+	}
+	
+	private void btnState(Boolean sNew, Boolean sSave, Boolean sCancel, Boolean sEdit, Boolean sDelete){//WITH EDIT
+		btnInsuranceInfoNew.setEnabled(sNew);
+		btnInsuranceInfoSave.setEnabled(sSave);
+		btnInsuranceInfoCancel.setEnabled(sCancel);
+		btnInsuranceInfoEdit.setEnabled(sEdit);
+		btnInsuranceInfoDelete.setEnabled(sDelete);
+	}
+	
+	private void pnlState(Boolean sBankInfo, Boolean sInsuranceInfo){
+		tabCenter.setEnabledAt(0, sBankInfo);
+		tabCenter.setEnabledAt(1, sInsuranceInfo);
+	}
+	
+	//SQL FOR LOOKUP OF CLIENTS
+	private String sqlClient(){
+		
+		
+		return "SELECT a.entity_id as \"Entity ID\",\n"
+				+ "get_client_name(a.entity_id) as \"Client Name\",\n"
+				+ "b.description as \"Unit Desc\", a.pbl_id as \"PBL\",\n"
+				+ "a.seq_no as \"Seq\", get_project_name(a.projcode) as \"Project\",\n"
+				+ "a.projcode as \"Proj. ID\", b.unit_id as \"Unit ID\"\n"
+				+ "FROM rf_sold_unit a\n"
+				+ "LEFT JOIN mf_unit_info b on b.proj_id = a.projcode and b.pbl_id = a.pbl_id\n"
+				+ "WHERE EXISTS (SELECT * FROM rf_bank_header\n"
+				+ "			  where entity_id = a.entity_id\n"
+				+ "			  and proj_id = a.projcode\n"
+				+ "			  and pbl_id = a.pbl_id\n"
+				+ "			  and seq_no = a.seq_no\n"
+				+ "			  and status_id = 'A'\n"
+				+ "			 )\n"
+				+ "ORDER BY get_client_name(a.entity_id)";
+		
+	}
+	
+	//DISPLAYS CLIENT INFORMATION
+	private void displayClientInfo(String entity_id, String proj_id, String pbl_id, Integer seq_no){
+		pgSelect db = new pgSelect();
+		
+		String sql = "SELECT get_client_name(a.entity_id) as client_name,\n"
+				+ "(select tran_date from rf_buyer_status where entity_id = a.entity_id and proj_id = a.projcode and pbl_id = a.pbl_id and seq_no = a.seq_no and trim(byrstatus_id) = '17' and status_id = 'A' order by tran_date desc limit 1) as tr_date,\n"
+				+ "(select tran_date from rf_buyer_status where entity_id = a.entity_id and proj_id = a.projcode and pbl_id = a.pbl_id and seq_no = a.seq_no and trim(byrstatus_id) = '01' and status_id = 'A' order by tran_date desc limit 1) as or_date,\n"
+				+ "c.status_desc, get_project_name(a.projcode), b.description,\n"
+				+ "get_model_name_v2(a.projcode, a.model_id), a.lotarea::VARCHAR, a.floorarea::VARCHAR,\n"
+				+ "get_gross_price(a.entity_id, a.pbl_id, a.seq_no, a.projcode),\n"
+				+ "get_discount_amt(a.entity_id, a.pbl_id, a.seq_no, a.projcode),\n"
+				+ "get_vat_amt(a.entity_id, a.pbl_id, a.seq_no, a.projcode),\n"
+				+ "get_nsp(a.entity_id, a.pbl_id, a.seq_no, a.projcode),\n"
+				+ "(select co_id from mf_project where proj_id = a.projcode) as co_id\n"
+				+ "FROM rf_sold_unit a\n"
+				+ "LEFT JOIN mf_unit_info b on b.proj_id = a.projcode and b.pbl_id = a.pbl_id\n"
+				+ "LEFT JOIN mf_buyer_status c on c.byrstatus_id = a.currentstatus\n"
+				+ "WHERE a.entity_id = '"+entity_id+"'\n"
+				+ "AND a.projcode = '"+proj_id+"'\n"
+				+ "AND a.pbl_id = '"+pbl_id+"'\n"
+				+ "AND a.seq_no = "+seq_no+"";
+		db.select(sql);
+		
+		//FncSystem.out("Display Client Info", sql);
+		if(db.isNotNull()){
+			
+			txtCDClient.setText((String) db.getResult()[0][0]);
+			dteCDTRDate.setDate((Date) db.getResult()[0][1]);
+			dteCDORDate.setDate((Date) db.getResult()[0][2]);
+			txtCDCurrentStatus.setText((String) db.getResult()[0][3]);
+			txtCDProject.setText((String) db.getResult()[0][4]);
+			txtCDPhBlkLt.setText((String) db.getResult()[0][5]);
+			txtCDHouseModel.setText((String) db.getResult()[0][6]);
+			txtCDLotArea.setText((String) db.getResult()[0][7]);
+			txtCDFloorArea.setText((String) db.getResult()[0][8]);
+			txtCDGSP.setValue(db.getResult()[0][9]);
+			txtCDDiscount.setValue(db.getResult()[0][10]);
+			txtCDVat.setValue(db.getResult()[0][11]);
+			txtCDNSP.setValue(db.getResult()[0][12]);
+			company_id = (String) db.getResult()[0][13];
+			
+		}
+	}
+	
+	//DISPLAY BANK INFORMATION
+	private void displayBankInfo(String entity_id, String proj_id, String pbl_id, Integer seq_no){
+		pgSelect db = new pgSelect();
+		
+		String sql = "SELECT a.adc_batch_no, b.bank_alias,\n" + 
+					 //"a.pn_number, a.bank_batch_no,\n" + 
+					 "a.pn_no, a.bank_batch_no,\n" + 
+					 "a.term, a.int_rate, a.availed_amt, \n" + 
+					 "a.sold_amt, a.ma_date, a.ma_amt\n" + 
+					 "FROM rf_bank_header a\n" + 
+					 "LEFT JOIN mf_bank b on b.bank_id = a.bank_id \n" + 
+					 "WHERE a.entity_id = '"+entity_id+"'\n" + 
+					 "AND a.proj_id = '"+proj_id+"'\n" + 
+					 "AND a.pbl_id = '"+pbl_id+"'\n" + 
+					 "AND a.seq_no = "+seq_no+"";
+		db.select(sql);
+		
+		//FncSystem.out("Display Bank Info", sql);
+		
+		if(db.isNotNull()){
+			//System.out.printf("Display batch no: %s%n", db.getResult()[0][0]);
+			txtBIBatchNo.setText((String) db.getResult()[0][0]);
+			txtBIBank.setText((String) db.getResult()[0][1]);
+			txtBIPNNo.setText((String) db.getResult()[0][2]);
+			txtBIAccountNo.setText((String) db.getResult()[0][3]);
+			txtBITerm.setText((db.getResult()[0][4]).toString());
+			txtBIIntRate.setValue(db.getResult()[0][5]);
+			txtBIAvailedAmt.setValue(db.getResult()[0][6]);
+			txtBISoldAmt.setValue(db.getResult()[0][7]);
+			dteMADate.setDate((Date) db.getResult()[0][8]);
+			txtBIMAAmt.setValue(db.getResult()[0][9]);
+		}
+	}
+	
+	//DISPLAY BANK SCHEDULE
+	private void displaySchedule(String entity_id, String proj_id, String pbl_id, Integer seq_no){
+		modelSchedule.clear();
+		
+		pgSelect db = new pgSelect();
+		
+		String sql = "SELECT get_particular_alias(part_id), scheddate,\n"
+				+ "amount, proc_fee, mri, fire, vat, hgc,\n"
+				+ "interest, principal, balance, int_rate\n"
+				+ "FROM rf_bank_schedule\n"
+				+ "WHERE entity_id = '"+entity_id+"'\n"
+				+ "AND proj_id = '"+proj_id+"'\n"
+				+ "AND pbl_id = '"+pbl_id+"'\n"
+				+ "AND seq_no = "+seq_no+"\n"
+				+ "and status_id != 'I'\n"
+				+ "order by scheddate";
+		db.select(sql);
+		
+		//FncSystem.out("Display Bank Schedule", sql);
+		
+		if(db.isNotNull()){
+			for(int x = 0; x<db.getRowCount(); x++){
+				modelSchedule.addRow(db.getResult()[x]);
+			}
+			scrollSchedule.setCorner(JScrollPane.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer(Integer.toString(tblSchedule.getRowCount())));
+			tblSchedule.packAll();
+		}
+	}
+	
+	//DISPLAY BANK LEDGER
+	private void displayBankLedger(String entity_id, String proj_id, String pbl_id, Integer seq_no){
+		pgSelect db = new pgSelect();
+		
+		String sql = "SELECT\n"
+				+ "--a.datepaid, a.appldate, a.scheddate,\\n\"\n"
+				+ "a.date_paid, a.appl_date, a.scheddate,\n"
+				+ "a.pmt_amt::NUMERIC, 0.00,\n"
+				+ "(SELECT amount from rf_bank_ledger WHERE entity_id = a.entity_id and proj_id = a.proj_id and pbl_id = a.pbl_id and seq_no = a.seq_no and scheddate::date = a.scheddate and part_id = '001')::NUMERIC as interest,\n"
+				+ "(SELECT amount from rf_bank_ledger WHERE entity_id = a.entity_id and proj_id = a.proj_id and pbl_id = a.pbl_id and seq_no = a.seq_no and scheddate::date = a.scheddate and part_id = '002')::NUMERIC as principal,\n"
+				+ "a.balance::NUMERIC\n"
+				+ "FROM rf_bank_ledger a\n"
+				+ "WHERE a.entity_id = '"+entity_id+"'\n"
+				+ "AND a.proj_id = '"+proj_id+"'\n"
+				+ "AND a.pbl_id = '"+pbl_id+"'\n"
+				+ "AND a.seq_no = "+seq_no+"\n"
+				+ "and a.status_id = 'A'\n"
+				+ "and a.part_id = '002'\n"
+				+ "order by a.date_paid, part_id";
+		db.select(sql);
+		
+		//FncSystem.out("Display sql for Bank Ledger", sql);
+		
+		if(db.isNotNull()){
+			for(int x = 0; x<db.getRowCount(); x++){
+				modelBankLedger.addRow(db.getResult()[x]);
+			}
+			scrollBankLedger.setCorner(JScrollPane.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer(Integer.toString(tblBankLedger.getRowCount())));
+			tblBankLedger.packAll();
+		}
+	}
+	
+	//DISPLAY PAYMENTS
+	private void displayPayments(String entity_id, String proj_id, String pbl_id, Integer seq_no){
+		pgSelect db = new pgSelect();
+		
+		String sql = "SELECT trans_date, amount, lumpsum, rplf_no,\n"
+				+ "date_released, batch_no, remarks\n"
+				+ "FROM rf_bank_payments\n"
+				+ "WHERE entity_id = '"+entity_id+"'\n"
+				+ "AND proj_id = '"+proj_id+"'\n"
+				+ "AND pbl_id = '"+pbl_id+"'\n"
+				+ "AND seq_no = "+seq_no+"\n"
+				+ "and status_id != 'I'\n"
+				+ "ORDER BY trans_date;";
+		db.select(sql);
+		
+		//FncSystem.out("Display sql for Payments", sql);
+		
+		if(db.isNotNull()){
+			for(int x = 0; x<db.getRowCount(); x++){
+				modelPayments.addRow(db.getResult()[x]);
+			}
+			scrollPayments.setCorner(JScrollPane.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer(Integer.toString(tblPayments.getRowCount())));
+			tblPayments.packAll();
+		}
+	}
+	
+	//LOOKUP BUYBACK
+	private String sqlBuyback(String entity_id, String proj_id, String pbl_id, Integer seq_no){
+		
+		String sql = "SELECT coalesce(date_buyback::varchar,'') as \"Buyback Date\", coalesce(tran_type,'') as \"Tran Type\", \n"
+				+ "coalesce(rplf_no,'') as \"RPLF NO\", coalesce(remarks,'') as \"Remarks\"\n"
+				+ "FROM rf_buyback\n"
+				+ "WHERE entity_id = '"+entity_id+"'\n"
+				+ "AND proj_id = '"+proj_id+"'\n"
+				+ "AND pbl_id = '"+pbl_id+"'\n"
+				+ "AND seq_no = "+seq_no+"\n"
+				+ "and status_id != 'I'\n"
+				+ "ORDER BY date_buyback desc";
+		return sql;
+	}
+	
+	//DISPLAYS BUYBACK INFO
+	private void displayBuybackHistory(String entity_id, String proj_id, String pbl_id, Integer seq_no, String date){
+		pgSelect db = new pgSelect();
+		
+		String sql = "SELECT trans_date, amount, lumpsum, rplf_no,\n"
+				+ "date_released, batch_no, remarks\n"
+				+ "FROM rf_buyback_history\n"
+				+ "WHERE entity_id = '"+entity_id+"'\n"
+				+ "AND proj_id = '"+proj_id+"'\n"
+				+ "AND pbl_id = '"+pbl_id+"'\n"
+				+ "AND seq_no = "+seq_no+"\n"
+				+ "and buyback_date::date = '"+date+"'\n"
+				+ "and status_id != 'I'\n"
+				+ "ORDER BY trans_date;";
+		db.select(sql);
+		
+		//FncSystem.out("Display sql for Payments", sql);
+		
+		if(db.isNotNull()){
+			for(int x = 0; x<db.getRowCount(); x++){
+				modelBuyback.addRow(db.getResult()[x]);
+			}
+			scrollBuybackHistory.setCorner(JScrollPane.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer(Integer.toString(tblBuyback.getRowCount())));
+			tblBuyback.packAll();
+		}
+	}
+	
+	//DISPLAY INSURANCE INFO
+	private void displayInsuranceInfo(String entity_id, String proj_id, String pbl_id, Integer seq_no){
+		//clearInsuranceInfo();
+		
+		FncTables.clearTable(modelInsuranceInfo);
+		rowHeaderInsuranceInfo.setModel(new DefaultListModel());
+		
+		pgSelect db = new pgSelect();
+		
+		String sql = "SELECT TRIM(a.reference_no), a.amt_insured, a.term, a.premium, a.policy_no, \n" + 
+					 "a.invoice_no, a.date_approved, a.date_from, a.date_to, a.insurance_comp, \n" + 
+					 "get_client_name(a.insurance_comp), a.insurance_line, \n" + 
+					 "get_client_name(a.insurance_line), a.rec_id, a.date_terminated, \n" + 
+					 "COALESCE(a.premium_refund, 0.00), a.applicant_no, a.part_id\n" + 
+					 "FROM rf_mri_details a\n" + 
+					 "LEFT JOIN rf_mri_header b on b.applicant_no = a.applicant_no\n" + 
+					 "WHERE b.entity_id = '"+entity_id+"'\n" + 
+					 "AND b.proj_id = '"+proj_id+"'\n" + 
+					 "AND b.pbl_id = '"+pbl_id+"'\n" + 
+					 "AND b.seq_no = "+seq_no+" \n" + 
+					 "ORDER BY a.date_enrolled;\n";
+		
+		db.select(sql);
+		
+		//FncSystem.out("Display sql for Insurance Info", sql);
+		
+		if(db.isNotNull()){
+			for(int x = 0; x<db.getRowCount(); x++){
+				modelInsuranceInfo.addRow(db.getResult()[x]);
+				((DefaultListModel) rowHeaderInsuranceInfo.getModel()).addElement(modelInsuranceInfo.getRowCount());
+			}
+			scrollInsuranceInfo.setCorner(JScrollPane.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer(Integer.toString(tblInsuranceInfo.getRowCount())));
+			tblInsuranceInfo.packAll();
+		}
+	}
+	
+	private String setReferenceNo(){
+		pgSelect db = new pgSelect();
+		
+		String ref_no = "";
+		
+		String sql = "select get_new_mri_ref_no()";
+		db.select(sql);
+		//FncSystem.out("Display generation of reference no", sql);
+		
+		if(db.isNotNull()){
+			ref_no = (String) db.getResult()[0][0];
+		}
+		return ref_no;
+	}
+	
+	//GENERATES THE BANK LEDGER REPORT
+	private void generateBankLedgerReport(){
+		
+		Map<String, Object> mapParameters = new HashMap<String, Object>();
+		
+		//CLIENT INFO PANEL
+		mapParameters.put("entity_id", lookupCDClient.getValue());
+		mapParameters.put("entity_name", txtCDClient.getText());
+		mapParameters.put("proj_id", proj_id);
+		mapParameters.put("unit_id", unit_id);
+		mapParameters.put("seq_no", seq_no);
+		
+		mapParameters.put("or_date", dteCDORDate.getDate());
+		mapParameters.put("status", txtCDCurrentStatus.getText());
+		mapParameters.put("proj_name", txtCDProject.getText());
+		mapParameters.put("unit_desc", txtCDPhBlkLt.getText());
+		mapParameters.put("house_model", txtCDHouseModel.getText());
+		mapParameters.put("lot_area", txtCDLotArea.getText());
+		mapParameters.put("floor_area", txtCDFloorArea.getText());
+		mapParameters.put("gsp", txtCDGSP.getValued());
+		mapParameters.put("vat", txtCDVat.getValued());
+		mapParameters.put("discount", txtCDDiscount.getValued());
+		mapParameters.put("nsp", txtCDNSP.getValued());
+		
+		//BANK INFO PANEL
+		mapParameters.put("batch_no", txtBIBatchNo.getText());
+		mapParameters.put("bank_name", txtBIBank.getText());
+		mapParameters.put("pn_no", txtBIPNNo.getText());
+		mapParameters.put("term", txtBITerm.getText());
+		mapParameters.put("int_rate", (BigDecimal) txtBIIntRate.getValued());
+		mapParameters.put("ma_date", dteMADate.getDate());
+		mapParameters.put("availed_amt", (BigDecimal) txtBIAvailedAmt.getValued());
+		mapParameters.put("sold_amt", (BigDecimal) txtBISoldAmt.getValued());
+		mapParameters.put("ma_amt", (BigDecimal) txtBIMAAmt.getValued());
+		
+		FncReport.generateReport("/Reports/rptBankInfo_BankLedger.jasper", "Bank Ledger", mapParameters);
+	}
+	
+	//Save Insurance Information
+	private void saveInsuranceInfo(String entity_id, String proj_id, String unit_id, Integer seq_no){
+		//try{
+		String reference_no = txtRefNo.getText();
+		BigDecimal amt_insured = (BigDecimal) txtAmtInsured.getValued();
+		String insurance_term = txtInsuranceTerm.getText();
+		BigDecimal premium = (BigDecimal) txtPremium.getValued();
+		Date date_from = dteFrom.getDate();
+		Date date_to = dteTo.getDate();
+		BigDecimal nsp = (BigDecimal) txtCDNSP.getValued();
+		String policy_no = txtInsurancePolicyNo.getText();
+		Date date_approved = dteInsuranceApproved.getDate();
+		String sql = "";
+
+		pgSelect db = new pgSelect();
+
+			if(tblInsuranceInfo.getSelectedRows().length == 1){
+				int selected_row = tblInsuranceInfo.getSelectedRow();
+				
+				String invoice_no = (String) modelInsuranceInfo.getValueAt(selected_row, 5);
+				String insurance_co = (String) modelInsuranceInfo.getValueAt(selected_row, 9);
+				String insurance_line = (String) modelInsuranceInfo.getValueAt(selected_row, 11);
+				Integer rec_id = (Integer) modelInsuranceInfo.getValueAt(selected_row, 13);
+				Date date_terminated = (Date) modelInsuranceInfo.getValueAt(selected_row, 14);
+				BigDecimal premium_refund = (BigDecimal) modelInsuranceInfo.getValueAt(selected_row, 15);
+				
+				sql = "SELECT sp_post_insurance_info(true,'"+entity_id+"', '"+proj_id+"', '"+unit_id+"', "+seq_no+", "+nsp+",'"+reference_no+"', \n"+
+					  ""+amt_insured+", "+insurance_term+", "+premium+", NULLIF('"+date_from+"', 'null')::TIMESTAMP, NULLIF('"+date_to+"', 'null')::TIMESTAMP, "+rec_id+", '"+policy_no+"', '"+invoice_no+"', \n"+
+					  "NULLIF('"+date_approved+"', 'null')::TIMESTAMP, '"+insurance_co+"', '"+insurance_line+"', NULLIF('"+date_terminated+"', 'null')::TIMESTAMP, "+premium_refund+")";
+				
+			}else{
+
+				sql = "SELECT sp_post_insurance_info(false,'"+entity_id+"', '"+proj_id+"', '"+unit_id+"', "+seq_no+", "+nsp+",'"+reference_no+"', \n"+
+					  ""+amt_insured+", "+insurance_term+", "+premium+", NULLIF('"+date_from+"', 'null')::TIMESTAMP, NULLIF('"+date_to+"', 'null')::TIMESTAMP, NULL, '"+policy_no+"', NULL, \n"+
+					  "NULL, NULL, NULL, NULL, NULL)";
+				
+			}
+
+			db.select(sql);
+			
+			//FncSystem.out("Display sql for posting insurance info", sql);
+			
+		//}catch (ArrayIndexOutOfBoundsException e){}
+	}
+	
+	//CHECKS FOR REQUIRED FIELD BEFORE SAVING
+	private Boolean toSave(){
+		
+		if(txtAmtInsured.getValued().equals(new BigDecimal("0.00"))){
+			JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Please input Amt Insured", "Save", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		
+		if(txtInsuranceTerm.getText().equals("")){
+			JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Please input Insurance Term", "Save", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		
+		if(txtPremium.getValued().equals(new BigDecimal("0.00"))){
+			JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Please input premium amount", "Save", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		
+		if(dteInsuranceApproved.getDate() == null){
+			JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Please input Date Approved", "Save", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		
+		if(dteFrom.getDate() == null){
+			JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Please input date from", "Save", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		
+		if(dteTo.getDate() == null){
+			JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Please input date to", "Save", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	class PopupTriggerListener_panel extends MouseAdapter {
+		public void mousePressed(MouseEvent ev) {
+			if (ev.isPopupTrigger()) {
+				String component_name = ev.getComponent().getName();
+				
+				System.out.println("component "+component_name);
+				if(component_name.equals("Client")) {
+					{
+						menuRightClick = new JPopupMenu("Popup");
+						menuItemBankLedger = new JMenuItem("Preview Bank Ledger");
+						menuRightClick.add(menuItemBankLedger);
+						menuItemBankLedger.addActionListener(new ActionListener() {
+							
+							public void actionPerformed(ActionEvent arg0) {
+								String menu_item = arg0.getActionCommand();
+								System.out.println("menu item "+menu_item);
+								
+								if(menu_item.equals("Preview Bank Ledger")) {
+									System.out.println("Do preview bank ledger");
+								}
+							}
+						});
+					}
+				}
+				
+				if(component_name.equals("Buyback")) {
+					{
+						menuRightClick = new JPopupMenu("Popup");
+						menuItemBankLedger = new JMenuItem("Preview Buyback Report");
+						menuRightClick.add(menuItemBankLedger);
+						menuItemBankLedger.addActionListener(new ActionListener() {
+							
+							public void actionPerformed(ActionEvent arg0) {
+								String menu_item = arg0.getActionCommand();
+								System.out.println("menu item "+menu_item);
+								
+								if(menu_item.equals("Preview Buyback Report")) {
+									if(lookupBuyback.getValue() == null){
+										JOptionPane.showMessageDialog(pnlBuyback_main, "Please select buyback date", "Preview Buyback", JOptionPane.WARNING_MESSAGE);
+									}else{
+										System.out.println("RPLF NO "+txtBuyback_rplf.getText());
+										System.out.println("Buyback Date "+buyback_date);
+										Map<String, Object> mapParameters = new HashMap<String, Object>();
+										
+										String company_logo = sql_getCompanyLogo(company_id);
+										mapParameters.put("p_logo", this.getClass().getClassLoader().getResourceAsStream("Images/" + company_logo));
+										mapParameters.put("p_payment_date", buyback_date);
+										mapParameters.put("p_co_id", company_id);
+										mapParameters.put("p_entity_id", entity_id);
+										mapParameters.put("p_proj_id", proj_id);
+										mapParameters.put("p_pbl_id", pbl_id);
+										mapParameters.put("p_seqno", seq_no);
+										mapParameters.put("p_buyback_date", buyback_date);
+										mapParameters.put("p_prepared_by", UserInfo.Alias);
+										FncReport.generateReport("/Reports/rpt_bankinfo_buyback.jasper", "Buyback For "+buyback_date, "", mapParameters);
+									}
+								}
+							}
+						});
+					}
+				}
+				
+				menuRightClick.show(ev.getComponent(), ev.getX(), ev.getY());
+			}
+		}
+		public void mouseReleased(MouseEvent ev) {
+			if (ev.isPopupTrigger()) {
+				menuRightClick.show(ev.getComponent(), ev.getX(), ev.getY());
+			}
+		}
+		
+		public void mouseClicked(MouseEvent e){
+			if(e.isPopupTrigger()){
+				menuRightClick.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent a) {
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		
+		if(arg0.isPopupTrigger()){
+			menuRightClick.show((JPanel) arg0.getSource(), arg0.getX(), arg0.getY());
+		}
+		if(arg0.isPopupTrigger()){
+			menuRightClick.show((JLabel)arg0.getSource(), arg0.getX(), arg0.getY());
+		}
+		if(arg0.isPopupTrigger()){
+			menuRightClick.show((_JXFormattedTextField)arg0.getSource(), arg0.getX(), arg0.getY());
+		}
+		if(arg0.isPopupTrigger()){
+			menuRightClick.show((_JXTextField)arg0.getSource(), arg0.getX(), arg0.getY());
+		}
+		if(arg0.isPopupTrigger()){
+			menuRightClick.show((JButton)arg0.getSource(), arg0.getX(), arg0.getY());
+		}
+		if(arg0.isPopupTrigger()){
+			menuRightClick.show((_JDateChooser) arg0.getSource(), arg0.getX(), arg0.getY());
+		}
+		
+	}
+	
+	public void actionPerformed(ActionEvent arg0) {
+		String actionCommand = arg0.getActionCommand();
+			
+		if(actionCommand.equals("New")){//New Insurance Info
+			newInsuranceInfo();
+		}
+		
+		if(actionCommand.equals("Save")){//Save
+			if(toSave()){
+				if(JOptionPane.showConfirmDialog(this.getTopLevelAncestor(), "Are you sure to save?", actionCommand, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+					saveInsuranceInfo(entity_id, proj_id, unit_id, seq_no);
+					clearInsuranceInfo();
+					displayInsuranceInfo(entity_id, proj_id, pbl_id, seq_no);
+					JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Insurance Information has been Saved", "Save", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		}
+		
+		if(actionCommand.equals("Cancel")){//Cancel
+			if(JOptionPane.showConfirmDialog(this.getTopLevelAncestor(), "Are you sure to Cancel?", actionCommand, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+				clearInsuranceInfo();
+				if(lookupCDClient.getValue() != null){
+					displayInsuranceInfo(entity_id, proj_id, pbl_id, seq_no);
+				}
+				btnState(true, false, false, true, true);
+				pnlState(true, true);
+			}
+		}
+		
+		if(actionCommand.equals("Edit")){//EDIT
+			editInsuranceInfo();
+		}
+		
+		if(actionCommand.equals("Delete")){
+			//REMOVES ROW FROM THE TABLE
+			deleteInsuranceInfo();
+		}
+		
+	}
+	
+	private String sql_getCompanyLogo(String co_id) {
+
+		String a = "";
+
+		String SQL = "select company_logo from mf_company \n" + "where co_id = '" + co_id + "' ";
+		pgSelect db = new pgSelect();
+		db.select(SQL);
+
+		if (db.isNotNull()) {
+			if ((String) db.getResult()[0][0] == null || db.getResult()[0][0].equals("null")) {
+				a = "";
+			} else {
+				a = (String) db.getResult()[0][0];
+			}
+
+		} else {
+			a = "";
+		}
+
+		return a;
+	}
+}

@@ -1,0 +1,729 @@
+package Utilities;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
+import Database.pgSelect;
+import Database.pgUpdate;
+import Functions.FncGlobal;
+import Functions.FncLookAndFeel;
+import Functions.FncTables;
+import Functions.UserInfo;
+import Lookup.LookupEvent;
+import Lookup.LookupListener;
+import Lookup._JLookup;
+import Lookup.lookupMethods;
+import components.JTBorderFactory;
+import components._JInternalFrame;
+import components._JTableMain;
+import tablemodel.model_hdmf_units;
+
+public class techDescBreaker extends _JInternalFrame {
+
+	private static final long serialVersionUID = -1292864156135847732L;
+	static String title = "Technical Description Breaker";
+	Dimension frameSize = new Dimension(820, 605);
+	
+	private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private static Integer screenHeight = screenSize.height;
+	private static Integer screenWidth = screenSize.width; 
+	
+	private model_hdmf_units modelTD;	
+	private static _JTableMain tblTD;
+	private static JList rowTD;
+	
+	private JPanel panel0;
+	private JPanel panel1;
+	private JPanel panel2;
+	private JPanel panel3;
+	private JPanel panel4;
+	private JPanel panFilter;
+	
+	private JTextArea txtTD;
+	private JTextArea txtTD_output;
+	private JTextArea txtLocation;
+	private JTextArea txtPortion;
+	private JTextArea txtArea;
+	
+	private JTextField txtPlan;
+	private JTextField txtLRC;
+	private JTextField txtProj;
+	private JTextField txtPhase;
+	private JTextField txtBlock;
+	private JTextField txtLot;
+	
+	private JComboBox cboCheck; 
+	private JButton btnCheck; 
+	private _JLookup txtProjID; 
+	
+	public techDescBreaker() {
+		super(title, false, true, false, false);
+		initGUI(); 
+	}
+
+	public techDescBreaker(String title) {
+		super(title);
+		initGUI(); 
+	}
+
+	public techDescBreaker(String title, boolean resizable, boolean closable, boolean maximizable,
+			boolean iconifiable) {
+		super(title, resizable, closable, maximizable, iconifiable);
+		initGUI(); 
+	}
+
+	public void initGUI() {
+		this.setLayout(new BorderLayout(5, 5));
+		this.setSize(screenWidth-100, 600);
+		
+		if(UserInfo.EmployeeCode.equals("900876")) {
+			this.setSize(screenWidth-1500, 600);
+		}
+		
+		JPanel panMain = new JPanel(new BorderLayout(5, 5));
+		this.add(panMain, BorderLayout.CENTER); 
+		panMain.setBorder(new EmptyBorder(5, 5, 5, 5));
+		{
+			JPanel panContent = new JPanel(new BorderLayout(5, 5));
+			panMain.add(panContent, BorderLayout.CENTER); 
+			{
+				{
+					JPanel panList = new JPanel(new BorderLayout(5, 5)); 
+					panContent.add(panList, BorderLayout.LINE_START);
+					panList.setPreferredSize(new Dimension(300, 0));
+					{
+						{
+							createfilter();
+							JPanel filter = new JPanel(new BorderLayout(5, 5));
+							panList.add(filter, BorderLayout.PAGE_START); 
+							filter.setPreferredSize(new Dimension(0, 200));
+							filter.setBorder(JTBorderFactory.createTitleBorder("Filters", FncLookAndFeel.systemFont_Bold.deriveFont(10f)));
+							{
+								filter.add(panFilter, BorderLayout.CENTER);
+							}
+						}
+						{
+							JScrollPane scr = new JScrollPane();
+							panList.add(scr, BorderLayout.CENTER);
+							scr.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+							{
+								modelTD = new model_hdmf_units(); 
+								modelTD.setEditable(false);
+
+								tblTD = new _JTableMain(modelTD);
+								tblTD.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+									public void valueChanged(ListSelectionEvent event) {
+										try {
+											adjusting(
+													modelTD.getValueAt(tblTD.getSelectedRow(), 5).toString(), 
+													modelTD.getValueAt(tblTD.getSelectedRow(), 6).toString(),
+													modelTD.getValueAt(tblTD.getSelectedRow(), 2).toString(),
+													modelTD.getValueAt(tblTD.getSelectedRow(), 3).toString(),
+													modelTD.getValueAt(tblTD.getSelectedRow(), 4).toString()
+													);										
+										} catch (ArrayIndexOutOfBoundsException e) {
+											
+										}
+										
+									}
+								});
+
+								rowTD = tblTD.getRowHeader();
+								scr.setViewportView(tblTD);
+								
+								tblTD.getColumnModel().getColumn(0).setPreferredWidth(40);
+								tblTD.getColumnModel().getColumn(1).setPreferredWidth(53);
+								tblTD.getColumnModel().getColumn(2).setPreferredWidth(51);
+								tblTD.getColumnModel().getColumn(3).setPreferredWidth(51);
+								tblTD.getColumnModel().getColumn(4).setPreferredWidth(51);
+								tblTD.hideColumns("proj_id", "pbl_id");
+
+								rowTD = tblTD.getRowHeader();
+								rowTD.setModel(new DefaultListModel());
+								scr.setRowHeaderView(rowTD);
+								scr.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, FncTables.getRowHeader_Header());
+								
+								LoadUnits(modelTD, rowTD); 
+							}
+						}
+					}
+				}
+				{
+					JPanel panTD = new JPanel(new BorderLayout(5, 5)); 
+					panContent.add(panTD, BorderLayout.CENTER);
+					{
+						{
+							txtTD = new JTextArea(""); 
+							txtTD.setLineWrap(false);
+							txtTD.setWrapStyleWord(true);
+							txtTD.setFont(new Font("Tahoma", Font.PLAIN, 10));
+							txtTD.setEditable(false);
+							
+							JScrollPane scr = new JScrollPane(txtTD); 
+							panTD.add(scr, BorderLayout.CENTER);
+							scr.setBorder(JTBorderFactory.createTitleBorder("Technical Description", FncLookAndFeel.systemFont_Bold.deriveFont(10f)));
+						}
+						{
+							txtTD_output = new JTextArea(""); 
+							txtTD_output.setLineWrap(true);
+							txtTD_output.setWrapStyleWord(true);
+							txtTD_output.setFont(new Font("Tahoma", Font.PLAIN, 12));
+							txtTD_output.setEditable(false);
+							
+							JScrollPane scr = new JScrollPane(txtTD_output); 
+							panTD.add(scr, BorderLayout.PAGE_END);
+							scr.setBorder(JTBorderFactory.createTitleBorder("Report Output", FncLookAndFeel.systemFont_Bold.deriveFont(10f)));
+							scr.setPreferredSize(new Dimension(0, 150));
+						}
+					}
+				}
+				{
+					JPanel panValues = new JPanel(new GridLayout(7, 1, 5, 5)); 
+					panContent.add(panValues, BorderLayout.LINE_END);
+					panValues.setPreferredSize(new Dimension(400, 0));
+					panValues.setBorder(JTBorderFactory.createTitleBorder("Proposed Values", FncLookAndFeel.systemFont_Bold.deriveFont(10f)));
+					{
+						final JPanel[] panel = new JPanel[6]; 
+						
+						for (int x=0; x<panel.length; x++) {
+							panel[x] = new JPanel(); 
+							panValues.add(panel[x]); 
+						}
+						
+						createpanel0(); 
+						createpanel1(); 
+						createpanel2(); 
+						createpanel3();
+						createpanel4(); 
+						
+						panel[0].setLayout(new BorderLayout(5, 5));
+						panel[0].add(panel0);
+						
+						panel[1].setLayout(new BorderLayout(5, 5));
+						panel[1].add(panel1); 
+						
+						panel[2].setLayout(new BorderLayout(5, 5));
+						panel[2].add(panel2); 
+						
+						panel[3].setLayout(new BorderLayout(5, 5));
+						panel[3].add(panel3);
+						
+						panel[4].setLayout(new BorderLayout(5, 5));
+						panel[4].add(panel4);
+
+					}
+				}
+			}
+		} 
+	}
+	
+	private void createpanel0() {
+		panel0 = new JPanel(new GridLayout(2, 1, 5, 5)); 
+		{
+			{
+				JPanel panArea = new JPanel(new BorderLayout(5, 5)); 
+				panel0.add(panArea); 
+				{
+					{
+						JLabel label = new JLabel("Plan No."); 
+						panArea.add(label, BorderLayout.LINE_START); 
+						label.setHorizontalAlignment(JLabel.LEADING);
+						label.setPreferredSize(new Dimension(100, 0));
+					}
+					{
+						txtPlan = new JTextField(""); 
+						panArea.add(txtPlan, BorderLayout.CENTER); 
+						txtPlan.setHorizontalAlignment(JTextField.CENTER);
+						txtPlan.setEditable(true);
+					}
+				}
+			}
+			{
+				JPanel panLocation = new JPanel(new BorderLayout(5, 5)); 
+				panel0.add(panLocation); 
+				{
+					{
+						JLabel label = new JLabel("LRC No."); 
+						panLocation.add(label, BorderLayout.LINE_START); 
+						label.setHorizontalAlignment(JLabel.LEADING);
+						label.setPreferredSize(new Dimension(100, 0));
+					}
+					{
+						txtLRC = new JTextField(""); 
+						panLocation.add(txtLRC, BorderLayout.CENTER); 
+						txtLRC.setHorizontalAlignment(JTextField.CENTER);
+						txtLRC.setEditable(true);
+					}
+				}
+			}
+		}
+	}
+	
+	
+	private void createpanel1() { 
+		panel1 = new JPanel(new BorderLayout(5, 5)); 
+		{
+			{
+				JPanel panLabel = new JPanel(new GridLayout(2, 1, 5, 5)); 
+				panel1.add(panLabel, BorderLayout.LINE_START); 
+				panLabel.setPreferredSize(new Dimension(100, 0));
+				{
+					JLabel label = new JLabel("Area"); 
+					panLabel.add(label, BorderLayout.LINE_START); 
+					label.setHorizontalAlignment(JLabel.LEADING);
+					label.setPreferredSize(new Dimension(100, 0));
+				}
+			}
+			{
+				txtArea = new JTextArea(""); 
+				txtArea.setLineWrap(true);
+				txtArea.setWrapStyleWord(true);
+				txtArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
+				txtArea.setEditable(true);
+				
+				JScrollPane scr = new JScrollPane(txtArea); 
+				panel1.add(scr, BorderLayout.CENTER); 
+			}
+		}
+	}
+	
+	
+	
+	private void createpanel2() {
+		panel2 = new JPanel(new BorderLayout(5, 5)); 
+		{
+			{
+				JPanel panLabel = new JPanel(new GridLayout(2, 1, 5, 5)); 
+				panel2.add(panLabel, BorderLayout.LINE_START); 
+				panLabel.setPreferredSize(new Dimension(100, 0));
+				{
+					JLabel label = new JLabel("Location"); 
+					panLabel.add(label, BorderLayout.LINE_START); 
+					label.setHorizontalAlignment(JLabel.LEADING);
+					label.setPreferredSize(new Dimension(100, 0));
+				}
+			}
+			{
+				txtLocation = new JTextArea(""); 
+				txtLocation.setLineWrap(true);
+				txtLocation.setWrapStyleWord(true);
+				txtLocation.setFont(new Font("Tahoma", Font.PLAIN, 11));
+				txtLocation.setEditable(true);
+				
+				JScrollPane scr = new JScrollPane(txtLocation); 
+				panel2.add(scr, BorderLayout.CENTER); 
+			}
+		}
+	}
+	
+	private void createpanel3() {
+		panel3 = new JPanel(new BorderLayout(5, 5)); 
+		{
+			{
+				JPanel panLabel = new JPanel(new GridLayout(2, 1, 5, 5)); 
+				panel3.add(panLabel, BorderLayout.LINE_START); 
+				panLabel.setPreferredSize(new Dimension(100, 0));
+				{
+					JLabel label = new JLabel("Portion of"); 
+					panLabel.add(label, BorderLayout.LINE_START); 
+					label.setHorizontalAlignment(JLabel.LEADING);
+					label.setPreferredSize(new Dimension(100, 0));
+				}
+			}
+			{
+				txtPortion = new JTextArea(""); 
+				txtPortion.setLineWrap(true);
+				txtPortion.setWrapStyleWord(true);
+				txtPortion.setFont(new Font("Tahoma", Font.PLAIN, 11));
+				txtPortion.setEditable(true);
+				
+				JScrollPane scr = new JScrollPane(txtPortion); 
+				panel3.add(scr, BorderLayout.CENTER); 
+			}
+		}
+	}
+	
+	private void createpanel4() {
+		panel4 = new JPanel(new BorderLayout(5, 5)); 
+		{
+			{
+				JPanel panLabel = new JPanel(new GridLayout(2, 2, 5, 5)); 
+				panel4.add(panLabel, BorderLayout.LINE_END); 
+				panLabel.setPreferredSize(new Dimension(200, 0));
+				{
+					{
+						panLabel.add(new JLabel(""));
+						panLabel.add(new JLabel(""));
+						panLabel.add(new JLabel(""));
+					}
+					{
+						btnCheck = new JButton("Check"); 
+						panLabel.add(btnCheck); 
+						btnCheck.setPreferredSize(new Dimension(60, 0));
+						btnCheck.setEnabled(true);
+						btnCheck.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								if (JOptionPane.showConfirmDialog(null, "Are the values correct?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION) {
+									
+									String strTD = ""; 
+									strTD = strTD.concat("A parcel of Land Lot "); 
+									strTD = strTD.concat(tblTD.getValueAt(tblTD.getSelectedRow(), 4).toString());
+									strTD = strTD.concat(", Blk ");
+									strTD = strTD.concat(tblTD.getValueAt(tblTD.getSelectedRow(), 3).toString());
+									strTD = strTD.concat(", Survey Plan No. ");
+									strTD = strTD.concat(txtPlan.getText());
+									strTD = strTD.concat("; Portion of: ");
+									strTD = strTD.concat(txtPortion.getText());
+									strTD = strTD.concat(" LRC Record No. ");
+									strTD = strTD.concat(txtLRC.getText());
+									strTD = strTD.concat("; Location: ");
+									strTD = strTD.concat(txtLocation.getText());
+									strTD = strTD.concat("; Area: ");
+									strTD = strTD.concat(txtArea.getText());
+									
+									pgUpdate dbExec = new pgUpdate(); 
+									dbExec.executeUpdate("update rf_techdesc_breakdown\n" + 
+											"set plan_no = '"+txtPlan.getText()+"', \n" +
+											"lrc_no = '"+txtLRC.getText()+"', \n" +
+											"area = '"+txtArea.getText()+"', \n" +
+											"location = '"+txtLocation.getText()+"', \n" +
+											"portion_of_lot = '"+txtPortion.getText()+"', \n" +
+											"checked = true, \n" +
+											"edited_by = '"+UserInfo.EmployeeCode+"', \n" +
+											"date_edited = now(), \n" +
+											"technical_desc_reduced = '"+strTD+"' \n" +
+											"where proj_id = '"+modelTD.getValueAt(tblTD.getSelectedRow(), 5).toString()+"' \n" +
+											"and pbl_id = '"+modelTD.getValueAt(tblTD.getSelectedRow(), 6).toString()+"'", true);
+									dbExec.commit();
+									
+									dbExec = new pgUpdate(); 
+									dbExec.executeUpdate("update rf_techdesc_breakdown c\n" + 
+											"set technical_desc_reduced = regexp_replace(concat('A parcel of Land Lot ', b.lot, ', Blk ', b.block, ', Survey Plan No. ', a.plan_no, '; Portion of: ', \n" + 
+											"a.portion_of_lot, ' LRC Record No. ', a.lrc_no, '; Location: ', a.location, '; Area: ', a.area), E'[\\\\n\\\\r]+', ' ', 'g' ) \n" + 
+											"from rf_techdesc_breakdown a\n" + 
+											"inner join mf_unit_info b on a.proj_id = b.proj_id and a.pbl_id = b.pbl_id\n" + 
+											"where a.proj_id = '"+modelTD.getValueAt(tblTD.getSelectedRow(), 5).toString()+"' \n" +
+											"and a.pbl_id = '"+modelTD.getValueAt(tblTD.getSelectedRow(), 6).toString()+"' and a.checked = true\n" + 
+											"and c.proj_id = a.proj_id and c.pbl_id = a.pbl_id", true);
+									dbExec.commit();
+									
+									txtTD_output.setText(FncGlobal.GetString("select technical_desc_reduced from rf_techdesc_breakdown where proj_id = '"+modelTD.getValueAt(tblTD.getSelectedRow(), 5).toString()+"' and pbl_id = '"+modelTD.getValueAt(tblTD.getSelectedRow(), 6).toString()+"' and checked; "));
+									reload(); 
+									JOptionPane.showMessageDialog(null, "Technical description marked as checked!");
+								}
+							}
+						});
+					}
+				}
+			}
+		}
+	}
+	
+	private void LoadUnits(DefaultTableModel modelMain, JList rowHeader) {
+		FncTables.clearTable(modelMain);
+		DefaultListModel listModel = new DefaultListModel();
+		rowHeader.setModel(listModel); 
+
+		String SQL = "select coalesce(b.checked, false) as checked, c.proj_alias, a.phase, a.block, a.lot, a.proj_id, a.pbl_id, b.checked \n" + 
+				"from mf_unit_info a \n" + 
+				"left join rf_techdesc_breakdown b on a.proj_id = b.proj_id and a.pbl_id = b.pbl_id \n" + 
+				"inner join mf_project c on a.proj_id = c.proj_id \n" + 
+				"where a.technical_desc is not null \n" + 
+				"and (a.proj_id = '"+txtProjID.getValue()+"' or '"+txtProjID.getValue()+"' = '') \n" +
+				"and (a.phase = '"+txtPhase.getText()+"' or '"+txtPhase.getText()+"' = '') \n" +
+				"and (a.block = '"+txtBlock.getText()+"' or '"+txtBlock.getText()+"' = '') \n" +
+				"and (a.lot = '"+txtLot.getText()+"' or '"+txtLot.getText()+"' = '') \n" +
+				"and (case when '"+cboCheck.getSelectedIndex()+"'::int = 0 then true when '"+cboCheck.getSelectedIndex()+"'::int = 1 then b.checked else not coalesce(b.checked, false) end) \n" + 
+				"order by c.proj_alias, a.description"; 
+		
+		System.out.println("\n\n"+SQL);
+		
+		pgSelect db = new pgSelect();
+		db.select(SQL);
+		if (db.isNotNull()) {
+			for (int x = 0; x < db.getRowCount(); x++) {
+				modelMain.addRow(db.getResult()[x]);
+				listModel.addElement(modelMain.getRowCount());
+			}
+		} else {
+			
+		};
+	}
+	
+	private void reload() {
+		LoadUnits(modelTD, rowTD); 
+	}
+	
+	private void adjusting(String strProj, String strPBL, String strPhase, String strBlock, String strLot) {
+		txtArea.setText("");
+		txtLocation.setText("");
+		txtPortion.setText("");
+		
+		txtTD.setText(FncGlobal.GetString("select technical_desc \n" +
+				"from mf_unit_info \n" +
+				"where proj_id = '"+strProj+"' \n" +
+				"and pbl_id = '"+strPBL+"'; "));
+		
+		String strTD = txtTD.getText().replace("'", "`");  
+		
+		if (!FncGlobal.GetBoolean("select exists(select * from rf_techdesc_breakdown where proj_id = '"+modelTD.getValueAt(tblTD.getSelectedRow(), 5)+"' and pbl_id = '"+modelTD.getValueAt(tblTD.getSelectedRow(), 6)+"'); ")) {
+			pgUpdate dbExec = new pgUpdate(); 
+			dbExec.executeUpdate("insert into rf_techdesc_breakdown \n" + 
+					"select proj_id, pbl_id, technical_desc, ''::varchar as plan_no, \n" + 
+					"''::varchar as lrc_no, \n" + 
+					"''::varchar as area, \n" + 
+					"''::varchar as \"location\", \n" + 
+					"''::varchar as portion_of_lot, false as checked \n" + 
+					"from mf_unit_info \n" + 
+					"where proj_id = '"+strProj+"' and pbl_id = '"+strPBL+"'; ", false);
+			dbExec.commit();
+		}
+		
+		if (FncGlobal.GetBoolean("select checked from rf_techdesc_breakdown where proj_id = '"+strProj+"' and pbl_id = '"+strPBL+"'; ")) {
+			pgSelect dbExec = new pgSelect(); 
+			dbExec.select("select plan_no, lrc_no, area, location, portion_of_lot \n" + 
+					"from rf_techdesc_breakdown \n" + 
+					"where proj_id = '"+strProj+"' and pbl_id = '"+strPBL+"'");
+			
+			if (dbExec!=null) {
+				txtPlan.setText(dbExec.getResult()[0][0].toString()); 
+				txtLRC.setText(dbExec.getResult()[0][1].toString());
+				txtArea.setText(dbExec.getResult()[0][2].toString());
+				txtLocation.setText(dbExec.getResult()[0][3].toString());
+				txtPortion.setText(dbExec.getResult()[0][4].toString());
+			}
+			
+			txtPlan.setEditable(false); 
+			txtLRC.setEditable(false);
+			txtArea.setEditable(false);
+			txtLocation.setEditable(false);
+			txtPortion.setEditable(false);
+			
+			txtPlan.setBackground(Color.GRAY); 
+			txtLRC.setBackground(Color.GRAY);
+			txtArea.setBackground(Color.GRAY);
+			txtLocation.setBackground(Color.GRAY);
+			txtPortion.setBackground(Color.GRAY);
+			
+			btnCheck.setEnabled(false);
+		} else {
+			txtPlan.setText(FncGlobal.GetString("select get_techdesc_break('"+strTD+"', 'Plan No.')"));
+			txtLRC.setText(FncGlobal.GetString("select get_techdesc_break('"+strTD+"', 'LRC Record No.')"));
+			txtArea.setText(FncGlobal.GetString("select get_techdesc_break('"+strTD+"', 'Area')"));
+			txtLocation.setText(FncGlobal.GetString("select concat('Barangay of ', barangay, ', Municipality of ', municipality, ', Province of ', province, ', Island of Luzon'), * \n" + 
+					"from mf_project \n" + 
+					"where proj_id = '"+strProj+"'"));
+			txtPortion.setText(FncGlobal.GetString("select get_techdesc_break('"+strTD+"', 'Portion of Lot')"));
+			
+			txtArea.setText(txtArea.getText().trim());
+			txtLocation.setText(txtLocation.getText().trim());
+			txtPortion.setText(txtPortion.getText().trim());
+			
+			txtPlan.setEditable(true); 
+			txtLRC.setEditable(true);
+			txtArea.setEditable(true);
+			txtLocation.setEditable(true);
+			txtPortion.setEditable(true);
+			
+			txtPlan.setBackground(Color.CYAN); 
+			txtLRC.setBackground(Color.CYAN);
+			txtArea.setBackground(Color.CYAN);
+			txtLocation.setBackground(Color.CYAN);
+			txtPortion.setBackground(Color.CYAN);
+			
+			btnCheck.setEnabled(true);
+		}
+		
+		txtTD_output.setText(FncGlobal.GetString("select technical_desc_reduced from rf_techdesc_breakdown where proj_id = '"+strProj+"' and pbl_id = '"+strPBL+"' and checked; "));
+	}
+	
+	private void createfilter() {
+		panFilter = new JPanel(new GridLayout(5, 1, 5, 5)); 
+		{
+			{
+				JPanel panProject = new JPanel(new BorderLayout(5, 5)); 
+				panFilter.add(panProject); 
+				{
+					{
+						JPanel panLabel = new JPanel(new GridLayout(1, 2, 5, 5)); 
+						panProject.add(panLabel, BorderLayout.LINE_START); 
+						panLabel.setPreferredSize(new Dimension(100, 0));
+						{
+							{
+								JLabel label = new JLabel("Project"); 
+								panLabel.add(new JLabel("Project")); 
+								label.setHorizontalAlignment(JLabel.LEADING);
+							}
+							{
+								txtProjID = new _JLookup(""); 
+								panLabel.add(txtProjID); 
+								txtProjID.setHorizontalAlignment(JTextField.CENTER);
+								txtProjID.setReturnColumn(0);
+								txtProjID.setLookupSQL(lookupMethods.getProject(""));
+								txtProjID.addLookupListener(new LookupListener() {
+									public void lookupPerformed(LookupEvent event) {
+										Object[] data = ((_JLookup) event.getSource()).getDataSet();  
+										
+										if (data!=null) {
+											txtProjID.setValue(data[0].toString());
+											txtProj.setText(data[1].toString()); 
+										}
+									}
+								});
+								txtProjID.addKeyListener(new KeyListener() {
+
+									public void keyTyped(KeyEvent e) {
+										if (e.getKeyChar()==KeyEvent.VK_BACK_SPACE) {
+											txtProjID.setValue("");
+											txtProj.setText("");
+										}
+									}
+
+									public void keyReleased(KeyEvent e) {
+
+									}
+
+									public void keyPressed(KeyEvent e) {
+
+									}
+								});
+								txtProjID.setValue("");
+							}
+						}
+					}
+					{
+						txtProj = new JTextField(""); 
+						panProject.add(txtProj, BorderLayout.CENTER); 
+						txtProj.setHorizontalAlignment(JTextField.CENTER);
+						txtProj.setEditable(false);
+					}
+				}
+			}
+			{
+				JPanel panPhase = new JPanel(new BorderLayout(5, 5)); 
+				panFilter.add(panPhase); 
+				{
+					{
+						JLabel label = new JLabel("Phase"); 
+						panPhase.add(label, BorderLayout.LINE_START); 
+						label.setHorizontalAlignment(JLabel.LEADING);
+						label.setPreferredSize(new Dimension(100, 0));
+					}
+					{
+						txtPhase = new JTextField(""); 
+						panPhase.add(txtPhase, BorderLayout.CENTER);
+						txtPhase.setHorizontalAlignment(JTextField.CENTER);
+						txtPhase.setEditable(true);
+						txtPhase.getDocument().addDocumentListener(document);
+					}
+				}
+			}
+			{
+				JPanel panBlock = new JPanel(new BorderLayout(5, 5)); 
+				panFilter.add(panBlock); 
+				{
+					{
+						JLabel label = new JLabel("Block"); 
+						panBlock.add(label, BorderLayout.LINE_START); 
+						label.setHorizontalAlignment(JLabel.LEADING);
+						label.setPreferredSize(new Dimension(100, 0));
+					}
+					{
+						txtBlock = new JTextField(""); 
+						panBlock.add(txtBlock, BorderLayout.CENTER);
+						txtBlock.setHorizontalAlignment(JTextField.CENTER);
+						txtBlock.setEditable(true);
+						txtBlock.getDocument().addDocumentListener(document);
+					}
+				}
+			}
+			{
+				JPanel panLot = new JPanel(new BorderLayout(5, 5)); 
+				panFilter.add(panLot); 
+				{
+					{
+						JLabel label = new JLabel("Lot"); 
+						panLot.add(label, BorderLayout.LINE_START); 
+						label.setHorizontalAlignment(JLabel.LEADING);
+						label.setPreferredSize(new Dimension(100, 0));
+					}
+					{
+						txtLot = new JTextField(""); 
+						panLot.add(txtLot, BorderLayout.CENTER);
+						txtLot.setHorizontalAlignment(JTextField.CENTER);
+						txtLot.setEditable(true);
+						txtLot.getDocument().addDocumentListener(document);
+					}
+				}
+			}
+			{
+				JPanel panChecked = new JPanel(new BorderLayout(5, 5)); 
+				panFilter.add(panChecked); 
+				{
+					{
+						JLabel label = new JLabel("Checked"); 
+						panChecked.add(label, BorderLayout.LINE_START); 
+						label.setHorizontalAlignment(JLabel.LEADING);
+						label.setPreferredSize(new Dimension(100, 0));
+					}
+					{
+						cboCheck = new JComboBox(new String[] {
+							"All",
+							"Checked",
+							"Not Checked" 
+						}); 
+						panChecked.add(cboCheck, BorderLayout.CENTER);
+						cboCheck.addItemListener(new ItemListener() {
+							public void itemStateChanged(ItemEvent e) {
+								reload();
+							}
+						});
+					}
+				}
+			}
+		}
+	}
+	
+	DocumentListener document = new DocumentListener() {
+		public void removeUpdate(DocumentEvent e) {
+			reload();
+		}
+
+		public void insertUpdate(DocumentEvent e) {
+			reload();
+		}
+		
+		public void changedUpdate(DocumentEvent e) {
+			reload();
+		}
+	};
+}

@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="936" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0245201830476058"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="597"/>
+	<property name="ireport.background.image.properties" value="true,true,0.25,-8,-8,0,0,2566,4216"/>
+	<style name="style1"/>
+	<parameter name="01_clientID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="02_projID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="03_pblID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="04_seqno" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select client_full_name || (case when coalesce(client_spouse_full_name, '') = '' then '' else ' & ' end) || coalesce(client_spouse_full_name, '') as client,
+coborrower_full_name as co_borrower,
+
+(case when a.coborrower_full_name is not null and (coalesce(a.coborrower_full_name, '') = coalesce(a.client_spouse_full_name, '')) 	then a.client_full_name || coalesce(' / ' || a.client_spouse_full_name, '') when a.coborrower_full_name is not null and (coalesce(a.coborrower_full_name, '') != coalesce(a.client_spouse_full_name, '')) 	then a.client_full_name || coalesce(' / ' || a.coborrower_full_name, '') else a.client_full_name end) as final_buyer,
+
+(case when a.coborrower_full_name is not null and (coalesce(a.coborrower_full_name, '') = coalesce(a.client_spouse_full_name, '')) then a.client_spouse_full_name || ' / ' || a.client_full_name
+when a.coborrower_full_name is not null and (coalesce(coalesce(a.coborrower_spouse_full_name, ''), '') != coalesce(a.client_full_name, '')) then coalesce(a.coborrower_full_name, '') || (case when coalesce(a.coborrower_full_name, '') != '' and coalesce(a.coborrower_spouse_full_name, '') != '' then ' / ' else '' end) || coalesce(a.coborrower_spouse_full_name, '') else null end) as final_spouse, *
+from view_hdmf_gen_client_info_v2($P{01_clientID}, $P{02_projID}, $P{03_pblID}, $P{04_seqno}) a;]]>
+	</queryString>
+	<field name="client" class="java.lang.String"/>
+	<field name="co_borrower" class="java.lang.String"/>
+	<field name="final_buyer" class="java.lang.String"/>
+	<field name="final_spouse" class="java.lang.String"/>
+	<field name="client_hdmf_no_1" class="java.lang.String"/>
+	<field name="client_hdmf_no_2" class="java.lang.String"/>
+	<field name="client_hdmf_no_3" class="java.lang.String"/>
+	<field name="client_hdmf_no_4" class="java.lang.String"/>
+	<field name="client_hdmf_no_5" class="java.lang.String"/>
+	<field name="client_hdmf_no_6" class="java.lang.String"/>
+	<field name="client_hdmf_no_7" class="java.lang.String"/>
+	<field name="client_hdmf_no_8" class="java.lang.String"/>
+	<field name="client_hdmf_no_9" class="java.lang.String"/>
+	<field name="client_hdmf_no_10" class="java.lang.String"/>
+	<field name="client_hdmf_no_11" class="java.lang.String"/>
+	<field name="client_hdmf_no_12" class="java.lang.String"/>
+	<field name="loanable_amount" class="java.math.BigDecimal"/>
+	<field name="term" class="java.lang.Integer"/>
+	<field name="property_location" class="java.lang.String"/>
+	<field name="sa_firewall" class="java.lang.String"/>
+	<field name="sd_firewall" class="java.lang.String"/>
+	<field name="developer" class="java.lang.String"/>
+	<field name="tct_no" class="java.lang.String"/>
+	<field name="tct_no_mixed" class="java.lang.String"/>
+	<field name="lot" class="java.lang.String"/>
+	<field name="lot_mixed" class="java.lang.String"/>
+	<field name="block" class="java.lang.String"/>
+	<field name="phase" class="java.lang.String"/>
+	<field name="land_area" class="java.math.BigDecimal"/>
+	<field name="client_last_name" class="java.lang.String"/>
+	<field name="client_first_name" class="java.lang.String"/>
+	<field name="client_middle_name" class="java.lang.String"/>
+	<field name="client_citizenship" class="java.lang.String"/>
+	<field name="client_address_1" class="java.lang.String"/>
+	<field name="client_address_2" class="java.lang.String"/>
+	<field name="client_address_3" class="java.lang.String"/>
+	<field name="client_address_4" class="java.lang.String"/>
+	<field name="client_address_5" class="java.lang.String"/>
+	<field name="client_zipcode" class="java.lang.String"/>
+	<field name="home_own_owned" class="java.lang.String"/>
+	<field name="home_own_mortgaged" class="java.lang.String"/>
+	<field name="home_own_company" class="java.lang.String"/>
+	<field name="home_own_rented" class="java.lang.String"/>
+	<field name="home_own_rented_amount" class="java.math.BigDecimal"/>
+	<field name="home_own_relatives" class="java.lang.String"/>
+	<field name="years_of_stay" class="java.lang.Integer"/>
+	<field name="tin" class="java.lang.String"/>
+	<field name="sss_gsis" class="java.lang.String"/>
+	<field name="client_employer_name" class="java.lang.String"/>
+	<field name="client_employer_address_1" class="java.lang.String"/>
+	<field name="client_employer_address_2" class="java.lang.String"/>
+	<field name="client_employer_address_3" class="java.lang.String"/>
+	<field name="client_employer_address_4" class="java.lang.String"/>
+	<field name="client_employer_address_5" class="java.lang.String"/>
+	<field name="client_employer_zipcode" class="java.lang.String"/>
+	<field name="birthdate" class="java.sql.Date"/>
+	<field name="client_area_code" class="java.lang.String"/>
+	<field name="client_country_code" class="java.lang.String"/>
+	<field name="client_tel" class="java.lang.String"/>
+	<field name="client_mobile" class="java.lang.String"/>
+	<field name="client_email" class="java.lang.String"/>
+	<field name="client_employer_country_code" class="java.lang.String"/>
+	<field name="client_employer_tel" class="java.lang.String"/>
+	<field name="client_employer_mobile" class="java.lang.String"/>
+	<field name="client_employer_email" class="java.lang.String"/>
+	<field name="no_dependents" class="java.lang.Integer"/>
+	<field name="client_position" class="java.lang.String"/>
+	<field name="spouse_last_name" class="java.lang.String"/>
+	<field name="spouse_first_name" class="java.lang.String"/>
+	<field name="spouse_middle_name" class="java.lang.String"/>
+	<field name="spouse_hdmf_no" class="java.lang.String"/>
+	<field name="spouse_citizenship" class="java.lang.String"/>
+	<field name="spouse_birthdate" class="java.sql.Date"/>
+	<field name="spouse_tin" class="java.lang.String"/>
+	<field name="spouse_employer_name" class="java.lang.String"/>
+	<field name="spouse_employer_address_1" class="java.lang.String"/>
+	<field name="spouse_employer_address_2" class="java.lang.String"/>
+	<field name="spouse_employer_address_3" class="java.lang.String"/>
+	<field name="spouse_employer_address_4" class="java.lang.String"/>
+	<field name="spouse_employer_address_5" class="java.lang.String"/>
+	<field name="spouse_employer_zipcode" class="java.lang.String"/>
+	<field name="spouse_employer_tel" class="java.lang.String"/>
+	<field name="spouse_position" class="java.lang.String"/>
+	<field name="gender_male" class="java.lang.String"/>
+	<field name="gender_female" class="java.lang.String"/>
+	<field name="occupation_employed" class="java.lang.String"/>
+	<field name="occupation_self_employed" class="java.lang.String"/>
+	<field name="marital_single" class="java.lang.String"/>
+	<field name="marital_married" class="java.lang.String"/>
+	<field name="marital_widow" class="java.lang.String"/>
+	<field name="marital_legally" class="java.lang.String"/>
+	<field name="marital_annulled" class="java.lang.String"/>
+	<field name="client_emp_employed" class="java.lang.String"/>
+	<field name="client_emp_self" class="java.lang.String"/>
+	<field name="pref_mailing_address" class="java.lang.String"/>
+	<field name="years_in_employment" class="java.lang.Integer"/>
+	<field name="client_full_name" class="java.lang.String"/>
+	<field name="client_spouse_full_name" class="java.lang.String"/>
+	<field name="coborrower_full_name" class="java.lang.String"/>
+	<field name="coborrower_spouse_full_name" class="java.lang.String"/>
+	<field name="coborrower_tin" class="java.lang.String"/>
+	<field name="com_address" class="java.lang.String"/>
+	<field name="loanable_amount_words" class="java.lang.String"/>
+	<field name="char_day" class="java.lang.String"/>
+	<field name="char_month" class="java.lang.String"/>
+	<field name="char_year" class="java.lang.String"/>
+	<field name="char_hour" class="java.lang.String"/>
+	<field name="char_minutes" class="java.lang.String"/>
+	<field name="char_ampm" class="java.lang.String"/>
+	<field name="client_full_address_1" class="java.lang.String"/>
+	<field name="client_full_address_2" class="java.lang.String"/>
+	<field name="coborrower_full_address" class="java.lang.String"/>
+	<field name="project_name" class="java.lang.String"/>
+	<field name="tin_date_issued" class="java.sql.Date"/>
+	<field name="house_model" class="java.lang.String"/>
+	<field name="coborrower_income_basic" class="java.math.BigDecimal"/>
+	<field name="coborrower_income_allowance" class="java.math.BigDecimal"/>
+	<field name="coborrower_income_other" class="java.math.BigDecimal"/>
+	<field name="coborrower_income_total" class="java.math.BigDecimal"/>
+	<field name="spouse_income_basic" class="java.math.BigDecimal"/>
+	<field name="spouse_income_allowance" class="java.math.BigDecimal"/>
+	<field name="spouse_income_other" class="java.math.BigDecimal"/>
+	<field name="spouse_income_total" class="java.math.BigDecimal"/>
+	<field name="monthly_pay_years_1" class="java.lang.String"/>
+	<field name="monthly_pay_years_2" class="java.lang.String"/>
+	<field name="monthly_pay_years_3" class="java.lang.String"/>
+	<field name="monthly_pay_contri" class="java.math.BigDecimal"/>
+	<field name="monthly_pay_mri" class="java.math.BigDecimal"/>
+	<field name="monthly_pay_fire" class="java.math.BigDecimal"/>
+	<field name="monthly_pay_prin_int" class="java.math.BigDecimal"/>
+	<field name="monthly_pay_total" class="java.math.BigDecimal"/>
+	<field name="int_rate" class="java.math.BigDecimal"/>
+	<field name="int_rate_words" class="java.lang.String"/>
+	<field name="entity_id" class="java.lang.String"/>
+	<field name="proj_id" class="java.lang.String"/>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="seq_no" class="java.lang.Integer"/>
+	<field name="client_full_address" class="java.lang.String"/>
+	<field name="term_words" class="java.lang.String"/>
+	<field name="no_of_storey" class="java.lang.String"/>
+	<field name="no_of_toilet_bath" class="java.lang.String"/>
+	<field name="no_of_bedrooms" class="java.lang.String"/>
+	<field name="floor_finish_plain_cement" class="java.lang.String"/>
+	<field name="floor_finish_red_cement" class="java.lang.String"/>
+	<field name="floor_finish_vinyl_tiles" class="java.lang.String"/>
+	<field name="floor_finish_others" class="java.lang.String"/>
+	<field name="floor_finish_others_name" class="java.lang.String"/>
+	<field name="external_doors_flush_type" class="java.lang.String"/>
+	<field name="external_doors_panel_type" class="java.lang.String"/>
+	<field name="external_doors_others" class="java.lang.String"/>
+	<field name="external_doors_others_name" class="java.lang.String"/>
+	<field name="internal_doors_flush_type" class="java.lang.String"/>
+	<field name="internal_doors_panel_type" class="java.lang.String"/>
+	<field name="internal_doors_none" class="java.lang.String"/>
+	<field name="internal_doors_others" class="java.lang.String"/>
+	<field name="internal_doors_others_name" class="java.lang.String"/>
+	<field name="windows_steel_casement" class="java.lang.String"/>
+	<field name="windows_glass_jalousie" class="java.lang.String"/>
+	<field name="windows_none" class="java.lang.String"/>
+	<field name="windows_others" class="java.lang.String"/>
+	<field name="windows_others_name" class="java.lang.String"/>
+	<field name="walls_hollow_blocks" class="java.lang.String"/>
+	<field name="walls_plywood" class="java.lang.String"/>
+	<field name="walls_others" class="java.lang.String"/>
+	<field name="walls_others_name" class="java.lang.String"/>
+	<field name="ceiling_gypsum_board" class="java.lang.String"/>
+	<field name="ceiling_plywood" class="java.lang.String"/>
+	<field name="ceiling_none" class="java.lang.String"/>
+	<field name="ceiling_others" class="java.lang.String"/>
+	<field name="ceiling_others_name" class="java.lang.String"/>
+	<field name="roofing_ordgisheets" class="java.lang.String"/>
+	<field name="roofing_ordgipainted" class="java.lang.String"/>
+	<field name="roofing_prepainted_longspan" class="java.lang.String"/>
+	<field name="roofing_others" class="java.lang.String"/>
+	<field name="roofing_others_name" class="java.lang.String"/>
+	<field name="lot_desc_area" class="java.lang.String"/>
+	<field name="lot_desc_shapeoflot_regular" class="java.lang.String"/>
+	<field name="lot_desc_shapeoflot_irregular" class="java.lang.String"/>
+	<field name="road_concrete" class="java.lang.String"/>
+	<field name="road_asphalt" class="java.lang.String"/>
+	<field name="road_mecadem" class="java.lang.String"/>
+	<field name="road_no_pavement" class="java.lang.String"/>
+	<field name="power_supply_permanent" class="java.lang.String"/>
+	<field name="power_supply_tempporary" class="java.lang.String"/>
+	<field name="power_not_yet_available" class="java.lang.String"/>
+	<field name="drainage_underground" class="java.lang.String"/>
+	<field name="drainage_covered_canal" class="java.lang.String"/>
+	<field name="drainage_open_canal" class="java.lang.String"/>
+	<field name="drainage_surface_runoff" class="java.lang.String"/>
+	<field name="water_through_elevated_water_tank" class="java.lang.String"/>
+	<field name="water_communal_wall" class="java.lang.String"/>
+	<field name="water_individual_wall" class="java.lang.String"/>
+	<field name="water_rationing" class="java.lang.String"/>
+	<field name="amenities_available" class="java.lang.String"/>
+	<field name="amenities_not_available" class="java.lang.String"/>
+	<field name="amenities_not_yet_constructed" class="java.lang.String"/>
+	<field name="plumbing_fixtures_complete" class="java.lang.String"/>
+	<field name="plumbing_fixtures_not_yet_installed" class="java.lang.String"/>
+	<field name="plumbing_fixtures_comments" class="java.lang.String"/>
+	<field name="electrical_fixtures_complete" class="java.lang.String"/>
+	<field name="electrical_fixtures_not_yet_installed" class="java.lang.String"/>
+	<field name="electrical_fixtures_comments" class="java.lang.String"/>
+	<field name="doors_fixtures_complete" class="java.lang.String"/>
+	<field name="doors_fixtures_not_yet_installed" class="java.lang.String"/>
+	<field name="doors_fixtures_comments" class="java.lang.String"/>
+	<field name="windows_fixtures_complete" class="java.lang.String"/>
+	<field name="windows_fixtures_not_yet_installed" class="java.lang.String"/>
+	<field name="windows_fixtures_comments" class="java.lang.String"/>
+	<field name="house_desc_single_attached" class="java.lang.String"/>
+	<field name="house_desc_single_detached" class="java.lang.String"/>
+	<field name="other_lot" class="java.lang.String"/>
+	<field name="other_tct_no" class="java.lang.String"/>
+	<field name="technical_desc" class="java.lang.String"/>
+	<field name="per_annum" class="java.lang.Integer"/>
+	<field name="tcp" class="java.math.BigDecimal"/>
+	<field name="tcp_word" class="java.lang.String"/>
+	<field name="in_favor_of_1" class="java.lang.String"/>
+	<field name="in_favor_of_2" class="java.lang.String"/>
+	<field name="in_favor_of_3" class="java.lang.String"/>
+	<field name="c_unit" class="java.lang.String"/>
+	<field name="c_other_unit" class="java.lang.String"/>
+	<field name="other_technical_desc" class="java.lang.String"/>
+	<field name="net_sp1" class="java.math.BigDecimal"/>
+	<field name="net_sp2" class="java.math.BigDecimal"/>
+	<field name="net_sp1_word" class="java.lang.String"/>
+	<field name="net_sp2_word" class="java.lang.String"/>
+	<field name="coa_in_favor_of_1" class="java.lang.String"/>
+	<field name="net_sp1_word_1" class="java.lang.String"/>
+	<field name="net_sp1_word_2" class="java.lang.String"/>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="936" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="356" y="126" width="224" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_full_address_1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="121" y="141" width="430" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_full_address_2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="107" y="100" width="444" height="26"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{coa_in_favor_of_1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="57" y="580" width="170" height="34"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_full_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="90" y="194" width="176" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{house_model}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="330" y="194" width="66" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{lot}+$F{lot_mixed}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="432" y="194" width="83" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{block}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="146" y="210" width="272" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{property_location}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="228" y="226" width="204" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="363" y="691" width="188" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Vice-President"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="226" y="580" width="158" height="34"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{coborrower_full_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="212" y="256" width="303" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tct_no_mixed}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="25" y="365" width="187" height="16"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tct_no_mixed}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="232" y="381" width="252" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Vice-President, Johnny Liwanag Corpuz"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="342" y="365" width="201" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{developer}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="358" y="674" width="188" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["CORPUZ, JOHNNY LIWANAG"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

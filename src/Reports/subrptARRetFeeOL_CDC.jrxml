@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptARRetFeeOL_CDC" pageWidth="503" pageHeight="792" columnWidth="503" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="client_seqno" class="java.lang.String"/>
+	<parameter name="ar_no" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT * FROM view_ar_receipt_breakdown($P{client_seqno}, $P{ar_no}) ORDER BY c_particulars;]]>
+	</queryString>
+	<field name="c_particulars" class="java.lang.String"/>
+	<field name="c_applied_amount" class="java.math.BigDecimal"/>
+	<field name="c_vat_sales" class="java.math.BigDecimal"/>
+	<field name="c_12_percent_vat" class="java.math.BigDecimal"/>
+	<field name="c_vat_exempt_sales" class="java.math.BigDecimal"/>
+	<field name="c_zero_rated_sales" class="java.math.BigDecimal"/>
+	<field name="c_withholding_tax" class="java.math.BigDecimal"/>
+	<field name="c_others" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="374" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_particulars}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="374" y="0" width="82" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_others}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

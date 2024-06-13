@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptROP_RefundAllocation" pageWidth="541" pageHeight="20" columnWidth="541" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.8181818181818195"/>
+	<property name="ireport.x" value="263"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="description" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="unit_id" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="seq_no" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="request_no" class="java.lang.String"/>
+	<parameter name="refund_type" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from view_rop_allocation($P{request_no});]]>
+	</queryString>
+	<field name="c_particulars" class="java.lang.String"/>
+	<field name="c_amount" class="java.math.BigDecimal"/>
+	<field name="c_rplf_no" class="java.lang.String"/>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="115" y="1" width="100" height="19"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_particulars}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="344" y="1" width="100" height="19"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_amount}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="441" y="1" width="100" height="19">
+					<printWhenExpression><![CDATA[$P{refund_type}.equals("B") && $F{c_particulars}.equals("") == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_rplf_no}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="1872" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0263162364614384"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="614"/>
+	<property name="ireport.background.image.properties" value="true,true,0.25,-8,-8,0,0,2566,4216"/>
+	<style name="style1"/>
+	<parameter name="01_clientID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="02_projID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="03_pblID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="04_seqno" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select a.*,
+(select x.phase from mf_unit_info x where x.proj_id = $P{02_projID} and x.pbl_id = $P{03_pblID}) as phase,
+
+(case when coalesce(other_tech_desc, '') = '' then
+(case when coalesce(a.technical_desc, '') = '' then '' else
+left(b.technical_desc, position('Notes:' IN b.technical_desc)-1) end)
+else '' end) as tech_desc,
+
+(case when coalesce(other_tech_desc, '') != '' then
+(case when coalesce(a.technical_desc, '') = '' then '' else left(b.technical_desc, position('Notes:' IN b.technical_desc)-1) end)
+else '' end) as tech_desc0,
+
+(case when coalesce(a.technical_desc, '') = '' then '' else left(b.technical_desc, position('Notes:' IN b.technical_desc)-1) end) as tech_desc1
+from view_hdmf_cts_flh240a ($P{01_clientID}, $P{02_projID}, $P{03_pblID}, $P{04_seqno}) a
+left join mf_unit_info b on a.proj_id = b.proj_id and a.pbl_id = b.pbl_id]]>
+	</queryString>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="company_address" class="java.lang.String"/>
+	<field name="vice_president" class="java.lang.String"/>
+	<field name="vendee" class="java.lang.String"/>
+	<field name="about_vendee_1" class="java.lang.String"/>
+	<field name="about_vendee_2" class="java.lang.String"/>
+	<field name="project_address_1" class="java.lang.String"/>
+	<field name="project_address_2" class="java.lang.String"/>
+	<field name="project_address_3" class="java.lang.String"/>
+	<field name="technical_desc" class="java.lang.String"/>
+	<field name="nsp" class="java.math.BigDecimal"/>
+	<field name="nsp_words" class="java.lang.String"/>
+	<field name="equity" class="java.math.BigDecimal"/>
+	<field name="equity_words" class="java.lang.String"/>
+	<field name="loanable_amount" class="java.math.BigDecimal"/>
+	<field name="loanable_words" class="java.lang.String"/>
+	<field name="ma" class="java.math.BigDecimal"/>
+	<field name="ma_words" class="java.lang.String"/>
+	<field name="int_rate" class="java.math.BigDecimal"/>
+	<field name="int_rate_words" class="java.lang.String"/>
+	<field name="term" class="java.lang.Integer"/>
+	<field name="spouse" class="java.lang.String"/>
+	<field name="proj_id" class="java.lang.String"/>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="client_tin" class="java.lang.String"/>
+	<field name="vp_tin" class="java.lang.String"/>
+	<field name="client_spouse_full_name" class="java.lang.String"/>
+	<field name="client_full_name" class="java.lang.String"/>
+	<field name="tct_no" class="java.lang.String"/>
+	<field name="coborrower_full_name" class="java.lang.String"/>
+	<field name="other_lot" class="java.lang.String"/>
+	<field name="other_tct_no" class="java.lang.String"/>
+	<field name="c_coborrower_spouse_full_name" class="java.lang.String"/>
+	<field name="other_pbl_id" class="java.lang.String"/>
+	<field name="other_tech_desc" class="java.lang.String"/>
+	<field name="phase" class="java.lang.String"/>
+	<field name="tech_desc" class="java.lang.String"/>
+	<field name="tech_desc0" class="java.lang.String"/>
+	<field name="tech_desc1" class="java.lang.String"/>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="1872" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="72" y="100" width="476" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="72" y="123" width="476" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_address}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="199" y="137" width="349" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{vice_president}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="72" y="175" width="475" height="42"/>
+				<box bottomPadding="0">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{about_vendee_1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="109" y="388" width="368" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_address_1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="17" y="402" width="126" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_address_2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="212" y="1106" width="381" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{equity_words}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="72" y="470" width="491" height="500"/>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{phase}.equals("2")) ?
+	"                                                                           "
+	+ $F{tech_desc}.replace("BANGKAL", "Bangkal").replace("CARMONA", "Carmona").replace("CAVITE", "Cavite").replace("LUZON", "Luzon").replace("Municipality of Carmona\n", "").replace("Province of Cavite\n", "").replace("Island of Luzon\n", "").replace("Barangay of Bangkal", "Barangay of Bangkal Municipality of Carmona Province of Cavite Island of Luzon\n").replace("                :", "\t\t:").replace("           :", "\t:").replace("          :", "\t:").replace("      :", "\t:").replace("   :", "\t:").replace(" :", "\t:").replace("  :", "\t:").replace("           :", "\t:").replace("Tie Point", "\nTie Point").replace("Area", "\nArea").replace("Psd-04-238397 and Lot 13, Block 29,\n", "").replace("( Reserved \n", "").replace("Area ); ", "").replace("Pcs-04-030323\n", "").replace("cons-subd. of Lots A-1, A-2, A-3 all of", "cons-subd. of Lots A-1, A-2, A-3 all of Psd-04-238397 and Lot 13, Block 29, ( Reserved Area ); Pcs-04-030323").replace("less.\n", "").replace("SIXTY FIVE(65) Square Meters more or", "SIXTY FIVE(65) Square Meters more or less.").replace("P.S. cyl. conc. mons 15x40 cms\n", "").replace("All points are referred on the plan by", "All points are referred on the plan by P.S. cyl. conc. mons 15x40 cms").replace("more or", "more or less.").replace("more or less. less.", "more or less.").replace("( Reserved Area )", "\n\t\t( Reserved Area )").replace("more or less. Description of Corners", "more or less.\nDescription of Corners")
+:
+($F{phase}.equals("4-A") ?
+	"                                                                           "
+	+ $F{tech_desc}.replace("BANCAL", "Bangkal").replace("Municipality of Carmona\n", "").replace("Province of Cavite\n", "").replace("Island of Luzon\n", "").replace("Barangay of Bangkal", "Barangay of Bangkal Municipality of Carmona Province of Cavite Island of Luzon\n").replace("                :", "\t\t:").replace("           :", "\t:").replace("          :", "\t:").replace("      :", "\t:").replace("   :", "\t:").replace(" :", "\t:").replace("  :", "\t:").replace("           :", "\t:").replace("Tie Point", "\nTie Point").replace("Area", "\nArea").replace("more or", "more or less.").replace("more or less. less.", "more or less.").replace(",\n", "").replace("(Reserved \n", "(Reserved ").replace("LOTS\n", "LOTS ").replace("all of\n", "\n\t\tall of ").replace("; LOT ", "; LOT ").replace("\nand LOTS", " and LOTS").replace("both of\n", "both of ").replace("Municipality of CARMONA\n", "").replace("Province of CAVITE\n", "").replace("Island of LUZON\n", "").replace("All points are referred on the plan and are marked\n", "All points are referred on the plan and are marked ").replace("by P.S. cyl.", "\n\t\t\t\tby P.S. cyl.").replace("Square Meters\n", "Square Meters ").replace("Square Meters more or less.\nless.", "Square Meters more or less.")
+:
+($F{phase}.equals("4") ?
+	"                                                                           "
+	+ $F{tech_desc}.replace("BANCAL", "Bangkal").replace("Municipality of Carmona\n", "").replace("Province of Cavite\n", "").replace("Island of Luzon\n", "").replace("Barangay of Bangkal", "Barangay of Bangkal Municipality of Carmona Province of Cavite Island of Luzon\n").replace("                :", "\t\t:").replace("           :", "\t:").replace("          :", "\t:").replace("      :", "\t:").replace("   :", "\t:").replace(" :", "\t:").replace("  :", "\t:").replace("           :", "\t:").replace("Tie Point", "\nTie Point").replace("Area", "\nArea").replace("more or", "more or less.").replace("more or less. less.", "more or less.").replace(",\n", "").replace("(Reserved \n", "(Reserved ").replace("LOTS\n", "LOTS ").replace("all of\n", "\n\t\tall of ").replace("; LOT ", "; LOT ").replace("\nand LOTS", " and LOTS").replace("both of\n", "both of ").replace("Municipality of CARMONA\n", "").replace("Province of CAVITE\n", "").replace("Island of LUZON\n", "").replace("All points are referred on the plan and are marked\n", "All points are referred on the plan and are marked ").replace("by P.S. cyl.", "\n\t\t\t\tby P.S. cyl.").replace("Square Meters\n", "Square Meters ").replace("Square Meters more or less.\nless.", "Square Meters more or less.")
+:
+	"                                                                           "
+	+ $F{tech_desc}.replace("Municipality of Carmona\n", "").replace("Province of Cavite\n", "").replace("Island of Luzon\n", "").replace("Barangay of Bangkal", "Barangay of Bangkal Municipality of Carmona Province of Cavite Island of Luzon\n").replace("                :", "\t\t:").replace("           :", "\t:").replace("          :", "\t:").replace("      :", "\t:").replace("   :", "\t:").replace(" :", "\t:").replace("  :", "\t:").replace("           :", "\t:").replace("Tie Point", "\nTie Point").replace("Area", "\nArea").replace("more or", "more or less.").replace("more or less. less.", "more or less."))
+)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="14" y="1072" width="365" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_address}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="22" y="982" width="374" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nsp_words}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="454" y="982" width="138" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{nsp}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="436" y="1330" width="30" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{int_rate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="254" y="1162" width="232" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{loanable_words}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="92" y="1132" width="355" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[null]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="508" y="1132" width="85" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[null]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="199" y="402" width="154" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_address_3}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="31" y="416" width="153" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tct_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="303" y="416" width="154" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Trece Martires, Cavite"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="141" y="1119" width="113" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{equity}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="486" y="1170" width="77" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{loanable_amount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="137" y="1231" width="105" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ma}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="403" y="1231" width="53" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{term}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="310" y="1219" width="283" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ma_words}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="351" y="1313" width="50" height="31"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{int_rate_words}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="284" y="1343" width="48" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["3"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="299" y="1363" width="44" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="368" y="1393" width="37" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="410" y="1393" width="20" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="382" y="1377" width="34" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[null]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="17" y="470" width="284" height="500"/>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Top">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{phase}.equals("2")) ?
+	"                                                                           "
+	+ $F{tech_desc0}.replace("BANGKAL", "Bangkal").replace("CARMONA", "Carmona").replace("CAVITE", "Cavite").replace("LUZON", "Luzon").replace("Municipality of Carmona\n", "").replace("Province of Cavite\n", "").replace("Island of Luzon\n", "").replace("Barangay of Bangkal", "Barangay of Bangkal Municipality of Carmona Province of Cavite Island of Luzon\n").replace("                :", "\t\t:").replace("           :", "\t:").replace("          :", "\t:").replace("      :", "\t:").replace("   :", "\t:").replace(" :", "\t:").replace("  :", "\t:").replace("           :", "\t:").replace("Tie Point", "\nTie Point").replace("Area", "\nArea").replace("Psd-04-238397 and Lot 13, Block 29,\n", "").replace("( Reserved \n", "").replace("Area ); ", "").replace("Pcs-04-030323\n", "").replace("cons-subd. of Lots A-1, A-2, A-3 all of", "cons-subd. of Lots A-1, A-2, A-3 all of Psd-04-238397 and Lot 13, Block 29, ( Reserved Area ); Pcs-04-030323").replace("less.\n", "").replace("SIXTY FIVE(65) Square Meters more or", "SIXTY FIVE(65) Square Meters more or less.").replace("P.S. cyl. conc. mons 15x40 cms\n", "").replace("All points are referred on the plan by", "All points are referred on the plan by P.S. cyl. conc. mons 15x40 cms").replace("more or", "more or less.").replace("more or less. less.", "more or less.").replace("( Reserved Area )", "\n\t\t( Reserved Area )").replace("more or less. Description of Corners", "more or less.\nDescription of Corners")
+:
+($F{phase}.equals("4-A") ?
+	"                                                                           "
+	+ $F{tech_desc0}.replace("BANCAL", "Bangkal").replace("Municipality of Carmona\n", "").replace("Province of Cavite\n", "").replace("Island of Luzon\n", "").replace("Barangay of Bangkal", "Barangay of Bangkal Municipality of Carmona Province of Cavite Island of Luzon\n").replace("                :", "\t\t:").replace("           :", "\t:").replace("          :", "\t:").replace("      :", "\t:").replace("   :", "\t:").replace(" :", "\t:").replace("  :", "\t:").replace("           :", "\t:").replace("Tie Point", "\nTie Point").replace("Area", "\nArea").replace("more or", "more or less.").replace("more or less. less.", "more or less.").replace(",\n", "").replace("(Reserved \n", "(Reserved ").replace("LOTS\n", "LOTS ").replace("all of\n", "\n\t\tall of ").replace("; LOT ", "; LOT ").replace("\nand LOTS", " and LOTS").replace("both of\n", "both of ").replace("Municipality of CARMONA\n", "").replace("Province of CAVITE\n", "").replace("Island of LUZON\n", "").replace("All points are referred on the plan and are marked\n", "All points are referred on the plan and are marked ").replace("by P.S. cyl.", "\n\t\t\t\tby P.S. cyl.").replace("Square Meters\n", "Square Meters ").replace("Square Meters more or less.\nless.", "Square Meters more or less.")
+:
+($F{phase}.equals("4") ?
+	"                                                                           "
+	+ $F{tech_desc0}.replace("BANCAL", "Bangkal").replace("Municipality of Carmona\n", "").replace("Province of Cavite\n", "").replace("Island of Luzon\n", "").replace("Barangay of Bangkal", "Barangay of Bangkal Municipality of Carmona Province of Cavite Island of Luzon\n").replace("                :", "\t\t:").replace("           :", "\t:").replace("          :", "\t:").replace("      :", "\t:").replace("   :", "\t:").replace(" :", "\t:").replace("  :", "\t:").replace("           :", "\t:").replace("Tie Point", "\nTie Point").replace("Area", "\nArea").replace("more or", "more or less.").replace("more or less. less.", "more or less.").replace(",\n", "").replace("(Reserved \n", "(Reserved ").replace("LOTS\n", "LOTS ").replace("all of\n", "\n\t\tall of ").replace("; LOT ", "; LOT ").replace("\nand LOTS", " and LOTS").replace("both of\n", "both of ").replace("Municipality of CARMONA\n", "").replace("Province of CAVITE\n", "").replace("Island of LUZON\n", "").replace("All points are referred on the plan and are marked\n", "All points are referred on the plan and are marked ").replace("by P.S. cyl.", "\n\t\t\t\tby P.S. cyl.").replace("Square Meters\n", "Square Meters ").replace("Square Meters more or less.\nless.", "Square Meters more or less.")
+:
+	"                                                                           "
+	+ $F{tech_desc0}.replace("Municipality of Carmona\n", "").replace("Province of Cavite\n", "").replace("Island of Luzon\n", "").replace("Barangay of Bangkal", "Barangay of Bangkal Municipality of Carmona Province of Cavite Island of Luzon\n").replace("                :", "\t\t:").replace("           :", "\t:").replace("          :", "\t:").replace("      :", "\t:").replace("   :", "\t:").replace(" :", "\t:").replace("  :", "\t:").replace("           :", "\t:").replace("Tie Point", "\nTie Point").replace("Area", "\nArea").replace("more or", "more or less.").replace("more or less. less.", "more or less."))
+)]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="310" y="470" width="284" height="500"/>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Top">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{phase}.equals("2")) ?
+	"                                                                           "
+	+ $F{other_tech_desc}.replace("BANGKAL", "Bangkal").replace("CARMONA", "Carmona").replace("CAVITE", "Cavite").replace("LUZON", "Luzon").replace("Municipality of Carmona\n", "").replace("Province of Cavite\n", "").replace("Island of Luzon\n", "").replace("Barangay of Bangkal", "Barangay of Bangkal Municipality of Carmona Province of Cavite Island of Luzon\n").replace("                :", "\t\t:").replace("           :", "\t:").replace("          :", "\t:").replace("      :", "\t:").replace("   :", "\t:").replace(" :", "\t:").replace("  :", "\t:").replace("           :", "\t:").replace("Tie Point", "\nTie Point").replace("Area", "\nArea").replace("Psd-04-238397 and Lot 13, Block 29,\n", "").replace("( Reserved \n", "").replace("Area ); ", "").replace("Pcs-04-030323\n", "").replace("cons-subd. of Lots A-1, A-2, A-3 all of", "cons-subd. of Lots A-1, A-2, A-3 all of Psd-04-238397 and Lot 13, Block 29, ( Reserved Area ); Pcs-04-030323").replace("less.\n", "").replace("SIXTY FIVE(65) Square Meters more or", "SIXTY FIVE(65) Square Meters more or less.").replace("P.S. cyl. conc. mons 15x40 cms\n", "").replace("All points are referred on the plan by", "All points are referred on the plan by P.S. cyl. conc. mons 15x40 cms").replace("more or", "more or less.").replace("more or less. less.", "more or less.").replace("( Reserved Area )", "\n\t\t( Reserved Area )").replace("more or less. Description of Corners", "more or less.\nDescription of Corners")
+:
+($F{phase}.equals("4-A") ?
+	"                                                                           "
+	+ $F{other_tech_desc}.replace("BANCAL", "Bangkal").replace("Municipality of Carmona\n", "").replace("Province of Cavite\n", "").replace("Island of Luzon\n", "").replace("Barangay of Bangkal", "Barangay of Bangkal Municipality of Carmona Province of Cavite Island of Luzon\n").replace("                :", "\t\t:").replace("           :", "\t:").replace("          :", "\t:").replace("      :", "\t:").replace("   :", "\t:").replace(" :", "\t:").replace("  :", "\t:").replace("           :", "\t:").replace("Tie Point", "\nTie Point").replace("Area", "\nArea").replace("more or", "more or less.").replace("more or less. less.", "more or less.").replace(",\n", "").replace("(Reserved \n", "(Reserved ").replace("LOTS\n", "LOTS ").replace("all of\n", "\n\t\tall of ").replace("; LOT ", "; LOT ").replace("\nand LOTS", " and LOTS").replace("both of\n", "both of ").replace("Municipality of CARMONA\n", "").replace("Province of CAVITE\n", "").replace("Island of LUZON\n", "").replace("All points are referred on the plan and are marked\n", "All points are referred on the plan and are marked ").replace("by P.S. cyl.", "\n\t\t\t\tby P.S. cyl.").replace("Square Meters\n", "Square Meters ").replace("Square Meters more or less.\nless.", "Square Meters more or less.")
+:
+($F{phase}.equals("4") ?
+	"                                                                           "
+	+ $F{other_tech_desc}.replace("BANCAL", "Bangkal").replace("Municipality of Carmona\n", "").replace("Province of Cavite\n", "").replace("Island of Luzon\n", "").replace("Barangay of Bangkal", "Barangay of Bangkal Municipality of Carmona Province of Cavite Island of Luzon\n").replace("                :", "\t\t:").replace("           :", "\t:").replace("          :", "\t:").replace("      :", "\t:").replace("   :", "\t:").replace(" :", "\t:").replace("  :", "\t:").replace("           :", "\t:").replace("Tie Point", "\nTie Point").replace("Area", "\nArea").replace("more or", "more or less.").replace("more or less. less.", "more or less.").replace(",\n", "").replace("(Reserved \n", "(Reserved ").replace("LOTS\n", "LOTS ").replace("all of\n", "\n\t\tall of ").replace("; LOT ", "; LOT ").replace("\nand LOTS", " and LOTS").replace("both of\n", "both of ").replace("Municipality of CARMONA\n", "").replace("Province of CAVITE\n", "").replace("Island of LUZON\n", "").replace("All points are referred on the plan and are marked\n", "All points are referred on the plan and are marked ").replace("by P.S. cyl.", "\n\t\t\t\tby P.S. cyl.").replace("Square Meters\n", "Square Meters ").replace("Square Meters more or less.\nless.", "Square Meters more or less.")
+:
+	"                                                                           "
+	+ $F{other_tech_desc}.replace("Municipality of Carmona\n", "").replace("Province of Cavite\n", "").replace("Island of Luzon\n", "").replace("Barangay of Bangkal", "Barangay of Bangkal Municipality of Carmona Province of Cavite Island of Luzon\n").replace("                :", "\t\t:").replace("           :", "\t:").replace("          :", "\t:").replace("      :", "\t:").replace("   :", "\t:").replace(" :", "\t:").replace("  :", "\t:").replace("           :", "\t:").replace("Tie Point", "\nTie Point").replace("Area", "\nArea").replace("more or", "more or less.").replace("more or less. less.", "more or less."))
+)]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

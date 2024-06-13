@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptNotcTO" pageWidth="612" pageHeight="792" columnWidth="447" leftMargin="93" rightMargin="72" topMargin="36" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="emp_lname" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="emp_fname" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="entity" class="java.util.ArrayList" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="entity_id" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pbl_id" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="projcode" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="seq_no" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="emp_alias" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="batch_no" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="from_card" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select distinct on (client_name, a.pbl_id) trim(a.description) as unit, get_project_name(b.projcode) as proj_name,
+get_company_alias(b.projcode) as co_alias, get_client_name(b.entity_id) as client_name,
+				d.addr_no, d.street, (case when e.city_name is null then h.municipality_name else e.city_name end) as city_name, (case when f.province_name is null then 'Metro Manila' else f.province_name end) as province_name, b.entity_id, 'CENQ' as company_alias,
+				g.batch_no, i.notice_alias, h.municipality_name, d.zip_code, b.pbl_id, b.seq_no, j.hse_color as color_scheme,
+				(case when a.ntc is not null then true else false end) as with_ntc, k.ntc_batchno, null,
+				null, null, null, a.ntc, a.house_constructed, venue_desc, g.orientation_date, g.orientation_time, TRIM(n.proj_name), TRIM(n.proj_alias), o.company_name
+
+				from mf_unit_info a
+
+				left join rf_sold_unit b on a.pbl_id = b.pbl_id and a.proj_id = b.projcode
+				left join mf_product_model c on a.model_id = c.model_id
+				left join rf_entity_address d on  b.entity_id = d.entity_id and d.pref_billing and d.status_id ='A'
+				left join mf_city e on d.city_id = e.city_id
+				left join mf_province f on d.province_id = f.province_id
+				left join rf_client_notices g on b.entity_id = g.entity_id and g.pbl_id = a.pbl_id and g.projcode = a.proj_id and g.notice_id = '34'
+				left join mf_municipality h on d.municipality_id = h.municipality_id
+				left join mf_notice_type i on g.notice_id = i.notice_id
+				left join (select * from rf_marketing_scheme_pricelist where status_id = 'A') j on a.proj_id = j.proj_id and a.phase = j.phase and a.block = j.block and a.lot = j.lot
+				left join rf_buyer_status k on b.entity_id = k.entity_id and b.projcode = k.proj_id and b.pbl_id = k.pbl_id and b.seq_no = k.seq_no
+				left join (select * from co_ntp_detail where work_percent = 100 and status_id = 'A' and ntp_no in (select ntp_no from co_ntp_header where co_id = '02' and status_id = 'A')) l on a.pbl_id = l.pbl_id
+				left join mf_orientation_venue m on g.venue_id = m.venue_id
+				left join mf_project n on g.projcode = n.proj_id
+				LEFT JOIN mf_company o on o.co_id = n.co_id
+
+where b.entity_id = $P{entity_id} and b.pbl_id = $P{pbl_id} and b.seq_no::varchar = $P{seq_no} and g.batch_no = $P{batch_no}]]>
+	</queryString>
+	<field name="unit" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="co_alias" class="java.lang.String"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="addr_no" class="java.lang.String"/>
+	<field name="street" class="java.lang.String"/>
+	<field name="city_name" class="java.lang.String"/>
+	<field name="province_name" class="java.lang.String"/>
+	<field name="entity_id" class="java.lang.String"/>
+	<field name="company_alias" class="java.lang.String"/>
+	<field name="batch_no" class="java.lang.String"/>
+	<field name="notice_alias" class="java.lang.String"/>
+	<field name="municipality_name" class="java.lang.String"/>
+	<field name="zip_code" class="java.lang.String"/>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="seq_no" class="java.lang.Integer"/>
+	<field name="color_scheme" class="java.lang.String"/>
+	<field name="with_ntc" class="java.lang.Boolean"/>
+	<field name="ntc_batchno" class="java.lang.String"/>
+	<field name="?column?" class="java.lang.String"/>
+	<field name="ntc" class="java.sql.Timestamp"/>
+	<field name="house_constructed" class="java.sql.Timestamp"/>
+	<field name="venue_desc" class="java.lang.String"/>
+	<field name="orientation_date" class="java.sql.Timestamp"/>
+	<field name="orientation_time" class="java.sql.Timestamp"/>
+	<field name="btrim" class="java.lang.String"/>
+	<field name="company_name" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="134" splitType="Stretch">
+			<textField>
+				<reportElement x="311" y="92" width="136" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{proj_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="311" y="106" width="136" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{entity_id}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="222" y="92" width="89" height="14"/>
+				<box rightPadding="6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Project]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="222" y="106" width="89" height="14"/>
+				<box rightPadding="6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Account ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="42" width="447" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOTICE FOR TURN-OVER ORIENTATION]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="15" width="447" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="473" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="447" height="354"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name} + "\n" +
+($F{addr_no}==null?""
+    :($F{street}==null?"":($F{addr_no} + " "))) +
+($F{street}==null?"":($F{street} + "\n")) +
+($F{city_name}==null?"":($F{city_name}.toUpperCase() + "\n")) +
+($F{province_name} == null ? "":$F{province_name}.toUpperCase() + "\n") +
+"\n\n\n\n" +
+"Dear " + $F{client_name} + " :" +
+"\n\n\n" +
+"Finally! A dream come true..." +
+"\n\n\n" +
+"It is our pleasure to bring you the good news that your housing loan application at <style isUnderline=\"true\">" + $F{proj_name} + " " + $F{unit} + "  </style> has been approved and released by Home " +
+"Development Mutual Fund (HDMF) and is now ready for inspection and eventual turnover." +
+"\n\n\n" +
+"May we then invite you to come at <style isUnderline=\"true\">  " + $F{venue_desc} + "  </style> on <style isUnderline=\"true\">" + new SimpleDateFormat("MMMMM dd, yyyy").format($F{orientation_date}) +
+"  </style> at <style isUnderline=\"true\">  " + new SimpleDateFormat("hh:mm a").format($F{orientation_time}) + "  </style> for turnover orientation with our Loans and Property Management Specialist." +
+"\n\n\n" +
+"We highly encourage that you the principal applicant, to attend the orientation at the " +
+"said schedule so that you can already enjoy your stay in your new home the soonest time possible." +
+"\n\n\n" +
+"Should you have any concerns or for confirmation of your schedule, please call us at 09989608769 or Trunkline 85342237 loc. 1102 and look for Jing Tadayca." +
+"\n\n\n\n\n\n"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="385" width="447" height="88"/>
+				<textElement markup="styled">
+					<font fontName="Tahoma" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["<style isBold=\"true\" textAlignment=\"Center\">Welcome to " + $F{proj_name} + " community!\n\n\n\n\n</style>" +
+"Josephine S. Roxas\n" +
+"Head - LMD"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="115" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="65" width="26" height="23"/>
+				<box topPadding="2" leftPadding="4" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.0" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Note: "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="26" y="65" width="224" height="23"/>
+				<box topPadding="2" leftPadding="0" bottomPadding="0" rightPadding="5">
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.0" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["This is a computer-generated document and if issued\n" +
+"without alteration, this does not require a signature."]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="-63" y="0" width="176" height="14"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["CENQ / lgtadayca"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="306" y="0" width="183" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Batch No. "  + ($F{batch_no} == null ? "":$F{batch_no})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

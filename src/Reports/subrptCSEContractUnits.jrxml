@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptCSEContractUnits" pageWidth="417" pageHeight="792" columnWidth="417" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ntp_no" class="java.lang.String">
+		<defaultValueExpression><![CDATA["000089"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+(case when split_part(work_desc, ' at ', 2) = '' then 'Metering' else 'Post' end) as cse_type,
+case when '002360' = '002360' THEN work_desc else
+REPLACE((case when split_part(work_desc, ' at ', 2) = '' then split_part(a.work_desc, ' at ', 1) else split_part(a.work_desc, ' at ', 2) end), '&', '&amp;') end /*|| ' - ' || work_qty || ' Units'*/ AS units
+,(case when block is null then '' else (select concat('Blk',' ',block)) end )as block,(case when lot is null then '' else (select concat('Lot',' ',lot)) end )as lot
+
+FROM co_ntp_detail a
+left join mf_unit_info b on a.pbl_id = b.pbl_id and coalesce(b.server_id, '') = coalesce(a.server_id,'')
+WHERE ntp_no = $P{ntp_no}
+ORDER BY a.seq_no::INT;]]>
+	</queryString>
+	<field name="cse_type" class="java.lang.String"/>
+	<field name="units" class="java.lang.String"/>
+	<field name="block" class="java.lang.String"/>
+	<field name="lot" class="java.lang.String"/>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="417" height="10"/>
+				<textElement markup="styled">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{ntp_no}.equals("002050") || $P{ntp_no}.equals("002049") || $P{ntp_no}.equals("002360") ? $F{units}.replaceAll(" \\(.+?\\)", "") : $F{cse_type}.equals( "Post" ) ?  $F{block}+ " " + $F{lot} +" "+$F{units}: $F{block}+ " " +$F{lot} +" "+$F{units}.replaceAll(" \\(.+?\\)", ""))]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

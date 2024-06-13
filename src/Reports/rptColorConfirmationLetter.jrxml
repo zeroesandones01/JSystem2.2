@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptColorConfirmationLetter" pageWidth="612" pageHeight="792" columnWidth="552" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5000000000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="296"/>
+	<parameter name="entity_id" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="proj_id" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="pbl_id" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="seq_no" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="prepared_by" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+
+FORMAT('%-*s', 70, FORMAT('%*s', (35  + char_length(FORMAT('%s %s', TRIM(c.first_name), TRIM(c.last_name)))) - (char_length(FORMAT('%s %s', TRIM(c.first_name), TRIM(c.last_name))) / 2), FORMAT('%s %s', TRIM(c.first_name), TRIM(c.last_name)))) as client_name,
+
+d.proj_name, b.phase, b.block, b.lot, b.lotarea, b.floorarea, e.model_id, e.model_desc, e.model_class, e.with_color_scheme, f.company_name, f.company_alias, array_length(b.color_scheme_id) as color_scheme_count, h.hse_color
+
+FROM rf_sold_unit a
+LEFT JOIN mf_unit_info b ON b.proj_id = a.projcode and b.pbl_id = a.pbl_id
+LEFT JOIN rf_entity c ON c.entity_id = a.entity_id
+LEFT JOIN mf_project d ON d.proj_id = a.projcode
+LEFT JOIN mf_product_model e ON e.model_id = a.model_id
+LEFT JOIN mf_company f ON f.co_id = d.co_id
+LEFT JOIN mf_product_model g ON g.model_id = a.model_id
+LEFT JOIN rf_marketing_scheme_pricelist h on h.proj_id = a.projcode and h.phase = b.phase and h.block = b.block and h.lot = b.lot
+
+WHERE a.entity_id = $P{entity_id}
+AND a.projcode = $P{proj_id}
+AND a.pbl_id = $P{pbl_id}
+AND a.seq_no = $P{seq_no};]]>
+	</queryString>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="phase" class="java.lang.String"/>
+	<field name="block" class="java.lang.String"/>
+	<field name="lot" class="java.lang.String"/>
+	<field name="lotarea" class="java.math.BigDecimal"/>
+	<field name="floorarea" class="java.math.BigDecimal"/>
+	<field name="model_id" class="java.lang.String"/>
+	<field name="model_desc" class="java.lang.String"/>
+	<field name="model_class" class="java.lang.String"/>
+	<field name="with_color_scheme" class="java.lang.Boolean"/>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="company_alias" class="java.lang.String"/>
+	<field name="color_scheme_count" class="java.lang.Integer"/>
+	<field name="hse_color" class="java.lang.String"/>
+	<title>
+		<band height="100" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="552" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Dialog" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="40" width="552" height="60"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONFIRMATION LETTER]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="100" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="30" width="552" height="50"/>
+				<textElement markup="styled">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Madam / Sirs:\n\n"+
+"I am <u><b>"+ $F{client_name} +"</b></u>, your buyer, executing this instrument to confirm my unit bought in your office:"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="180" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Client Servicing Department]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="460" splitType="Prevent">
+			<staticText>
+				<reportElement x="0" y="0" width="72" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Project]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="72" y="0" width="480" height="20"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{proj_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="25" width="72" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Phase]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="72" y="25" width="50" height="20"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{phase}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="50" width="72" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Block]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="72" y="50" width="50" height="20"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{block}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="75" width="72" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Lot]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="72" y="75" width="50" height="20"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{lot}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="180" y="25" width="72" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Lot Area]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="252" y="25" width="50" height="20"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{lotarea}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="356" y="25" width="72" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Floor Area]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="428" y="25" width="50" height="20"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{floorarea}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="180" y="49" width="125" height="15"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[House Model]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="64" width="125" height="45"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="185" y="70" width="15" height="15"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+			</textField>
+			<image>
+				<reportElement x="186" y="71" width="13" height="13">
+					<printWhenExpression><![CDATA[$F{model_class}.equals("B")]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.net.URL"><![CDATA[this.getClass().getClassLoader().getResource("Images/Very-Basic-Checkmark-icon.png")]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="200" y="70" width="100" height="15"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Bare"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="185" y="89" width="15" height="15"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+			</textField>
+			<image>
+				<reportElement x="186" y="90" width="13" height="13">
+					<printWhenExpression><![CDATA[$F{model_class}.equals("C")]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.net.URL"><![CDATA[this.getClass().getClassLoader().getResource("Images/Very-Basic-Checkmark-icon.png")]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="200" y="89" width="100" height="15"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Complete"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="305" y="64" width="247" height="45"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{model_desc}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="116" width="193" height="13" backcolor="#CBC4C4"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pre-assigned Color Scheme]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="129" width="193" height="27"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Opaque" x="193" y="116" width="359" height="13" backcolor="#CBC4C4"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Preferred Color Scheme]]></text>
+			</staticText>
+			<frame>
+				<reportElement x="193" y="129" width="359" height="27"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<subreport isUsingCache="false">
+					<reportElement isPrintRepeatedValues="false" x="0" y="0" width="359" height="27"/>
+					<subreportParameter name="pbl_id">
+						<subreportParameterExpression><![CDATA[$P{pbl_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression class="java.io.InputStream"><![CDATA[this.getClass().getResourceAsStream("/Reports/" +
+
+($F{color_scheme_count} == 1 ? "subrptColorConfirmationLetter1.jasper":
+  ($F{color_scheme_count} == 2 ? "subrptColorConfirmationLetter2.jasper":
+    "subrptColorConfirmationLetter3.jasper")))]]></subreportExpression>
+				</subreport>
+			</frame>
+			<textField>
+				<reportElement x="0" y="168" width="552" height="45"/>
+				<textElement markup="none">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Furthermore, I understand that subject to the development schedule of "+ $F{company_alias}.toUpperCase() +" / "+ $F{company_alias}.toUpperCase() +" may commence contruction of my unit without any need for advise or further re-confirmation on the above details.\n\n" +
+
+"Affixing my signature verifies that the above information is correct."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="235" width="193" height="34"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Client's Signature over Printed Name or Authorized Representative*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="277" width="33" height="20"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="33" y="296" width="147" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="305" width="230" height="20"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[* Authorized Representative can either be the Spouse or SPA]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="331" width="552" height="129"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle radius="10">
+				<reportElement x="207" y="323" width="120" height="15" backcolor="#010101"/>
+			</rectangle>
+			<textField>
+				<reportElement x="207" y="323" width="120" height="14" forecolor="#FBF1F1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("FOR {0} USE ONLY", $F{company_alias})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="338" width="20" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[CSD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="24" y="338" width="20" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[FAD]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="9" y="352" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="28" y="352" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="47" y="352" width="502" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[If paid Full DP & 3 or 6 MAs]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="9" y="366" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="28" y="366" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="47" y="366" width="502" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[If Selling Price = requested house model]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="9" y="380" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="28" y="380" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="47" y="380" width="502" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[If payments status is current at the time of request, despite payment for Full DP & 3 or 6 MAs has been paid]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="9" y="394" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="28" y="394" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="47" y="394" width="502" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[If there are changes in model house, check latest approved request made by the buyer]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="9" y="408" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="28" y="408" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="47" y="408" width="502" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[If confirmation letter = CTS]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="9" y="422" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="28" y="422" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="47" y="422" width="502" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[If account is OR]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="9" y="436" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="28" y="436" width="12" height="12"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="47" y="436" width="502" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[If account is sold to bank]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="129" width="193" height="27"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{hse_color}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="12">
+			<textField>
+				<reportElement x="2" y="0" width="200" height="12"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("<font face=\"Dot Font\">{0}</font>/{1}", $F{company_alias}, $P{prepared_by}.toUpperCase())]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

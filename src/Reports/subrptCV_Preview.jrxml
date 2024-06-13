@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptCV_Preview" pageWidth="577" pageHeight="792" columnWidth="577" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.3579476910000023"/>
+	<property name="ireport.x" value="564"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="prepared_by" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["AAGONZALES"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="due_date" class="java.util.Date"/>
+	<parameter name="co_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pay_type" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cv_no" class="java.lang.String"/>
+	<parameter name="dv_amt" class="java.lang.Double"/>
+	<parameter name="payee_" class="java.lang.String"/>
+	<parameter name="check_no" class="java.lang.String"/>
+	<parameter name="dv_date" class="java.util.Date"/>
+	<parameter name="bank_alias" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[-----------preview : Disbursement Voucher
+
+select
+
+a.pv_no,
+b.acct_id,
+c.acct_name,
+b.tran_amt as debit,
+null as credit,
+trim(d.entity_name) as payee,
+trim(get_employee_name((select case when edited_by is null or edited_by = '' then created_by else edited_by end from rf_cv_header where cv_no = $P{cv_no} and co_id = $P{co_id}))) as prepared_by
+
+from ( select * from rf_pv_header where cv_no = $P{cv_no} and co_id = $P{co_id} ) a
+left join ( select * from rf_pv_detail where acct_id in ('22010001', '03-01-01-001') and status_id = 'A' and co_id = $P{co_id} ) b on a.pv_no = b.pv_no and a.co_id=b.co_id
+left join mf_boi_chart_of_accounts c on b.acct_id = c.acct_id
+left join rf_entity d on a.entity_id1 = d.entity_id
+
+UNION ALL
+
+select
+
+'' as pv_no,
+a.acct_id,
+b.acct_name,
+null as debit,
+a.tran_amt as credit,
+trim(d.entity_name) as payee,
+trim(get_employee_name((case when c.edited_by is null or c.edited_by = '' then c.created_by else c.edited_by end))) as prepared_by
+
+from ( select * from rf_cv_detail where cv_no = $P{cv_no} and co_id = $P{co_id} and acct_id not in ('22010001', '03-01-01-001') and status_id = 'A' ) a
+left join mf_boi_chart_of_accounts b on a.acct_id = b.acct_id
+left join (select * from rf_cv_header where co_id = $P{co_id} and status_id != 'I' ) c on a.cv_no = c.cv_no and a.co_id = c.co_id
+left join rf_entity d on c.entity_id1 = d.entity_id]]>
+	</queryString>
+	<field name="pv_no" class="java.lang.String"/>
+	<field name="acct_id" class="java.lang.String"/>
+	<field name="acct_name" class="java.lang.String"/>
+	<field name="debit" class="java.math.BigDecimal"/>
+	<field name="credit" class="java.math.BigDecimal"/>
+	<field name="payee" class="java.lang.String"/>
+	<field name="prepared_by" class="java.lang.String"/>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="166" y="0" width="218" height="13"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acct_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="69" height="13"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{pv_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement x="69" y="0" width="97" height="13"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acct_id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="377" y="0" width="85" height="13"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{debit}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="462" y="0" width="80" height="13"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{credit}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="13">
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="383" y="0" width="79" height="13"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{dv_amt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="462" y="0" width="79" height="13"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{dv_amt}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

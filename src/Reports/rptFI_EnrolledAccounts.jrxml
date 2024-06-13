@@ -1,0 +1,638 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptFI_EnrolledAccounts" pageWidth="936" pageHeight="612" orientation="Landscape" columnWidth="916" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="2.853116706110004"/>
+	<property name="ireport.x" value="1949"/>
+	<property name="ireport.y" value="265"/>
+	<parameter name="company_name" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="proj_id" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="proj_name" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="invoice_no" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="search_by" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="prepared_by" class="java.lang.String"/>
+	<parameter name="posted" class="java.lang.Boolean" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT a.invoice_no, a.policy_no,
+get_project_name(a.proj_id) as proj_name, e.company_name as company_name,
+a.renewal_batch as batch_no,
+c.description as unit_desc, get_client_name(a.entity_id) as client_name, get_model_name(b.model_id) as model_desc,
+get_payment_stage(a.entity_id, a.proj_id, a.pbl_id, a.seq_no) as pmt_stage, a.amt_insured,
+a.date_from, a.date_to, a.fire_lightning, a.full_earthquake, a.typhoon, a.flood, a.ext_cover, a.rsmd,
+(a.fire_lightning + a.full_earthquake + a.typhoon + a.flood + a.ext_cover + a.rsmd) as premium_sub_total,
+a.doc_stamps, a.evat, a.fire_srvc_tax, a.loc_govt_tax, a.premium as premium
+FROM rf_fire_header a
+LEFT JOIN rf_sold_unit b on b.entity_id = a.entity_id and b.projcode = a.proj_id and b.pbl_id = a.pbl_id and b.seq_no = a.seq_no
+LEFT JOIN mf_unit_info c on c.proj_id = a.proj_id and c.pbl_id = a.pbl_id
+LEFT JOIN mf_project d on d.proj_id = a.proj_id
+LEFT JOIN mf_company e on e.co_id = d.co_id
+WHERE a.invoice_no IS NOT NULL
+AND a.invoice_no = $P{invoice_no}
+AND a.date_approved IS NOT NULL
+AND a.auto_terminate_date IS NULL
+AND a.status_id = 'A';]]>
+	</queryString>
+	<field name="invoice_no" class="java.lang.String"/>
+	<field name="policy_no" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="batch_no" class="java.lang.String"/>
+	<field name="unit_desc" class="java.lang.String"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="model_desc" class="java.lang.String"/>
+	<field name="pmt_stage" class="java.lang.String"/>
+	<field name="amt_insured" class="java.math.BigDecimal"/>
+	<field name="date_from" class="java.sql.Timestamp"/>
+	<field name="date_to" class="java.sql.Timestamp"/>
+	<field name="fire_lightning" class="java.math.BigDecimal"/>
+	<field name="full_earthquake" class="java.math.BigDecimal"/>
+	<field name="typhoon" class="java.math.BigDecimal"/>
+	<field name="flood" class="java.math.BigDecimal"/>
+	<field name="ext_cover" class="java.math.BigDecimal"/>
+	<field name="rsmd" class="java.math.BigDecimal"/>
+	<field name="premium_sub_total" class="java.math.BigDecimal"/>
+	<field name="doc_stamps" class="java.math.BigDecimal"/>
+	<field name="evat" class="java.math.BigDecimal"/>
+	<field name="fire_srvc_tax" class="java.math.BigDecimal"/>
+	<field name="loc_govt_tax" class="java.math.BigDecimal"/>
+	<field name="premium" class="java.math.BigDecimal"/>
+	<variable name="total_amt_insured" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amt_insured}]]></variableExpression>
+	</variable>
+	<variable name="total_fire_lightning" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{fire_lightning}]]></variableExpression>
+	</variable>
+	<variable name="total_full_earthquake" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{full_earthquake}]]></variableExpression>
+	</variable>
+	<variable name="total_typhoon" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{typhoon}]]></variableExpression>
+	</variable>
+	<variable name="total_flood" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{flood}]]></variableExpression>
+	</variable>
+	<variable name="total_ext_cover" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ext_cover}]]></variableExpression>
+	</variable>
+	<variable name="total_rsmd" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{rsmd}]]></variableExpression>
+	</variable>
+	<variable name="total_premium_sub_total" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{premium_sub_total}]]></variableExpression>
+	</variable>
+	<variable name="total_doc_stamps" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{doc_stamps}]]></variableExpression>
+	</variable>
+	<variable name="total_evat" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{evat}]]></variableExpression>
+	</variable>
+	<variable name="total_fst" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{fire_srvc_tax}]]></variableExpression>
+	</variable>
+	<variable name="total_lgt" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{loc_govt_tax}]]></variableExpression>
+	</variable>
+	<variable name="total_premium" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{premium}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="81" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="21" width="290" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[List of For Payments to Insurance Company]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1" y="1" width="362" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="41" width="196" height="20"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{proj_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="61" width="290" height="20"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["<html><b>Invoice No:   " + $F{invoice_no} + "</b></html>"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="1" width="75" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Policy No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="379" y="1" width="55" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amt Insured]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="812" y="1" width="33" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FST 2.00%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="571" y="1" width="33" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TYP 0.025%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="193" y="1" width="114" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Client Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="307" y="1" width="44" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[House Model]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="467" y="21" width="33" height="15" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[To]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="500" y="1" width="33" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[F & L 0.05%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="670" y="1" width="33" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RSMD 0.01%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="533" y="1" width="38" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FE   0.15%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="741" y="1" width="38" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Doc Stamps 12.5%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="121" y="1" width="72" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="434" y="1" width="66" height="20" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Period Covered]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="878" y="1" width="38" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Premium]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="434" y="21" width="33" height="15" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[From]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="76" y="1" width="45" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Batch]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="637" y="1" width="33" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EC 0.01%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="779" y="1" width="33" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EVAT 12.00%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="604" y="1" width="33" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FLD 0.025%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="845" y="1" width="33" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LGT 0.121%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="703" y="1" width="38" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Premium]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="351" y="1" width="28" height="35" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pmt Stage]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="76" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{policy_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="76" y="0" width="45" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{batch_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="121" y="0" width="72" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{unit_desc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="193" y="0" width="114" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="307" y="0" width="44" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{model_desc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="351" y="0" width="28" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{pmt_stage}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="379" y="0" width="55" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amt_insured}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="500" y="0" width="33" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{fire_lightning}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="533" y="2" width="38" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{full_earthquake}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="571" y="2" width="33" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{typhoon}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="604" y="2" width="33" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{flood}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="637" y="2" width="33" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ext_cover}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="670" y="2" width="33" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{rsmd}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="741" y="2" width="38" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{doc_stamps}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="779" y="2" width="33" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{evat}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="812" y="2" width="33" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{fire_srvc_tax}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="845" y="2" width="33" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{loc_govt_tax}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement x="434" y="0" width="33" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_from}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement x="467" y="0" width="33" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_to}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="703" y="2" width="38" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{premium_sub_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="878" y="2" width="40" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{premium}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="23" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement x="876" y="1" width="40" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="796" y="1" width="80" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="42">
+			<staticText>
+				<reportElement x="2" y="0" width="56" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Prepared by:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="27" width="146" height="1"/>
+			</line>
+			<textField>
+				<reportElement x="2" y="28" width="146" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{prepared_by}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="171" y="0" width="56" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Checked by:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="171" y="27" width="146" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="386" y="0" width="56" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Received by:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="386" y="27" width="146" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="386" y="28" width="149" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[(Signature over printed name)]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+</jasperReport>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptPricelistUnitsSummary" pageWidth="298" pageHeight="792" columnWidth="278" leftMargin="10" rightMargin="10" topMargin="5" bottomMargin="5" uuid="59c98295-4fb5-412f-8ace-d108621a6959">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="company" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["CENQHOMES DEVELOPMENT CORPORATION"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="proj_id" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["015"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="phase" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select trim(a.pbl_id) as pbl_id, trim(a.phase) as phase, trim(a.block) as block, trim(a.lot) as lot, a.floorarea, a.lotarea, b.model_desc, a.proj_id, c.proj_name
+from mf_unit_info a
+left join mf_product_model b on b.model_id = a.model_id
+left join mf_project c on c.proj_id = a.proj_id
+where a.status_id = 'A'
+and a.proj_id = $P{proj_id}
+and a.phase = $P{phase}
+order by b.model_desc;]]>
+	</queryString>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="phase" class="java.lang.String"/>
+	<field name="block" class="java.lang.String"/>
+	<field name="lot" class="java.lang.String"/>
+	<field name="floorarea" class="java.math.BigDecimal"/>
+	<field name="lotarea" class="java.math.BigDecimal"/>
+	<field name="model_desc" class="java.lang.String"/>
+	<field name="proj_id" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<variable name="grandTotal" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{model_desc}]]></variableExpression>
+	</variable>
+	<variable name="totalProject" class="java.lang.Integer" resetType="Group" resetGroup="grpProject" calculation="Count">
+		<variableExpression><![CDATA[$F{model_desc}]]></variableExpression>
+	</variable>
+	<variable name="totalPhase" class="java.lang.Integer" resetType="Group" resetGroup="grpPhase" calculation="Count">
+		<variableExpression><![CDATA[$F{phase}]]></variableExpression>
+	</variable>
+	<variable name="totalModelDesc" class="java.lang.Integer" resetType="Group" resetGroup="grpModelDesc" calculation="Count">
+		<variableExpression><![CDATA[$F{model_desc}]]></variableExpression>
+	</variable>
+	<group name="grpProject">
+		<groupExpression><![CDATA[$F{proj_name}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField>
+					<reportElement x="0" y="0" width="210" height="15" uuid="d12d03cd-ae63-4bf1-bb1a-6029963f1939"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{proj_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<staticText>
+					<reportElement x="0" y="0" width="278" height="15" uuid="aa34c80d-93ce-4ba9-a2c1-82e53169f9de"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="0" width="205" height="15" uuid="e714db1f-5065-4957-9c6d-e4e646d54dfe"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{proj_name} + " Sub-Total"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto">
+					<reportElement x="205" y="0" width="35" height="15" uuid="9a3dc88a-d236-4a92-8c05-465379d637d2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalProject}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto" pattern="#,##0.00">
+					<reportElement x="240" y="0" width="38" height="15" uuid="1fad4817-654c-4cbc-8080-005f1f1345a7"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{totalProject}.doubleValue() / $V{grandTotal}.doubleValue()) * 100]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="grpPhase">
+		<groupExpression><![CDATA[$F{phase}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField>
+					<reportElement x="10" y="0" width="100" height="15" uuid="7da76e59-4726-4727-a1b4-c8d2f270a8de"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Phase " + $F{phase}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<staticText>
+					<reportElement x="0" y="0" width="278" height="15" uuid="c6f7fcf1-bf69-4215-8f73-38e723570650"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+					</box>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="75" y="0" width="100" height="15" uuid="8ed8a7ad-9188-4762-8d97-b292c5222c95"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Phase " + $F{phase} + " Sub-Total"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto">
+					<reportElement x="205" y="0" width="35" height="15" uuid="12c7d237-27c1-426c-8974-45615fdedd25"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalPhase}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto" pattern="#,##0.00">
+					<reportElement x="240" y="0" width="38" height="15" uuid="ea37f162-15ef-4f53-b523-04032026dca1"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{totalPhase}.doubleValue() / $V{totalPhase}.doubleValue()) * 100]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="grpModelDesc">
+		<groupExpression><![CDATA[$F{model_desc}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField>
+					<reportElement x="75" y="0" width="100" height="15" uuid="b491035e-4696-426f-87e8-7f44245eca4b"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{model_desc}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto" pattern="#,##0.00">
+					<reportElement x="240" y="0" width="38" height="15" uuid="449c786e-309a-459f-b7a1-a9d54f1f8342"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{totalModelDesc}.doubleValue() / $V{totalPhase}.doubleValue()) * 100]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto">
+					<reportElement x="205" y="0" width="35" height="15" uuid="5fcc6b2e-58b8-4dd9-9418-3dc2620c5ec2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalModelDesc}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band height="22">
+			<staticText>
+				<reportElement x="0" y="0" width="278" height="22" uuid="a54d0fd1-5764-4372-afbd-99cc085b41f3"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="140" height="11" uuid="62fed9a5-65e7-4edd-8f75-be5f45a47109"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Summary:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="11" width="175" height="11" uuid="8ed59ebe-9d14-480c-9cd4-31a91de0863f"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Model]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="205" y="11" width="35" height="11" uuid="7782dd61-18bd-4e88-adee-16f48b686f99"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="240" y="11" width="38" height="11" uuid="6166239d-970d-42cd-a1e9-dbb7a57b01eb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pctg]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<summary>
+		<band height="15">
+			<textField evaluationTime="Auto" pattern="#,##0.00">
+				<reportElement x="240" y="0" width="38" height="15" uuid="04fa0fd5-5b95-40c6-ae93-b7e586bfc9fc"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($V{grandTotal}.doubleValue() / $V{grandTotal}.doubleValue()) * 100]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Auto">
+				<reportElement x="205" y="0" width="35" height="15" uuid="708c690c-3a47-4466-b316-328088e24feb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{grandTotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="205" height="15" uuid="da43874b-90dc-4a34-8a7a-dd211146199d"/>
+				<box rightPadding="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Grand Total: "]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

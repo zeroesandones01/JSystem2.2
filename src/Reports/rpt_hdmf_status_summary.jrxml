@@ -1,0 +1,840 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="1152" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1124" leftMargin="14" rightMargin="14" topMargin="14" bottomMargin="14">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="01_Company" class="java.lang.String"/>
+	<parameter name="02_Date" class="java.lang.String"/>
+	<parameter name="03_Logo" class="java.io.InputStream"/>
+	<parameter name="04_User" class="java.lang.String"/>
+	<parameter name="05_Host" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT a.group_zero, a.group_alpha, a.group_bravo, a.group_delta, a.status_sequence,
+(case when position('.' in group_charlie::varchar) = 0 then group_charlie::varchar when position('.' in group_charlie::varchar) > 0 then
+case when LENGTH(right(group_charlie::varchar, LENGTH(group_charlie::varchar) - position('.' in group_charlie::varchar))) = 2 then group_charlie::varchar
+else group_charlie::numeric(19, 2)::varchar end end)::numeric as group_charlie
+FROM
+(
+	SELECT *
+	FROM
+	(
+		select x.status::varchar(50) as group_zero, project_phase as group_alpha, 'A. Units'::varchar(20) as group_bravo,
+		x.group::varchar(20) as group_delta, x.status_sequence,
+		(
+			CASE
+				WHEN (select sum(y.count) from tmp_hdmfstatussummary_crosstable y where y.status = x.status and y.project_phase = x.project_phase and y.host = x.host) is null
+					THEN 0
+				ELSE (select sum(y.count) from tmp_hdmfstatussummary_crosstable y where y.status = x.status and y.project_phase = x.project_phase and y.host = x.host)
+			END
+		) as group_charlie
+		FROM tmp_hdmfstatussummary_crosstable x
+		where x.host = $P{05_Host}
+		UNION
+
+		select x.status::varchar(50) as group_zero, project_phase as group_alpha, 'B. L.A.'::varchar(20) as group_bravo,
+		x.group::varchar(20) as group_delta, x.status_sequence,
+		(
+			CASE
+				WHEN (select sum(y.loan) from tmp_hdmfstatussummary_crosstable y where y.status = x.status and y.project_phase = x.project_phase and y.host = x.host) is null
+					THEN 0.00::NUMERIC(19, 2)
+				ELSE (select sum(y.loan) from tmp_hdmfstatussummary_crosstable y where y.status = x.status and y.project_phase = x.project_phase and y.host = x.host)
+			END
+		) as group_charlie
+		FROM tmp_hdmfstatussummary_crosstable x
+		where x.host = $P{05_Host}
+		UNION
+		select x.status::varchar(50) as group_zero, project_phase as group_alpha, 'C. Pctg(%)'::varchar(20) as group_bravo,
+		x.group::varchar(20) as group_delta, x.status_sequence,(case when total_loan > 0 then (1 - ((total_loan - loan) / total_loan)) * 100 else 0.00 end) as group_charlie
+		FROM tmp_hdmfstatussummary_crosstable x
+		where project_phase = 'ER - PH1-B' and x.host = $P{05_Host}
+		union
+
+		select x.status::varchar(50) as group_zero, project_phase as group_alpha, 'C. Pctg(%)'::varchar(20) as group_bravo,
+		x.group::varchar(20) as group_delta, x.status_sequence,(case when total_loan > 0 then (1 - ((total_loan - loan) / total_loan)) * 100 else 0.00 end) as group_charlie
+		FROM tmp_hdmfstatussummary_crosstable x
+		where project_phase = 'TV - PH1' and x.host = $P{05_Host}
+		union
+		select x.status::varchar(50) as group_zero, project_phase as group_alpha, 'C. Pctg(%)'::varchar(20) as group_bravo,
+		x.group::varchar(20) as group_delta, x.status_sequence,(case when total_loan > 0 then (1 - ((total_loan - loan) / total_loan)) * 100 else 0.00 end) as group_charlie
+		FROM tmp_hdmfstatussummary_crosstable x
+		where project_phase = 'TV - PH2' and x.host = $P{05_Host}
+		union
+		select x.status::varchar(50) as group_zero, project_phase as group_alpha, 'C. Pctg(%)'::varchar(20) as group_bravo,
+		x.group::varchar(20) as group_delta, x.status_sequence,(case when total_loan > 0 then (1 - ((total_loan - loan) / total_loan)) * 100 else 0.00 end) as group_charlie
+		FROM tmp_hdmfstatussummary_crosstable x
+		where project_phase = 'TV - PH4-A' and x.host = $P{05_Host}
+		union
+		select x.status::varchar(50) as group_zero, project_phase as group_alpha, 'C. Pctg(%)'::varchar(20) as group_bravo,
+		x.group::varchar(20) as group_delta, x.status_sequence,(case when total_loan > 0 then (1 - ((total_loan - loan) / total_loan)) * 100 else 0.00 end) as group_charlie
+		FROM tmp_hdmfstatussummary_crosstable x
+		where project_phase = 'TV - PH4' and x.host = $P{05_Host}
+		union
+		select x.status::varchar(50) as group_zero, project_phase as group_alpha, 'C. Pctg(%)'::varchar(20) as group_bravo,
+		x.group::varchar(20) as group_delta, x.status_sequence,(case when total_loan > 0 then (1 - ((total_loan - loan) / total_loan)) * 100 else 0.00 end) as group_charlie
+		FROM tmp_hdmfstatussummary_crosstable x
+		where project_phase = 'TV - PH3' and x.host = $P{05_Host}
+		union
+		select x.status::varchar(50) as group_zero, project_phase as group_alpha, 'C. Pctg(%)'::varchar(20) as group_bravo,
+		x.group::varchar(20) as group_delta, x.status_sequence,(case when total_loan > 0 then (1 - ((total_loan - loan) / total_loan)) * 100 else 0.00 end) as group_charlie
+		FROM tmp_hdmfstatussummary_crosstable x
+		where project_phase = 'EB - PH2' and x.host = $P{05_Host}
+	) a
+	union ALL
+	SELECT *
+	FROM
+	(
+		select x.status::varchar(50) as group_zero, 'Z. Total' as group_alpha, 'A. Units'::varchar(20) as group_bravo,
+		x.group::varchar(20) as group_delta, x.status_sequence,
+		(
+			CASE
+				WHEN (select sum(y.count) from tmp_hdmfstatussummary_crosstable y where y.status = x.status and y.project_phase = x.project_phase and y.host = x.host) is null
+					THEN 0
+				ELSE (select sum(y.count) from tmp_hdmfstatussummary_crosstable y where y.status = x.status and y.project_phase = x.project_phase and y.host = x.host)
+			END
+		) as group_charlie
+		FROM tmp_hdmfstatussummary_crosstable x
+		where x.host = $P{05_Host}
+		UNION
+		select x.status::varchar(50) as group_zero, 'Z. Total' as group_alpha, 'B. L.A.'::varchar(20) as group_bravo,
+		x.group::varchar(20) as group_delta, x.status_sequence,
+		(
+			CASE
+				WHEN (select sum(y.loan) from tmp_hdmfstatussummary_crosstable y where y.status = x.status and y.project_phase = x.project_phase and y.host = x.host) is null
+					THEN 0.00::NUMERIC(19, 2)
+				ELSE (select sum(y.loan) from tmp_hdmfstatussummary_crosstable y where y.status = x.status and y.project_phase = x.project_phase and y.host = x.host)
+			END
+		) as group_charlie
+		FROM tmp_hdmfstatussummary_crosstable x
+		where x.host = $P{05_Host}
+		UNION
+		select x.status as group_zero, 'Z. Total' as group_alpha, 'C. Pctg(%)'::varchar(20) as group_bravo,
+		x.group::varchar(20) as group_delta, x.status_sequence,
+		(case when coalesce(sum(total_loan), 0) > 0 then ((1 - ((sum(x.total_loan) - sum(x.loan)) / sum(x.total_loan))) * 100) else 0.00 end) as group_charlie
+		from tmp_hdmfstatussummary_crosstable x
+		where x.host = $P{05_Host}
+		group by x.status, x.group, x.status_sequence
+	) a
+) a
+order by a.status_sequence, a.group_alpha, a.group_bravo]]>
+	</queryString>
+	<field name="group_zero" class="java.lang.String"/>
+	<field name="group_alpha" class="java.lang.String"/>
+	<field name="group_bravo" class="java.lang.String"/>
+	<field name="group_delta" class="java.lang.String"/>
+	<field name="status_sequence" class="java.lang.Integer"/>
+	<field name="group_charlie" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="14" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="77" splitType="Stretch">
+			<textField>
+				<reportElement x="87" y="25" width="273" height="15"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Status Of PAGIBIG Accounts Summary"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="87" y="8" width="340" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{01_Company}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="87" y="40" width="273" height="15"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["As Of Date: " + $P{02_Date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="738" y="40" width="242" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="738" y="25" width="242" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle" isUsingCache="true">
+				<reportElement x="0" y="0" width="65" height="65"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{03_Logo}]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<pageFooter>
+		<band height="43">
+			<textField>
+				<reportElement x="76" y="0" width="210" height="17"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{04_User}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="76" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Prepared by: "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="738" y="26" width="242" height="17"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="420" splitType="Stretch">
+			<crosstab>
+				<reportElement x="0" y="0" width="980" height="240"/>
+				<crosstabDataset isDataPreSorted="true">
+					<dataset>
+						<incrementWhenExpression><![CDATA[$F{group_delta}.equals("SUB1")]]></incrementWhenExpression>
+					</dataset>
+				</crosstabDataset>
+				<crosstabHeaderCell>
+					<cellContents>
+						<rectangle>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="140" height="30" backcolor="#F0F8FF"/>
+							<graphicElement>
+								<pen lineWidth="0.5"/>
+							</graphicElement>
+						</rectangle>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="group_zero" width="140" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{group_zero}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="140" height="15"/>
+								<box leftPadding="5"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<font fontName="Tahoma" size="6"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{group_zero}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="140" height="16"/>
+								<box rightPadding="5"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Tahoma" size="6" isBold="true"/>
+								</textElement>
+								<text><![CDATA[SUBTOTAL]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="group_alpha" height="15">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{group_alpha}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="40" height="15"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Tahoma" size="6" isBold="true"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{group_alpha}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<columnGroup name="group_bravo" height="15">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{group_bravo}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="40" height="15"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="Tahoma" size="6" isBold="false"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{group_bravo}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="group_charlieMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{group_charlie}]]></measureExpression>
+				</measure>
+				<crosstabCell width="40" height="15">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="40" height="15"/>
+							<box rightPadding="5"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font fontName="Tahoma" size="6"/>
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="40" height="16" rowTotalGroup="group_zero">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="40" height="16"/>
+							<box rightPadding="5"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font fontName="Tahoma" size="6" isBold="true"/>
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="group_alpha">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" forecolor="#FFFFFF"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="group_zero" columnTotalGroup="group_alpha">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" forecolor="#FFFFFF"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="group_bravo">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="group_zero" columnTotalGroup="group_bravo">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+			<crosstab>
+				<reportElement x="0" y="241" width="980" height="107"/>
+				<crosstabDataset isDataPreSorted="true">
+					<dataset>
+						<incrementWhenExpression><![CDATA[$F{group_delta}.equals("SUB2")]]></incrementWhenExpression>
+					</dataset>
+				</crosstabDataset>
+				<rowGroup name="group_zero" width="140" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{group_zero}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="140" height="15"/>
+								<box leftPadding="5"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<font fontName="Tahoma" size="6"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{group_zero}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="140" height="16"/>
+								<box rightPadding="5"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Tahoma" size="6" isBold="true"/>
+								</textElement>
+								<text><![CDATA[SUBTOTAL]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="group_alpha" height="0">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{group_alpha}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<columnGroup name="group_bravo" height="0">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{group_bravo}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="group_charlieMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{group_charlie}]]></measureExpression>
+				</measure>
+				<crosstabCell width="40" height="15">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="40" height="15"/>
+							<box rightPadding="5"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font fontName="Tahoma" size="6"/>
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="40" height="16" rowTotalGroup="group_zero">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="40" height="16"/>
+							<box rightPadding="5"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font fontName="Tahoma" size="6" isBold="true"/>
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="group_alpha">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" forecolor="#FFFFFF"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="group_zero" columnTotalGroup="group_alpha">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" forecolor="#FFFFFF"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="group_bravo">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="group_zero" columnTotalGroup="group_bravo">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+			<crosstab>
+				<reportElement x="0" y="377" width="980" height="16"/>
+				<crosstabDataset isDataPreSorted="true">
+					<dataset>
+						<incrementWhenExpression><![CDATA[$F{group_delta}.equals("SUB4")]]></incrementWhenExpression>
+					</dataset>
+				</crosstabDataset>
+				<rowGroup name="group_zero" width="140" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{group_zero}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="140" height="16"/>
+								<box rightPadding="5"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Tahoma" size="6" isBold="true"/>
+								</textElement>
+								<text><![CDATA[GRAND TOTAL]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="group_alpha" height="0">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{group_alpha}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<columnGroup name="group_bravo" height="0">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{group_bravo}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="group_charlieMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{group_charlie}]]></measureExpression>
+				</measure>
+				<crosstabCell width="40" height="0">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="40" height="16" rowTotalGroup="group_zero">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="40" height="16"/>
+							<box rightPadding="5"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font fontName="Tahoma" size="6" isBold="true"/>
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="group_alpha">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" forecolor="#FFFFFF"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="group_zero" columnTotalGroup="group_alpha">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" forecolor="#FFFFFF"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="group_bravo">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="group_zero" columnTotalGroup="group_bravo">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+			<crosstab>
+				<reportElement x="0" y="347" width="980" height="30"/>
+				<crosstabDataset isDataPreSorted="true">
+					<dataset>
+						<incrementWhenExpression><![CDATA[$F{group_delta}.equals("SUB3")]]></incrementWhenExpression>
+					</dataset>
+				</crosstabDataset>
+				<rowGroup name="group_zero" width="140" totalPosition="End">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{group_zero}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="140" height="15"/>
+								<box leftPadding="5"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<font fontName="Tahoma" size="6"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{group_zero}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="140" height="16"/>
+								<box rightPadding="5"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="Tahoma" size="6" isBold="true"/>
+								</textElement>
+								<text><![CDATA[SUBTOTAL]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="group_alpha" height="0">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{group_alpha}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<columnGroup name="group_bravo" height="0">
+					<bucket>
+						<bucketExpression class="java.lang.String"><![CDATA[$F{group_bravo}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="group_charlieMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{group_charlie}]]></measureExpression>
+				</measure>
+				<crosstabCell width="40" height="15">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="40" height="15"/>
+							<box rightPadding="5"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font fontName="Tahoma" size="6"/>
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="40" height="16" rowTotalGroup="group_zero">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="40" height="16"/>
+							<box rightPadding="5"/>
+							<textElement textAlignment="Right" verticalAlignment="Middle">
+								<font fontName="Tahoma" size="6" isBold="true"/>
+							</textElement>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="group_alpha">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" forecolor="#FFFFFF"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="group_zero" columnTotalGroup="group_alpha">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" forecolor="#FFFFFF"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="group_bravo">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="group_zero" columnTotalGroup="group_bravo">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{group_charlieMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>

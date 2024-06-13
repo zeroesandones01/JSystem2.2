@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_summary_check" pageWidth="936" pageHeight="612" orientation="Landscape" columnWidth="883" leftMargin="25" rightMargin="28" topMargin="28" bottomMargin="28">
+	<property name="ireport.zoom" value="1.241842646118314"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="103"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.1" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.2" value="pageHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.(uniqueValue)" value="columnFooter"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.collapse.row.span" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.wrap.text" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.graphics" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.auto.fit.column" value="true"/>
+	<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.auto.fit.row" value="true"/>
+	<parameter name="co_name" class="java.lang.String">
+		<defaultValueExpression><![CDATA["CENQHOMES DEVELOPMENT CORPORATION"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dateParam" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="user_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select  coalesce(a.proj_alias, '') || ' ' || (case when coalesce(a.phase, '') != '' then 'PH ' || a.phase else '' end) as project_phase,
+
+coalesce((select sum(x.amount) from tmp_check_summary_2 x left join mf_unit_info y on x.proj_id = y.proj_id and x.pbl_id = y.pbl_id where coalescE(x.proj_id, '') = coalescE(a.proj_id, '') and coalescE(y.phase, '') = coalescE(a.phase, '') and x.dated = true and x.deposited = true and x.c_user = $P{user_id}), 0) as dated_deposited,
+coalesce((select sum(x.amount) from tmp_check_summary_2 x left join mf_unit_info y on x.proj_id = y.proj_id and x.pbl_id = y.pbl_id where coalescE(x.proj_id, '') = coalescE(a.proj_id, '') and coalescE(y.phase, '') = coalescE(a.phase, '') and x.dated = true and x.good = true and x.c_user = $P{user_id}), 0) as dated_cleared,
+coalesce((select sum(x.amount) from tmp_check_summary_2 x left join mf_unit_info y on x.proj_id = y.proj_id and x.pbl_id = y.pbl_id where coalescE(x.proj_id, '') = coalescE(a.proj_id, '') and coalescE(y.phase, '') = coalescE(a.phase, '') and x.dated = true and x.bounced = true and x.c_user = $P{user_id}), 0) as dated_bounced,
+coalesce((select sum(x.amount) from tmp_check_summary_2 x left join mf_unit_info y on x.proj_id = y.proj_id and x.pbl_id = y.pbl_id where coalescE(x.proj_id, '') = coalescE(a.proj_id, '') and coalescE(y.phase, '') = coalescE(a.phase, '') and x.dated = true and x.others = true and x.c_user = $P{user_id}), 0) as dated_others,
+
+coalesce((select sum(x.amount) from tmp_check_summary_2 x left join mf_unit_info y on x.proj_id = y.proj_id and x.pbl_id = y.pbl_id where coalescE(x.proj_id, '') = coalescE(a.proj_id, '') and coalescE(y.phase, '') = coalescE(a.phase, '') and x.dated = false and x.deposited = true and x.c_user = $P{user_id}), 0) as pdc_deposited,
+coalesce((select sum(x.amount) from tmp_check_summary_2 x left join mf_unit_info y on x.proj_id = y.proj_id and x.pbl_id = y.pbl_id where coalescE(x.proj_id, '') = coalescE(a.proj_id, '') and coalescE(y.phase, '') = coalescE(a.phase, '') and x.dated = false and x.good = true and x.c_user = $P{user_id}), 0) as pdc_cleared,
+coalesce((select sum(x.amount) from tmp_check_summary_2 x left join mf_unit_info y on x.proj_id = y.proj_id and x.pbl_id = y.pbl_id where coalescE(x.proj_id, '') = coalescE(a.proj_id, '') and coalescE(y.phase, '') = coalescE(a.phase, '') and x.dated = false and x.bounced = true and x.c_user = $P{user_id}), 0) as pdc_bounced,
+coalesce((select sum(x.amount) from tmp_check_summary_2 x left join mf_unit_info y on x.proj_id = y.proj_id and x.pbl_id = y.pbl_id where coalescE(x.proj_id, '') = coalescE(a.proj_id, '') and coalescE(y.phase, '') = coalescE(a.phase, '') and x.dated = false and x.others = true and x.c_user = $P{user_id}), 0) as pdc_others,
+
+coalesce((select sum(x.amount) from tmp_check_summary_2 x left join mf_unit_info y on x.proj_id = y.proj_id and x.pbl_id = y.pbl_id where coalescE(x.proj_id, '') = coalescE(a.proj_id, '') and coalescE(y.phase, '') = coalescE(a.phase, '') and x.deposited = true and x.c_user = $P{user_id}), 0) as total_deposited,
+coalesce((select sum(x.amount) from tmp_check_summary_2 x left join mf_unit_info y on x.proj_id = y.proj_id and x.pbl_id = y.pbl_id where coalescE(x.proj_id, '') = coalescE(a.proj_id, '') and coalescE(y.phase, '') = coalescE(a.phase, '') and x.good = true and x.c_user = $P{user_id}), 0) as total_cleared,
+coalesce((select sum(x.amount) from tmp_check_summary_2 x left join mf_unit_info y on x.proj_id = y.proj_id and x.pbl_id = y.pbl_id where coalescE(x.proj_id, '') = coalescE(a.proj_id, '') and coalescE(y.phase, '') = coalescE(a.phase, '') and x.bounced = true and x.c_user = $P{user_id}), 0) as total_bounced,
+coalesce((select sum(x.amount) from tmp_check_summary_2 x left join mf_unit_info y on x.proj_id = y.proj_id and x.pbl_id = y.pbl_id where coalescE(x.proj_id, '') = coalescE(a.proj_id, '') and coalescE(y.phase, '') = coalescE(a.phase, '') and x.others = true and x.c_user = $P{user_id}), 0) as total_others,
+(select y.entity_name from em_employee x inner join rf_entity y on x.entity_id = y.entity_id where x.emp_code = $P{user_id}) as prepared_by
+
+from
+(
+	select distinct y.proj_alias, x.phase, y.proj_id
+	from mf_unit_info x
+	inner join mf_project y on x.proj_id = y.proj_id
+	union
+	select distinct y.proj_alias, '' as phase, y.proj_id
+	from mf_unit_info x
+	inner join mf_project y on x.proj_id = y.proj_id
+	union
+	select '' as proj_alias, '' as phase, '' as proj_id
+) a
+
+order by coalesce(a.proj_alias, '') || ' ' || (case when coalesce(a.phase, '') != '' then 'PH ' || a.phase else '' end)]]>
+	</queryString>
+	<field name="project_phase" class="java.lang.String"/>
+	<field name="dated_deposited" class="java.math.BigDecimal"/>
+	<field name="dated_cleared" class="java.math.BigDecimal"/>
+	<field name="dated_bounced" class="java.math.BigDecimal"/>
+	<field name="dated_others" class="java.math.BigDecimal"/>
+	<field name="pdc_deposited" class="java.math.BigDecimal"/>
+	<field name="pdc_cleared" class="java.math.BigDecimal"/>
+	<field name="pdc_bounced" class="java.math.BigDecimal"/>
+	<field name="pdc_others" class="java.math.BigDecimal"/>
+	<field name="total_deposited" class="java.math.BigDecimal"/>
+	<field name="total_cleared" class="java.math.BigDecimal"/>
+	<field name="total_bounced" class="java.math.BigDecimal"/>
+	<field name="total_others" class="java.math.BigDecimal"/>
+	<field name="prepared_by" class="java.lang.String"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="v_dated_deposited" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{dated_deposited}]]></variableExpression>
+	</variable>
+	<variable name="v_dated_cleared" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{dated_cleared}]]></variableExpression>
+	</variable>
+	<variable name="v_dated_bounced" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{dated_bounced}]]></variableExpression>
+	</variable>
+	<variable name="v_dated_other" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{dated_others}]]></variableExpression>
+	</variable>
+	<variable name="v_pdc_deposited" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{pdc_deposited}]]></variableExpression>
+	</variable>
+	<variable name="v_pdc_cleared" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{pdc_cleared}]]></variableExpression>
+	</variable>
+	<variable name="v_pdc_bounced" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{pdc_bounced}]]></variableExpression>
+	</variable>
+	<variable name="v_pdc_others" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{pdc_others}]]></variableExpression>
+	</variable>
+	<variable name="v_total_deposited" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_deposited}]]></variableExpression>
+	</variable>
+	<variable name="v_total_cleared" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_cleared}]]></variableExpression>
+	</variable>
+	<variable name="v_total_bounced" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_bounced}]]></variableExpression>
+	</variable>
+	<variable name="v_total_others" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_others}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="90">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="10" width="355" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{co_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="30" width="355" height="15"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Check Status Summary Report Per Project/Per batch"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Auto">
+				<reportElement positionType="Float" x="745" y="45" width="138" height="15"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + ($V{CURRENT_PAGE_NUMBER} == null ? $V{PAGE_NUMBER}:$V{CURRENT_PAGE_NUMBER}) + " of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="0" y="45" width="355" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Date Covered:" + $P{dateParam}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="40" splitType="Stretch">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="91" height="40" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Project Phase"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="91" y="20" width="66" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Deposited"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="157" y="20" width="66" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Cleared"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="223" y="20" width="66" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Bounced"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="289" y="20" width="66" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Others"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="91" y="0" width="264" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Dated Checks"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="355" y="0" width="264" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Post Dated Checks"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="619" y="0" width="264" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Total"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="421" y="20" width="66" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Cleared"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="355" y="20" width="66" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Deposited"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="487" y="20" width="66" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Bounced"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="553" y="20" width="66" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Others"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="817" y="20" width="66" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Others"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="685" y="20" width="66" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Cleared"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="751" y="20" width="66" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Bounced"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="619" y="20" width="66" height="20" backcolor="#D9D9D9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Deposited"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="91" y="0" width="66" height="20"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{dated_deposited}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="157" y="0" width="66" height="20"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{dated_cleared}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="223" y="0" width="66" height="20"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{dated_bounced}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="289" y="0" width="66" height="20"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{dated_others}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="355" y="0" width="66" height="20"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{pdc_deposited}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="421" y="0" width="66" height="20"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{pdc_cleared}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="487" y="0" width="66" height="20"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{pdc_bounced}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="553" y="0" width="66" height="20"/>
+				<box rightPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{pdc_others}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="619" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{total_deposited}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="685" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{total_cleared}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="751" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{total_bounced}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="817" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{total_others}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="91" height="20"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_phase}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="35"/>
+	</columnFooter>
+	<lastPageFooter>
+		<band height="50">
+			<staticText>
+				<reportElement x="0" y="10" width="63" height="20"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Prepared by :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="63" y="10" width="170" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{prepared_by}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="20">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="91" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Subtotal"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="91" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{v_dated_deposited}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="157" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{v_dated_cleared}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="223" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{v_dated_bounced}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="289" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{v_dated_other}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="421" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{v_pdc_cleared}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="355" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{v_pdc_deposited}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="553" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{v_pdc_others}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="487" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{v_pdc_bounced}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="751" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{v_total_bounced}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="817" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{v_total_others}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="619" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{v_total_deposited}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="685" y="0" width="66" height="20" backcolor="#D9D9D9"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{v_total_cleared}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

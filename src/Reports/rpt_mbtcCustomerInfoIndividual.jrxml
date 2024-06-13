@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.3660269107301688"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="753"/>
+	<property name="ireport.background.image.properties" value="true,true,0.25,-8,-8,0,0,2566,4216"/>
+	<style name="style1"/>
+	<parameter name="batch_no" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT A.c_last_name, A.c_first_name, A.c_middle_name,
+TRIM(A.c_permaaddress) || CASE WHEN COALESCE(A.c_city, '') != '' THEN ', ' ELSE '' END || UPPER(COALESCE(TRIM(A.c_city), '')) as c_PermaAddress,
+A.c_mobile, A.c_email, '534-2237' as BusinessNumber,
+LPAD(DATE_PART('month', A.c_birthdate::DATE)::CHAR(2), 2, '0') as MM,
+LPAD(DATE_PART('day', A.c_birthdate::DATE)::CHAR(2), 2, '0') as dd,
+DATE_PART('year', A.c_birthdate::DATE)::CHAR(4) as year,
+UPPER(
+(
+	CASE
+		WHEN COALESCE((SELECT X.city_name FROM mf_city X WHERE X.city_id = B.birth_place), '') = ''
+			THEN
+				(
+					CASE
+						WHEN COALESCE((SELECT x.municipality_name FROM mf_municipality X WHERE X.municipality_id = B.birth_place), '') = ''
+							THEN COALESCE((SELECT X.province_name FROM mf_province X WHERE X.province_id = B.birth_place), '')
+						ELSE COALESCE((SELECT x.municipality_name FROM mf_municipality X WHERE X.municipality_id = B.birth_place), '')
+					END
+				)
+		ELSE COALESCE((SELECT X.city_name FROM mf_city X WHERE X.city_id = B.birth_place), '')
+	END
+)) as c_birthplace, A.c_tin, A.c_nationality, A.c_first_name || A.c_middle_name || A.c_last_name as PrintedName,
+(
+	select X.connection_last_name || '		' || X.connection_first_name || '		' || X.connection_middle_name
+	from rf_entity_connect X
+	where X.entity_id = B.entity_id AND X.connect_type IN ('SC', 'SP') AND X.status_id = 'A' LIMIT 1
+) as Spouse, A.c_mother as Mother,
+CASE WHEN A.c_marital = 'S' THEN '/' ELSE '' END as Unmarried, CASE WHEN A.c_marital = 'M' THEN '/' ELSE '' END as Married,
+'' as Separated, '' as Widowed, '' as Divorce,
+(
+	SELECT (CASE WHEN x.dependent_no > 0 THEN x.dependent_no WHEN COALESCE(x.dependent_no::CHAR(1), '') = '' THEN 0 ELSE x.dependent_no END)::text
+	FROM rf_entity x
+	WHERE x.entity_id = B.entity_id AND x.status_id = 'A'
+) as NoChildren,
+CASE WHEN A.c_gender = 'F' THEN '/' ELSE '' END as Female,
+CASE WHEN A.c_gender = 'M' THEN '/' ELSE '' END as Male,
+(
+SELECT CASE WHEN length(id_desc)::INT > 24::INT THEN Y.id_alias ELSE Y.id_desc END AS id_alias
+FROM rf_entity_submitted_id X
+INNER JOIN mf_client_valid_id Y ON X.id_type::INTEGER = Y.id_no::INTEGER
+WHERE X.entity_id = B.entity_id AND (Y.id_no::INTEGER = 9 OR '' = '') AND X.default_id = true
+ORDER BY Y.id_no::INTEGER ASC LIMIT 1
+) as IDType,
+(
+SELECT X.id_no
+FROM rf_entity_submitted_id X
+INNER JOIN mf_client_valid_id Y ON X.id_type::INTEGER = Y.id_no::INTEGER
+WHERE X.entity_id = B.entity_id AND (Y.id_no::INTEGER = 9 OR '' = '') AND X.default_id = true
+ORDER BY Y.id_no::INTEGER ASC LIMIT 1
+) as IDNo, A.c_employer as Employer, A.c_job
+FROM view_rtd_enrollment('', '') A
+INNER JOIN rf_entity B ON A.c_last_name = B.last_name AND A.c_first_name = B.first_name AND A.c_middle_name = B.middle_name
+INNER JOIN mf_project C ON A.c_project = C.proj_name
+INNER JOIN mf_unit_info D ON C.proj_id = D.proj_id AND TRIM(A.c_unit) = TRIM(D.description)
+INNER JOIN rf_sold_unit E ON B.entity_id = E.entity_id AND C.proj_id = E.projcode AND D.pbl_id = E.pbl_id
+LEFT JOIN rf_rtd_enrolled F ON B.entity_id = F.c_entity_id AND C.proj_id = F.c_proj_id AND D.pbl_id = F.c_pbl_id AND E.seq_no::INT = F.c_seq_no::INT
+WHERE (COALESCE(F.batch_no, '') = $P{batch_no} OR $P{batch_no} = '') AND F.tobeprinted::INTEGER = 1::INTEGER
+ORDER BY A.c_last_name, A.c_first_name, A.c_middle_name]]>
+	</queryString>
+	<field name="c_last_name" class="java.lang.String"/>
+	<field name="c_first_name" class="java.lang.String"/>
+	<field name="c_middle_name" class="java.lang.String"/>
+	<field name="c_permaaddress" class="java.lang.String"/>
+	<field name="c_mobile" class="java.lang.String"/>
+	<field name="c_email" class="java.lang.String"/>
+	<field name="businessnumber" class="java.lang.String"/>
+	<field name="mm" class="java.lang.String"/>
+	<field name="dd" class="java.lang.String"/>
+	<field name="year" class="java.lang.String"/>
+	<field name="c_birthplace" class="java.lang.String"/>
+	<field name="c_tin" class="java.lang.String"/>
+	<field name="c_nationality" class="java.lang.String"/>
+	<field name="printedname" class="java.lang.String"/>
+	<field name="spouse" class="java.lang.String"/>
+	<field name="mother" class="java.lang.String"/>
+	<field name="unmarried" class="java.lang.String"/>
+	<field name="married" class="java.lang.String"/>
+	<field name="separated" class="java.lang.String"/>
+	<field name="widowed" class="java.lang.String"/>
+	<field name="divorce" class="java.lang.String"/>
+	<field name="nochildren" class="java.lang.String"/>
+	<field name="female" class="java.lang.String"/>
+	<field name="male" class="java.lang.String"/>
+	<field name="idtype" class="java.lang.String"/>
+	<field name="idno" class="java.lang.String"/>
+	<field name="employer" class="java.lang.String"/>
+	<field name="c_job" class="java.lang.String"/>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="776" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="390" y="178" width="154" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Tel. No. 534-2237; Fax No. 533-3155"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="428" y="303" width="136" height="22"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["CENQHOMES DEVELOPMENT CORPORATION"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="21" y="610" width="172" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_last_name} + ", " + $F{c_first_name} + " " + $F{c_middle_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="21" y="100" width="132" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_last_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="172" y="100" width="105" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_first_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="305" y="101" width="118" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_middle_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="21" y="125" width="534" height="14"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_permaaddress}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="77" y="178" width="126" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_mobile}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="228" y="178" width="115" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_email}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="24" y="246" width="27" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{mm}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="77" y="246" width="31" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{dd}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="141" y="246" width="62" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{year}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="202" y="246" width="103" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_birthplace}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="322" y="246" width="96" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_tin}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="449" y="246" width="105" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_nationality}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="192" y="670" width="371" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{spouse}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="192" y="695" width="235" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{mother}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="449" y="695" width="61" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nochildren}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="21" y="151" width="534" height="14"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_permaaddress}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="23" y="746" width="73" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{idtype}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="104" y="746" width="164" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{idno}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="23" y="276" width="404" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["N/A"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="427" y="276" width="127" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["N/A"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="428" y="404" width="127" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["BUYER"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

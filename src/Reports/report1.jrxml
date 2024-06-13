@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SQL" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["SELECT a.award_date, a.contract_no, b.entity_name, b.address, b.contactperson, b.position, c.proj_name, d._count,\n" + "LOWER(TRIM(split_part(cash_words (d._count::VARCHAR::MONEY), 'dollar', 1))) AS  _word, a.orig_contract_price,\n" + "UPPER(TRIM(REPLACE(cash_words(a.orig_contract_price::VARCHAR::MONEY), '  dollars', ''))) AS contract_price_word,\n" + "a.dp_percentage, LOWER(TRIM(split_part(cash_words (a.dp_percentage::VARCHAR::MONEY), 'dollar', 1)))\n" + "FROM co_ntp_header a\n" + "LEFT JOIN mf_entity b ON b.entity_id = a.entity_id\n" + "LEFT JOIN mf_project c ON c.proj_id = a.proj_id\n" + "LEFT JOIN (SELECT count(ntp_no) AS _count, ntp_no FROM co_ntp_detail WHERE ntp_no = '000087' GROUP BY ntp_no) d ON d.ntp_no = a.ntp_no \n" + "WHERE a.ntp_no = '000087'"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[EXECUTE $P{SQL}]]>
+	</queryString>
+	<variable name="SQL" class="java.lang.String">
+		<variableExpression><![CDATA["SELECT a.award_date, a.contract_no, b.entity_name, b.address, b.contactperson, b.position, c.proj_name, d._count,\n" +
+"LOWER(TRIM(split_part(cash_words (d._count::VARCHAR::MONEY), 'dollar', 1))) AS  _word, a.orig_contract_price,\n" +
+"UPPER(TRIM(REPLACE(cash_words(a.orig_contract_price::VARCHAR::MONEY), '  dollars', ''))) AS contract_price_word,\n" +
+"a.dp_percentage, LOWER(TRIM(split_part(cash_words (a.dp_percentage::VARCHAR::MONEY), 'dollar', 1)))\n" +
+"FROM co_ntp_header a\n" +
+"LEFT JOIN mf_entity b ON b.entity_id = a.entity_id\n" +
+"LEFT JOIN mf_project c ON c.proj_id = a.proj_id\n" +
+"LEFT JOIN (SELECT count(ntp_no) AS _count, ntp_no FROM co_ntp_detail WHERE ntp_no = '000087' GROUP BY ntp_no) d ON d.ntp_no = a.ntp_no \n" +
+"WHERE a.ntp_no = '000087'"]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptSOA_toFullSettle" pageWidth="750" pageHeight="50" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="750" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.1435888100000025"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="entity_id" class="java.lang.String"/>
+	<parameter name="proj_id" class="java.lang.String"/>
+	<parameter name="pbl_id" class="java.lang.String"/>
+	<parameter name="seq_no" class="java.lang.Integer"/>
+	<parameter name="date_cut_off" class="java.sql.Timestamp"/>
+	<parameter name="img_hand_pointer" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="pmt_type" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT UPPER(b.part_desc) as part_desc, a.*
+FROM view_to_fullsettled_itsreal(
+	$P{entity_id},
+	$P{proj_id},
+	$P{pbl_id},
+	$P{seq_no},
+	$P{date_cut_off}::DATE,
+	$P{pmt_type}) a
+LEFT JOIN mf_client_ledger_part b on b.part_id = a.c_part_id;]]>
+	</queryString>
+	<field name="part_desc" class="java.lang.String"/>
+	<field name="c_part_id" class="java.lang.String"/>
+	<field name="c_part_desc" class="java.lang.String"/>
+	<field name="c_scheddate" class="java.sql.Timestamp"/>
+	<field name="c_amount" class="java.math.BigDecimal"/>
+	<field name="c_proc_fee" class="java.math.BigDecimal"/>
+	<field name="c_rpt_amt" class="java.math.BigDecimal"/>
+	<field name="c_mri" class="java.math.BigDecimal"/>
+	<field name="c_fire" class="java.math.BigDecimal"/>
+	<field name="c_maf" class="java.math.BigDecimal"/>
+	<field name="c_vat" class="java.math.BigDecimal"/>
+	<field name="c_soi" class="java.math.BigDecimal"/>
+	<field name="c_sop" class="java.math.BigDecimal"/>
+	<field name="c_dpp" class="java.math.BigDecimal"/>
+	<field name="c_cbp" class="java.math.BigDecimal"/>
+	<field name="c_adjustment" class="java.math.BigDecimal"/>
+	<field name="c_interest" class="java.math.BigDecimal"/>
+	<field name="c_accrued_interest" class="java.math.BigDecimal"/>
+	<field name="c_principal" class="java.math.BigDecimal"/>
+	<field name="c_balance" class="java.math.BigDecimal"/>
+	<field name="c_date_paid" class="java.sql.Date"/>
+	<field name="c_script" class="java.lang.String"/>
+	<variable name="totalOtherFees" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_proc_fee}]]></variableExpression>
+	</variable>
+	<variable name="totalMRI" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_mri}]]></variableExpression>
+	</variable>
+	<variable name="totalFire" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_fire}]]></variableExpression>
+	</variable>
+	<variable name="totalMAF" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_maf}]]></variableExpression>
+	</variable>
+	<variable name="totalVAT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_vat}]]></variableExpression>
+	</variable>
+	<variable name="totalSOI" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_soi}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal("0.00")]]></initialValueExpression>
+	</variable>
+	<variable name="totalSOP" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_sop}]]></variableExpression>
+	</variable>
+	<variable name="totalPenalty" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_dpp}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="totalInterest" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_interest}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal("0.00")]]></initialValueExpression>
+	</variable>
+	<variable name="totalPrincipal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_principal}]]></variableExpression>
+	</variable>
+	<variable name="totalAmtToFullSettle" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{totalOtherFees}.add($V{totalMRI}).add($V{totalFire}).add($V{totalMAF}).add($V{totalVAT}).add($V{totalSOI}).add($V{totalSOP}).add($V{totalPenalty}).add($V{totalInterest}).add($V{totalPrincipal})]]></variableExpression>
+	</variable>
+	<group name="grpTotalFooter">
+		<groupFooter>
+			<band height="20">
+				<staticText>
+					<reportElement x="112" y="0" width="56" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<text><![CDATA[Totals =>]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement x="200" y="0" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalOtherFees}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="250" y="0" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalMRI}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="300" y="1" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalFire}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="350" y="0" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalMAF}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="400" y="1" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalVAT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="450" y="1" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalSOI}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="500" y="0" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalSOP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="650" y="1" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalPrincipal}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="0" width="750" height="1"/>
+				</line>
+				<line>
+					<reportElement x="0" y="9" width="750" height="1"/>
+				</line>
+				<staticText>
+					<reportElement x="550" y="10" width="96" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Amount to Full Settle:]]></text>
+				</staticText>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="673" y="10" width="63" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalAmtToFullSettle}]]></textFieldExpression>
+				</textField>
+				<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" isUsingCache="true">
+					<reportElement x="648" y="10" width="25" height="10"/>
+					<imageExpression class="java.io.InputStream"><![CDATA[$P{img_hand_pointer}]]></imageExpression>
+				</image>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="600" y="1" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalInterest}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="550" y="1" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalPenalty}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<columnHeader>
+		<band height="30">
+			<staticText>
+				<reportElement x="16" y="0" width="56" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[Particular]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="16" width="750" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="29" width="750" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="113" y="0" width="56" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[Payment for]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="0" width="50" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[Other Fees]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="0" width="50" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[MRI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="0" width="50" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[Fire]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="350" y="0" width="50" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[MAF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="0" width="50" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[VAT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="0" width="50" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[SOI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="0" width="50" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[SOP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="0" width="50" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[RES/DP Penalty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="600" y="0" width="50" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[Interest]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="650" y="0" width="50" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[Pri/Amt]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="700" y="0" width="50" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[Particular Balance]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Transparent" x="16" y="17" width="233" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["To Full Settle on:" + new SimpleDateFormat("MMMMMM dd, yyyy").format($P{date_cut_off}) + "(for " +$P{pmt_type}+")"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField>
+				<reportElement x="16" y="0" width="97" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{part_desc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMM dd, yyyy">
+				<reportElement x="113" y="0" width="56" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{c_scheddate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="200" y="0" width="50" height="10">
+					<printWhenExpression><![CDATA[$F{c_proc_fee}.equals(new BigDecimal("0.00")) == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_proc_fee}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="300" y="0" width="50" height="10" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{c_fire}.equals(new BigDecimal("0.00")) == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_fire}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="350" y="0" width="50" height="10" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{c_maf}.equals(new BigDecimal("0.00")) == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_maf}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="400" y="0" width="50" height="10" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{c_vat}.equals(new BigDecimal("0.00")) == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_vat}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="450" y="0" width="50" height="10" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{c_soi}.equals(new BigDecimal("0.00")) == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_soi}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="500" y="0" width="50" height="10" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{c_sop}.equals(new BigDecimal("0.00")) == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_sop}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="650" y="0" width="50" height="10" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{c_principal}.equals(new BigDecimal("0.00")) == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_principal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="700" y="0" width="50" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_balance}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="600" y="0" width="50" height="10" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{c_interest}.equals(new BigDecimal("0.00")) == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_interest}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Auto" pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="250" y="0" width="50" height="10" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{c_mri}.equals(new BigDecimal("0.00")) == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_mri}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="550" y="0" width="50" height="10" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[$F{c_dpp}.equals(new BigDecimal("0.00")) == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_dpp}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

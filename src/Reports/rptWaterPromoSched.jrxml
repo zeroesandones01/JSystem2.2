@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptWaterPromoSched" pageWidth="612" pageHeight="251" orientation="Landscape" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.1"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="entity_id" class="java.lang.String"/>
+	<parameter name="proj_id" class="java.lang.String"/>
+	<parameter name="pbl_id" class="java.lang.String"/>
+	<parameter name="seq_no" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select c.company_name, b.proj_name,
+get_client_name(a.entity_id), get_merge_unit_desc_v3(a.entity_id, a.proj_id, a.pbl_id, a.seq_no),
+a.scheddate::DATE, a.pmt_due, d.water_due
+from rf_water_promo_sched a
+LEFT JOIN mf_project b on b.proj_id = a.proj_id
+LEFT JOIN mf_company c on c.co_id = b.co_id
+LEFT JOIN rf_water_promo d on d.entity_id = a.entity_id and d.proj_id = a.proj_id and d.pbl_id = a.pbl_id and d.seq_no = a.seq_no
+where a.entity_id = $P{entity_id}
+and a.proj_id = $P{proj_id}
+and a.pbl_id = $P{pbl_id}
+and a.seq_no = $P{seq_no}::INT
+and a.status_id = 'A'
+order by a.scheddate;]]>
+	</queryString>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="get_client_name" class="java.lang.String"/>
+	<field name="get_merge_unit_desc_v3" class="java.lang.String"/>
+	<field name="scheddate" class="java.sql.Date"/>
+	<field name="pmt_due" class="java.math.BigDecimal"/>
+	<field name="water_due" class="java.math.BigDecimal"/>
+	<title>
+		<band height="113" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="20" width="572" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUMMARY OF STATEMENT OF ACCOUNT]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="0" width="572" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="45" width="70" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Client Name:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="70" y="60" width="331" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("[ {0} ]",$F{proj_name})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="70" y="45" width="331" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("[ {0} ]", $F{get_client_name})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="70" y="75" width="331" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("[ {0} ]", $F{get_merge_unit_desc_v3})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="75" width="70" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Unit:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="60" width="70" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Project:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="24">
+			<staticText>
+				<reportElement mode="Opaque" x="134" y="0" width="141" height="24" backcolor="#BEE9D6"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[Payment Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="275" y="0" width="141" height="24" backcolor="#BEE9D6"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[Amt to Pay]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="false">
+				<reportElement mode="Opaque" x="134" y="0" width="141" height="21" backcolor="#F4ECEC"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{scheddate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="275" y="0" width="141" height="21" backcolor="#F4ECEC"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+					<paragraph spacingAfter="5"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{pmt_due}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

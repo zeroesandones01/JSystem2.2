@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptROP_RefundAllocation" pageWidth="270" pageHeight="752" columnWidth="270" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="3.2210200000000015"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="description" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="unit_id" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="seq_no" class="java.lang.Integer" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select (select coalesce(sum(comm_amt), 0.00)
+        from cm_schedule_dl
+        where tran_type = 'AA'
+        and pbl_id = getinteger($P{unit_id})::VARCHAR and seq_no = $P{seq_no} and status = 'R') as "Commission",
+       (select coalesce(sum(comm_amt), 0.0)
+        from cm_schedule_dl
+        where tran_type = 'BB'
+        and pbl_id = getinteger($P{unit_id})::VARCHAR and seq_no = $P{seq_no} and status = 'R') as "Incentives";]]>
+	</queryString>
+	<field name="Commission" class="java.math.BigDecimal"/>
+	<field name="Incentives" class="java.math.BigDecimal"/>
+	<variable name="total_expense" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{Commission} == null ? new BigDecimal("0.00"):$F{Commission}
+.add($F{Incentives} == null ? new BigDecimal("0.00"):$F{Incentives})]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="21" splitType="Stretch"/>
+	</detail>
+</jasperReport>

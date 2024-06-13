@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptPaidOut_summary_subtable" pageWidth="504" pageHeight="792" columnWidth="448" leftMargin="28" rightMargin="28" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="acct_id" class="java.lang.String"/>
+	<parameter name="payee_id" class="java.lang.String"/>
+	<parameter name="excl_payee_id" class="java.lang.String"/>
+	<parameter name="date_from" class="java.util.Date"/>
+	<parameter name="date_to" class="java.util.Date"/>
+	<parameter name="pymnt_type" class="java.lang.String"/>
+	<parameter name="co_id" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+
+ax.acct_id,
+--(case when a.acct_id = '01-01-01-002' then 'CASH ON HAND DISBURSEMENT' else a.bank_name end) bank_name,
+(case when ax.acct_id = '01-01-01-002' then 'CASH ON HAND DISBURSEMENT'
+	else (select
+	c.bank_name
+	from mf_bank_account a
+	left join mf_bank_branch b on a.bank_branch_id = b.bank_branch_id
+	left join mf_bank c on b.bank_id = c.bank_id
+	where a.acct_id = ax.acct_id and a.status_id != 'I'
+          limit 1 ) end)
+as bank_name,
+--(case when a.acct_id = '01-01-01-002' then '-' else a.bank_acct_no end) as bank_acct_no,
+(case when ax.acct_id = '01-01-01-002' then '-'
+	else (select
+	a.bank_acct_no
+	from mf_bank_account a
+	left join mf_bank_branch b on a.bank_branch_id = b.bank_branch_id
+	left join mf_bank c on b.bank_id = c.bank_id
+	where a.acct_id = ax.acct_id
+	and a.status_id != 'I'
+          limit 1) end)
+as bank_acct_no,
+sum(ax.amount) as amount
+
+from (
+select
+
+(select x.acct_id from rf_cv_detail x where x.cv_no = a.cv_no and x.co_id = a.co_id and bal_side = 'C' and x.acct_id not in ( '00301004', '', '03-01-01-001') limit 1) as acct_id,
+to_char(b.date_due,'MM-dd-yyyy') as check_date,
+b.check_no,
+a.cv_no,
+to_char(a.cv_date,'MM-dd-yyyy') as dv_date,
+to_char(a.date_paid,'MM-dd-yyyy') as date_paid,
+trim(c.entity_name) as payee,
+--b.chk_amt
+(case when b.chk_amt is null then (select tran_amt from rf_cv_detail where cv_no = a.cv_no and bal_side = 'C' and status_id = 'A' and co_id = $P{co_id}) else b.chk_amt end) as amount
+from rf_cv_header a
+left join (select * from rf_check where status_id = 'A') b on a.cv_no = b.cv_no and a.co_id = b.co_id
+left join rf_entity c on coalesce(b.entity_id, a.entity_id1) = c.entity_id
+
+where
+(case when $P{pymnt_type} = '' then true else a.pay_type_id = $P{pymnt_type} end)
+and (case when $P{payee_id} = '' then a.entity_id1 is not null else coalesce(b.entity_id, a.entity_id1) = $P{payee_id} end)
+and (case when $P{excl_payee_id} = '' then true else coalesce(b.entity_id, a.entity_id1) != $P{excl_payee_id} end)
+and a.status_id = 'P'
+and a.date_paid >= $P{date_from}::date
+and a.date_paid <= $P{date_to}::date
+and a.proc_id in (5,6,7,14,15,16,17)
+and a.co_id = $P{co_id}
+--and not exists (select * from rf_cv_detail where cv_no = a.cv_no and acct_id in ( '00301004', '', '03-01-01-001') and bal_side = 'C' and status_id = 'A')
+and exists (select * from rf_cv_detail where cv_no = a.cv_no and (case when $P{acct_id} = '' then true else acct_id = $P{acct_id} end) and bal_side = 'C' and status_id = 'A')
+
+) ax
+
+group by ax.acct_id
+--a.bank_name,
+--a.bank_acct_no]]>
+	</queryString>
+	<field name="acct_id" class="java.lang.String"/>
+	<field name="bank_name" class="java.lang.String"/>
+	<field name="bank_acct_no" class="java.lang.String"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="total_amount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="8"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="29" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="16" width="63" height="13" backcolor="#CCFFCC"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACCOUNT ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="197" y="16" width="153" height="13" backcolor="#CCFFCC"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BANK ACCOUNT No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="350" y="16" width="70" height="13" backcolor="#CCFFCC"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AMOUNT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="63" y="16" width="134" height="13" backcolor="#CCFFCC"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BANK NAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="3" width="420" height="26" backcolor="#CCCCFF"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="3" width="420" height="13" backcolor="#CCFFCC"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUMMARY]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="63" height="13"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acct_id}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="197" y="0" width="153" height="13"/>
+				<box leftPadding="3" rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_acct_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="350" y="0" width="70" height="13"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="63" y="0" width="134" height="13"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="13"/>
+	</columnFooter>
+	<summary>
+		<band height="27">
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="350" height="13"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" TOTAL"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="350" y="0" width="70" height="13"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_amount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptARReceipt_preview" pageWidth="330" pageHeight="792" columnWidth="330" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.610510000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="client_seqno" class="java.lang.String"/>
+	<parameter name="ar_no" class="java.lang.String"/>
+	<parameter name="credit_ar_no" class="java.lang.String"/>
+	<parameter name="recpt_type" class="java.lang.String"/>
+	<parameter name="credited_amount" class="java.lang.Double"/>
+	<queryString>
+		<![CDATA[select (case when credit_ar_no != '' and $P{client_seqno} NOT IN ('010211129024', '010211129018', '010211129034', '010211129063', '010211129078', '010211129002') then concat('Credited Payment from', ' ',
+receipt_type, ' ', credit_ar_no, '; ', a.credited_amt::varchar, '; ') else '' end) as payment_remark, a.credited_amt
+from
+(
+SELECT (case when x.receipt_type = '01' then 'OR No.' when x.receipt_type = '03' then 'AR No.' else 'PR No. ' end) as receipt_type,
+coalesce(x.ar_no, '') as credit_ar_no, x.amount as credited_amt
+from rf_pay_detail x
+where client_seqno = $P{client_seqno}
+and (receipt_no = $P{ar_no} or ar_no = $P{ar_no})
+and check_date is null
+) a]]>
+	</queryString>
+	<field name="payment_remark" class="java.lang.String"/>
+	<field name="credited_amt" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField pattern="#,##0.00;(#,##0.00)">
+				<reportElement x="259" y="0" width="52" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{credited_amt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)">
+				<reportElement x="0" y="0" width="259" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payment_remark}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

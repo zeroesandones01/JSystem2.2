@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptRefundofPayment" pageWidth="541" pageHeight="792" columnWidth="541" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.366026910730141"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="rplf_no" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="refund_amount" class="java.math.BigDecimal" isForPrompting="false"/>
+	<parameter name="description" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="SUBREPORT_TotalExpenses" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sum_payments_made" class="java.math.BigDecimal" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$V{total_expense}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="unit_id" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="seq_no" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="request_no" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="deduction" class="java.math.BigDecimal" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT '';]]>
+	</queryString>
+	<field name="datepaid" class="java.util.Date"/>
+	<field name="particulars" class="java.lang.String"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="receipt_no" class="java.lang.String"/>
+	<variable name="sum_payments_made" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<variable name="variance" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$P{sum_payments_made} == null ?
+new BigDecimal("0.00"):$P{sum_payments_made}
+.subtract($V{net_amt_refund} == null ?
+new BigDecimal("0.00"):$V{net_amt_refund})]]></variableExpression>
+	</variable>
+	<variable name="total_expense" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{total_expense}]]></variableExpression>
+	</variable>
+	<variable name="net_amt_refund" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$P{refund_amount} == null ? new BigDecimal("0.00"):$P{refund_amount}
+.add($V{total_expense} == null ? new BigDecimal("0.00"):$V{total_expense})]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="49" y="0" width="100" height="18"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{datepaid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="159" y="0" width="174" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{particulars}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="344" y="0" width="100" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="0" width="97" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{receipt_no}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement isPrintRepeatedValues="false" mode="Transparent" x="0" y="0" width="541" height="18"/>
+			</rectangle>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="28">
+			<textField pattern="#,##0.00">
+				<reportElement x="312" y="6" width="169" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_payments_made}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="120" y="6" width="158" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Total Payments Made ---->]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="3" width="541" height="25"/>
+			</rectangle>
+		</band>
+	</columnFooter>
+</jasperReport>

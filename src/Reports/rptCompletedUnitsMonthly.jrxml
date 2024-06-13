@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCompletedUnitsMonthly" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5394743546921208"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="29"/>
+	<parameter name="logo" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="co_name" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["CENQHOMES DEVELOPMENT CORPORATION"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="proj_id" class="java.lang.String"/>
+	<parameter name="project" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="user_name" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="company_alias" class="java.lang.String"/>
+	<parameter name="co_id" class="java.lang.String"/>
+	<parameter name="phase_no" class="java.lang.String"/>
+	<parameter name="date_fr" class="java.lang.String"/>
+	<parameter name="date_to" class="java.lang.String"/>
+	<parameter name="subrptPMDTaggedCompletedUnitsPerPhase" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select * from
+(select b.pbl_id, to_char(c.status_date,'MONTH yyyy') as month_head, a.description, a.phase, a.block, a.lot, to_char(c.status_date,'MM-dd-YYYY') as completion_date, b.percent_accomplish, b.remarks
+	from mf_unit_info a
+	left join co_ntp_accomplishment b on a.pbl_id = b.pbl_id
+	LEFT JOIN rf_unit_status c on a.pbl_id = c.pbl_id
+	where b.percent_accomplish = 100
+	and c.unitstatus_id = '02'
+	and c.status_date between $P{date_fr}::date and $P{date_to}::date
+	and b.status_id = 'A'
+	AND c.status_id = 'A'
+	order by a.phase, a.block::int, a.lot::int, c.status_date)x
+
+left join
+
+(select distinct on (y.phase_summary)* from(
+		Select E.phase as phase_summary, count (E.lot)::int as phase_count from
+		(select b.pbl_id, b.unitstatus_id, a.description, b.status_date, a.phase, a.block, a.lot, to_char(b.status_date,'MM-dd-YYYY') as completion_date
+		from mf_unit_info a
+		left join rf_unit_status b on a.pbl_id = b.pbl_id
+		where (case when $P{phase_no} = '' then a.phase in ('1','2','3','4-A', '4') else (a.phase = $P{phase_no} or $P{phase_no} = '')end)
+		and b.unitstatus_id = '02' and b.status_date between $P{date_fr}::date and $P{date_to}::date
+AND b.status_id = 'A'
+		order by a.phase, a.block::int, a.lot::int, b.status_date)E
+		group by E.phase)y)y on x.phase = y.phase_summary
+where (x.phase= $P{phase_no} or $P{phase_no} = '');]]>
+	</queryString>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="month_head" class="java.lang.String"/>
+	<field name="description" class="java.lang.String"/>
+	<field name="phase" class="java.lang.String"/>
+	<field name="block" class="java.lang.String"/>
+	<field name="lot" class="java.lang.String"/>
+	<field name="completion_date" class="java.lang.String"/>
+	<field name="percent_accomplish" class="java.lang.Integer"/>
+	<field name="remarks" class="java.lang.String"/>
+	<field name="phase_summary" class="java.lang.String"/>
+	<field name="phase_count" class="java.lang.Integer"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<group name="grpTotal">
+		<groupFooter>
+			<band height="74">
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="70" y="1" width="56" height="14" backcolor="#F5C2C2"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+						<paragraph spacingAfter="5"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="0" width="572" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="1" width="70" height="14" backcolor="#F5C2C2"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Units]]></text>
+				</staticText>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="126" y="1" width="446" height="14" backcolor="#F5C2C2"/>
+					<box leftPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+						<paragraph spacingAfter="5"/>
+					</textElement>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="5" y="42" width="70" height="11" backcolor="#BEE9D6"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[No. of Units/Phase]]></text>
+				</staticText>
+				<subreport>
+					<reportElement x="0" y="54" width="287" height="20" isPrintWhenDetailOverflows="true"/>
+					<subreportParameter name="logo">
+						<subreportParameterExpression><![CDATA[$P{logo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="_dbase">
+						<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="company_alias">
+						<subreportParameterExpression><![CDATA[$P{company_alias}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="co_id">
+						<subreportParameterExpression><![CDATA[$P{co_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="proj_id">
+						<subreportParameterExpression><![CDATA[$P{proj_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="date_fr">
+						<subreportParameterExpression><![CDATA[$P{date_fr}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="co_name">
+						<subreportParameterExpression><![CDATA[$P{co_name}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="phase_no">
+						<subreportParameterExpression><![CDATA[$P{phase_no}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="user_name">
+						<subreportParameterExpression><![CDATA[$P{user_name}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="project">
+						<subreportParameterExpression><![CDATA[$P{project}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="subrptPMDTaggedCompletedUnitsPerPhase">
+						<subreportParameterExpression><![CDATA[$P{subrptPMDTaggedCompletedUnitsPerPhase}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="_server">
+						<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="date_to">
+						<subreportParameterExpression><![CDATA[$P{date_to}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression class="java.io.InputStream"><![CDATA[$P{subrptPMDTaggedCompletedUnitsPerPhase}]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="55" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="572" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{co_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="37" width="262" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["As of: " + new SimpleDateFormat("EEE MMM dd, yyyy hh:mm a").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Auto">
+				<reportElement positionType="Float" x="488" y="37" width="84" height="15"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + ($V{CURRENT_PAGE_NUMBER} == null ? $V{PAGE_NUMBER}:$V{CURRENT_PAGE_NUMBER}) + " of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="54" width="572" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement positionType="FixRelativeToBottom" mode="Opaque" x="0" y="20" width="572" height="15" forecolor="#FBF1F1" backcolor="#404040"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["COMPLETED UNITS (100% PMD TAGGED) AS OF  "+$F{month_head}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="5" width="70" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Company:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="20" width="70" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Project:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="70" y="5" width="299" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("[ {0} ]", $P{co_name})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="70" y="20" width="229" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("[ {0} ]", $P{project})]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="78" width="572" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="54" width="152" height="24" backcolor="#BEE9D6"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[UNIT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="152" y="54" width="135" height="11" backcolor="#BEE9D6"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[PH-BK-LT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="403" y="54" width="169" height="24" backcolor="#BEE9D6"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[REMARKS]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="152" y="65" width="45" height="13"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["PHASE"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="197" y="65" width="45" height="13"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["BLOCK"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="242" y="65" width="45" height="13"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["LOT"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="287" y="54" width="116" height="24" backcolor="#BEE9D6"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<text><![CDATA[100% ACCOMPLISHMENT DATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="299" y="20" width="70" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Phase:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="369" y="20" width="203" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("[ {0} ]", $P{phase_no})]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="false">
+				<reportElement mode="Opaque" x="0" y="0" width="152" height="14" backcolor="#F4ECEC"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="403" y="1" width="169" height="14" backcolor="#F4ECEC"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+					<paragraph spacingAfter="5"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{remarks}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="152" y="0" width="45" height="14" backcolor="#F4ECEC"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{phase}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="197" y="0" width="45" height="14" backcolor="#F4ECEC"/>
+				<box leftPadding="0">
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{block}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="242" y="0" width="45" height="14" backcolor="#F4ECEC"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{lot}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="287" y="0" width="116" height="14" backcolor="#F4ECEC"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{completion_date}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="12">
+			<textField>
+				<reportElement x="0" y="0" width="403" height="12"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("<font face=\"Dot Font\">{0}</font>/{1}", $P{company_alias}, $P{user_name}.toUpperCase())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="33">
+			<staticText>
+				<reportElement x="403" y="0" width="168" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Prepared by:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="403" y="20" width="168" height="12"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{user_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="18" width="287" height="14"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("<font face=\"Dot Font\">{0}</font>/{1}", $P{company_alias}, $P{user_name}.toUpperCase())]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

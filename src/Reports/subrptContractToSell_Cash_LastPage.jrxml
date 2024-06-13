@@ -1,0 +1,747 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptAddendumToCTS_HDMF_LastPage" pageWidth="612" pageHeight="860" whenNoDataType="BlankPage" columnWidth="526" leftMargin="36" rightMargin="50" topMargin="20" bottomMargin="0">
+	<property name="ireport.zoom" value="1.1000000000000005"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="288"/>
+	<parameter name="client_name" class="java.lang.String"/>
+	<parameter name="client_id_presented" class="java.lang.String"/>
+	<parameter name="client_id_no" class="java.lang.String"/>
+	<parameter name="client_tin_no" class="java.lang.String"/>
+	<parameter name="signatory_name" class="java.lang.String"/>
+	<parameter name="signatory_id_presented" class="java.lang.String"/>
+	<parameter name="signatory_id_no" class="java.lang.String"/>
+	<parameter name="signatory_tin_no" class="java.lang.String"/>
+	<parameter name="entity_id" class="java.lang.String"/>
+	<parameter name="proj_id" class="java.lang.String"/>
+	<parameter name="pbl_id" class="java.lang.String"/>
+	<parameter name="seq_no" class="java.lang.Integer"/>
+	<parameter name="coapplicant" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT --sp_center_format(30, FORMAT('%s %s', TRIM(c.first_name), TRIM(c.last_name))) as client_name,
+
+sp_center_format(0, TRIM(f.company_name)) as company_name,
+f.company_address,
+sp_center_format(21, TRIM(d.proj_name)) as proj_name,
+d.address as proj_address,
+FORMAT('%s %s', d.proj_name, b.description) as proj_pbl,
+sp_center_format(0, TRIM('JOHNNY LIWANAG CORPUZ')) as sir_johnny,
+case when c.entity_kind = 'C' THEN c.entity_name else
+sp_center_format(52, FORMAT('%s %s. %s', TRIM(c.first_name), substr(TRIM(c.middle_name), 1, 1), TRIM(c.last_name))) end as client_name,
+
+/*sp_center_format(58, COALESCE(NULLIF(FORMAT('%s %s', TRIM(g.connection_first_name), TRIM(g.connection_last_name)), ' '), 'N/A')) as client_spouse,*/
+case when c.entity_kind = 'C' THEN 'N/A' ELSE
+sp_center_format(52, FORMAT('%s %s. %s', TRIM(g.connection_first_name), substr(TRIM(g.connection_middle_name), 1, 1), TRIM(g.connection_last_name))) END as client_spouse,
+
+
+sp_center_format(135, COALESCE(get_client_address(a.entity_id), 'N/A')) as client_address,
+sp_center_format(70, COALESCE(NULLIF(TRIM(FORMAT('%s %s', TRIM(k.connection_first_name), TRIM(k.connection_last_name))), ''), 'N/A')) as coapplicant,
+
+sp_center_format(58, COALESCE(NULLIF(TRIM(FORMAT('%s %s', TRIM(m.connection_first_name), TRIM(m.connection_last_name))), ''), 'N/A')) as coapplicant_spouse,
+sp_center_format(68, COALESCE(k.connection_address, 'N/A')) as coapplicant_address,
+
+FORMAT('%s AND XX / 100', to_words(i.amount)) as tr_words,
+i.amount as temporary_reservation,
+FORMAT('%s AND XX / 100', to_words(j.amount)) as or_words,
+j.amount as official_reservation,
+sp_center_format(3 ,b.phase)as phase,
+b.block, b.lot, b.lotarea, e.model_desc, a.sellingprice, o.client_id_no, o.client_id_presented, o.client_tin_no, o.signatory_name, o.signatory_id_presented, o.signatory_id_no, o.signatory_tin_no, o.signatory_position,
+get_acts_no(a.entity_id, a.projcode, a.pbl_id, a.seq_no) as acts_no,
+get_project_alias(a.projcode) as proj_alias,
+FORMAT('%s-%s', b.block, b.lot) as blk_lt,
+ROUND(b.floorarea::NUMERIC, 2) as floorarea,
+sp_center_format(60, to_words(p.gross_sprice)) as tcp_words,
+sp_center_format(100, TRIM(to_char(p.gross_sprice, '99,999,999D00'))) as tcp,
+--p.gross_sprice as tcp,
+sp_center_format(108, to_words(p.discount)) as discount_words,
+sp_center_format(105, TRIM(to_char(p.discount, '99,999,990D00'))) as discount,
+sp_center_format(108, to_words(COALESCE(p.vat, 0.00))) as vat_words,
+sp_center_format(105, TRIM(to_char(COALESCE(p.vat, 0.00), '99,999,990D00'))) as vat,
+sp_center_format(60, to_words(p.net_sprice)) as fcp_words,
+sp_center_format(100, TRIM(to_char(p.net_sprice, '99,999,990D00'))) as fcp,
+sp_center_format(56, to_words(q.dp+(q.dp_term*q.proc_fee))) as dp_outlay_words,
+sp_center_format(16, TRIM(to_char((q.dp+(q.dp_term*q.proc_fee)), '99,999,990D00'))) as dp_outlay,
+
+sp_center_format(15, trim(to_char(((q.dp/p.net_sprice)*100), '99,999,990D00'))) AS dp_rate,
+sp_center_format(65, to_words(q.loanable_amount)) as ob_words,
+sp_center_format(18, TRIM(to_char(q.loanable_amount, '99,999,990D00'))) as ob,
+
+
+sp_center_format(56, to_words(r.res_fee1 + r.res_fee2)) as res_fee_words,
+sp_center_format(20, trim(to_char( (r.res_fee1+r.res_fee2), '99,999,990DOO'))) AS res_fee,
+sp_center_format(45, to_words((q.dp_term*q.proc_fee))) as misc_fee_words,
+sp_center_format(16, TRIM(to_char((q.dp_term*q.proc_fee), '99,999,990DOO'))) as misc_fee
+
+
+FROM rf_sold_unit a
+LEFT JOIN mf_unit_info b ON b.proj_id = a.projcode and b.pbl_id = a.pbl_id
+LEFT JOIN rf_entity c ON c.entity_id = a.entity_id
+LEFT JOIN mf_project d ON d.proj_id = a.projcode
+LEFT JOIN mf_product_model e ON e.model_id = a.model_id
+LEFT JOIN mf_company f ON f.co_id = d.co_id
+
+--Spouse
+LEFT JOIN rf_entity_connect g ON g.entity_id = a.entity_id and g.connect_type = 'SP' AND g.status_id = 'A'
+
+LEFT JOIN mf_pay_scheme_detail i ON i.pmt_scheme_id  = a.pmt_scheme_id AND i.part_id = '012' AND i.part_sequence = 1
+LEFT JOIN mf_pay_scheme_detail j ON j.pmt_scheme_id  = a.pmt_scheme_id AND j.part_id = '012' AND j.part_sequence = 2
+
+--Co-Applicant
+LEFT JOIN rf_entity_connect k ON k.entity_id = a.entity_id AND k.connect_type = 'CO' AND k.status_id = 'A'
+
+--Spouse
+LEFT JOIN rf_entity_connect m ON m.entity_id = k.entity_id AND m.connect_type = 'SP' AND m.status_id = 'A'
+
+LEFT JOIN (SELECT * FROM view_acknowledgement_part($P{entity_id}, $P{proj_id}, $P{pbl_id}, $P{seq_no})) o ON o.entity_id = a.entity_id
+LEFT JOIN rf_client_price_history p on p.entity_id = a.entity_id and p.proj_id = a.projcode and p.pbl_id = a.pbl_id and p.seq_no = a.seq_no AND p.status_id = 'A'
+LEFT JOIN rf_pagibig_computation q on q.entity_id = a.entity_id and q.proj_id = a.projcode and q.pbl_id = a.pbl_id and q.seq_no = a.seq_no AND q.status_id = 'A'
+LEFT JOIN mf_product_model r on r.model_id = a.model_id
+
+WHERE a.entity_id = $P{entity_id}
+AND a.projcode = $P{proj_id}
+AND a.pbl_id = $P{pbl_id}
+AND a.seq_no = $P{seq_no};]]>
+	</queryString>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="company_address" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="proj_address" class="java.lang.String"/>
+	<field name="proj_pbl" class="java.lang.String"/>
+	<field name="sir_johnny" class="java.lang.String"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="client_spouse" class="java.lang.String"/>
+	<field name="client_address" class="java.lang.String"/>
+	<field name="coapplicant" class="java.lang.String"/>
+	<field name="coapplicant_spouse" class="java.lang.String"/>
+	<field name="coapplicant_address" class="java.lang.String"/>
+	<field name="tr_words" class="java.lang.String"/>
+	<field name="temporary_reservation" class="java.math.BigDecimal"/>
+	<field name="or_words" class="java.lang.String"/>
+	<field name="official_reservation" class="java.math.BigDecimal"/>
+	<field name="phase" class="java.lang.String"/>
+	<field name="block" class="java.lang.String"/>
+	<field name="lot" class="java.lang.String"/>
+	<field name="lotarea" class="java.math.BigDecimal"/>
+	<field name="model_desc" class="java.lang.String"/>
+	<field name="sellingprice" class="java.math.BigDecimal"/>
+	<field name="client_id_no" class="java.lang.String"/>
+	<field name="client_id_presented" class="java.lang.String"/>
+	<field name="client_tin_no" class="java.lang.String"/>
+	<field name="signatory_name" class="java.lang.String"/>
+	<field name="signatory_id_presented" class="java.lang.String"/>
+	<field name="signatory_id_no" class="java.lang.String"/>
+	<field name="signatory_tin_no" class="java.lang.String"/>
+	<field name="signatory_position" class="java.lang.String"/>
+	<field name="acts_no" class="java.lang.String"/>
+	<field name="proj_alias" class="java.lang.String"/>
+	<field name="blk_lt" class="java.lang.String"/>
+	<field name="floorarea" class="java.math.BigDecimal"/>
+	<field name="tcp_words" class="java.lang.String"/>
+	<field name="tcp" class="java.lang.String"/>
+	<field name="discount_words" class="java.lang.String"/>
+	<field name="discount" class="java.lang.String"/>
+	<field name="vat_words" class="java.lang.String"/>
+	<field name="vat" class="java.lang.String"/>
+	<field name="fcp_words" class="java.lang.String"/>
+	<field name="fcp" class="java.lang.String"/>
+	<field name="dp_outlay_words" class="java.lang.String"/>
+	<field name="dp_outlay" class="java.lang.String"/>
+	<field name="dp_rate" class="java.lang.String"/>
+	<field name="ob_words" class="java.lang.String"/>
+	<field name="ob" class="java.lang.String"/>
+	<field name="res_fee_words" class="java.lang.String"/>
+	<field name="res_fee" class="java.lang.String"/>
+	<field name="misc_fee_words" class="java.lang.String"/>
+	<field name="misc_fee" class="java.lang.String"/>
+	<detail>
+		<band height="825" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="526" height="825"/>
+				<staticText>
+					<reportElement x="28" y="0" width="26" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[N.]]></text>
+				</staticText>
+				<textField>
+					<reportElement positionType="Float" x="54" y="0" width="472" height="77"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<b>WAIVER.</b>  This Contract shall not be considered as changed, modified, or altered by any act of tolerance on the "+
+"part of the SELLER unless such changes, modifications, or alterations are in writing and signed by both parties to "+
+"this Contract.  No failure or delay by the SELLER in exercising any right, power or privilege under this Contract shall "+
+"be construed as a waiver thereof nor shall any single or partial exercise thereof preclude any other or further "+
+"exercise thereof or any other right, power, or privilege.  Moreover, acceptance by the SELLER of any payments "+
+"made in a manner or at any time other than as herein provided shall not be construed as a variation, novation, or "+
+"waiver of the terms hereof."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="28" y="77" width="26" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[O.]]></text>
+				</staticText>
+				<textField>
+					<reportElement positionType="Float" x="54" y="77" width="472" height="33"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<b>COURT ACTION.</b>  Should the SELLER seek relief in court for the enforcement of this Contract or any of the "+
+"documents hereto attached, or incorporated herein by reference, the parties hereby agree to submit to the "+
+"jurisdiction of the proper court of Quezon City to the exclusion of any other venue."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="28" y="110" width="26" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[P.]]></text>
+				</staticText>
+				<textField>
+					<reportElement positionType="Float" x="54" y="110" width="472" height="22"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["In case of litigation, the BUYER hereby agrees to pay the SELLER all costs and expenses of litigation and "+
+"25% of whatever amounts may be due as and by way of attorney’s fees."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="28" y="132" width="26" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Q.]]></text>
+				</staticText>
+				<textField>
+					<reportElement positionType="Float" x="54" y="132" width="472" height="22"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<b>JOINT AND SOLIDARY.</b>  If there are two (2) or more BUYERS under this Contract, the obligations "+
+"mentioned herein are deemed contracted by the BUYERS in a joint and solidary manner."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="28" y="154" width="26" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[R.]]></text>
+				</staticText>
+				<textField>
+					<reportElement positionType="Float" x="54" y="154" width="472" height="33"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<b>TRANSLATION.</b> The BUYER represents that he/she fully understands the terms and conditions of this "+
+"Contract. The entire agreement has been read and/or translated to him/her in the language or dialect known to and "+
+"understood by him/her."]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="54" y="187" width="472" height="33"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<b>SEPARABILITY CLAUSE.</b>  In case one or more of the provisions in this Contract shall be declared invalid, illegal, "+
+"or unenforceable in any respect by a competent authority, the validity, legality and enforceability of the remaining "+
+"provisions shall not in any way be affected or impaired thereby."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="28" y="187" width="26" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[S.]]></text>
+				</staticText>
+				<textField>
+					<reportElement positionType="Float" x="54" y="220" width="472" height="90"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<b>ENTIRE CONTRACT.</b>  This Contract cancels and supersedes all previous agreements and understandings "+
+"between the parties herein.  Together with the documents executed in connection with this transaction and which "+
+"are specifically attached or incorporated herein by reference, this Contract constitutes the entire agreement "+
+"between the parties.\n\n"+
+"IN WITNESS WHEREOF, the parties have hereunto signed these presents in the place and on the date first above \n"+
+"written. \n"+
+"By:"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="28" y="220" width="26" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[T.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="66" y="341" width="150" height="11"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<text><![CDATA[SELLER]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="332" y="341" width="150" height="11"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<text><![CDATA[BUYER]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="306" y="362" width="150" height="11"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<text><![CDATA[With marital consent:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="332" y="397" width="150" height="11"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<text><![CDATA[SPOUSE OF BUYER]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="262" y="434" width="120" height="11"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<text><![CDATA[CO-BUYER]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="456" width="526" height="11"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SIGNED IN THE PRESENCE OF]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="54" y="479" width="150" height="11"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<text><![CDATA[(Signature over Printed Name)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="332" y="479" width="150" height="11"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<text><![CDATA[(Signature over Printed Name)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="503" width="526" height="11"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[A C K N O W L E D G M E N T]]></text>
+				</staticText>
+				<textField>
+					<reportElement positionType="Float" x="0" y="525" width="526" height="21"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["REPUBLIC OF THE PHILIPPINES) \n"+
+"_____________________________) S.S."]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="0" y="561" width="526" height="21"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["       BEFORE ME, a Notary Public, for and in the municipality of _____________, Metro Manila this _____ day of "+
+"_______________ personally appeared."]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="0" y="600" width="131" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["NAME"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="131" y="600" width="131" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["ID PRESENTED"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="262" y="600" width="131" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["ID NO."]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="393" y="600" width="133" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["TIN"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="0" y="615" width="131" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="6"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name}.trim()]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="131" y="615" width="131" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{client_id_presented}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="393" y="615" width="133" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{client_tin_no}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="0" y="630" width="131" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{signatory_name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="131" y="630" width="131" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{signatory_id_presented}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="262" y="630" width="131" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{signatory_id_no}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="393" y="630" width="133" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{signatory_tin_no}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="0" y="645" width="131" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="131" y="645" width="131" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="0" y="672" width="526" height="21"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["       Known to me to be same persons who executed the foregoing instrument and they acknowledged to me that the "+
+"same is their voluntary act and deed as well as that of the corporation herein represented."]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="0" y="704" width="526" height="21"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["           This instrument, consisting of 6 pages including the page on which this Acknowledgment is written have been "+
+"signed on each and every page thereof by the parties and their instrumental witnesses and sealed with my notarial seal."]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="0" y="735" width="526" height="11"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["           IN WITNESS WHEREOF, I have hereunto set my hand on the date and place above written."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="756" width="248" height="11"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NOTARY PUBLIC]]></text>
+				</staticText>
+				<textField>
+					<reportElement positionType="Float" x="0" y="778" width="526" height="47"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Doc. No.__________\n"+
+"Page No.__________\n"+
+"Book No._________\n"+
+"Series of 201_______"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="40" y="328" width="211" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["CENQHOMES DEVELOPMENT CORPORATION"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="306" y="328" width="203" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name}.trim()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="306" y="384" width="203" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{client_spouse}.trim()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="262" y="421" width="120" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{coapplicant}.trim()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="382" y="421" width="11" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["/"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="393" y="421" width="120" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{coapplicant_spouse}.trim()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="40" y="358" width="211" height="11"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Represented by:"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="397" width="211" height="22"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top" markup="styled">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<b>JOHNNY L. CORPUZ</b>\n" +
+"Vice-President"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="382" y="432" width="11" height="13"/>
+					<box>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["/"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="393" y="434" width="120" height="11"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<text><![CDATA[SPOUSE OF CO-BUYER]]></text>
+				</staticText>
+			</frame>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="262" y="615" width="131" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Dialog" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_id_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="262" y="645" width="131" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Dialog" size="9"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="393" y="645" width="133" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Dialog" size="9"/>
+				</textElement>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

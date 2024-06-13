@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_hdmf_cts_hqphlf161_v06_122023_page4" pageWidth="612" pageHeight="936" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.5937424601000036"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="1473"/>
+	<property name="ireport.background.image.properties" value="true,true,0.25,-8,-8,0,0,2566,4216"/>
+	<style name="style1"/>
+	<parameter name="01_clientID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="02_projID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="03_pblID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="04_seqno" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select a.*,
+(case when coalesce(a.technical_desc, '') = '' then '' else b.technical_desc end) as tech_desc,
+client_full_name || (case when coalesce(coborrower_full_name, '') != '' then ' / ' || coborrower_full_name else '' end) as borcobor,
+(
+	case
+		when (a.coborrower_full_name is not null or coalesce(a.coborrower_full_name, '') != '') and (coalesce(a.coborrower_full_name, '') = coalesce(a.client_spouse_full_name, ''))
+			then coalesce(a.client_spouse_full_name, '') || (case when coalesce(a.client_spouse_full_name, '') != '' and coalesce(c_coborrower_spouse_full_name, '') != '' then ' / ' || coalesce(a.client_full_name, '') else '' end)
+		when (a.coborrower_full_name is not null or coalesce(a.coborrower_full_name, '') != '') and (coalesce(a.coborrower_full_name, '') != coalesce(a.client_spouse_full_name, ''))
+			then coalesce(a.client_spouse_full_name, '') || (case when coalesce(a.client_spouse_full_name, '') != '' and coalesce(c_coborrower_spouse_full_name, '') != '' then ' / ' else '' end) || coalesce(c_coborrower_spouse_full_name, '')
+		else a.client_spouse_full_name
+	end
+) as final_spouse
+from view_hdmf_cts_flh240a_v06 ($P{01_clientID}, $P{02_projID}, $P{03_pblID}, $P{04_seqno}) a
+left join mf_unit_info b on a.proj_id = b.proj_id and a.pbl_id = b.pbl_id]]>
+	</queryString>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="company_address" class="java.lang.String"/>
+	<field name="vice_president" class="java.lang.String"/>
+	<field name="vendee" class="java.lang.String"/>
+	<field name="about_vendee_1" class="java.lang.String"/>
+	<field name="about_vendee_2" class="java.lang.String"/>
+	<field name="project_address_1" class="java.lang.String"/>
+	<field name="project_address_2" class="java.lang.String"/>
+	<field name="project_address_3" class="java.lang.String"/>
+	<field name="technical_desc" class="java.lang.String"/>
+	<field name="nsp" class="java.math.BigDecimal"/>
+	<field name="nsp_words" class="java.lang.String"/>
+	<field name="equity" class="java.math.BigDecimal"/>
+	<field name="equity_words" class="java.lang.String"/>
+	<field name="loanable_amount" class="java.math.BigDecimal"/>
+	<field name="loanable_words" class="java.lang.String"/>
+	<field name="ma" class="java.math.BigDecimal"/>
+	<field name="ma_words" class="java.lang.String"/>
+	<field name="int_rate" class="java.math.BigDecimal"/>
+	<field name="int_rate_words" class="java.lang.String"/>
+	<field name="term" class="java.lang.Integer"/>
+	<field name="spouse" class="java.lang.String"/>
+	<field name="proj_id" class="java.lang.String"/>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="client_tin" class="java.lang.String"/>
+	<field name="co_borrower_tin" class="java.lang.String"/>
+	<field name="vp_tin" class="java.lang.String"/>
+	<field name="client_spouse_full_name" class="java.lang.String"/>
+	<field name="client_full_name" class="java.lang.String"/>
+	<field name="tct_no" class="java.lang.String"/>
+	<field name="coborrower_full_name" class="java.lang.String"/>
+	<field name="other_lot" class="java.lang.String"/>
+	<field name="other_tct_no" class="java.lang.String"/>
+	<field name="c_coborrower_spouse_full_name" class="java.lang.String"/>
+	<field name="other_pbl_id" class="java.lang.String"/>
+	<field name="other_tech_desc" class="java.lang.String"/>
+	<field name="vatable" class="java.lang.Boolean"/>
+	<field name="co_app_spouse" class="java.lang.String"/>
+	<field name="co_app_connect_id" class="java.lang.String"/>
+	<field name="civil_status" class="java.lang.Boolean"/>
+	<field name="int_rate_affo" class="java.math.BigDecimal"/>
+	<field name="int_rate_words_affo" class="java.lang.String"/>
+	<field name="repricing" class="java.lang.String"/>
+	<field name="c_miscellaneous" class="java.math.BigDecimal"/>
+	<field name="c_miscellaneous_words" class="java.lang.String"/>
+	<field name="tech_desc" class="java.lang.String"/>
+	<field name="borcobor" class="java.lang.String"/>
+	<field name="final_spouse" class="java.lang.String"/>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="936" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="2" y="331" width="185" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["JOHNNY L. CORPUZ"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="36" y="269" width="185" height="28"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="26" y="358" width="62" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["TIN"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="111" y="359" width="62" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{vp_tin}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2" y="628" width="185" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["JOHNNY L. CORPUZ"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="13" y="640" width="220" height="12"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="38" y="46" width="188" height="28"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_spouse_full_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="235" y="46" width="188" height="28"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{civil_status})?$F{co_app_spouse}:(($F{coborrower_full_name}==null || $F{coborrower_full_name}.equals(""))?"":$F{client_full_name}))]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

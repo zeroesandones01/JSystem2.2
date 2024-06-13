@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptConformityToAssignmentOfReceivable" pageWidth="612" pageHeight="936" columnWidth="512" leftMargin="50" rightMargin="50" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="entity_id" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["0000000100"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="proj_id" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["015"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pbl_id" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["241"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="seq_no" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT * FROM view_conformity_to_assignment_of_receivable($P{entity_id}, $P{proj_id}, $P{pbl_id}, $P{seq_no})]]>
+	</queryString>
+	<field name="c_current_date" class="java.lang.String"/>
+	<field name="c_company_name" class="java.lang.String"/>
+	<field name="c_address" class="java.lang.String"/>
+	<field name="c_entity_name" class="java.lang.String"/>
+	<field name="c_coapplicant" class="java.lang.String"/>
+	<field name="c_model_desc" class="java.lang.String"/>
+	<field name="c_proj_name" class="java.lang.String"/>
+	<field name="c_phase" class="java.lang.String"/>
+	<field name="c_block" class="java.lang.String"/>
+	<field name="c_lot" class="java.lang.String"/>
+	<field name="c_buyertype" class="java.lang.String"/>
+	<field name="c_proj_name_phase" class="java.lang.String"/>
+	<variable name="bank_finance" class="java.lang.String" resetType="None">
+		<initialValueExpression><![CDATA["BANK FINANCING"]]></initialValueExpression>
+	</variable>
+	<variable name="hdmf" class="java.lang.String" resetType="None">
+		<initialValueExpression><![CDATA["HOME DEVELOPMENT MUTUAL FUND (PAG-IBIG)"]]></initialValueExpression>
+	</variable>
+	<variable name="buyertype" class="java.lang.String" resetType="None">
+		<variableExpression><![CDATA[$F{c_buyertype}.equals("05") ? "BANK FINANCING":"HOME DEVELOPMENT MUTUAL FUND (PAG-IBIG)"]]></variableExpression>
+	</variable>
+	<pageHeader>
+		<band height="150">
+			<textField>
+				<reportElement x="0" y="47" width="512" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Dialog" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_company_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="87" width="512" height="50"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Dialog" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONFORMITY TO ASSIGNMENT OF RECEIVABLE]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="377" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="0" width="512" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["\n\n"+ $F{c_current_date} + "\n\n\n\n\n" +
+
+"Dear " + String.format("%s / %s:", $F{c_entity_name}.trim(), $F{c_coapplicant}).replace($F{c_entity_name}+" /  :", ""+$F{c_entity_name}+":") + "\n\n\n" +
+
+"This is in connection with your purchase of "+ $F{c_model_desc} +"\n"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="43" y="20" width="60" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Project]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="103" y="20" width="359" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[": "+$F{c_proj_name_phase}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="43" y="35" width="60" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Phase]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="103" y="35" width="359" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[": "+ $F{c_phase}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="43" y="50" width="60" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Block]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="103" y="50" width="359" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[": "+ $F{c_block}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="43" y="65" width="60" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Lot]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="103" y="65" width="359" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[": "+ $F{c_lot}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="43" y="80" width="60" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Location]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="103" y="80" width="359" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[": "+ $F{c_address}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="105" width="512" height="20"/>
+				<textElement textAlignment="Justified">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Said purchase has been made by way of "+$V{buyertype}+" covered with a Contract-to-Sell. Under this agreement, we as vendor shall have the right to assign or discount or transfer our rights over said contract receivables to any financial institution"+"\n\n"+
+
+"In this regard, we have decided to assign our contract receivables from you to _________________________ _____________________________________________, in accordance with our agreement under the said Contract-to-Sell."+"\n\n"+
+
+"In this connection, all the post dated checks which you have issued and will subsequently issue for the amortization payments may be endorsed to the bank. The bank may likewise conduct credit investigation for which the buyer manifests his/her intention to cooperate. The bank and/or the financial institution however is not authorized by "+ $F{c_company_name} +" to be the collecting agent."+"\n\n"+
+
+"We assure you that upon full payment of your account/obligation in accordance with the Contract-to-Sell, we shall issue/release to you the Certificate of Title, free from liens and encumbrances, including the mentioned assignment in this letter."+"\n\n"+
+
+"Thank You."+"\n\n\n\n"+
+
+
+
+
+"Very truly yours,"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="162" width="150" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Dialog" size="9"/>
+				</textElement>
+				<text><![CDATA[JOHNNY LIWANAG CORPUZ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="182" width="150" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Dialog" size="9"/>
+				</textElement>
+				<text><![CDATA[Vice President]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="297" y="173" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Dialog" size="9"/>
+				</textElement>
+				<text><![CDATA[Conforme:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="297" y="229" width="215" height="20"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Dialog" size="9"/>
+				</textElement>
+				<text><![CDATA[Signature of Buyer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="327" y="331" width="135" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Dialog" size="9"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="298" y="331" width="29" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Dialog" size="9"/>
+				</textElement>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="297" y="209" width="215" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="styled">
+					<font fontName="Dialog" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_entity_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="297" y="292" width="215" height="20">
+					<printWhenExpression><![CDATA[$F{c_coapplicant}.equals(" ") == false]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Dialog" size="9"/>
+				</textElement>
+				<text><![CDATA[Signature of Co-Buyer]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="297" y="272" width="215" height="20">
+					<printWhenExpression><![CDATA[$F{c_coapplicant}.equals(" ") == false]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="styled">
+					<font fontName="Dialog" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_coapplicant}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

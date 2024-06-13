@@ -1,0 +1,282 @@
+package Reports.LoansAndReceivable;
+
+import interfaces._GUI;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.OverlayLayout;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+
+import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.JXTextField;
+
+import Functions.FncFocusTraversalPolicy;
+import Functions.FncGlobal;
+import Functions.FncReport;
+import Functions.UserInfo;
+import Lookup.LookupEvent;
+import Lookup.LookupListener;
+import Lookup._JLookup;
+
+import components._JCheckBox;
+import components._JInternalFrame;
+
+public class NOAReleased extends _JInternalFrame implements _GUI, ActionListener, AncestorListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5159650933602942626L;
+
+	static String title = "Notice of Approval (NOA) Released";
+	Dimension frameSize = new Dimension(510, 200);// 510, 250
+	Border lineBorder = BorderFactory.createLineBorder(Color.GRAY);
+	Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+
+	private JXPanel pnlMain;
+
+	private JXPanel pnlCenter;
+
+	private JXLabel lblCompany;
+	private JCheckBox chkOpenHouse;
+	private _JLookup lookupCompany;
+	private JTextField txtCompany;
+
+	private _JCheckBox chkProject;
+	private _JLookup lookupProject;
+	private JTextField txtProject;
+
+	private _JCheckBox chkPhase;
+	private _JLookup lookupPhase;
+	private JXTextField txtPhase;
+
+	private JXPanel pnlSouth;
+	private JButton btnPreview;
+
+	private KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+
+	public NOAReleased() {
+		super(title, false, true, false, true);
+		initGUI();
+	}
+
+	public NOAReleased(String title) {
+		super(title);
+		initGUI();
+	}
+
+	public NOAReleased(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
+		super(title, resizable, closable, maximizable, iconifiable);
+		initGUI();
+	}
+
+	@Override
+	public void initGUI() {
+		this.setTitle(title);
+		this.setSize(frameSize);
+		this.setPreferredSize(frameSize);
+		this.addAncestorListener(this);
+		{
+			pnlMain = new JXPanel();
+			getContentPane().add(pnlMain, BorderLayout.CENTER);
+			pnlMain.setLayout(new BorderLayout(5, 5));
+			pnlMain.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			{
+				pnlCenter = new JXPanel();
+				pnlMain.add(pnlCenter, BorderLayout.CENTER);
+				pnlCenter.setLayout(null);
+				pnlCenter.setBorder(FncGlobal.lineBorder);
+				{
+					lblCompany = new JXLabel("Company");
+					pnlCenter.add(lblCompany);
+					lblCompany.setHorizontalAlignment(SwingConstants.RIGHT);
+					//lblProject.setBorder(lineBorder);
+					lblCompany.setBounds(10, 10, 75, 25);
+				}
+				{
+					lookupCompany = new _JLookup(null, "Company");
+					pnlCenter.add(lookupCompany);
+					lookupCompany.setReturnColumn(0);
+					lookupCompany.setLookupSQL(_JInternalFrame.SQL_COMPANY());
+					lookupCompany.setBounds(90, 10, 50, 25);
+					lookupCompany.addLookupListener(new LookupListener() {
+						public void lookupPerformed(LookupEvent event) {//XXX Project
+							Object[] data = ((_JLookup)event.getSource()).getDataSet();
+							if(data != null){
+								txtCompany.setText(data[1].toString());
+								txtCompany.setToolTipText(data[2].toString());
+
+								lookupProject.setLookupSQL(_JInternalFrame.SQL_PROJECT(data[0].toString()));
+
+								manager.focusNextComponent();
+							}else{
+								txtCompany.setText("");
+							}
+						}
+					});
+				}
+				{
+					txtCompany = new JTextField();
+					pnlCenter.add(txtCompany);
+					txtCompany.setEditable(false);
+					txtCompany.setBounds(144, 10, 341, 25);
+				}
+				{
+					chkProject = new _JCheckBox("Project");
+					pnlCenter.add(chkProject);
+					chkProject.setIconTextGap(11);
+					chkProject.setBounds(10, 40, 75, 25);
+					chkProject.addItemListener(new ItemListener() {
+						public void itemStateChanged(ItemEvent e) {
+							lookupProject.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+							chkPhase.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+							lookupPhase.setEnabled(e.getStateChange() == ItemEvent.SELECTED && chkPhase.isSelected());
+
+							manager.focusNextComponent(lookupCompany);
+						}
+					});
+				}
+				{
+					lookupProject = new _JLookup(null, "Project", "Please select company.");
+					pnlCenter.add(lookupProject);
+					lookupProject.setEnabled(false);
+					lookupProject.setReturnColumn(0);
+					lookupProject.setBounds(90, 40, 50, 25);
+					lookupProject.addLookupListener(new LookupListener() {
+						public void lookupPerformed(LookupEvent event) {//XXX Project
+							Object[] data = ((_JLookup)event.getSource()).getDataSet();
+							if(data != null){
+								txtProject.setText(data[1].toString());
+								lookupPhase.setLookupSQL(FncGlobal.getPhase(data[0].toString()));
+								manager.focusNextComponent();
+							}else{
+								txtProject.setText("");
+							}
+						}
+					});
+				}
+				{
+					txtProject = new JTextField();
+					pnlCenter.add(txtProject);
+					txtProject.setEditable(false);
+					txtProject.setBounds(144, 40, 251, 25);
+				}
+				{
+					chkPhase = new _JCheckBox("Phase");
+					pnlCenter.add(chkPhase);
+					chkPhase.setIconTextGap(16);
+					chkPhase.setEnabled(false);
+					chkPhase.setBounds(10, 70, 75, 25);
+					chkPhase.addItemListener(new ItemListener() {
+						public void itemStateChanged(ItemEvent e) {
+							lookupPhase.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+							manager.focusNextComponent(lookupProject);
+						}
+					});
+				}
+				{
+					lookupPhase = new _JLookup(null, "Phase", "Please select project.");
+					pnlCenter.add(lookupPhase);
+					lookupPhase.setEnabled(false);
+					lookupPhase.setReturnColumn(0);
+					lookupPhase.setBounds(90, 70, 50, 25);
+					lookupPhase.addLookupListener(new LookupListener() {
+						public void lookupPerformed(LookupEvent event) {//XXX Phase
+							Object[] data = ((_JLookup)event.getSource()).getDataSet();
+							if(data != null){
+								txtPhase.setText(data[1].toString());
+								manager.focusNextComponent();
+							}else{
+								JOptionPane.showMessageDialog(FncGlobal.homeMDI, "Please select project first.", "Phase", JOptionPane.WARNING_MESSAGE);
+							}
+						}
+					});
+				}
+				{
+					txtPhase = new JXTextField("");
+					pnlCenter.add(txtPhase);
+					txtPhase.setEditable(false);
+					txtPhase.setBounds(144, 70, 120, 25);
+				}
+				{
+					chkOpenHouse = new JCheckBox("Open House");
+					//pnlCenter.add(chkOpenHouse);
+					chkOpenHouse.setBounds(90, 100, 174, 25);
+				}
+			}
+			{
+				pnlSouth = new JXPanel();
+				pnlMain.add(pnlSouth, BorderLayout.SOUTH);
+				//pnlSouth.setBorder(lineBorder);
+				//pnlSouth.setCursor(handCursor);
+				pnlSouth.setLayout(new OverlayLayout(pnlSouth));
+				pnlSouth.setPreferredSize(new Dimension(388, 30));
+				{
+					btnPreview = new JButton("Preview");
+					pnlSouth.add(btnPreview);
+					btnPreview.setAlignmentX(0.5f);
+					btnPreview.setAlignmentY(0.5f);
+					btnPreview.setMaximumSize(new Dimension(100, 30));
+					btnPreview.setMnemonic(KeyEvent.VK_P);
+					btnPreview.addActionListener(this);
+				}
+			}
+		}
+
+		this.setFocusTraversalPolicy(new FncFocusTraversalPolicy(lookupCompany, lookupProject, lookupPhase, btnPreview));
+	}
+
+	@Override
+	public void ancestorAdded(AncestorEvent event) {
+		lookupCompany.requestFocus();
+	}
+
+	@Override
+	public void ancestorMoved(AncestorEvent event) { }
+
+	@Override
+	public void ancestorRemoved(AncestorEvent event) { }
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String action = e.getActionCommand();
+
+		if(action.equals("Preview")){
+			Map<String, Object> mapOpenUnits = new HashMap<String, Object>();
+
+			mapOpenUnits.put("co_id", lookupCompany.getValue());
+			mapOpenUnits.put("company", txtCompany.getText());
+			mapOpenUnits.put("company_alias", txtCompany.getToolTipText());
+			mapOpenUnits.put("filterProject", chkProject.isSelected());
+			mapOpenUnits.put("proj_id", lookupProject.getValue());
+			mapOpenUnits.put("filterProject", chkProject.isSelected());
+			mapOpenUnits.put("proj_id", lookupProject.getValue());
+			mapOpenUnits.put("phase", lookupPhase.getValue());
+			mapOpenUnits.put("filterPhase", chkPhase.isSelected());
+			mapOpenUnits.put("prepared_by", UserInfo.Alias);
+
+			FncReport.generateReport("/Reports/rptNOAReleased.jasper", title, txtProject.getText(), txtPhase.getText(), mapOpenUnits);
+		}
+	}
+
+}

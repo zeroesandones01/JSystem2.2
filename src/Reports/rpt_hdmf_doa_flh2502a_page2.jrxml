@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="1872" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0263162364614384"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="877"/>
+	<property name="ireport.background.image.properties" value="true,true,0.25,-8,-8,0,0,2566,4216"/>
+	<style name="style1"/>
+	<parameter name="01_clientID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="02_projID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="03_pblID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="04_seqno" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select a.*, a.technical_desc as tech_desc, (case when a.coborrower_full_name is not null and (coalesce(a.coborrower_full_name, '') = coalesce(a.client_spouse_full_name, '')) then client_full_name else coborrower_spouse_full_name end) as spocospo,
+
+
+(case when loanable_amount::numeric(19, 2) <= 750000::numeric(19, 2) then '' when loanable_amount::numeric(19, 2) >= 751000::numeric(19, 2) and loanable_amount::numeric(19, 2) <= 1700000::numeric(19, 2)
+then 'PRISCILA A. VALENZUELA' when loanable_amount::numeric(19, 2) >= 1701000::numeric(19, 2) and loanable_amount::numeric(19, 2) <= 3000000::numeric(19, 2) then 'PRISCILA A. VALENZUELA' end) as signatory,
+
+(case when loanable_amount::numeric(19, 2) <= 750000::numeric(19, 2) then '' when loanable_amount::numeric(19, 2) >= 751000::numeric(19, 2) and loanable_amount::numeric(19, 2) <= 1700000::numeric(19, 2)
+then 'ASSISTANT MANAGER - LOANS EVALUATION DEPT. II' when loanable_amount::numeric(19, 2) >= 1701000::numeric(19, 2) and loanable_amount::numeric(19, 2) <= 3000000::numeric(19, 2) then 'OIC DEPT. MANAGER - LOANS EVALUTAION DEPT II' end) as position
+
+from view_hdmf_doa_flh2502a($P{01_clientID}, $P{02_projID}, $P{03_pblID}, $P{04_seqno}) a
+left join mf_unit_info b on a.proj_id = b.proj_id and a.pbl_id = b.pbl_id]]>
+	</queryString>
+	<field name="developer" class="java.lang.String"/>
+	<field name="developer_address_1" class="java.lang.String"/>
+	<field name="developer_address_2" class="java.lang.String"/>
+	<field name="vp_tin" class="java.lang.String"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="spouse_name" class="java.lang.String"/>
+	<field name="co_borrower_name" class="java.lang.String"/>
+	<field name="client_address_1" class="java.lang.String"/>
+	<field name="client_address_2" class="java.lang.String"/>
+	<field name="memo_agreement_date" class="java.sql.Date"/>
+	<field name="memo_agreement_doc_no" class="java.lang.String"/>
+	<field name="memo_agreement_page_no" class="java.lang.String"/>
+	<field name="memo_agreement_book_no" class="java.lang.String"/>
+	<field name="memo_agreement_series_no" class="java.lang.String"/>
+	<field name="memo_agreement_atty" class="java.lang.String"/>
+	<field name="project_name" class="java.lang.String"/>
+	<field name="loanable_amount" class="java.math.BigDecimal"/>
+	<field name="loanable_words" class="java.lang.String"/>
+	<field name="cts_agreement_date" class="java.sql.Date"/>
+	<field name="cts_agreement_doc_no" class="java.lang.String"/>
+	<field name="cts_agreement_page_no" class="java.lang.String"/>
+	<field name="cts_agreement_book_no" class="java.lang.String"/>
+	<field name="cts_agreement_series_no" class="java.lang.String"/>
+	<field name="cts_agreement_atty" class="java.lang.String"/>
+	<field name="technical_description" class="java.lang.String"/>
+	<field name="client_tin" class="java.lang.String"/>
+	<field name="spouse_tin" class="java.lang.String"/>
+	<field name="co_borrower_tin" class="java.lang.String"/>
+	<field name="tct_no" class="java.lang.String"/>
+	<field name="proj_id" class="java.lang.String"/>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="client_full_name" class="java.lang.String"/>
+	<field name="client_spouse_full_name" class="java.lang.String"/>
+	<field name="coborrower_full_name" class="java.lang.String"/>
+	<field name="coborrower_spouse_full_name" class="java.lang.String"/>
+	<field name="other_lot" class="java.lang.String"/>
+	<field name="other_tct_no" class="java.lang.String"/>
+	<field name="technical_desc" class="java.lang.String"/>
+	<field name="tech_desc" class="java.lang.String"/>
+	<field name="spocospo" class="java.lang.String"/>
+	<field name="signatory" class="java.lang.String"/>
+	<field name="position" class="java.lang.String"/>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="1872" splitType="Stretch">
+			<textField>
+				<reportElement x="84" y="1116" width="205" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Johnny Liwanag Corpuz - Vice President"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="1154" width="88" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["TIN"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="59" y="1254" width="200" height="26"/>
+				<box bottomPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_full_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="309" y="1267" width="156" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{coborrower_full_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="82" y="1296" width="158" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_spouse_full_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="1090" width="205" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{developer}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="198" y="1154" width="93" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{vp_tin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="204" y="1280" width="147" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["TIN: " + $F{client_tin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="428" y="1280" width="156" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["TIN: " + $F{co_borrower_tin}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="131" y="493" width="140" height="26"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tct_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="309" y="1296" width="156" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{spocospo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="1089" width="236" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="1103" width="236" height="26"/>
+				<box bottomPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{position}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptARReceipt" pageWidth="572" pageHeight="396" columnWidth="572" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="83"/>
+	<property name="ireport.y" value="304"/>
+	<parameter name="client_seqno" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ar_no" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="prepared_by" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT * FROM view_ar_receipt($P{client_seqno}, $P{ar_no});]]>
+	</queryString>
+	<field name="c_or_no" class="java.lang.String"/>
+	<field name="c_entity_name" class="java.lang.String"/>
+	<field name="c_proj_alias" class="java.lang.String"/>
+	<field name="c_description" class="java.lang.String"/>
+	<field name="c_tin_no" class="java.lang.String"/>
+	<field name="c_address" class="java.lang.String"/>
+	<field name="c_trans_date" class="java.sql.Timestamp"/>
+	<field name="c_total_amount" class="java.math.BigDecimal"/>
+	<field name="c_total_amount_words" class="java.lang.String"/>
+	<field name="c_amount" class="java.math.BigDecimal"/>
+	<field name="c_amount_words" class="java.lang.String"/>
+	<field name="c_particulars" class="java.lang.String"/>
+	<field name="c_acct_no" class="java.lang.String"/>
+	<field name="c_check_no" class="java.lang.String"/>
+	<field name="c_check_date" class="java.sql.Timestamp"/>
+	<field name="c_bank" class="java.lang.String"/>
+	<field name="c_branch" class="java.lang.String"/>
+	<detail>
+		<band height="376">
+			<subreport>
+				<reportElement x="51" y="190" width="503" height="14"/>
+				<subreportParameter name="ar_no">
+					<subreportParameterExpression><![CDATA[$P{ar_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="client_seqno">
+					<subreportParameterExpression><![CDATA[$P{client_seqno}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[this.getClass().getResourceAsStream("/Reports/subrptARReceipt.jasper")]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="425" y="78" width="129" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("Receipt#: {0}", $F{c_or_no})]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy hh:mm aaa">
+				<reportElement x="425" y="89" width="129" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{c_trans_date}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="96" y="90" width="298" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("{0} -- [{1} {2}]", $F{c_entity_name}, $F{c_proj_alias}==null ? "No Proj |":$F{c_proj_alias} , $F{c_description}==null ? "No Unit":$F{c_description} )]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="71" y="102" width="323" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_tin_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="71" y="114" width="323" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_address}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="66" y="150" width="340" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["a"+$F{c_total_amount_words}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(-#,##0.00)">
+				<reportElement x="425" y="150" width="129" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_total_amount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(-#,##0.00)">
+				<reportElement x="425" y="257" width="129" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_total_amount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="418" y="289" width="116" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{prepared_by}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="106" y="301" width="71" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_check_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="181" y="301" width="72" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{c_check_date}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="253" y="301" width="79" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_acct_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="332" y="301" width="66" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_check_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="332" y="286" width="66" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_check_no} == null ? $F{c_amount}:null]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptMRI_ForPmtInsurance" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.3636363636363635"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="listQualifiedMRIEnroll" class="java.util.ArrayList" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="company_name" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="insurance_company" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="search_by" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="invoice_no" class="java.lang.String"/>
+	<parameter name="proj_id" class="java.lang.String"/>
+	<parameter name="reference_no" class="java.lang.String"/>
+	<parameter name="rplf_no" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT e.company_name as company_name,b.rplf_no as rplf_no, b.part_id || ' STAGE' as pmt_stage,
+get_project_alias(a.proj_id) as proj_alias, c.description as unit_desc,
+get_client_name(a.entity_id) as client_name, b.date_enrolled as date_enrolled, b.date_approved as date_approved,
+b.policy_no as policy_no, trim(b.reference_no) as reference_no, coalesce(b.invoice_no, '') as invoice_no, b.amt_insured as amt_insured, b.premium as premium
+FROM rf_mri_header a
+LEFT JOIN rf_mri_details b on b.applicant_no = a.applicant_no
+LEFT JOIN mf_unit_info c on c.proj_id = a.proj_id AND c.pbl_id = a.pbl_id
+LEFT JOIN mf_project d on d.proj_id = a.proj_id
+LEFT JOIN mf_company e on e.co_id = d.co_id
+WHERE b.invoice_no = $P{invoice_no}
+and b.rplf_no = $P{rplf_no}
+AND b.date_approved IS NOT NULL
+AND b.date_terminated IS NULL
+AND b.termination_no IS NULL
+AND a.proj_id = $P{proj_id}
+ORDER BY b.invoice_no;]]>
+	</queryString>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="rplf_no" class="java.lang.String"/>
+	<field name="pmt_stage" class="java.lang.String"/>
+	<field name="proj_alias" class="java.lang.String"/>
+	<field name="unit_desc" class="java.lang.String"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="date_enrolled" class="java.sql.Timestamp"/>
+	<field name="date_approved" class="java.sql.Timestamp"/>
+	<field name="policy_no" class="java.lang.String"/>
+	<field name="reference_no" class="java.lang.String"/>
+	<field name="invoice_no" class="java.lang.String"/>
+	<field name="amt_insured" class="java.math.BigDecimal"/>
+	<field name="premium" class="java.math.BigDecimal"/>
+	<variable name="total_amt_insured_invoice" class="java.math.BigDecimal" resetType="Group" resetGroup="grpStage" calculation="Sum">
+		<variableExpression><![CDATA[$F{amt_insured}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="total_premium_invoice" class="java.math.BigDecimal" resetType="Group" resetGroup="grpStage" calculation="Sum">
+		<variableExpression><![CDATA[$F{premium}]]></variableExpression>
+	</variable>
+	<variable name="total_amt_insured" class="java.math.BigDecimal" resetType="Group" resetGroup="grpStage" incrementType="Group" incrementGroup="grpStage" calculation="Sum">
+		<variableExpression><![CDATA[$V{total_amt_insured_invoice}]]></variableExpression>
+	</variable>
+	<variable name="total_premium" class="java.math.BigDecimal" resetType="Group" resetGroup="grpStage" incrementType="Group" incrementGroup="grpStage" calculation="Sum">
+		<variableExpression><![CDATA[$V{total_premium}]]></variableExpression>
+	</variable>
+	<variable name="grand_total_amt_insured" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amt_insured}]]></variableExpression>
+	</variable>
+	<variable name="grand_total_premium" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{premium}]]></variableExpression>
+	</variable>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page" incrementType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<group name="grpStage">
+		<groupExpression><![CDATA[$F{invoice_no}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<textField>
+					<reportElement x="0" y="2" width="226" height="20"/>
+					<textElement verticalAlignment="Middle" markup="html">
+						<font isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{pmt_stage}]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="22">
+				<textField>
+					<reportElement x="0" y="0" width="270" height="20"/>
+					<textElement verticalAlignment="Middle" markup="html">
+						<font isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<html><b>Invoice No:   " + $F{invoice_no} + "</b></html>"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="26">
+				<staticText>
+					<reportElement x="0" y="6" width="45" height="13"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL:]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="3" width="571" height="1"/>
+				</line>
+				<textField evaluationTime="Group" evaluationGroup="grpStage" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="457" y="3" width="58" height="20" printWhenGroupChanges="grpStage"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_amt_insured_invoice}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="grpStage" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="515" y="3" width="58" height="20" printWhenGroupChanges="grpStage"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_premium_invoice}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="2" y="23" width="571" height="1"/>
+				</line>
+			</band>
+			<band height="21">
+				<staticText>
+					<reportElement x="0" y="3" width="45" height="13">
+						<printWhenExpression><![CDATA[$F{pmt_stage} == "DP Stage"]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL:]]></text>
+				</staticText>
+				<textField evaluationTime="Group" evaluationGroup="grpStage" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="457" y="1" width="58" height="20" printWhenGroupChanges="grpStage">
+						<printWhenExpression><![CDATA[$F{pmt_stage} == "DP Stage"]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_amt_insured_invoice}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="grpStage" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="515" y="0" width="58" height="20" printWhenGroupChanges="grpStage">
+						<printWhenExpression><![CDATA[$F{pmt_stage} == "DP Stage"]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_premium_invoice}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="20" width="571" height="1"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="63">
+			<textField>
+				<reportElement positionType="FixRelativeToBottom" x="373" y="7" width="198" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("EEE MMM dd, yyyy hh:mm a").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Auto">
+				<reportElement positionType="Float" x="501" y="17" width="70" height="10"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + ($V{CURRENT_PAGE_NUMBER} == null ? $V{PAGE_NUMBER}:$V{CURRENT_PAGE_NUMBER}) + " of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="362" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="20" width="244" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[List of Clients with Approved MRI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="40" width="19" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[For]]></text>
+			</staticText>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="19" y="40" width="97" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="127" y="40" width="53" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[RPLF No:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="40" width="129" height="20"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{rplf_no}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="1" width="34" height="18" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Project]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="34" y="1" width="53" height="18" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ph-Blk-Lt]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="87" y="1" width="93" height="18" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Client Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="180" y="1" width="45" height="18" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date Enrolled]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="225" y="1" width="45" height="18" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date Approved]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="270" y="1" width="68" height="18" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Policy No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="338" y="1" width="61" height="18" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Reference No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="399" y="1" width="58" height="18" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Invoice No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="457" y="1" width="57" height="18" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amt. Insured]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="514" y="1" width="57" height="18" backcolor="#FFFFFF"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Premium]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="34" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{proj_alias}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="34" y="0" width="53" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{unit_desc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="87" y="0" width="93" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="180" y="0" width="46" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_enrolled}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="226" y="0" width="46" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_approved}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="272" y="0" width="66" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{policy_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="338" y="0" width="61" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{reference_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="399" y="0" width="58" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="456" y="0" width="58" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amt_insured}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="513" y="0" width="58" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{premium}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="18">
+			<staticText>
+				<reportElement x="0" y="1" width="87" height="13"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GRAND TOTAL:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="16" width="571" height="1"/>
+			</line>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="457" y="-2" width="58" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{grand_total_amt_insured}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="515" y="-2" width="58" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{grand_total_premium}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

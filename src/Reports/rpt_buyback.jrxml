@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_buyback" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="340"/>
+	<property name="ireport.y" value="142"/>
+	<parameter name="p_logo" class="java.io.InputStream"/>
+	<parameter name="p_bank_id" class="java.lang.String"/>
+	<parameter name="p_emp_code" class="java.lang.String">
+		<defaultValueExpression><![CDATA["901288"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_co_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_payment_date" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from view_buyback_report($P{p_bank_id},$P{p_co_id},$P{p_emp_code})]]>
+	</queryString>
+	<field name="c_status" class="java.lang.String"/>
+	<field name="c_proj_alias" class="java.lang.String"/>
+	<field name="c_description" class="java.lang.String"/>
+	<field name="c_entity_name" class="java.lang.String"/>
+	<field name="c_entity_id" class="java.lang.String"/>
+	<field name="c_proj_id" class="java.lang.String"/>
+	<field name="c_pbl_id" class="java.lang.String"/>
+	<field name="c_seq_no" class="java.lang.Integer"/>
+	<field name="c_out_balance" class="java.math.BigDecimal"/>
+	<field name="c_interest" class="java.math.BigDecimal"/>
+	<field name="c_total" class="java.math.BigDecimal"/>
+	<field name="c_reason" class="java.lang.String"/>
+	<field name="c_int_rate" class="java.math.BigDecimal"/>
+	<field name="c_latest_ledger_date" class="java.lang.String"/>
+	<field name="c_company_name" class="java.lang.String"/>
+	<field name="c_bank_name" class="java.lang.String"/>
+	<field name="c_phase" class="java.lang.String"/>
+	<field name="c_block" class="java.lang.String"/>
+	<field name="c_lot" class="java.lang.String"/>
+	<field name="c_proj_name" class="java.lang.String"/>
+	<field name="c_rplf_no" class="java.lang.String"/>
+	<variable name="total_out_balance" class="java.math.BigDecimal" resetType="Group" resetGroup="groupProject" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_out_balance}]]></variableExpression>
+	</variable>
+	<variable name="sub_total_out_balance" class="java.math.BigDecimal" resetType="Group" resetGroup="groupPhase" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_out_balance}]]></variableExpression>
+	</variable>
+	<variable name="grand_total_out_balance" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_out_balance}]]></variableExpression>
+	</variable>
+	<variable name="grand_total_interest" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_interest}]]></variableExpression>
+	</variable>
+	<variable name="sub_total_interest" class="java.math.BigDecimal" resetType="Group" resetGroup="groupPhase" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_interest}]]></variableExpression>
+	</variable>
+	<variable name="total_interest" class="java.math.BigDecimal" resetType="Group" resetGroup="groupProject" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_interest}]]></variableExpression>
+	</variable>
+	<variable name="total" class="java.math.BigDecimal" resetType="Group" resetGroup="groupProject" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_total}]]></variableExpression>
+	</variable>
+	<variable name="sub_total" class="java.math.BigDecimal" resetType="Group" resetGroup="groupPhase" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_total}]]></variableExpression>
+	</variable>
+	<variable name="grand_total" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_total}]]></variableExpression>
+	</variable>
+	<group name="groupProject">
+		<groupExpression><![CDATA[$F{c_proj_name}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<textField>
+					<reportElement x="5" y="1" width="289" height="15"/>
+					<textElement textAlignment="Left">
+						<font size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{c_proj_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<textField>
+					<reportElement x="5" y="6" width="289" height="15"/>
+					<textElement textAlignment="Left">
+						<font size="8" isBold="true" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Total:           "+$F{c_proj_name}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="5" y="20" width="743" height="1"/>
+				</line>
+				<textField pattern="#,##0.00">
+					<reportElement x="469" y="1" width="93" height="20"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_out_balance}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="567" y="1" width="81" height="20"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_interest}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="648" y="1" width="100" height="20"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="groupPhase">
+		<groupExpression><![CDATA[$F{c_phase}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField>
+					<reportElement x="5" y="2" width="289" height="15"/>
+					<textElement textAlignment="Left">
+						<font size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Phase:"+" "+$F{c_phase}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<textField>
+					<reportElement x="5" y="6" width="289" height="15"/>
+					<textElement textAlignment="Left">
+						<font size="8" isBold="true" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Sub-Total:"+"    Phase:"+" "+$F{c_phase}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="5" y="20" width="743" height="1"/>
+				</line>
+				<textField pattern="#,##0.00">
+					<reportElement x="469" y="1" width="93" height="20"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sub_total_out_balance}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="567" y="1" width="81" height="20"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sub_total_interest}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="648" y="1" width="100" height="20"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sub_total}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="groupRplf">
+		<groupExpression><![CDATA[$F{c_rplf_no}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<textField>
+					<reportElement x="5" y="1" width="289" height="15"/>
+					<textElement textAlignment="Left">
+						<font size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["RPLF NO: "+$F{c_rplf_no}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band height="70" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle" isUsingCache="true">
+				<reportElement x="5" y="4" width="65" height="62"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{p_logo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="81" y="14" width="274" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_company_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="81" y="33" width="274" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["SOLD TO BANK CLIENTS FOR BUYBACK"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="81" y="51" width="274" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["For : " + $P{p_payment_date} + " ("+$F{c_bank_name}+")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="548" y="51" width="53" height="15"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Print Date :"]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
+				<reportElement x="612" y="51" width="136" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="33" splitType="Stretch">
+			<staticText>
+				<reportElement x="80" y="1" width="35" height="30"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Lot]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="45" y="1" width="35" height="30"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Block]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="648" y="1" width="100" height="30"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[T O T A L]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="562" y="1" width="86" height="30"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Interest]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="469" y="1" width="93" height="30"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Out Balance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="382" y="1" width="87" height="30"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Due Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="115" y="1" width="179" height="30"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Client's Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="1" width="40" height="30"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Phase]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="294" y="1" width="88" height="30"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Full Settled Date]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="5" y="0" width="40" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_phase}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="45" y="0" width="35" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_block}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="81" y="0" width="34" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_lot}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="115" y="0" width="179" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_entity_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="294" y="0" width="88" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="382" y="0" width="87" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_latest_ledger_date}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="469" y="0" width="93" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_out_balance}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="562" y="0" width="86" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_interest}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="648" y="0" width="100" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_total}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="5" y="19" width="743" height="1"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="5" y="6" width="289" height="15"/>
+				<textElement textAlignment="Left">
+					<font size="8" isBold="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Grand Total:           "]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="5" y="20" width="743" height="1"/>
+			</line>
+			<textField>
+				<reportElement x="469" y="1" width="93" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{grand_total_out_balance}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="567" y="1" width="81" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{grand_total_interest}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="648" y="1" width="100" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{grand_total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,3679 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptNTPContract" pageWidth="612" pageHeight="936" columnWidth="472" leftMargin="70" rightMargin="70" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.4641000000000017"/>
+	<property name="ireport.x" value="17"/>
+	<property name="ireport.y" value="384"/>
+	<property name="ireport.callouts" value="##Mon Sep 08 15:21:15 PHT 2014"/>
+	<parameter name="_server" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="_dbase" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="logo" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ntp_no" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["000087"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="signatory" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="tin" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="prepared_by" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["AAGONZALES"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="subrptNTPContractUnits" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="isHousing" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="title" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="subrptLandDevContractUnits" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[this.getClass().getResourceAsStream("/Reports/subrptOSPContractUnits_NA.jasper")]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+a.award_date,
+a.contract_no,
+trim(b.entity_name) as entity_name,
+get_client_address_for2307(a.entity_id) as address,
+initcap(trim(g.contactperson)) as contactperson,
+trim(g.position) as position,
+h.tin_no as tin,
+initcap(trim(c.proj_name)) as proj_name,
+trim(c.barangay) as proj_barangay,
+trim(c.municipality) as proj_municipality,
+trim(c.province) as proj_province,
+d._count,
+initcap(to_words(d._count::VARCHAR)) AS  _word,
+a.orig_contract_price,
+initcap(TRIM(REPLACE(split_part(cash_words(a.orig_contract_price::VARCHAR::MONEY), 'dollars', 1), ' and', ''))) AS orig_contract_price_word,
+a.dp_percentage,
+to_words(a.dp_percentage::VARCHAR) as dp_percentage_word,
+(a.orig_contract_price * a.dp_percentage) /100 as downpayment,
+initcap(TRIM(split_part(REPLACE(cash_words(((a.orig_contract_price * a.dp_percentage)/ 100)::VARCHAR::MONEY), ' dollars', ''), ' and ', 1))) as downpayment_word,
+a.start_date,
+a.finish_date,
+date_part('day', timestamp_mi(timestamp_pl_interval(a.finish_date, INTERVAL '1 day'), a.start_date))::INT AS working_days,
+initcap(to_words(date_part('day', timestamp_mi(timestamp_pl_interval(a.finish_date, INTERVAL '1 day'), a.start_date))::VARCHAR)) AS  working_days_word,
+initcap(trim(e.company_name)) as company,
+trim(e.company_address) as company_address,
+(select (select initcap(sub_proj_name) from mf_sub_project where proj_id = a.proj_id
+and replace(sub_proj_alias, ' ', '') = replace(
+	(
+	case when
+		position('4-A' in a.contract_no) > 0 or position('4A' in a.contract_no) > 0 then
+		(case when a.proj_id = '016' then 'PH4A' when a.proj_id = '015' then 'PH4-A' end)
+		when
+		position('1-B' in a.contract_no) > 0 or position('1B' in a.contract_no) > 0 then
+		(case when a.proj_id = '019' then 'PH1-B' end)
+		else a.phase end
+	), ' ', ''))
+from
+(
+select regexp_split_to_table(contract_no, '-') as phase, proj_id, contract_no
+from co_ntp_header
+where ntp_no = $P{ntp_no}
+) a
+where a.phase ~* 'PH'
+) as phase,
+
+
+
+format('%s day of %s', trim(to_char(a.start_date, 'DDth'), '0'), to_char(a.start_date, 'MonthYYYY')) as start_date_word,
+case when $P{ntp_no} IN ('002142', '002141') then
+(SELECT TRIM(ntp_subject_description) FROM co_ntp_subjects WHERE ntp_no = $P{ntp_no})
+else
+
+(case when ((SELECT COUNT(*) FROM co_ntp_detail WHERE ntp_no = $P{ntp_no}) > 1) then (SELECT TRIM(ntp_subject_description) FROM co_ntp_subjects WHERE ntp_no = $P{ntp_no}) else (SELECT REPLACE(work_desc, '&', '&#038;') FROM co_ntp_detail WHERE ntp_no = $P{ntp_no}) end) end as c_title,
+a.ntp_date
+
+FROM co_ntp_header a
+LEFT JOIN rf_entity b ON b.entity_id = a.entity_id
+LEFT JOIN mf_project c ON c.proj_id = a.proj_id
+LEFT JOIN (SELECT count(ntp_no) AS _count, ntp_no FROM co_ntp_detail WHERE ntp_no = $P{ntp_no} GROUP BY ntp_no) d ON d.ntp_no = a.ntp_no
+LEFT JOIN mf_company e ON e.co_id = a.co_id
+LEFT JOIN rf_entity_address f ON f.entity_id = a.entity_id
+LEFT JOIN rf_contacts g ON g.entity_id = a.entity_id
+LEFT JOIN rf_entity_id_no h ON h.entity_id = a.entity_id
+
+WHERE a.ntp_no = $P{ntp_no};]]>
+	</queryString>
+	<field name="award_date" class="java.sql.Timestamp"/>
+	<field name="contract_no" class="java.lang.String"/>
+	<field name="entity_name" class="java.lang.String"/>
+	<field name="address" class="java.lang.String"/>
+	<field name="contactperson" class="java.lang.String"/>
+	<field name="position" class="java.lang.String"/>
+	<field name="tin" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="proj_barangay" class="java.lang.String"/>
+	<field name="proj_municipality" class="java.lang.String"/>
+	<field name="proj_province" class="java.lang.String"/>
+	<field name="_count" class="java.lang.Long"/>
+	<field name="_word" class="java.lang.String"/>
+	<field name="orig_contract_price" class="java.math.BigDecimal"/>
+	<field name="orig_contract_price_word" class="java.lang.String"/>
+	<field name="dp_percentage" class="java.math.BigDecimal"/>
+	<field name="dp_percentage_word" class="java.lang.String"/>
+	<field name="downpayment" class="java.math.BigDecimal"/>
+	<field name="downpayment_word" class="java.lang.String"/>
+	<field name="start_date" class="java.sql.Timestamp"/>
+	<field name="finish_date" class="java.sql.Timestamp"/>
+	<field name="working_days" class="java.lang.Integer"/>
+	<field name="working_days_word" class="java.lang.String"/>
+	<field name="company" class="java.lang.String"/>
+	<field name="company_address" class="java.lang.String"/>
+	<field name="phase" class="java.lang.String"/>
+	<field name="start_date_word" class="java.lang.String"/>
+	<field name="c_title" class="java.lang.String"/>
+	<field name="ntp_date" class="java.sql.Timestamp"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="TOTAL_PAGE_NUMBER" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="contract_price" class="java.lang.String">
+		<variableExpression><![CDATA[new DecimalFormat("#,##0.00").format($F{orig_contract_price})]]></variableExpression>
+	</variable>
+	<variable name="start_date" class="java.lang.String">
+		<variableExpression><![CDATA[new SimpleDateFormat("MMMMM dd, YYYY").format($F{start_date})]]></variableExpression>
+	</variable>
+	<variable name="formatted_orig_contract_price" class="java.lang.String">
+		<variableExpression><![CDATA[new DecimalFormat("#,##0.00").format($F{orig_contract_price})]]></variableExpression>
+		<initialValueExpression><![CDATA[new DecimalFormat("#,##0.00").format($F{orig_contract_price})]]></initialValueExpression>
+	</variable>
+	<variable name="formatted_award_date" class="java.lang.String">
+		<variableExpression><![CDATA[new SimpleDateFormat("dd MMMMM yyyy").format($F{award_date})]]></variableExpression>
+		<initialValueExpression><![CDATA[new SimpleDateFormat("dd MMMMM yyyy").format($F{award_date})]]></initialValueExpression>
+	</variable>
+	<group name="grpHeader">
+		<groupHeader>
+			<band height="124">
+				<staticText>
+					<reportElement mode="Transparent" x="0" y="0" width="472" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+						<font fontName="Tahoma" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[CONTRACT]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="">
+					<reportElement positionType="Float" x="0" y="20" width="472" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["KNOW ALL MEN BY THESE PRESENTS:\n"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" mode="Transparent" x="0" y="56" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[-and-]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="66" width="472" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single" firstLineIndent="25"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<b>"+ $F{entity_name}.replace("&", "AND") +"</b>, a corporation duly organized and existing under and by virtue of the laws of the Republic of the Philippines, with principal office at <b>"+ $F{address} +"</b> represented herein by <b>"+ $F{contactperson} +"</b> after referred to as the \"CONTRACTOR\");"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" mode="Transparent" x="0" y="78" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Witnesseth That:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="88" width="472" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single" firstLineIndent="25"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{isHousing}
+?
+
+	"WHEREAS, the OWNER desires to obtain the services of the CONTRACTOR to undertake the <b>Construction of "+ $F{_word} +" ("+ $F{_count} +") Housing Units at "+ $F{proj_name} + ($F{phase} == null ? "":" - "+ $F{phase}) +"</b> (the \"Project\"), located at <b>Brgy. "+ $F{proj_barangay} +", Municipality of "+ $F{proj_municipality} +", Province of "+ $F{proj_province} +"</b> (herein after referred to as the \"Project Site\");"
+:
+
+	$P{ntp_no}.equals("002142") || $P{ntp_no}.equals("002141")
+
+	?
+
+		"WHEREAS, the OWNER desires to obtain the services of the CONTRACTOR to undertake the <b>"+ "Construction of TERRAVERDE TRANSPORT TERMINAL" +" at "+ $F{proj_name} + ($F{phase} == null ? "":" - "+ $F{phase}) +"</b> (the \"Project\"), located at <b>Brgy. "+ $F{proj_barangay} +", Municipality of "+ $F{proj_municipality} +", Province of "+ $F{proj_province} +"</b> (herein after referred to as the \"Project Site\");"
+	:
+
+		"WHEREAS, the OWNER desires to obtain the services of the CONTRACTOR to undertake the <b>"+ ($P{title}.equals("") ? $F{c_title}:$P{title}) +" at "+ $F{proj_name} + ($F{phase} == null ? "":" - "+ $F{phase}) +"</b> (the \"Project\"), located at <b>Brgy. "+ $F{proj_barangay} +", Municipality of "+ $F{proj_municipality} +", Province of "+ $F{proj_province} +"</b> (herein after referred to as the \"Project Site\");"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="100" width="472" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single" firstLineIndent="25"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["WHEREAS, the CONTRACTOR being licensed to render and provide the above mentioned services, has offered to undertake the aforementioned works and the OWNER has accepted the CONTRACTOR’S offer subject to certain terms and conditions;"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="112" width="472" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single" firstLineIndent="25"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["NOW, THEREFORE, for and in consideration of the foregoing premises and the stipulations hereinafter set forth, the parties herein agree and bind themselves to the following:"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="">
+					<reportElement positionType="Float" x="0" y="32" width="472" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single" firstLineIndent="25"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["This Contract made and entered into by and between:\n"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="">
+					<reportElement positionType="Float" x="0" y="44" width="472" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single" firstLineIndent="25"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<b>"+ $F{company}.toUpperCase() +"</b>, a corporation duly organized and existing under and by virtue of the laws of the Republic of the Philippines, with principal office at the <b>"+ $F{company_address} +"</b>, represented herein by <b>"+ $P{signatory} +"</b> (hereinafter referred to as the \"OWNER\");"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="222">
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="15"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["IN WITNESS WHEREOF, the parties have signed this Contract this ______ day of _________________ "+ new SimpleDateFormat("YYYY").format($F{award_date}) +", at ____________________, Metro Manila.\n\n"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="15" width="236" height="15"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<b>"+ $F{company}.toUpperCase() + "</b>\n" +
+"By:\n\n\n\n" +
+"<b>"+ $P{signatory}.toUpperCase() +"</b>\n\n\n\n" +
+"SIGNED IN THE PRESENCE OF:\n\n"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="272" y="15" width="200" height="15"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<b>"+ $F{entity_name}.replace("&", "AND") + "</b>\n" +
+"By:\n\n\n\n" +
+"<b>"+ $F{contactperson}.toUpperCase() +"</b>\n\n\n\n\n\n"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="30" width="150" height="15"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Witness]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="272" y="30" width="150" height="15"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Witness]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="118" y="55" width="236" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[ACKNOWLEDGMENT]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="85" width="472" height="15"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Republic of the Philippines	)\n\n" +
+"______________________	) S.S.\n\n" +
+"BEFORE ME, Notary Public for and in ___________________, personally appeared the following persons with respective residence certificate number, to wit:"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="110" width="180" height="20"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[NAME]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="136" width="180" height="15"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{signatory}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="151" width="180" height="15"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{contactperson}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="181" y="151" width="150" height="15"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{tin}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="181" y="136" width="150" height="15"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{tin}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="181" y="110" width="150" height="20"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["COMMUNITY TAX\n" +
+"CERTIFICATE NO. / TIN"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="331" y="110" width="141" height="20"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["DATE /\n" +
+"PLACE ISSUED"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="179" width="472" height="15"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["All known to me and by me known to be the same persons who executed the foregoing instrument and they acknowledged to me that the same is their free act and voluntary deed as well as the free act and voluntary deed of the corporations they respectively represent.\n\n" +
+"This contract consists of "+(($V{PAGE_NUMBER}.toString().equals("1")) ? "ONE ( " : ($V{PAGE_NUMBER}.toString().equals("2")) ? "TWO ( " : ($V{PAGE_NUMBER}.toString().equals("3")) ? "THREE ( " : ($V{PAGE_NUMBER}.toString().equals("4")) ? "FOUR ( " : ($V{PAGE_NUMBER}.toString().equals("5")) ? "FIVE ( " : ($V{PAGE_NUMBER}.toString().equals("6")) ? "SIX ( " : "")+$V{PAGE_NUMBER}+" ) pages including this page, wherein the acknowledgment clause is written and signed by the parties and two instrumental witnesses at proper places as required by law.\n\n\n\n" +
+"WITNESS MY HAND AND SEAL, this _____________ day of ____________________ "+ new SimpleDateFormat("YYYY").format($F{award_date}) +" at _____________________________ City.\n\n"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="331" y="192" width="141" height="15"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Notary Public"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="207" width="472" height="15"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Doc No. __________;\n" +
+"Page No. _________;\n" +
+"Book No. _________;\n" +
+"Series of ________;"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="50">
+			<textField>
+				<reportElement mode="Transparent" x="352" y="30" width="120" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract_no}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="109" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE I - CONTRACT DOCUMENTS]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[1.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The Contract Documents shall mean all the instruments, agreements, information, proposal and instructions submitted or issued to prospective bidders, relating to the construction and implementation of the Project, and shall include this Contract, General Conditions of Contract, UAP Document 301, Bid Documents particularly the Contract Plans and Drawings and Technical Specifications, Contractor’s Proposal, General Guidelines on Repairs Implementation Under Contractor's Warranties, Standard Repair Cost and <b>Letter of Award / Notice to Proceed dated " + $V{formatted_award_date} +"</b> issued to and signed by the CONTRACTOR."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="22" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[1.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The Contract Documents are mutually complementary. What is noted in one although not shown in the others shall be considered contained in all unless one is in correction of the other. In case of conflict, the Contract Documents shall have the following sequence of priority and importance in so far as their specific statement(s), phrase(s), intent and requirement conflict:"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="34" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[1.2.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["This Contract"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="44" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[1.2.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Drawings and Technical Specifications"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="54" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[1.2.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["General Conditions of Contract"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="64" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[1.2.4]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["UAP Document 301"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="74" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[1.2.5]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Bill of Quantities (BOQ)"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="94" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[1.2.7]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Letter of Award / Notice to Proceed dated <b>"+ $V{formatted_award_date} +"</b>"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="84" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[1.2.6]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Contractor’s Proposal accepted by the Owner"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="103">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE II - SCOPE OF WORK]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[2.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{isHousing} ?
+"The CONTRACTOR shall undertake the <b>Construction of "+ $F{_word} +" ("+ $F{_count} +") Housing Units at "+ $F{proj_name} + ($F{phase} == null ? "":" - "+ $F{phase}) +"</b> in strict accordance with and subject to all conditions and requirements of the Contract Documents."
+:
+	$P{ntp_no}.equals("002142") || $P{ntp_no}.equals("002141")
+
+	?"The CONTRACTOR shall undertake the <b>"+ "Construction of TERRAVERDE TRANSPORT TERMINAL" +" at "+ $F{proj_name} + ($F{phase} == null ? "":" - "+ $F{phase}) +"</b> in strict accordance with and subject to all conditions and requirements of the Contract Documents."
+
+:
+"The CONTRACTOR shall undertake the <b>"+ ($P{title}.equals("") ? $F{c_title}:$P{title}) +" at "+ $F{proj_name} + ($F{phase} == null ? "":" - "+ $F{phase}) +"</b> in strict accordance with and subject to all conditions and requirements of the Contract Documents."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="22" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[2.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR shall furnish all labor, materials, consumables, tools, equipment and other supervision and other services necessary for the Work which shall include, but not limited to, the following items of works:"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="34" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[2.2.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Mobilization and Demobilization"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="44" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[2.2.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{isHousing} ?
+    "Construction of <b>"+ $F{_word} +" ("+ $F{_count} +")</b> Housing Units base on Complete Plans and Specifications":
+$P{ntp_no}.equals("002141")?
+"<b>"+""+ $F{c_title}.replace("&", "and")+"" +"</b>":
+"<b>"+""+($P{title}.equals("") ? $F{c_title}.replace("&", "and"):$P{title}.replace("&", "and"))+"" +"</b>"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<subreport>
+				<reportElement positionType="Float" x="65" y="54" width="220" height="8" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{isHousing}]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="_dbase">
+					<subreportParameterExpression><![CDATA[$P{_dbase}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="_server">
+					<subreportParameterExpression><![CDATA[$P{_server}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ntp_no">
+					<subreportParameterExpression><![CDATA[$P{ntp_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[$P{subrptNTPContractUnits}]]></subreportExpression>
+			</subreport>
+			<frame>
+				<reportElement positionType="Float" x="25" y="64" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[2.2.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Hauling and disposal of excess materials."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="74" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[2.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The scope of work also includes, but is not limited to handling, storage, preparatory work, installation work and any other related work required to protect the Project and to make the equipment and facilities of the Project completely operational, according to the requirements of the plans, drawings, technical specifications and other related Contract Documents."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="86" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[2.4]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The scope of work as specified under this Article II and any other revisions and alterations, as agreed to by both parties, including any additional work and/or change order approved by the OWNER is herein referred to as the Work."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="27">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE III - OWNER’S REPRESENTATIVE]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[3.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{company}.equals("Supercity Realty Development Corporation") ?
+"The <b>Construction Management Department (CMD) of "+ $F{company} + " (SRDC)</b> is the authorized representative of the OWNER to oversee and coordinate the prosecution of the Project, either directly or through properly authorized agents, such agents acting within the scope of the particular duties assigned to them. The <b>Construction Manager</b> is the duly authorized representative of the <b>Construction Management Department (CMD).</b>" :
+"The <b>Construction Management Department (CMD) of "+ $F{company} + " (CDC)</b> is the authorized representative of the OWNER to oversee and coordinate the prosecution of the Project, either directly or through properly authorized agents, such agents acting within the scope of the particular duties assigned to them. The <b>Construction Manager</b> is the duly authorized representative of the <b>Construction Management Department (CMD).</b>"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="39">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE IV - CONTRACT PRICE]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[4.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The Contract Price is the fixed lump sum amount, which the OWNER is obligated to pay the CONTRACTOR under this Contract for the execution and completion of the Work. All costs to the CONTRACTOR for the supply of materials, labor, supervision, vehicles, use of equipment, fuel, oils, tools, including the payment of contingencies, overtime or extra shift work, site delivery charges, local and national taxes, bonds, insurance, testing of materials, permits, fees, temporary facilities, water and power requirements, and all other costs necessary to complete the Work, shall be for the account of the CONTRACTOR."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="22" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[4.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The Contract Price to be due to the CONTRACTOR is PESOS:<b>Philippine Pesos: "+ $F{orig_contract_price_word} +" + 00/000 (PHP "+ $V{formatted_orig_contract_price} +")</b> Philippine Currency, inclusive of VAT and subject to the expanded withholding tax, if any. The Contract Price is not subject to escalation for any reason whatsoever."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="123">
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE V - TERMS OF PAYMENT]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[5.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The OWNER agrees to pay the CONTRACTOR a down payment equivalent to <b>"+ $F{dp_percentage_word} +" ("+ $F{dp_percentage} +"%)</b> of the Contract Price or PESOS: <b>"+ $F{downpayment_word} +" + 00/000 (PHP "+ new DecimalFormat("#,##0.00").format($F{downpayment}) +")</b> upon mobilization of its equipments to the Project Site."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="94" width="472" height="12"/>
+				<staticText>
+					<reportElement x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[5.8]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The payment of the progress billings and the release of the amounts retained by the OWNER to the CONTRACTOR shall not be construed as admission by the OWNER that the CONTRACTOR has satisfactorily performed or is satisfactorily performing the Work in accordance with the Contract Documents, or that such Work is free from defects of any kind, hidden or otherwise, or that the CONTRACTOR is not guilty of violating the Contract Documents, or that the CONTRACTOR is complying or has complied with the provisions, terms and conditions of the Contract Documents and its obligations hereunder."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="34" width="472" height="12"/>
+				<staticText>
+					<reportElement x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[5.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The down payment shall be deducted proportionately from the <b>STAGE</b> billings of the CONTRACTOR in such away that when the work is completed, the down payment shall have been fully liquidated and/or repaid by the CONTRACTOR."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="106" width="472" height="12"/>
+				<staticText>
+					<reportElement x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[5.9]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Before final payment on the Contract Price is made, the CONTRACTOR shall aside from the specific requirements in the Contract Documents, submit the following:\n" +
+"5.9.1	A release waiver and quit claim on causes of action, which the CONTRACTOR may have against the OWNER arising under and by virtue of this Contract;\n" +
+"5.9.2	Original and a copy of the Certificate of Completion and Acceptance of the Work by the OWNER."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="58" width="472" height="12"/>
+				<staticText>
+					<reportElement x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[5.5]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Ten percent (10%) of the Contract Price shall be retained by the OWNER deducted proportionately from the STAGE billings of the CONTRACTOR. The amounts retained by the OWNER shall be non-interest bearing and shall be held by the OWNER until the warranty period specified in Article VIII hereof expires."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="82" width="472" height="12"/>
+				<staticText>
+					<reportElement x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[5.7]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["If during the period of construction there shall be other forms of financial accommodations or advances made to the CONTRACTOR and collectibles due to the OWNER from the CONTRACTOR, the same shall be repaid as outright deductions from any and all payables due to the CONTRACTOR."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="46" width="472" height="12"/>
+				<staticText>
+					<reportElement x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[5.4]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR shall be paid after the completion of each milestone work and upon signing of turn-over form and upon issuance of certificate of acceptance, certified to by Property Management Department (PMD) and/or the architects and engineers by the OWNER for the project."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="70" width="472" height="12"/>
+				<staticText>
+					<reportElement x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[5.6]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Subject to the above deductions and retentions, payments shall be made by the OWNER within twenty one (21) days from receipt of the CONTRACTOR’S billing (duly approved by the Construction Manager).  All billings of the CONTRACTOR shall be accompanied with copies of test results demonstrating that the items so accomplished have passed the requirements of the plans and specifications, and by an affidavit of the CONTRACTOR to the effect that all costs of labor, materials, services, equipment and supplies employed in the Project have been paid for by the CONTRACTOR"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="22" width="472" height="12"/>
+				<staticText>
+					<reportElement x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[5.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR shall be required to post a bond or present other similar instrument that would guaranty recovery of the down payment should the CONTRACTOR fails to return the payment advanced within 7 days after the OWNER had exercised its right to terminate the Contract as provided in Article XII hereof. "]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="118">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE VI - CONSTRUCTION PERIOD / EFFECTIVITY]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[6.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR undertakes to implement and complete the Work in accordance with the plans, specifications and conditions specified in the Contract Documents within the following contractual period:"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="65" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[6.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The period of completion shall be extended only when the OWNER approves the extension in writing."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="77" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[6.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Should the contractor be obstructed or delayed in the execution or completion of the work by the act, or omission, neglect or default of the OWNER, the CONTRACTOR shall inform the OWNER in writing of any event giving rise to excusable delay under the pertinent provisions of the Contract Documents within fifteen (15) days from the date such event occurs and file the necessary request for extension for such period of time he consider reasonable under the circumstances. However, the CONTRACTOR shall not be entitled for any CLAIMS on damages whatsoever from the above mentioned causes of delay."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="101" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[6.5]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Excusable delays are those falling under Force Majeure or acts of God which include catastrophic earthquake, tidal wave, tornado, war, flood and other cataclysmic phenomenon and misfortune which is beyond the prudence and fore sight of the CONTRACTOR and which it could not prevent by any means.  Natural occurrences and other events, which are within the control of the CONTRACTOR and as provided in the General Conditions of Contract and Article 1.26 of UAP Document 301, shall not be considered for purposes of adjusting the Contract Period.  No reparation shall be made to the CONTRACTOR for damages resulting therefrom."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="89" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[6.4]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Claims for the time extension of the Contract Period by reason of Force Majeure shall be subject to the approval by the OWNER, at no cost to the OWNER"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="97" y="23" width="376" height="12"/>
+				<textField isStretchWithOverflow="true" pattern="MMMMM dd, yyyy" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="83" y="0" width="277" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{start_date}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="83" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Contract Start Date:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="97" y="34" width="376" height="12"/>
+				<textField isStretchWithOverflow="true" pattern="MMMMM dd, yyyy" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="83" y="0" width="277" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{finish_date}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="83" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Contract End Date  :]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="97" y="46" width="376" height="12"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="83" y="0" width="277" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{working_days} + " calendar days"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="83" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Duration                  :]]></text>
+				</staticText>
+			</frame>
+		</band>
+		<band height="27">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE VII - LIQUIDATED DAMAGES]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[7.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["It is understood that time is the essence of this Contract.  Upon failure of the CONTRACTOR to complete the Work within the Contract Period, the CONTRACTOR agrees to pay the OWNER the amount equivalent to one-tenth (1/10) of one percent (1%) of the total contract amount for each and every calendar day of delay (Sundays and regular/legal holidays included) up to a maximum amount equivalent to ten percent (10%) of the total and final contract amount.  Said amount shall be considered as liquidated damages and not as a penalty."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="51">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE VIII - GUARANTY]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[8.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR guarantees the workmanship and the materials supplied by it for a period of one (1) year from the date of the issuance of the Certificate of Completion and Acceptance of the Work by the OWNER of the 100% completed Work."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="22" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[8.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["For the purpose of the above guaranty, the OWNER shall retain the amount allowed under Article 5.5 from the CONTRACTOR’s billing until the expiry of the warranty period.  The warranty period starts after the issuance by the OWNER of the Certificate of Completion and Acceptance for the completed Work."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="34" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[8.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The OWNER may upon representation by the CONTRACTOR and approval of the OWNER, release the amounts retained or a portion thereof after forty five days upon issuance of certificate of completion , provided that the CONTRACTOR submits a Warranty Certificate. Such Warranty Certificate shall be in force during the warranty period and shall be canceled only upon the advice by the OWNER."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="88">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE IX - RESPONSIBILITIES OF THE CONTRACTOR]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[9.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR shall complete the Work strictly in accordance with the Contract Documents. The CONTRACTOR warrants the integrity and reliability of the Work and their conformity with the highest standard of safety, workmanship, appropriateness for use in the Project, taking into consideration of the Project’s size, location, purpose, design and durability. The CONTRACTOR shall provide everything necessary or appropriate, including labor and construction equipment, for the proper accomplishment and completion of the Work in strict accordance with the true intent and meaning of the Contract Documents referred to in Article I taken together, whether the same may or may not be particularly shown in the drawings or described in the specifications: Provided that the same can be reasonably inferred therefrom; Provided further that, if the CONTRACTOR finds any discrepancies in the drawings or between the drawings and the specifications, the CONTRACTOR shall immediately refer the same to the Project Manager to evaluate and recommend to the OWNER who shall finally decide on which shall be followed."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="60" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[9.5]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR shall indemnify the OWNER for whatever injuries or damages that the OWNER will suffer as a result of the negligent or deliberate acts of the employees of the CONTRACTOR."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="22" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[9.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR shall coordinate the work of the SUBCONTRACTOR in addition to its own, and shall be directly responsible for the work of all men under its control and supervision to ensure the expeditious and satisfactory completion of the Work."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="34" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[9.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR is an independent Contractor. It is not an employee of the OWNER. Neither shall the personnel or workmen of the CONTRACTOR be deemed employees of the OWNER. Hence, the OWNER shall not in any way be liable, or responsible for any and all unpaid wages or compensation, or personal injury (ies) or damages, including death, sustained or caused by any of the employees of the CONTRACTOR. The CONTRACTOR shall, at all times, be directly responsible and liable for the enforcement of, and compliance with all existing laws, rules and regulations particularly in respect of any and all claims brought about by its personnel for the enforcement of the provisions of the Labor Code of the Philippines and other pertinent labor and social legislation. The CONTRACTOR hereby holds the OWNER free and harmless from all such claims and liabilities."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="72" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[9.6]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR, after the completion of the WORK, shall be responsible for the safekeeping of any construction material and or equipment supplied by the OWNER, if there is any. The cost for safekeeping will be base on the agreed amount of both parties and shall be for the account of the OWNER. Any losses / damages to said construction material and or equipment will be charged to the account of the CONTRACTOR."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="47" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[9.4]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Any liability of the CONTRACTOR under this Article shall not extend to the employees, workmen, or staff of the SUBCONTRACTORS. The Contractor shall individually be directly responsible for any and all damages, including death, sustained or caused by any of their respective employees."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="69">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE X –  OWNER'S RIGHTS TO WITHHOLD PAYMENTS]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[10.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Notwithstanding the conditions indicated in Article V of this Contract, the OWNER shall have the right to withhold any payments to the CONTRACTOR in the event of the following:"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="42" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[10.1.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR is delayed in meeting the Construction Period specified under Article VI of this Contract which brings forth reasonable doubt that the Contract can be completed for the balance then unpaid."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="32" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[10.1.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Non-compliance or defective or irregular compliance with any of the CONTRACTOR’s obligations under the Contract Documents."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="52" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[10.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["When the above grounds are removed, the OWNER may proceed with the release of the amount withheld."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="22" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[10.1.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["A claim against the CONTRACTOR is made and coursed through the OWNER by a party for the payment of labor, services, supplies and/or materials, or of rentals for the use of tools and equipment"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="69">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE XI – AUTHORIZED DEDUCTIONS FROM VALUE OF COMPLETED WORKS]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[11.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The OWNER may deduct frm any payments due to the CONTRACTOR, even from other contracts awarded in case of multiple contracts, for the following: "]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="42" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[11.1.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The amount which has accrued as liquidated damages"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="32" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[11.1.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Payment for unpaid water and or electricity consumed by the CONTRACTOR using the facilities of the OWNER. Deduction may include the cost to restore the facility in case where the utility company had disconnected its service due to the CONTRACTOR's negligence to pay the billed amount on time. "]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="22" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[11.1.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The estimated cost of non-compliant or defective work for which the CONTRACTOR fail to remedy;"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="52" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[11.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The OWNER should properly account for any deduction made."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="99">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE XII - TERMINATION OF CONTRACT AT OWNER’S CONVENIENCE]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[12.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The OWNER reserves the right to terminate this Contract and/or take over the Work upon the occurrence of any of the following events:"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="22" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[12.1.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR is delayed in meeting the Construction Period specified under Article VI of this Contract by at least twenty percent (20%)."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="52" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[12.1.4]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR disregards or violates provisions of the Contract Documents or Construction Manager’s instructions, or fails to prosecute the Work according to the agreed Schedule of Completion, including extensions thereof."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="72" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[12.1.6]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR fails to make prompt payment to sub-contractors, workmen, or materials suppliers."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="42" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[12.1.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR declares bankruptcy, becomes insolvent or assigns his assets for the benefit of his creditors."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="32" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[12.1.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR becomes liable for liquidated damages in an amount corresponding to a delay of at least five percent (5%) of the total Contract Price."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="62" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[12.1.5]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR fails to provide a qualified superintendent, competent workmen or sub-contractors, or proper materials."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="82" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[12.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Should any one of the aforecited events occur, the OWNER shall have the option to take possession of the premises and of all materials, tools and appliance thereon and take over the remaining Work, with or without terminating this Contract. Upon the exercise of such option by the OWNER, the OWNER shall be entitled to withhold the payment of all amounts, which would otherwise have been due to the CONTRACTOR. Implementation of this Contract provision is subject to the OWNER'S Take-Over Policy."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="65">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE XIII - CONTRACTOR’S REPRESENTATIONS AND WARRANTIES]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[13.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR warrants that it has inspected the Project Site; that it has been fully informed of the conditions which affect the nature, extent and cost of the Work; that the OWNER shall in no way be responsible for any costs or expenses which may develop on account of failure of the CONTRACTOR to make an accurate examination of present and future factors that may affect the cost of execution of Work."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="22" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[13.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR represents that the Contract Price accepted by the OWNER has taken into account the possible escalation in the costs of labor arising from any cause, or the costs of CONTRACTOR provided materials, tools and equipment, or the escalation in the foregoing costs by reason of any delay in completing the Work due to causes directly or indirectly attributable to the national, provincial, city or municipal government, or any agency, entity or official of the government, or any company or person. The Contract Price shall remain a firm unalterable price which shall not be subject to increase for any cause or reason."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="34" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[13.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR warrants that it has sufficient operating capital to perform and complete the Work without relying upon advances or payments from the OWNER; that it has sufficient and adequate equipment, tools and other materials that may be needed in the Work, that it has the required knowledge, experience and professional competence to undertake the Work; that it has experienced, skilled and professionally equipped personnel to be assigned for this purpose; that the materials to be used in the Project shall be the best available or obtainable and shall conform to the specifications under the Contract Documents; that the method or process it will follow shall be the one that will best accomplish the desired results; that it will provide workmanship which is first class; and that it will be able to complete the Work without any extension of the Contract Period."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="46" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[13.4]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR warrants that: (a) it is a corporation duly incorporated and registered with the Securities and Exchange Commission; (b) its franchise to exist as such or to engage in business has not been terminated, canceled or suspended; (c) it is not under investigation by any competent governmental authority for the purpose of terminating, canceling or suspending such franchise; (d) its board of directors has approved this Contract; (e) the persons signing for the CONTRACTOR has been fully empowered and authorized to sign this Contract and the other Contract Documents; (f) all the obligations incurred by the CONTRACTOR under the Contract Documents are legal and valid obligations enforceable against it in accordance with its license; (g) the performance by the CONTRACTOR of its obligations under the Contract Documents will not violate any agreement binding upon it or any of its property and will not violate its Articles of Incorporation and By-Laws; (h) that it is not insolvent or in imminent danger of insolvency; (i) there is no pending petition, action or proceeding, whether judicial or extrajudicial, seeking to declare the CONTRACTOR insolvent or to suspend its payments to creditors; (j) it does not plan to suspend payment to creditors; and (k) until completion of the Work and the expiry of the warranty period, there will be no action, petition or proceeding initiated by the CONTRACTOR or by any person seeking to declare the CONTRACTOR insolvent or to suspend payments of its debts."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="55">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="1" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE XIV - VARIATIONS AND ALTERATIONS OF WORKS]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="11" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[14.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR is expressly prohibited from arbitrarily implementing any modification and or improvements in the actual implementation of works contracted, even if such modification or improvement is to be OWNER's advantage and even without any related cost on the part of the OWNER, unless with written instruction from the OWNER's authorized representative."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="23" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[14.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["In case where the OWNER initiates modification and or improvements on the plans and specifications or adapts the proposal of the CONTRACTOR for modifications and improvements, the OWNER shall issue a written instruction to implement the changes after the cost related to such change, either deductive or additive, has been finalized between both parties."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="35" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[14.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Changes in the scope of works during implementation of approved variations and alterations is still subject to CONTRACTOR's warranty."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="31">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE XV -TITLE TO THE WORK]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Title to the Work, all materials and equipment covered under the Contract Documents shall be transferred to the OWNER, free of all liens and encumbrances. No work, materials or equipment shall be acquired by the CONTRACTOR under which an interest is retained by the seller thereof."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="140">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE XVI - OTHER CONDITIONS]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[16.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The Contract Documents shall be binding upon the successors and assigns of both parties; provided that, the prior written consent of the OWNER shall be required for the assignment of this Contract by the CONTRACTOR."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="22" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[16.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["If any court shall declare any provision of this Contract null and void, the remaining provisions shall remain in full force and effect."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="34" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[16.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["When the extent of the Work originally contemplated under this Contract is changed, the determination of the difference in value between the originally envisaged amount of the Work and the changed work for the purpose of adjusting the Contract Price shall be agreed upon in writing between the OWNER and CONTRACTOR."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="46" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[16.4]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR agrees not to sub-let or sub-contract any portion of this Contract without the prior written consent of the OWNER as stipulated in Article 25 of UAP Document 301."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="58" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[16.5]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Nothing herein provided should be deemed to be a waiver of the obligations and liabilities of the CONTRACTOR under Article 1723 of the Civil Code."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="70" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[16.6]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR shall comply with all applicable laws, decrees, rules and regulations, which may be promulgated from time to time by governmental authorities, and shall hold the OWNER free and harmless from any liability that may arise from the CONTRACTOR’S violation thereof."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="82" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[16.7]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The CONTRACTOR shall observe the confidentiality of the information specially on the following:"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="94" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[16.7.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Cost of Contract"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="104" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[16.7.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Plans and specifications. House plans is solely for use by the contractor to construct the awarded units of OWNER and cannot be used for any other purpose."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="114" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[16.7.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Bill of Quantities and Materials"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="25" y="124" width="447" height="10"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="40" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[16.7.4]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="40" y="0" width="407" height="10"/>
+					<box topPadding="0" bottomPadding="0">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Other information critical to the OWNER's line of business."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="41">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE XVII - ARBITRATION]]></text>
+			</staticText>
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[17.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Any dispute arising in the course of the execution of this Contract by reason of differences in interpretation of the Contract Documents which the OWNER and the CONTRACTOR are unable to resolve between themselves, shall be submitted by either party for resolution or decision, as mentioned in Articles 33.04 and 33.05 of UAP Document 301, to a board of arbitrators composed of three (3) members, to be chosen as follows:\n" +
+"One (1) member each shall be chosen and appointed by the OWNER and CONTRACTOR. The said two (2) members, in turn, shall select and appoint a third member acceptable to both of them. The decision of the board of arbitrators shall be rendered within fifteen (15) days from first meeting of the board. The decision of the board of arbitrators when reached through the affirmative vote of at least two (2) of its members shall be final and binding upon the OWNER and CONTRACTOR."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="0" y="22" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[17.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Matters not otherwise provided for in this Contract or by special agreement of the parties shall be governed by the provisions of the Construction Arbitration Law of the Philippines.\n\n" +
+"It is hereby agreed that the submission of any matter to arbitration shall not be reason for the CONTRACTOR to suspend the Work nor shall it affect the Contract Period set forth in Article VI hereof, except for the portion of the Work subject to arbitration."]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="38">
+			<frame>
+				<reportElement positionType="Float" x="0" y="10" width="472" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="25" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="25" y="0" width="447" height="12"/>
+					<box topPadding="0" bottomPadding="2">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Tahoma" size="8" isBold="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<b>COURT ACTION</b>. Should the CONTRACTOR seek relief in court for the enforcement of this Contract or any of the documents hereto attached, or incorporated by reference, the parties hereby agree to submit to the jurisdiction of the proper court of <b>Mandaluyong City</b>. It is understood that upon the execution hereof, the parties expressly waive any other venue."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="472" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="styled">
+					<font fontName="Tahoma" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[ARTICLE XVIII – VENUE]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="99" splitType="Stretch">
+			<textField isStretchWithOverflow="true" evaluationTime="Report">
+				<reportElement x="163" y="73" width="250" height="12"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" of " +$V{PAGE_NUMBER}+ " Housing Contract " + $F{contract_no}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="111" y="73" width="52" height="12"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Auto">
+				<reportElement positionType="Float" x="313" y="73" width="159" height="12"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["As of: " + new SimpleDateFormat("EEE MMM dd, yyyy hh:mm a").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Auto">
+				<reportElement positionType="Float" x="0" y="73" width="111" height="12"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false" isItalic="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["/" + $P{prepared_by}.toUpperCase()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

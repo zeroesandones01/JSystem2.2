@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptARReceipt_checkPmt_EDC" pageWidth="180" pageHeight="60" columnWidth="180" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.3579476910000023"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="client_seqno" class="java.lang.String"/>
+	<parameter name="ar_no" class="java.lang.String"/>
+	<parameter name="pymnt_type" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT c.bank_name, b.receipt_no, a.entity_id, a.proj_id, a.pbl_id, a.trans_date, a.total_amt_paid, b.part_type, SUM(b.amount) as amount, b.bank, b.branch, b.acct_no, b.check_no, b.check_date
+FROM rf_pay_header a
+LEFT JOIN rf_pay_detail b ON b.client_seqno = a.client_seqno
+LEFT JOIN mf_bank c on c.bank_id = b.bank
+WHERE a.client_seqno = $P{client_seqno}
+and (b.receipt_no = $P{ar_no} or b.ar_no = $P{ar_no})
+AND b.bank is not null
+GROUP BY c.bank_name, b.receipt_no, a.entity_id, a.proj_id, a.pbl_id, a.trans_date, a.total_amt_paid, b.part_type, b.bank, branch, b.acct_no, b.check_no, b.check_date]]>
+	</queryString>
+	<field name="bank_name" class="java.lang.String"/>
+	<field name="receipt_no" class="java.lang.String"/>
+	<field name="entity_id" class="java.lang.String"/>
+	<field name="proj_id" class="java.lang.String"/>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="trans_date" class="java.sql.Timestamp"/>
+	<field name="total_amt_paid" class="java.math.BigDecimal"/>
+	<field name="part_type" class="java.lang.String"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="bank" class="java.lang.String"/>
+	<field name="branch" class="java.lang.String"/>
+	<field name="acct_no" class="java.lang.String"/>
+	<field name="check_no" class="java.lang.String"/>
+	<field name="check_date" class="java.sql.Timestamp"/>
+	<detail>
+		<band height="53" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="16" height="15"/>
+				<textElement markup="html">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{pymnt_type}.equals("A") ? "<html>&#10004;</html>" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="64" y="0" width="16" height="15"/>
+				<textElement markup="html">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{pymnt_type}.equals("B") ? "<html>&#10004;</html>" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="15" width="100" height="12"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{check_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="27" width="100" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="128" y="15" width="56" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{check_date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="40" width="100" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

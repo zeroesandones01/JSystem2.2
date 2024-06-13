@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptNoticeOfAward" columnCount="2" pageWidth="400" pageHeight="792" columnWidth="200" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ntp_no" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["000087"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select ('2.2.2.' || row_number() over(order by a.seq_no::int))::varchar || ' ' || a.work_desc as work_desc
+from co_ntp_detail a
+where a.ntp_no = $P{ntp_no}
+order by a.seq_no::int;]]>
+	</queryString>
+	<field name="work_desc" class="java.lang.String"/>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="0" width="400" height="10"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{work_desc}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

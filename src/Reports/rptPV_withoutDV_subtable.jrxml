@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptPV_withoutDV_subtable" pageWidth="432" pageHeight="792" columnWidth="397" leftMargin="25" rightMargin="10" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="date_from" class="java.util.Date"/>
+	<parameter name="date_to" class="java.util.Date"/>
+	<parameter name="req_type_id" class="java.lang.String"/>
+	<parameter name="payee_id" class="java.lang.String"/>
+	<parameter name="availer_id" class="java.lang.String"/>
+	<parameter name="prepared_id" class="java.lang.String"/>
+	<parameter name="status_id" class="java.lang.String"/>
+	<parameter name="pmt_type_id" class="java.lang.String"/>
+	<parameter name="pv_from" class="java.lang.Integer"/>
+	<parameter name="pv_to" class="java.lang.Integer"/>
+	<parameter name="co_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+
+a.acct_id,
+a.acct_name,
+sum(a.pv_amt) as pv_amt
+
+from (
+
+select
+
+aa.acct_id,
+trim(i.acct_name) as acct_name,
+aa.pv_amt
+
+from (select * from rf_request_detail where status_id != 'I') aa
+join (select * from rf_pv_header where cv_no is null or cv_no = '') a on aa.rplf_no = a.pv_no
+left join rf_request_header b on a.pv_no = b.rplf_no and a.co_id = b.co_id
+left join mf_rplf_type c on b.rplf_type_id = c.rplf_type_id
+left join rf_entity d on a.entity_id1 = d.entity_id
+left join rf_entity e on a.entity_id2 = e.entity_id
+left join ( select distinct on (pv_no) pv_no, sum(tran_amt) as amt_payable from rf_pv_detail where status_id != 'I' and acct_id = '03-01-01-001'  and co_id = $P{co_id} group by pv_no ) f on a.pv_no = f.pv_no
+left join mf_record_status g on a.status_id = g.status_id
+left join rf_cv_header h on a.cv_no = h.cv_no and a.co_id = h.co_id
+left join mf_boi_chart_of_accounts i on aa.acct_id = i.acct_id
+
+where a.pv_date::date >= $P{date_from}
+and a.pv_date::date <= $P{date_to}
+and ( case when $P{req_type_id} = '' or $P{req_type_id} is null then a.pv_no is not null else b.rplf_type_id = $P{req_type_id}  end )
+and ( case when $P{payee_id} = '' or $P{payee_id} is null then a.pv_no is not null else a.entity_id1 = $P{payee_id}  end )
+and ( case when $P{availer_id} = '' or $P{availer_id} is null then a.pv_no is not null else a.entity_id2 = $P{availer_id}  end )
+and ( case when $P{prepared_id} = '' or $P{prepared_id} is null then a.pv_no is not null else a.created_by = $P{prepared_id}  end )
+and ( case when $P{pv_from} = 0 or $P{pv_from} is null then a.pv_no is not null else a.pv_no::int >= $P{pv_from}   end )
+and ( case when $P{pv_to} = 0 or $P{pv_to} is null then a.pv_no is not null else a.pv_no::int <= $P{pv_to}  end )
+and ( case when $P{pmt_type_id} = '' then a.pv_no is not null else a.pay_type_id = $P{pmt_type_id} end )
+and ( case when $P{status_id} = '' then a.pv_no is not null else a.status_id = $P{status_id} end )
+
+order by a.pv_no
+
+) a
+
+group by a.acct_id, a.acct_name
+
+order by a.acct_name]]>
+	</queryString>
+	<field name="acct_id" class="java.lang.String"/>
+	<field name="acct_name" class="java.lang.String"/>
+	<field name="pv_amt" class="java.math.BigDecimal"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="total_pv_amt" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{pv_amt}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="8"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="13" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="71" height="13" backcolor="#CCFFCC"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Account ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="71" y="0" width="181" height="13" backcolor="#CCFFCC"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Account Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="252" y="0" width="80" height="13" backcolor="#CCFFCC"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PV Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="0" width="332" height="13" backcolor="#CCCCFF"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="71" height="11"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acct_id}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="71" y="0" width="181" height="11"/>
+				<box leftPadding="3" rightPadding="0">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acct_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="252" y="0" width="80" height="11"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{pv_amt}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7"/>
+	</columnFooter>
+	<summary>
+		<band height="15">
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="252" height="11"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Total"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="252" y="0" width="80" height="11"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total_pv_amt}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

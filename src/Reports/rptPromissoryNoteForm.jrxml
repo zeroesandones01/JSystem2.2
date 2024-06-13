@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptPromissoryNoteForm" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="0.7513148009015785"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="company" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["CENQHOMES DEVELOPMENT CORPORATION"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logo" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pn_no" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["0000000005"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="subrptPromissoryNotel" class="java.io.InputStream" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[this.getClass().getResourceAsStream("/Reports/subrptPromissoryNotel.jasper")]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+distinct on (a.entity_id)
+trim(_get_client_name(a.entity_id)) as client_name,
+phase,block,lot,
+get_project_name(a.proj_id) as proj_name,
+--current_date as date_asof,
+--committed_amt_1 + COALESCE(committed_amt_2,0) as total_amount,
+--committed_amt_1,
+--COALESCE(committed_amt_2,0) as amt2,
+--committed_amt_1 + COALESCE(committed_amt_2,0) as partial_amount,
+--(CASE WHEN date_committed_2 IS NULL THEN date_committed_1 ELSE date_committed_2 END )::DATE,
+payment_date::date as as_of_date,
+a.amount_to_pay as amount_due,
+payment_amount,
+(select SUM(amount) from rf_pn_detail where pn_no = a.pn_no) as partial_amount,
+_get_client_mobileno(a.entity_id) as mobile_no,
+_get_client_email(a.entity_id) as email
+
+ from rf_pn_header a
+ LEFT JOIN mf_unit_info b on a.unit_id = b.unit_id
+ LEFT JOIN rf_pn_detail c on a.pn_no = c.pn_no
+
+ WHERE a.pn_no = $P{pn_no}]]>
+	</queryString>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="phase" class="java.lang.String"/>
+	<field name="block" class="java.lang.String"/>
+	<field name="lot" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="as_of_date" class="java.sql.Date"/>
+	<field name="amount_due" class="java.math.BigDecimal"/>
+	<field name="payment_amount" class="java.math.BigDecimal"/>
+	<field name="partial_amount" class="java.math.BigDecimal"/>
+	<field name="mobile_no" class="java.lang.String"/>
+	<field name="email" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<image>
+				<reportElement x="2" y="0" width="74" height="40"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="76" y="0" width="479" height="40"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="111" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="7" width="555" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROMISSORY NOTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="50" width="45" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="70" width="320" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Credit and Collection Department]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="90" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Madame / Sir :]]></text>
+			</staticText>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="47" y="50" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="13" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="75" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="0" width="32" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[I am]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="32" y="0" width="200" height="20"/>
+				<box bottomPadding="0">
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="html">
+					<font fontName="Times New Roman" size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="232" y="0" width="106" height="20"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[, your buyer of Phase]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="339" y="0" width="35" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{phase}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="374" y="0" width="31" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[Block]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="409" y="0" width="35" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{block}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="445" y="0" width="31" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[Lot]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="476" y="0" width="40" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{lot}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="516" y="0" width="37" height="20"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[located]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="20" width="14" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[at]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="16" y="20" width="228" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{proj_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="244" y="20" width="309" height="20"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[Subdivision.  I am executing this instrument by virtue of and in]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="40" width="309" height="20"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[consideration of the following:]]></text>
+			</staticText>
+		</band>
+		<band height="30">
+			<staticText>
+				<reportElement x="16" y="0" width="16" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[1.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="34" y="0" width="521" height="20"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["<html>I acknowledge that the amount due from me to update my account as of <b><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+new SimpleDateFormat("MMMMM dd, yyyy").format(new java.util.Date())+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></b> for the purchase of the above-mentioned unit is PhP <b><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+new DecimalFormat("#,##0.00").format($F{amount_due})+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></b>.</html>"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="30">
+			<staticText>
+				<reportElement x="16" y="0" width="16" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[2.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="32" y="0" width="521" height="20"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["<html>That I am capable of making only a partial payment amounting to PhP <b><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+new DecimalFormat("#,##0.00").format($F{payment_amount})+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></b>  at this time;</html>"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="111">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="32" y="0" width="521" height="32"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["<html>That I promise to pay the difference, together with all the corresponding penalties, accrued interests and other amount due on the following payment schedule/s\" </html>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="16" y="0" width="16" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[3.]]></text>
+			</staticText>
+			<subreport isUsingCache="false">
+				<reportElement x="57" y="42" width="361" height="32"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="logo">
+					<subreportParameterExpression><![CDATA[$P{logo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="pn_no">
+					<subreportParameterExpression><![CDATA[$P{pn_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="subrptPromissoryNotel">
+					<subreportParameterExpression><![CDATA[$P{subrptPromissoryNotel}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="company">
+					<subreportParameterExpression><![CDATA[$P{company}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[$P{SUBREPORT_DIR}]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="30">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="32" y="0" width="521" height="20"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["<html>That the acceptance of CenQhomes Development Corporation (CDC) of my partial payment does not in any way make my account current or diminish the number of days that my account has been overdue;</html>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="16" y="0" width="16" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[4.]]></text>
+			</staticText>
+		</band>
+		<band height="30">
+			<staticText>
+				<reportElement x="16" y="0" width="16" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[5.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="32" y="0" width="521" height="20"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["<html>And in case I failed to settle my obligation of the dates stated above, CenQHomes Development Corporation (CDC) may automatically cancel my account without prior notice;</html>"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="50">
+			<staticText>
+				<reportElement x="16" y="0" width="16" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<text><![CDATA[6.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="32" y="0" width="521" height="20"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["<html>That in the event cancellation of my contract. I promise to voluntarily and peacefully surrender the possesion of the property to CenQHomes Development Corporation (CDC) and shall vacate the same within thirty (30) days from the date of cancellation.</html>"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="92">
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="100" y="20" width="246" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Client		: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="100" y="0" width="246" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="20" width="100" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date		:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="100" y="40" width="246" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{mobile_no}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="40" width="100" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Telephone	:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="60" width="100" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[E-mail             :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="100" y="60" width="246" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{email}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

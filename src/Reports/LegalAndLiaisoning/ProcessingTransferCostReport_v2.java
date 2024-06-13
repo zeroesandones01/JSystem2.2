@@ -1,0 +1,1370 @@
+package Reports.LegalAndLiaisoning;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import org.jdesktop.swingx.JXTextField;
+import Database.pgSelect;
+import DateChooser._JDateChooser;
+import Functions.FncGlobal;
+import Functions.FncReport;
+import Functions.FncSystem;
+import Functions.FncTables;
+import Functions.UserInfo;
+import Lookup.LookupEvent;
+import Lookup.LookupListener;
+import Lookup._JLookup;
+import components.JTBorderFactory;
+import components._JInternalFrame;
+import components._JTableMain;
+import interfaces._GUI;
+import tablemodel.model_PCost2;
+import tablemodel.model_TCost2;
+
+public class ProcessingTransferCostReport_v2 extends _JInternalFrame implements _GUI, ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Dimension frameSize = new Dimension(750, 630);
+	private JPanel pnlMain;
+	private static _JLookup lookupCompany;
+	private JXTextField txtCompany;
+	private _JLookup lookupProject;
+	private JXTextField txtProject;
+	private JComboBox cmbClass;
+	private _JDateChooser dteDateFrom;
+	private _JDateChooser dteDateTo;
+	private _JLookup lookupBatch;
+	private static JTabbedPane tabCenter;
+	private model_PCost2 modelPCost;
+	private _JTableMain tblPCost;
+	private model_TCost2 modelTCost;
+	private _JTableMain tblTCost;
+	private _JLookup lookupBuyer;
+	private JTextField txtBuyer;
+	private String co_id = "";
+	private String proj_id = "";
+	private String entity_id = "";
+	private String strBatchProject;
+	private JTextField txtPBL;
+	private JTextField txtUnit;
+	private String rplf_no_pcost;
+
+
+	public ProcessingTransferCostReport_v2() {
+		// TODO Auto-generated constructor stub
+		super("Processing/Transfer Cost Report", true, true, true, true);
+		initGUI();	
+	}
+
+	public ProcessingTransferCostReport_v2(String title) {
+		super(title);
+		// TODO Auto-generated constructor stub
+	}
+
+	public ProcessingTransferCostReport_v2(String title, boolean resizable, boolean closable, boolean maximizable,
+			boolean iconifiable) {
+		super(title, resizable, closable, maximizable, iconifiable);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void initGUI() {
+		// TODO Auto-generated method stub
+		this.setLayout(new BorderLayout(5,5));
+		this.setSize(frameSize);
+		this.setMinimumSize(frameSize);
+		{
+			pnlMain = new JPanel(new BorderLayout(5,5));
+			this.add(pnlMain, BorderLayout.CENTER);
+			pnlMain.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+			{
+				JPanel pnlNorth = new JPanel(new GridBagLayout());
+				pnlMain.add(pnlNorth, BorderLayout.NORTH);
+				pnlNorth.setPreferredSize(new Dimension(0,300));
+				{
+					GridBagConstraints c = new GridBagConstraints();
+					c.fill =  GridBagConstraints.BOTH;
+					{
+						c.weightx = 1;
+						c.weighty = 1;
+
+						c.gridx = 0;
+						c.gridy = 0;
+
+						JPanel pnlDetails = new JPanel(new GridBagLayout());
+						pnlNorth.add(pnlDetails, c);
+						pnlDetails.setBorder(JTBorderFactory.createTitleBorder("Details"));
+						{
+							GridBagConstraints cons_det = new GridBagConstraints();
+							cons_det.fill = GridBagConstraints.BOTH;
+							cons_det.insets = new Insets(5, 5, 5, 5);
+
+							//COMPANY
+							{
+								cons_det.weightx = 0;
+								cons_det.weighty = 1;
+
+								cons_det.gridx = 0;
+								cons_det.gridy = 0;
+
+								JLabel lblCompany = new JLabel("Company", JLabel.CENTER);
+								pnlDetails.add(lblCompany, cons_det);						
+							}
+							{
+								cons_det.weightx = 0.25;
+								cons_det.weighty = 1;
+
+								cons_det.gridx = 1;
+								cons_det.gridy = 0;
+
+								lookupCompany = new _JLookup(null, "Company");	
+								pnlDetails.add(lookupCompany, cons_det);
+								lookupCompany.setReturnColumn(0);
+								lookupCompany.setLookupSQL(company());
+								lookupCompany.addLookupListener(new LookupListener() {
+
+									@Override
+									public void lookupPerformed(LookupEvent event) {
+										Object data[] = ((_JLookup)event.getSource()).getDataSet();
+
+										if(data!=null) {
+											System.out.printf("SQL for company:%s\n", company());
+											co_id = (String) data[0];
+											String co_name = (String) data[1];
+
+											txtCompany.setText(co_name);
+
+											lookupProject.setLookupSQL(sql_project(co_id));
+
+											int index = tabCenter.getSelectedIndex();										
+											if(index == 0) {
+												lookupBatch.setLookupSQL(SQL_BATCHPCOST(entity_id, co_id, proj_id));
+											}else {
+												lookupBatch.setLookupSQL(SQL_BATCHTCOST(entity_id, co_id, proj_id));
+											}
+											lookupBatch.setEnabled(true);
+
+										}				
+									}
+								});
+							}
+							{
+								cons_det.weightx = 1;
+								cons_det.weighty = 1;
+
+								cons_det.gridx = 2;
+								cons_det.gridy = 0;
+
+								txtCompany = new JXTextField("All Company");
+								pnlDetails.add(txtCompany, cons_det);
+								txtCompany.setEnabled(false);
+							}
+
+							//PROJECT
+							{
+								cons_det.weightx = 0;
+								cons_det.weighty = 1;
+
+								cons_det.gridx = 0;
+								cons_det.gridy = 1;
+
+								JLabel lblProject = new JLabel("Project", JLabel.CENTER);
+								pnlDetails.add(lblProject, cons_det);						
+							}
+							{
+								cons_det.weightx = 0.25;
+								cons_det.weighty = 1;
+
+								cons_det.gridx = 1;
+								cons_det.gridy = 1;
+
+								lookupProject = new _JLookup(null, "Project");	
+								pnlDetails.add(lookupProject, cons_det);
+								lookupProject.setReturnColumn(0);
+								lookupProject.addLookupListener(new LookupListener() {
+
+									@Override
+									public void lookupPerformed(LookupEvent event) {
+										Object data[] = ((_JLookup)event.getSource()).getDataSet();
+
+										if(data!=null) {
+											System.out.printf("SQL for project:%s\n", sql_project(co_id));
+											proj_id = (String) data[0];
+											String proj_name = (String) data[1];
+
+											txtProject.setText(proj_name);
+
+											lookupBuyer.setEnabled(true);
+											lookupBatch.setEnabled(true);
+											lookupBuyer.setLookupSQL(SQL_BUYER(proj_id));	
+
+											int index = tabCenter.getSelectedIndex();										
+											if(index == 0) {
+												lookupBatch.setLookupSQL(SQL_BATCHPCOST(entity_id, co_id, proj_id));
+											}else {
+												lookupBatch.setLookupSQL(SQL_BATCHTCOST(entity_id, co_id, proj_id));
+											}
+										}				
+									}
+								});
+							}
+							{
+								cons_det.weightx = 1;
+								cons_det.weighty = 1;
+
+								cons_det.gridx = 2;
+								cons_det.gridy = 1;
+
+								txtProject = new JXTextField("All Projects");
+								pnlDetails.add(txtProject, cons_det);
+								txtProject.setEnabled(false);
+							}
+
+							//PHASE
+							//							{
+							//								cons_det.weightx = 0;
+							//								cons_det.weighty = 1;
+							//								
+							//								cons_det.gridx = 0;
+							//								cons_det.gridy = 2;
+							//								
+							//								JLabel lblPhase = new JLabel("Phase", JLabel.CENTER);
+							//								pnlDetails.add(lblPhase, cons_det);			
+							//							}
+							//							{
+							//								cons_det.weightx = 0.25;
+							//								cons_det.weighty = 1;
+							//								
+							//								cons_det.gridx = 1;
+							//								cons_det.gridy = 2;
+							//								
+							//								lookupPhase = new _JLookup(null, "Phase");	
+							//								pnlDetails.add(lookupPhase, cons_det);
+							//								lookupPhase.setReturnColumn(0);
+							//							}
+							//							{
+							//								cons_det.weightx = 1;
+							//								cons_det.weighty = 1;
+							//								
+							//								cons_det.gridx = 2;
+							//								cons_det.gridy = 2;
+							//								
+							//								txtPhase = new JXTextField("All Phase");
+							//								pnlDetails.add(txtPhase, cons_det);
+							//								txtPhase.setEnabled(false);
+							//							}
+
+							//CLASS
+							{
+								cons_det.weightx = 0;
+								cons_det.weighty = 1;
+
+								cons_det.gridx = 0;
+								cons_det.gridy = 2;
+
+								JLabel lblClass = new JLabel("Class", JLabel.CENTER);
+								pnlDetails.add(lblClass, cons_det);			
+							}
+							{
+								cons_det.weightx = 0.25;
+								cons_det.weighty = 1;
+
+								cons_det.gridx = 1;
+								cons_det.gridy = 2;
+
+								cons_det.gridwidth = 2;
+
+								cmbClass = new JComboBox(new DefaultComboBoxModel(getClass1()));
+								pnlDetails.add(cmbClass, cons_det);
+								//cmbClass.addActionListener(this);
+								cmbClass.addItemListener(new ItemListener() {//**ADDED BY JED VICEDO 2019-07-18 : TO SEPARATE BUYER RELATED TO BLOCK LOT RELATED PARTICULARS**//
+
+									@Override
+									public void itemStateChanged(ItemEvent e) {
+										// TODO Auto-generated method stub
+										int index = ((JComboBox) e.getSource()).getSelectedIndex();
+										String type = "";
+
+										if(index == 0) {
+											type = "";
+											displayPCost(type);
+										}
+										if(index == 1) {
+											type = "B";
+											displayPCost(type);
+										}
+										if(index == 2) {
+											type = "L";
+											displayPCost(type);
+										}
+									}
+								});
+							}	
+						}
+					}
+					{
+						c.weightx = 0.5;
+						c.weighty = 1;
+
+						c.gridx = 1;
+						c.gridy = 0;
+
+						JPanel pnlTransDate = new JPanel(new GridBagLayout());
+						pnlNorth.add(pnlTransDate, c);
+						pnlTransDate.setBorder(JTBorderFactory.createTitleBorder("Trans. Date"));
+						{
+							GridBagConstraints cons_date = new GridBagConstraints();
+							cons_date.fill = GridBagConstraints.BOTH;
+							cons_date.insets = new Insets(5, 5, 5, 5);
+
+							//TRANSACTION DATE
+							{
+								cons_date.weightx = 0;
+								cons_date.weighty = 1;
+
+								cons_date.gridx = 0;
+								cons_date.gridy = 0;
+
+								JLabel lblDateFrom = new JLabel("Date From", JLabel.CENTER);
+								pnlTransDate.add(lblDateFrom, cons_date);								
+							}
+							{
+								cons_date.weightx = 1;
+								cons_date.weighty = 1;
+
+								cons_date.gridx = 1; 
+								cons_date.gridy = 0; 
+
+								dteDateFrom = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+								pnlTransDate.add(dteDateFrom, cons_date);						
+								dteDateFrom.setDate(dateFormat("2017-01-01"));						
+							}
+							{
+								cons_date.weightx = 0;
+								cons_date.weighty = 1;
+
+								cons_date.gridx = 0; 
+								cons_date.gridy = 1; 
+
+								JLabel lblDateTo = new JLabel("Date To", JLabel.CENTER);
+								pnlTransDate.add(lblDateTo, cons_date);
+							}
+							{
+								cons_date.weightx = 1;
+								cons_date.weighty = 1;
+
+								cons_date.gridx = 1; 
+								cons_date.gridy = 1;
+
+								dteDateTo = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+								pnlTransDate.add(dteDateTo, cons_date);
+								dteDateTo.setDate(FncGlobal.GetDate("SELECT CURRENT_DATE"));
+							}
+						}	
+					}
+					{
+						c.weightx = 1;
+						c.weighty = 0.25;
+
+						c.gridx = 0;
+						c.gridy = 1;
+
+						c.gridwidth = 2;
+
+						JPanel pnlBuyer = new JPanel(new GridBagLayout());
+						pnlNorth.add(pnlBuyer, c);
+						pnlBuyer.setBorder(JTBorderFactory.createTitleBorder("Select Buyer"));
+						{
+							GridBagConstraints cons_buyer = new GridBagConstraints();
+							cons_buyer.fill = GridBagConstraints.BOTH;
+							cons_buyer.insets = new Insets(5, 5, 5, 5);
+
+							//BUYER
+							{
+								cons_buyer.weightx = 0.5;
+								cons_buyer.weighty = 1;
+
+								cons_buyer.gridx = 0;
+								cons_buyer.gridy = 0;
+
+								lookupBuyer = new _JLookup("", "Buyer");
+								pnlBuyer.add(lookupBuyer, cons_buyer);
+								lookupBuyer.setReturnColumn(0);
+								lookupBuyer.setEnabled(false);
+								lookupBuyer.setFilterIndex(1);
+								lookupBuyer.addLookupListener(new LookupListener() {
+
+									@Override
+									public void lookupPerformed(LookupEvent event) {
+										Object data[] = ((_JLookup)event.getSource()).getDataSet();
+
+										if(data!=null) {
+											System.out.printf("SQL for buyer:%s\n", SQL_BUYER(proj_id));
+
+											entity_id = (String) data[0];
+											String entity_name = (String) data[1];
+											String unit = (String) data[2];
+											String pbl = (String) data[3];
+											strBatchProject = (String) data[6];
+
+											txtBuyer.setText(entity_name);
+											txtPBL.setText(pbl);
+											txtUnit.setText(unit);
+
+											int index = tabCenter.getSelectedIndex();										
+											if(index == 0) {
+												lookupBatch.setLookupSQL(SQL_BATCHPCOST(entity_id, co_id, proj_id));
+											}else {
+												lookupBatch.setLookupSQL(SQL_BATCHTCOST(entity_id, co_id, proj_id));
+											}
+
+										}				
+									}
+								});
+
+							}
+							{
+								cons_buyer.weightx = 1;
+								cons_buyer.weighty = 1;
+
+								cons_buyer.gridx = 1; 
+								cons_buyer.gridy = 0; 
+
+								txtBuyer = new JTextField("");
+								pnlBuyer.add(txtBuyer, cons_buyer);
+								txtBuyer.setEditable(false);		
+							}
+
+							//PBL
+							{
+								cons_buyer.weightx = 0.5;
+								cons_buyer.weighty = 1;
+
+								cons_buyer.gridx = 0; 
+								cons_buyer.gridy = 1; 
+
+								txtPBL = new JTextField("");
+								txtPBL.setHorizontalAlignment(JTextField.CENTER);
+								pnlBuyer.add(txtPBL, cons_buyer);
+								txtPBL.setEditable(false);		
+							}
+							{
+								cons_buyer.weightx = 0.5;
+								cons_buyer.weighty = 1;
+
+								cons_buyer.gridx = 1; 
+								cons_buyer.gridy = 1; 
+
+								txtUnit = new JTextField("");
+								pnlBuyer.add(txtUnit, cons_buyer);
+								txtUnit.setEditable(false);		
+							}
+						}
+					}
+					//					{
+					//						c.weightx = 1;
+					//						c.weighty = 0.25;
+					//						
+					//						c.gridx = 0;
+					//						c.gridy = 2;
+					//						
+					//						JPanel pnlTransDate = new JPanel(new GridBagLayout());
+					//						pnlNorth.add(pnlTransDate, c);
+					//						pnlTransDate.setBorder(JTBorderFactory.createTitleBorder("Trans. Date"));
+					//						{
+					//							GridBagConstraints cons_date = new GridBagConstraints();
+					//							cons_date.fill = GridBagConstraints.BOTH;
+					//							cons_date.insets = new Insets(5, 5, 5, 5);
+					//							
+					//							//TRANSACTION DATE
+					//							{
+					//								cons_date.weightx = 1;
+					//								cons_date.weighty = 1;
+					//								
+					//								cons_date.gridx = 0;
+					//								cons_date.gridy = 0;
+					//								
+					//								JLabel lblDateFrom = new JLabel("Date From", JLabel.CENTER);
+					//								pnlTransDate.add(lblDateFrom, cons_date);								
+					//							}
+					//							{
+					//								cons_date.weightx = 1;
+					//								cons_date.weighty = 1;
+					//
+					//								cons_date.gridx = 1; 
+					//								cons_date.gridy = 0; 
+					//								
+					//								dteDateFrom = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+					//								pnlTransDate.add(dteDateFrom, cons_date);						
+					//								dteDateFrom.setDate(dateFormat("2017-01-01"));
+					//							}
+					//							{
+					//								cons_date.weightx = 0.5;
+					//								cons_date.weighty = 1;
+					//
+					//								cons_date.gridx = 2; 
+					//								cons_date.gridy = 0; 
+					//								
+					//								JLabel lblDateTo = new JLabel("Date To", JLabel.CENTER);
+					//								pnlTransDate.add(lblDateTo, cons_date);
+					//							}
+					//							{
+					//								cons_date.weightx = 1;
+					//								cons_date.weighty = 1;
+					//
+					//								cons_date.gridx = 3; 
+					//								cons_date.gridy = 0;
+					//								
+					//								dteDateTo = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+					//								pnlTransDate.add(dteDateTo, cons_date);
+					//								dteDateTo.setDate(GlobalVariables.GetDate("SELECT CURRENT_DATE"));
+					//							}
+					//						}
+					//					}
+					{
+						c.weightx = 1;
+						c.weighty = 0.25;
+
+						c.gridx = 0;
+						c.gridy = 2;
+
+						JPanel pnlBatchNo = new JPanel(new GridBagLayout());
+						pnlNorth.add(pnlBatchNo, c);
+						pnlBatchNo.setBorder(JTBorderFactory.createTitleBorder("PCOST/TCOST Batch"));
+						{
+							GridBagConstraints cons_batch = new GridBagConstraints();
+							cons_batch.fill = GridBagConstraints.BOTH;
+							cons_batch.insets = new Insets(5, 5, 5, 5);
+
+							//BATCH
+							{
+								cons_batch.weightx = 0;
+								cons_batch.weighty = 1;
+
+								cons_batch.gridx = 0;
+								cons_batch.gridy = 0;
+
+								JLabel lblBatch = new JLabel("Please select a batch number:", JLabel.CENTER);
+								pnlBatchNo.add(lblBatch, cons_batch);
+							}
+							{
+								cons_batch.weightx = 1;
+								cons_batch.weighty = 1;
+
+								cons_batch.gridx = 1;
+								cons_batch.gridy = 0;
+
+								lookupBatch = new _JLookup(null, "Batch");	
+								pnlBatchNo.add(lookupBatch, cons_batch);
+								lookupBatch.setEnabled(false);
+								lookupBatch.setReturnColumn(0);
+								lookupBatch.addLookupListener(new LookupListener() {
+
+									@Override
+									public void lookupPerformed(LookupEvent event) {
+										Object data[] = ((_JLookup)event.getSource()).getDataSet();
+
+										if(data!=null) {
+											System.out.printf("SQL for Batch:%s\n", lookupBatch.getLookupSQL());
+
+											strBatchProject = (String) data[4];
+											rplf_no_pcost = (String) data[02];
+
+
+										}
+									}
+								});
+							}
+						}					
+					}
+				}
+			}
+			{
+				JPanel pnlCenter = new JPanel(new BorderLayout(5,5));
+				pnlMain.add(pnlCenter, BorderLayout.CENTER);
+				{
+					//					c.weightx = 1;
+					//					c.weighty = 1;
+					//					
+					//					c.gridx = 0;
+					//					c.gridy = 3;
+
+					{
+						tabCenter = new JTabbedPane();
+						pnlCenter.add(tabCenter, BorderLayout.CENTER);
+						//tabCenter.setPreferredSize(new Dimension(0,800));
+						{
+							JPanel pnlPcost = new JPanel(new BorderLayout(5,5));
+							tabCenter.add("Processing Cost Particular", pnlPcost);
+							{
+								JScrollPane scrollPCost = new JScrollPane();
+								pnlPcost.add(scrollPCost);
+								scrollPCost.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+								modelPCost = new model_PCost2();
+								tblPCost = new _JTableMain(modelPCost);
+
+								scrollPCost.setViewportView(tblPCost);
+								tblPCost.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);								
+							}
+						}
+						{
+							JPanel pnlTcost = new JPanel(new BorderLayout(5,5));
+							tabCenter.add("Transfer Cost Particular", pnlTcost);
+							{
+								JScrollPane scrollTCost = new JScrollPane();
+								pnlTcost.add(scrollTCost);
+								scrollTCost.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+								modelTCost = new model_TCost2();
+								tblTCost = new _JTableMain(modelTCost);
+
+								scrollTCost.setViewportView(tblTCost);
+								tblTCost.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							}
+						}
+
+						tabCenter.addChangeListener(new ChangeListener() {//**ADDED BY JED 2019-02-28***//
+							public void stateChanged(ChangeEvent arg0) {
+								int selectedTab = ((JTabbedPane)arg0.getSource()).getSelectedIndex();
+
+								if(selectedTab == 0){
+									//proj_id = "";
+									lookupBatch.setValue(null);
+									lookupBatch.setLookupSQL(SQL_BATCHPCOST(entity_id, co_id, proj_id));
+									cmbClass.setEnabled(true);
+								}
+								if(selectedTab == 1){
+									//proj_id = "";
+									lookupBatch.setValue(null);
+									lookupBatch.setLookupSQL(SQL_BATCHTCOST(entity_id, co_id, proj_id));
+									cmbClass.setEnabled(false);
+								}
+							}
+						});
+					}
+				}
+			}
+			{
+				JPanel pnlSouth = new JPanel(new GridLayout(1,3,5,5));
+				pnlMain.add(pnlSouth, BorderLayout.SOUTH);
+				pnlSouth.setPreferredSize(new Dimension(0,30));
+				{
+					JButton btnPreview = new JButton("Preview");
+					pnlSouth.add(btnPreview);
+					btnPreview.setActionCommand("Preview");
+					btnPreview.setMnemonic(KeyEvent.VK_P);
+					btnPreview.addActionListener(this);
+				}
+				{//**ADDED BY JED DCRF NO. 1489 : PREVIEW SUMMARY OF TRANSACTION REPORT PER DAY**//
+					JButton btnSummary = new JButton("Summary");
+					pnlSouth.add(btnSummary);
+					btnSummary.setActionCommand("Summary");
+					btnSummary.setMnemonic(KeyEvent.VK_S);
+					btnSummary.addActionListener(this);
+				}
+				{
+					JButton btnCancel = new JButton("Cancel");
+					pnlSouth.add(btnCancel);
+					btnCancel.setActionCommand("Cancel");
+					btnCancel.setMnemonic(KeyEvent.VK_C);
+					btnCancel.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							int response = JOptionPane.showConfirmDialog(ProcessingTransferCostReport_v2.this.getTopLevelAncestor(),"Are you sure you want to Clear all fields?   ",
+									"Confirm",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+							if (response == JOptionPane.YES_OPTION) {
+								int index = tabCenter.getSelectedIndex();
+								if(index == 0) {
+									modelPCost.clear();
+									displayPCost("");
+
+								}
+
+								if(index == 1) {
+									modelTCost.clear();
+									displayTCost();
+								}
+
+								refreshTO();
+								pnlState(true, true);
+							}
+						}
+					});
+				}
+			}
+		}
+
+		initializeInputFields();
+	}
+
+	public void actionPerformed(ActionEvent e) {
+
+		if(e.getActionCommand().equals("Preview")) {	preview();}	
+
+		if(e.getActionCommand().equals("Summary")) {	summary();}
+	}
+
+	private static String company() {
+		String SQL = "select co_id as \"ID\", trim(company_name) as \"Company Name\", trim(company_alias) as \"Alias\", '' as logo from mf_company";
+		return SQL;
+	}
+
+	private static String sql_project(String co_id) {
+		String SQL = "select proj_id as \"ID\", trim(proj_name) as \"Project Name\", trim(proj_alias) as \"Alias\"\n"
+				+ "from mf_project where trim(co_id) = '" + co_id + "' and proj_id not in('008','021')  order by proj_id\n";
+		FncSystem.out("PROJECT", SQL);
+		
+		return SQL;
+	}
+
+	private String[] getClass1() {
+		return new String[] {
+				"All",
+				"Buyer Related",
+				"Block - Lot Related",
+		};
+	}
+
+	private void displayPCost(String type) {
+
+		FncTables.clearTable(modelPCost);;//Code to clear modelMain.		
+		DefaultListModel listModel = new DefaultListModel();//Creating DefaultListModel for rowHeader.
+		//rowheaderTagAccounts.setModel(listModel);//Setting of DefaultListModel into rowHeader.
+
+		String sql = "SELECT false, pcostdtl_id as \"PCost ID.\", trim(pcostdtl_desc) as \"PCost Desc\" \n" + 
+				"				FROM mf_processing_cost_dl\n" + 
+				"				WHERE (case when '"+type+"' = '' then true else pcostdtl_type = '"+type+"' end)\n" + 
+				"				GROUP BY pcostdtl_id, pcostdtl_desc\n" + 
+				"				ORDER BY pcostdtl_desc ASC";
+
+		pgSelect db = new pgSelect();
+		db.select(sql);
+
+		if(db.isNotNull()){ 
+			for(int x=0; x < db.getRowCount(); x++){
+				modelPCost.addRow(db.getResult()[x]);
+				listModel.addElement(modelPCost.getRowCount());
+			}	
+		}		
+		tblPCost.packAll();
+	}
+
+	private void displayTCost() {
+
+		FncTables.clearTable(modelTCost);//Code to clear modelMain.		
+		DefaultListModel listModel = new DefaultListModel();//Creating DefaultListModel for rowHeader.
+		//rowheaderTagAccounts.setModel(listModel);//Setting of DefaultListModel into rowHeader.
+
+		String sql = "SELECT false, tcostdtl_id as \"TCost ID.\", trim(tcostdtl_desc) as \"TCost Desc\"\n" + 
+				"FROM mf_transfer_cost_dl \n" + 
+				"WHERE status_id = 'A'\n" +
+				"GROUP BY tcostdtl_id, tcostdtl_desc\n" + 
+				"ORDER BY tcostdtl_desc ASC;";
+
+		pgSelect db = new pgSelect();
+		db.select(sql);
+
+		if(db.isNotNull()){ 
+			for(int x=0; x < db.getRowCount(); x++){
+				modelTCost.addRow(db.getResult()[x]);
+				listModel.addElement(modelTCost.getRowCount());
+			}	
+		}		
+		tblTCost.packAll();
+	}
+
+	private static String SQL_BATCHPCOST(String entity_id, String co_id, String proj_id) {//XXX Batch ID
+		String SQL = "SELECT batch_no as \"Batch No.\", get_employee_name(requested_by) as \"Requested By\", rplf_no as \"RPLF No\", tran_date::DATE::TIMESTAMP as \"Trans Date\", projcode as \"Projcode\"\n" + 
+				"FROM rf_processing_cost  \n" + 
+				"WHERE status_id = 'A'\n" + 
+				"--GROUP BY batch_no, requested_by, /*tran_date::DATE::TIMESTAMP,*/ rplf_no\n" + 
+				"and (case when coalesce('"+co_id+"', '') = '' then true else co_id = '"+co_id+"' end)\n" + 
+				"and (case when coalesce('"+proj_id+"', '') = '' then true else projcode = '"+proj_id+"' end)\n" +
+				"and (case when coalesce('"+entity_id+"', '') = '' then true else entity_id = '"+entity_id+"' end)\n" +
+				"group by batch_no, requested_by, rplf_no, tran_date::DATE::TIMESTAMP, projcode\n" + 
+				"ORDER BY  tran_date::DATE::TIMESTAMP desc, batch_no ";
+		return SQL;
+	}
+
+	private static String SQL_BATCHTCOST(String entity_id, String co_id, String proj_id) {//XXX Batch ID
+		String SQL = "SELECT batch_no as \"Batch No.\", get_employee_name(requested_by) as \"Requested By\", rplf_no as \"RPLF No\", tran_date::DATE::TIMESTAMP as \"Trans Date\", projcode as \"Projcode\"\n" + 
+				"FROM rf_transfer_cost\n" + 
+				"WHERE status_id = 'A' \n" +
+				"and (case when coalesce('"+co_id+"', '') = '' then true else co_id = '"+co_id+"' end)\n" + 
+				"and (case when coalesce('"+proj_id+"', '') = '' then true else projcode = '"+proj_id+"' end)\n" +
+				"and (case when coalesce('"+entity_id+"', '') = '' then true else entity_id = '"+entity_id+"' end)\n" +
+				"GROUP BY batch_no, requested_by, tran_date::DATE::TIMESTAMP, rplf_no, projcode\n" + 
+				"ORDER BY batch_no DESC;";
+
+		return SQL;
+	}
+
+	//**MODIFIED BY Timothy John Lanuza 2022-05-05 : Postgres Funchtion **//
+	private static String SQL_BUYER(String proj_id) {
+		String SQL =
+				"select * from view_sql_buyer('"+proj_id+"')";
+
+		FncSystem.out("LIST: ", SQL); 
+		return SQL;
+
+	}
+
+
+
+	private void summary() {
+
+		pnlTransactionSummaryReport ps = new pnlTransactionSummaryReport(FncGlobal.homeMDI, "Report Summary");
+		ps.setLocationRelativeTo(this);
+		ps.setVisible(true);
+
+	}
+
+	private void preview() {
+
+		ArrayList<String> listparticular = new ArrayList<String>();
+		ArrayList<String> listcost_id = new ArrayList<String>();
+
+		String batch_no = lookupBatch.getText();
+		String emp_code = UserInfo.EmployeeCode;
+		String co_name = txtCompany.getText();
+		String emp_name = UserInfo.FullName2;
+
+		if (tabCenter.getSelectedIndex() == 0) {
+
+//			if(strBatchProject.equals("019")) {
+//				co_name = "VERDANTPOINT DEVELOPMENT CORPORATION";
+//			}else {
+//				co_name = "CENQHOMES DEVELOPMENT CORPORATION";
+//			}
+
+			String type = "PROCESSING COST REPORT";
+			for (int x = 0; x < modelPCost.getRowCount(); x++) {
+				Boolean isSelected = (Boolean) modelPCost.getValueAt(x, 0);
+				if(isSelected) {
+					String pcost_id = (String) modelPCost.getValueAt(x, 1);
+					String particulars = (String) modelPCost.getValueAt(x, 2);
+					listcost_id.add(String.format("%s", pcost_id));
+					listparticular.add(String.format("%s", particulars));
+
+				}
+			}if(listcost_id.isEmpty()) {
+				JOptionPane.showMessageDialog(getContentPane(), "Please select first for preview!", "Error", JOptionPane.ERROR_MESSAGE);
+			}{
+
+				String pcost_id = listcost_id.toString().replaceAll("\\[", "").replaceAll("\\]","");
+				String particulars = listparticular.toString().replaceAll("\\[", "").replaceAll("\\]","");
+				System.out.printf("The value of new pcost_id: (%s)\n", pcost_id);
+				System.out.printf("The value of new particulars: (%s)\n", particulars);
+				System.out.printf("strBatchProject: (%s)\n", strBatchProject);
+
+				String buyer = lookupBuyer.getText();
+
+				System.out.printf("buyer:%s\n", buyer);
+
+				if(buyer.equals("")) {
+
+					Map<String, Object> mapParameters = new HashMap<String, Object>();
+					mapParameters.put("co_id", txtCompany.getText());
+					mapParameters.put("proj_name", txtProject.getText());
+					mapParameters.put("emp_alias", UserInfo.Alias);
+					mapParameters.put("emp_fname", UserInfo.FirstName);
+					mapParameters.put("emp_lname", UserInfo.LastName);
+					mapParameters.put("date_from", dteDateFrom.getDate());
+					mapParameters.put("date_to", dteDateTo.getDate());
+					mapParameters.put("part_desc", particulars);
+					mapParameters.put("pcost_id", pcost_id);
+					System.out.println("pcost_id "+pcost_id);
+					mapParameters.put("projcode", lookupProject.getValue());
+					mapParameters.put("buyer", lookupBuyer.getValue());
+					mapParameters.put("batch_no", batch_no);
+					mapParameters.put("batch_no1", "");
+					mapParameters.put("phase", "");
+					mapParameters.put("co_name", co_name);
+					mapParameters.put("rplf_no", rplf_no_pcost);
+					mapParameters.put("comp_id", co_id);
+					mapParameters.put("subrptPCostSummary2", this.getClass().getResourceAsStream("/Reports/subrptPCostSummary2.jasper"));				
+					
+					
+					if(checkRPT(batch_no) == true) {//***ADDED BY JED 2019-07-16 DCRF NO. 1122 : ENHANCE REPORT FOR RPT LOTS AND HOUSE***//
+						FncReport.generateReport("/Reports/rptProcessingCost_RPT.jasper", "Processing Cost Report", null, mapParameters);
+					}else {
+						if(batch_no.equals("0000001022")) {//**ADDED BY JED VICEDO 2019-11-21 DCRF NO. 1291 : ADDITIONAL REMARKS FOR REPORT SPECIAL CASES**//
+							FncReport.generateReport("/Reports/rptProcessingCost_v4.jasper", "Processing Cost Report", null, mapParameters);
+						}else {							
+							FncReport.generateReport("/Reports/rptProcessingCostRevise_Meralco_v2.jasper", "Processing Cost Report", null, mapParameters);
+							System.out.println("rptProcessingCostRevise_Meralco_v2");
+						}
+					}
+
+					if(checkEmployee(emp_code).equals(null) || checkEmployee(emp_code).equals("")){
+
+					}else{
+						if(rplfExist_pcost(batch_no, co_id).equals(null) || rplfExist_pcost(batch_no, co_id).equals("")){
+
+						}else{
+							System.out.printf("listcost_id: %s\n", pcost_id);
+							System.out.printf("listparticulars: %s\n", particulars);
+
+							String rplf_no = rplfExist_pcost(batch_no, co_id);
+							String targetValue = "220";
+
+							Map<String, Object> mapParameters1 = new HashMap<String, Object>();
+							mapParameters1.put("p_co_id", lookupCompany.getValue());
+							mapParameters1.put("batch_no", batch_no);
+							mapParameters1.put("rplf_no", rplf_no);
+							mapParameters1.put("emp_code", UserInfo.EmployeeCode);
+							mapParameters1.put("co_name", co_name);
+							if(getClientNo_pcost(rplf_no) <= 1){//added by jed 2018-10-05 : separate batching report from individual
+								FncReport.generateReport("/Reports/rptPCOSTDisbursement_Req.jasper", "Disbursement Request", null, mapParameters1);
+							}else{
+								FncReport.generateReport("/Reports/rptPCOSTDisbursement_Req_batch.jasper", "Disbursement Request", null, mapParameters1);
+							}
+
+							//---added by JED 2018-11-15 : DRCF no. 855 to preview Affidavit report---//
+							Map<String, Object> mapParameters2 = new HashMap<String, Object>();
+							mapParameters2.put("batch_no", batch_no);
+							mapParameters2.put("emp_code", UserInfo.EmployeeCode);
+
+							if(useLoop(listcost_id, targetValue) == true){
+								FncReport.generateReport("/Reports/rptPCOST_Affidavit.jasper", "Affidavit", null, mapParameters2);
+								FncReport.generateReport("/Reports/rptPCost_TechnicalDescription.jasper", "Technical Description", null, mapParameters2);
+							}
+						}
+					}
+
+
+				}else {
+
+					Map<String, Object> mapParameters = new HashMap<String, Object>();
+					mapParameters.put("p_co_id", lookupCompany.getText());
+					mapParameters.put("p_proj_name", txtProject.getText());
+					mapParameters.put("p_emp_alias", UserInfo.Alias);
+					//					mapParameters.put("emp_fname", GlobalVariables.FirstName);
+					//					mapParameters.put("emp_lname", GlobalVariables.LastName);
+					mapParameters.put("p_date_from", dteDateFrom.getDate());
+					mapParameters.put("p_date_to", dteDateTo.getDate());
+					//					mapParameters.put("part_desc", particulars);
+					mapParameters.put("p_cost_id", pcost_id);
+					mapParameters.put("p_proj_id", lookupProject.getValue());
+					mapParameters.put("p_entity_id", lookupBuyer.getValue());
+					mapParameters.put("p_batch_no", batch_no);
+					//					mapParameters.put("batch_no1", "");
+					//					mapParameters.put("phase", "");
+					mapParameters.put("p_co_name", co_name);
+					//					mapParameters.put("p_rplf_no", rplf_no_pcost);
+					mapParameters.put("p_type", type);
+					mapParameters.put("p_pbl_id", txtPBL.getText());
+
+					//FncReport.generateReport("/Reports/rptProcessingTransferCostReport_perBuyer.jasper", "Processing Cost Report", null, mapParameters);
+					FncReport.generateReport("/Reports/rptProcessingTransferCostReport_perBuyer_v2.jasper", "Processing Cost Report", null, mapParameters);
+
+				}
+			}
+		}
+
+		if (tabCenter.getSelectedIndex() == 1) {
+
+//			if(strBatchProject.equals("019")) {
+//				co_name = "VERDANTPOINT DEVELOPMENT CORPORATION";
+//			}else {
+//				co_name = "CENQHOMES DEVELOPMENT CORPORATION";
+//			}
+
+			String type = "TRANSFER COST REPORT";
+			for (int x = 0; x < modelTCost.getRowCount(); x++) {
+				Boolean isSelected = (Boolean) modelTCost.getValueAt(x, 0);
+				if(isSelected) {
+					String tcost_id = (String) modelTCost.getValueAt(x, 1);
+					String particulars = (String) modelTCost.getValueAt(x, 2);
+					listcost_id.add(String.format("%s", tcost_id));
+					listparticular.add(String.format("%s", particulars));
+
+				}
+			}
+
+			if (listcost_id.isEmpty()) {
+				JOptionPane.showMessageDialog(getContentPane(),"Please select first for preview ","Preview", JOptionPane.OK_OPTION);
+				return;
+			}
+			else {
+
+				String tcost_id = listcost_id.toString().replaceAll("\\[", "").replaceAll("\\]","");
+				String particulars = listparticular.toString().replaceAll("\\[", "").replaceAll("\\]","");
+				System.out.printf("The value of new tcost_id: (%s)\n", tcost_id);
+				System.out.printf("The value of new particulars: (%s)\n", particulars);
+
+				System.out.printf("The value of new tcost_id: (%s)\n", listparticular);
+				System.out.printf("The value of new tcost_id: (%s)\n", listcost_id);
+				//System.out.println("**************" + listcost_id);
+
+				String buyer = lookupBuyer.getText();
+
+				System.out.printf("buyer:%s\n", buyer);
+
+				if(buyer.equals("")) {
+
+					Map<String, Object> mapParameters = new HashMap<String, Object>();
+
+					mapParameters.put("proj_name", txtProject.getText());
+					mapParameters.put("emp_alias", UserInfo.Alias);
+					mapParameters.put("emp_fname", UserInfo.FirstName);
+					mapParameters.put("emp_lname", UserInfo.LastName);
+					mapParameters.put("date_from", dteDateFrom.getDate());
+					mapParameters.put("date_to", dteDateTo.getDate());
+					mapParameters.put("part_desc", particulars);
+					mapParameters.put("tcost_id", tcost_id);
+					mapParameters.put("projcode", lookupProject.getValue());
+					mapParameters.put("buyer", lookupBuyer.getValue());
+					mapParameters.put("batch_no", "");
+					mapParameters.put("batch_no1", batch_no);
+					mapParameters.put("phase", "");
+					mapParameters.put("co_name", co_name);
+					mapParameters.put("rplf_no", rplf_no_pcost);
+					mapParameters.put("subrptTCostSummary", this.getClass().getResourceAsStream("/Reports/subrptTCostSummary.jasper"));
+					mapParameters.put("subrptTCostSummary2", this.getClass().getResourceAsStream("/Reports/subrptTCostSummary2.jasper"));
+					mapParameters.put("subrptTCostSummaryPhase", this.getClass().getResourceAsStream("/Reports/subrptTCostSummaryPhase.jasper"));
+
+					if(lookupCompany.getValue().equals("02")) {
+						FncReport.generateReport("/Reports/rptTransferCost2CDC.jasper", "Transfer Cost Report", null, mapParameters);
+					
+					String sql = "select * from view_tcost_report('"+dteDateFrom.getDate()+"', '"+dteDateTo.getDate()+"', '"+tcost_id+"', '"+lookupProject.getValue()+"', '"+""+"', '"+""+"', '"+batch_no+"', '"+""+"')";
+					//----added by JED 2018-09-24 : DCRF no. 771 additional report for DB req
+					FncSystem.out("GG1", sql);
+					}
+					
+					else if(lookupCompany.getValue().equals("05")) {
+						FncReport.generateReport("/Reports/rptTransferCost2EDC.jasper", "Transfer Cost Report", null, mapParameters);
+					
+					String SQL = "select * from view_tcost_report('"+dteDateFrom.getDate()+"', '"+dteDateTo.getDate()+"', '"+tcost_id+"', '"+lookupProject.getValue()+"', '"+""+"', '"+""+"', '"+batch_no+"', '"+""+"')";
+					//----added by JED 2018-09-24 : DCRF no. 771 additional report for DB req
+					FncSystem.out("GG3", SQL);
+					}
+					else if(lookupCompany.getValue().equals("04")) {
+						FncReport.generateReport("/Reports/rptTransferCost2ADC.jasper", "Transfer Cost Report", null, mapParameters);
+					
+					String SQL = "select * from view_tcost_report('"+dteDateFrom.getDate()+"', '"+dteDateTo.getDate()+"', '"+tcost_id+"', '"+lookupProject.getValue()+"', '"+""+"', '"+""+"', '"+batch_no+"', '"+""+"')";
+					//----added by JED 2018-09-24 : DCRF no. 771 additional report for DB req
+					FncSystem.out("GG3", SQL);
+					}
+					
+					else {
+						
+						FncReport.generateReport("/Reports/rptTransferCost2.jasper", "Transfer Cost Report", null, mapParameters);
+						
+						String SQL = "select * from view_tcost_report('"+dteDateFrom.getDate()+"', '"+dteDateTo.getDate()+"', '"+tcost_id+"', '"+lookupProject.getValue()+"', '"+""+"', '"+""+"', '"+batch_no+"', '"+""+"')";
+						//----added by JED 2018-09-24 : DCRF no. 771 additional report for DB req
+						FncSystem.out("GG2", SQL);
+					
+					}
+					
+					if(checkEmployee(emp_code).equals(null) || checkEmployee(emp_code).equals("")){
+
+					}else{
+						if(rplfExist_tcost(batch_no).equals(null) || rplfExist_tcost(batch_no).equals("")){
+
+						}else{
+							String rplf_no = rplfExist_tcost(batch_no);
+
+							Map<String, Object> mapParameters1 = new HashMap<String, Object>();
+
+							mapParameters1.put("batch_no", batch_no);
+							mapParameters1.put("rplf_no", rplf_no);
+							mapParameters1.put("p_co_id", lookupCompany.getValue());
+							mapParameters1.put("emp_code", UserInfo.EmployeeCode);
+							System.out.print("Preview TCost");
+							if(getClientNo_tcost(rplf_no) == 1){//added by jed 2018-10-05 : separate batching report from individual
+
+								FncReport.generateReport("/Reports/rptTCOSTDisbursement_Req.jasper", "Disbursement Request", null, mapParameters1);
+
+							}else{
+
+								FncReport.generateReport("/Reports/rptTCOSTDisbursement_Req_batch.jasper", "Disbursement Request", null, mapParameters1);
+
+							}
+						}
+					}
+
+				}else {
+					Map<String, Object> mapParameters = new HashMap<String, Object>();
+
+					mapParameters.put("p_co_id", lookupCompany.getText());
+					mapParameters.put("p_proj_name", txtProject.getText());
+					mapParameters.put("p_emp_alias", UserInfo.Alias);
+					//					mapParameters.put("emp_fname", GlobalVariables.FirstName);
+					//					mapParameters.put("emp_lname", GlobalVariables.LastName);
+					mapParameters.put("p_date_from", dteDateFrom.getDate());
+					mapParameters.put("p_date_to", dteDateTo.getDate());
+					//					mapParameters.put("part_desc", particulars);
+					mapParameters.put("p_cost_id", tcost_id);
+					mapParameters.put("p_proj_id", lookupProject.getValue());
+					mapParameters.put("p_entity_id", lookupBuyer.getValue());
+					mapParameters.put("p_batch_no", batch_no);
+					//					mapParameters.put("batch_no1", "");
+					//					mapParameters.put("phase", "");
+					mapParameters.put("p_co_name", co_name);
+					//					mapParameters.put("p_rplf_no", rplf_no_pcost);
+					mapParameters.put("p_type", type);
+					mapParameters.put("p_pbl_id", txtPBL.getText());
+
+					FncReport.generateReport("/Reports/rptProcessingTransferCostReport_perBuyer_v2.jasper", "Processing Cost Report", null, mapParameters);
+				}
+			}
+		}	
+	}
+
+	private static boolean checkRPT(String batch_no) {
+
+		Boolean x = false;
+
+		String SQL = "select\n" + 
+				"*\n" + 
+				"from rf_processing_cost\n" + 
+				"where batch_no = '"+batch_no+"'\n" + 
+				"and pcostid_dl in ('215', '216')\n" + 
+				"and status_id = 'A'";
+
+		pgSelect db = new pgSelect();
+		db.select(SQL);
+
+		if(db.isNotNull()) {
+			if ((String) db.getResult()[0][1] == null || db.getResult()[0][1].equals("null")) {
+				x = false;
+			}else {
+				x = true;
+			}
+		}else {
+			x = false;
+		}
+		return x;			
+	}
+
+	private static String checkEmployee(String emp_code){
+
+		String employee_code = "";
+		String sql =
+				"select\n" + 
+						"emp_code\n" + 
+						"from em_employee\n" + 
+						"where emp_code = '"+emp_code+"' and\n" + 
+						"div_code in ('05', '02') and \n" + 
+						"dept_code in ('18','98')" ;
+
+		pgSelect db = new pgSelect();
+		db.select(sql);
+
+		if (db.isNotNull()){
+			if ((String) db.getResult()[0][0] == null || db.getResult()[0][0].equals("null")){
+			}else{
+				employee_code = (String) db.getResult()[0][0].toString();
+				System.out.printf("The employee code is: %s", employee_code);
+			}
+		}else{
+			employee_code = "";
+		}
+		return employee_code;
+	}
+
+	private static String rplfExist_pcost(String batch, String co_id){//----added by JED  2018-09-24 : DCRF no. 771 additional report for DB req
+
+		String rplfExist_pcost = "";
+		String sql = 
+				"select rplf_no from rf_processing_cost where batch_no = '"+batch+"' and co_id = '"+co_id+"' AND status_id = 'A'";
+
+		pgSelect db = new pgSelect();
+		db.select(sql);
+
+		if (db.isNotNull()) {
+			if ((String) db.getResult()[0][0] == null || db.getResult()[0][0].equals("null")) {
+			} else {
+				rplfExist_pcost = (String) db.getResult()[0][0].toString();
+				System.out.println(rplfExist_pcost);
+			}
+		} else {
+			rplfExist_pcost = "";
+			System.out.println(rplfExist_pcost);
+		}
+
+		return rplfExist_pcost;
+	}
+
+	private static String rplfExist_tcost(String batch1){//----added by JED  2018-09-24 : DCRF no. 771 additional report for DB req
+
+		String rplfExist_tcost = "";
+		String sql = 
+				"select rplf_no from rf_transfer_cost where batch_no = '"+batch1+"' and status_id = 'A' limit 1";
+
+		pgSelect db = new pgSelect();
+		db.select(sql);
+
+		if (db.isNotNull()) {
+			if ((String) db.getResult()[0][0] == null || db.getResult()[0][0].equals("null")) {
+			} else {
+				rplfExist_tcost = (String) db.getResult()[0][0].toString();
+			}
+		} else {
+			rplfExist_tcost = "";
+		}
+
+		return rplfExist_tcost;
+	}
+
+	private static Integer getClientNo_pcost (String rplf_no){
+
+		Integer no_of_clients = 0;
+		String sql =
+				"Select sum(a.count)::INT from (Select distinct on (entity_id) 1 as count, entity_id from rf_processing_cost where rplf_no = '"+rplf_no+"') a" ;
+
+		pgSelect db = new pgSelect();
+		db.select(sql);
+
+		if(db.isNotNull()){
+			if((Integer) db.getResult()[0][0] == null || db.getResult()[0][0].equals("null")){
+			}else{
+				no_of_clients = (Integer) db.getResult()[0][0];
+			}
+		}else{
+			no_of_clients = 0;
+		}
+
+		return no_of_clients;	
+	}
+
+	private static Integer getClientNo_tcost (String rplf_no){
+
+		Integer no_of_clients = 0;
+		String sql =
+				"Select sum(a.count)::INT from (Select distinct on (entity_id) 1 as count, entity_id from rf_transfer_cost where rplf_no = '"+rplf_no+"' and co_id = '"+lookupCompany.getValue()+"') a" ;
+
+		pgSelect db = new pgSelect();
+		db.select(sql);
+
+		if(db.isNotNull()){
+			if((Integer) db.getResult()[0][0] == null || db.getResult()[0][0].equals("null")){
+			}else{
+				no_of_clients = (Integer) db.getResult()[0][0];
+			}
+		}else{
+			no_of_clients = 0;
+		}
+
+		return no_of_clients;	
+	}
+
+	private static boolean useLoop(ArrayList<String> arr, String targetValue) {//--added by JED 2018-11-15: DRCF no. 855 for previewing Affidavit---//
+		for(String s: arr){//--store array in String "s" then compare it on the target value--//
+			if(s.equals(targetValue))
+				return true;
+		}
+		return false;
+
+	}
+
+	private static Date dateFormat(String dates){
+
+		DateFormat formatter ; 
+		Date date = null ;
+
+		formatter = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			date = (Date)formatter.parse(dates);
+		} catch (ParseException e) {
+		} 
+
+		return date;
+	}
+
+	private void refreshTO() {
+
+		int index = tabCenter.getSelectedIndex();
+
+		if(index == 0) {
+			lookupCompany.setValue(null);
+			lookupProject.setValue(null);
+			lookupBuyer.setValue(null);
+			lookupBuyer.setEnabled(false);
+			txtBuyer.setText("");
+			txtPBL.setText("");
+			txtUnit.setText("");
+			co_id = "";
+			proj_id = "";
+			entity_id = "";
+			txtCompany.setText("All Company");
+			txtProject.setText("All Projects");
+			lookupBatch.setValue(null);
+			lookupBatch.setLookupSQL(SQL_BATCHPCOST(entity_id, co_id, proj_id));
+			cmbClass.setSelectedItem("All");
+			dteDateFrom.setDate(dateFormat("2017-01-01"));
+			dteDateTo.setDate(FncGlobal.GetDate("SELECT CURRENT_DATE"));
+		}
+
+		if(index == 1) {
+			lookupCompany.setValue(null);
+			lookupProject.setValue(null);
+			lookupBuyer.setValue(null);
+			lookupBuyer.setEnabled(false);
+			txtBuyer.setText("");
+			txtPBL.setText("");
+			txtUnit.setText("");
+			co_id = "";
+			proj_id = "";
+			entity_id = "";
+			txtCompany.setText("All Company");
+			txtProject.setText("All Projects");
+			lookupBatch.setValue(null);
+			lookupBatch.setLookupSQL(SQL_BATCHTCOST(entity_id, co_id, proj_id));
+			cmbClass.setSelectedItem("All");
+			dteDateFrom.setDate(dateFormat("2017-01-01"));
+			dteDateTo.setDate(FncGlobal.GetDate("SELECT CURRENT_DATE"));
+		}
+	}
+
+	private static void pnlState (Boolean PCOST, Boolean TCOST) {
+
+		tabCenter.setEnabledAt(0, PCOST);
+		tabCenter.setEnabledAt(1, TCOST);
+
+	}
+
+	public void initializeInputFields() {
+
+		displayPCost("");
+		displayTCost();
+
+		lookupBatch.setLookupSQL(SQL_BATCHPCOST(entity_id, co_id, proj_id));
+		lookupBuyer.setLookupSQL(SQL_BUYER(proj_id));
+
+	}
+
+}

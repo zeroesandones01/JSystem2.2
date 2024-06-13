@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptOpenUnitsSummary" pageWidth="298" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="278" leftMargin="10" rightMargin="10" topMargin="5" bottomMargin="5">
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="company" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["CENQHOMES DEVELOPMENT CORPORATION"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="proj_id" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["015"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="phase" class="java.lang.String"/>
+	<parameter name="user_id" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[--SELECT * FROM view_open_units('02', 'All', '1');
+
+SELECT TRIM(a.pbl_id) as pbl_id, TRIM(a.phase) as phase, TRIM(a.block) as block, TRIM(a.lot) as lot, b.floor_area, a.lotarea, b.model_desc, a.proj_id, c.proj_name
+FROM mf_unit_info a
+LEFT JOIN mf_product_model b on b.model_id = a.model_id
+LEFT JOIN (select * from mf_project where co_id = '02') c on c.proj_id = a.proj_id
+LEFT JOIN mf_sub_project e on a.proj_id = e.proj_id and a.sub_proj_id = e.sub_proj_id
+LEFT JOIN rf_marketing_scheme_main f on a.proj_id = e.proj_id and f.sub_proj_id = e.sub_proj_id
+
+WHERE a.status_id = 'A'
+AND f.status_id = 'P'
+AND (CASE WHEN ($P{proj_id} = 'All' OR NULLIF(UPPER($P{proj_id}), 'NULL') IS NULL) THEN TRUE ELSE a.proj_id = $P{proj_id} END)
+AND (CASE WHEN ($P{phase} = 'All' OR NULLIF(UPPER($P{phase}), 'NULL') IS NULL) THEN TRUE ELSE a.phase ~* $P{phase} END)
+AND (case when $P{user_id} in ('900965', '900025', '00278', '900216', '900354', '900383') then a.date_created::DATE != '2020-07-06' ELSE TRUE END)
+
+ORDER BY TRIM(a.phase), b.model_desc;]]>
+	</queryString>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="phase" class="java.lang.String"/>
+	<field name="block" class="java.lang.String"/>
+	<field name="lot" class="java.lang.String"/>
+	<field name="floor_area" class="java.math.BigDecimal"/>
+	<field name="lotarea" class="java.math.BigDecimal"/>
+	<field name="model_desc" class="java.lang.String"/>
+	<field name="proj_id" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<variable name="grandTotal" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{model_desc}]]></variableExpression>
+	</variable>
+	<variable name="totalProject" class="java.lang.Integer" resetType="Group" resetGroup="grpProject" calculation="Count">
+		<variableExpression><![CDATA[$F{model_desc}]]></variableExpression>
+	</variable>
+	<variable name="totalPhase" class="java.lang.Integer" resetType="Group" resetGroup="grpPhase" calculation="Count">
+		<variableExpression><![CDATA[$F{phase}]]></variableExpression>
+	</variable>
+	<variable name="totalModelDesc" class="java.lang.Integer" resetType="Group" resetGroup="grpModelDesc" calculation="Count">
+		<variableExpression><![CDATA[$F{model_desc}]]></variableExpression>
+	</variable>
+	<group name="grpProject">
+		<groupExpression><![CDATA[$F{proj_name}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField>
+					<reportElement x="0" y="0" width="210" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{proj_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<staticText>
+					<reportElement x="0" y="0" width="278" height="15"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement/>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="0" width="205" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{proj_name} + " Sub-Total"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto">
+					<reportElement x="205" y="0" width="35" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{totalProject}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto" pattern="#,##0.00">
+					<reportElement x="240" y="0" width="38" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Double"><![CDATA[($V{totalProject}.doubleValue() / $V{grandTotal}.doubleValue()) * 100]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="grpPhase">
+		<groupExpression><![CDATA[$F{phase}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField>
+					<reportElement x="10" y="0" width="100" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Phase " + $F{phase}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<staticText>
+					<reportElement x="0" y="0" width="278" height="15"/>
+					<box>
+						<topPen lineWidth="0.25"/>
+					</box>
+					<textElement/>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="75" y="0" width="100" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Phase " + $F{phase} + " Sub-Total"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto">
+					<reportElement x="205" y="0" width="35" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{totalPhase}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto" pattern="#,##0.00">
+					<reportElement x="240" y="0" width="38" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Double"><![CDATA[($V{totalPhase}.doubleValue() / $V{totalPhase}.doubleValue()) * 100]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="grpModelDesc">
+		<groupExpression><![CDATA[$F{model_desc}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField>
+					<reportElement x="75" y="0" width="100" height="15"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{model_desc}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto" pattern="#,##0.00">
+					<reportElement x="240" y="0" width="38" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Double"><![CDATA[($V{totalModelDesc}.doubleValue() / $V{totalPhase}.doubleValue()) * 100]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Auto">
+					<reportElement x="205" y="0" width="35" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{totalModelDesc}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band height="22">
+			<staticText>
+				<reportElement x="0" y="0" width="278" height="22"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="140" height="11"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Summary:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="11" width="175" height="11"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Model]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="205" y="11" width="35" height="11"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="240" y="11" width="38" height="11"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pctg]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<summary>
+		<band height="15">
+			<textField evaluationTime="Auto" pattern="#,##0.00">
+				<reportElement x="240" y="0" width="38" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[($V{grandTotal}.doubleValue() / $V{grandTotal}.doubleValue()) * 100]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Auto">
+				<reportElement x="205" y="0" width="35" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{grandTotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="205" height="15"/>
+				<box rightPadding="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Grand Total: "]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

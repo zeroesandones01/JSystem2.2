@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptSuretyBondRequestForm" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.8181818181818181"/>
+	<property name="ireport.x" value="446"/>
+	<property name="ireport.y" value="271"/>
+	<parameter name="company" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["CENQHOMES DEVELOPMENT CORPORATION"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ntp_no" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["000105"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="prepared_by" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["AAGONZALES"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logo" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="_server" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["SERVER23"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="_dbase" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Cenqhomes"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="bat" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["ALVIN GONZALES"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select a.award_date, b.entity_name as contractor, a.contract_no,
+a.start_date + interval '1 year' as bond_effectivity,
+orig_contract_price * (dp_percentage / 100) as insured_amount
+from co_ntp_header a
+left join rf_entity b on b.entity_id = a.entity_id
+where a.ntp_no = $P{ntp_no}
+order by a.ntp_no::int desc;]]>
+	</queryString>
+	<field name="award_date" class="java.sql.Timestamp"/>
+	<field name="contractor" class="java.lang.String"/>
+	<field name="contract_no" class="java.lang.String"/>
+	<field name="bond_effectivity" class="java.sql.Timestamp"/>
+	<field name="insured_amount" class="java.math.BigDecimal"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="65" splitType="Stretch">
+			<textField>
+				<reportElement x="36" y="10" width="500" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="36" y="0" width="50" height="50"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="161" y="30" width="250" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="13" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[SURETY BOND REQUEST FORM]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="550" splitType="Stretch">
+			<staticText>
+				<reportElement x="350" y="0" width="30" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement x="380" y="0" width="192" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{award_date}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="20" width="68" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<text><![CDATA[Contractor :]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement x="68" y="20" width="200" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{contractor}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="50" width="572" height="15"/>
+				<textElement markup="styled">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Please be reminded that the following contract needs SURETY BOND on or before __________________ prior to release of DOWNPAYMENT on ___________________.\n\n" +
+
+"The following <b>SURETY BOND</b> information are to be checked before endorsement to Bidding and Awards Team:"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="55" y="73" width="145" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<text><![CDATA[Company Name :]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement positionType="Float" x="200" y="73" width="340" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{contractor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="55" y="93" width="145" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<text><![CDATA[Contract No. :]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement positionType="Float" x="200" y="93" width="340" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract_no}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="55" y="113" width="145" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<text><![CDATA[Bond Effectivity :]]></text>
+			</staticText>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement positionType="Float" x="200" y="113" width="340" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{bond_effectivity}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="200" y="133" width="340" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["(one year from start date of the contract)"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="55" y="143" width="145" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<text><![CDATA[Insured Amount :]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement positionType="Float" x="200" y="143" width="340" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[ $P{ntp_no}.equals("002041") ? "PHP 10,000.00":"PHP "+ new DecimalFormat("#,##0.00").format($F{insured_amount})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="55" y="183" width="45" height="30"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[NOTE:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="100" y="183" width="440" height="30"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[NO SURETY BOND ISSUED ON THE SCHEDULED DATE MEANS NO RELEASE OF DP ON THE SCHEDULED DATE.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="233" width="572" height="20"/>
+				<textElement markup="styled">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["This certifies that the Contractor is aware on the submission date and important information to be reflected on the Surety Bond. Any information not properly executed or written will cause none release of the downpayment on the scheduled date until all required information will be reflected accurately in the Surety Bond document."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="377" width="150" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<text><![CDATA[Bidding and Awards Team]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="0" y="357" width="150" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="none">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{bat}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="447" width="150" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<text><![CDATA[Conforme :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="530" width="170" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<text><![CDATA[Contractor]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="0" y="510" width="170" height="20"/>
+				<textElement verticalAlignment="Bottom" markup="none">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{contractor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="190" y="530" width="170" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Tahoma" size="12"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="15">
+			<textField isStretchWithOverflow="true" evaluationTime="Auto">
+				<reportElement positionType="Float" x="422" y="3" width="150" height="12"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["As of: " + new SimpleDateFormat("EEE MMM dd, yyyy hh:mm a").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Auto">
+				<reportElement positionType="Float" x="0" y="3" width="200" height="12"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["/" + $P{prepared_by}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Auto">
+				<reportElement positionType="Float" x="236" y="3" width="100" height="12"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + ($V{CURRENT_PAGE_NUMBER} == null ? $V{PAGE_NUMBER}:$V{CURRENT_PAGE_NUMBER}) + " of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

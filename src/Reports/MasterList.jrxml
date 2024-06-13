@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MasterList" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="supp_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="div_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dept_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="category_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sort_by" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from (select
+a.asset_code,
+a.item_id,
+c.category_name,
+a.asset_name,
+a.asset_cost,
+a.asset_ulm,
+a.asset_mon_dep,
+to_char(a.asset_no,'FM00000000') as asset_no,
+a.asset_serial,
+a.asset_model,
+a.asset_bk_val,
+a.asset_ret_cost,
+a.date_acquired,
+a.from_dep,
+a.to_dep,
+a.date_retired,
+a.owned,
+a.insured,
+a.insured_value,
+coalesce(i.remarks, a.remarks) as remarks,
+(substr(a.status, 1, 1)) as status,
+format('%s, %s %s.',e.last_name, e.first_name, left(e.middle_name,1)) as current_cust,
+--format('%s/%s/%s',g.division_alias, f.dept_alias, h.loc_alias) as divdeptbrach,
+g.division_alias,
+f.dept_alias,
+j.supp_name,
+c.category_id
+from tbl_asset a
+left join tbl_item b on a.item_id=b.item_id
+left join tbl_category c on b.category_id=c.category_id
+left join em_employee d on a.current_cust=d.emp_code::int
+left join rf_entity e on d.entity_id=e.entity_id
+left join mf_department f on d.dept_code=f.dept_code
+left join mf_division g on f.division_code = g.division_code or d.div_code=g.division_code
+left join rf_location h on d.loc_id=h.loc_id
+left join tbl_asset_history i on a.asset_no=i.asset_no and a.current_cust=i.current_cust
+left join tbl_supplier j on a.supp_id=j.supp_id
+where   a.status not in('INACTIVE','I')
+and a.co_id not in('3')
+and a.asset_bk_val > 0.00
+and (b.category_id::varchar=$P{category_id} or $P{category_id}='All')
+and (g.division_code=$P{div_id} or $P{div_id}='All' )
+and (f.dept_code=$P{dept_id} or $P{dept_id}='All')
+and (a.supp_id::varchar=$P{supp_id} or $P{supp_id}='All')
+and d.emp_code not in ('null')
+--order by g.division_alias, f.dept_alias
+) a
+where current_cust is not null
+order by division_alias,dept_alias,(case when $P{sort_by} = 'current_cust' then current_cust else  asset_no end),(case when $P{sort_by}= 'current_cust' then asset_no  end  ) ;]]>
+	</queryString>
+	<field name="asset_code" class="java.lang.String"/>
+	<field name="item_id" class="java.lang.Integer"/>
+	<field name="category_name" class="java.lang.String"/>
+	<field name="asset_name" class="java.lang.String"/>
+	<field name="asset_cost" class="java.math.BigDecimal"/>
+	<field name="asset_ulm" class="java.lang.Integer"/>
+	<field name="asset_mon_dep" class="java.math.BigDecimal"/>
+	<field name="asset_no" class="java.lang.String"/>
+	<field name="asset_serial" class="java.lang.String"/>
+	<field name="asset_model" class="java.lang.String"/>
+	<field name="asset_bk_val" class="java.math.BigDecimal"/>
+	<field name="asset_ret_cost" class="java.math.BigDecimal"/>
+	<field name="date_acquired" class="java.sql.Date"/>
+	<field name="from_dep" class="java.sql.Date"/>
+	<field name="to_dep" class="java.sql.Date"/>
+	<field name="date_retired" class="java.sql.Date"/>
+	<field name="owned" class="java.lang.Boolean"/>
+	<field name="insured" class="java.lang.Boolean"/>
+	<field name="insured_value" class="java.math.BigDecimal"/>
+	<field name="remarks" class="java.lang.String"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="current_cust" class="java.lang.String"/>
+	<field name="division_alias" class="java.lang.String"/>
+	<field name="dept_alias" class="java.lang.String"/>
+	<field name="supp_name" class="java.lang.String"/>
+	<field name="category_id" class="java.lang.Integer"/>
+	<group name="Div/dept">
+		<groupExpression><![CDATA[$F{division_alias}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<textField pattern="">
+					<reportElement x="0" y="0" width="94" height="12"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{division_alias}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="32">
+				<textField>
+					<reportElement x="0" y="0" width="752" height="15"/>
+					<box>
+						<topPen lineWidth="0.05"/>
+						<bottomPen lineWidth="0.05"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Total # of asset(s) of "+$F{division_alias}+": "+$V{Div/dept_COUNT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0;#,##0-">
+					<reportElement x="94" y="15" width="658" height="15"/>
+					<box>
+						<topPen lineWidth="0.05"/>
+						<bottomPen lineWidth="0.05"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="15" width="94" height="15"/>
+					<box>
+						<topPen lineWidth="0.05"/>
+						<bottomPen lineWidth="0.05"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Total # of all asset(s): ]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="sub_grp_dept">
+		<groupExpression><![CDATA[$F{dept_alias}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<textField>
+					<reportElement x="0" y="0" width="94" height="12"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{dept_alias}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<textField>
+					<reportElement x="0" y="0" width="752" height="15"/>
+					<box>
+						<topPen lineWidth="0.05"/>
+						<bottomPen lineWidth="0.05"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Total # of asset(s) "+(($F{dept_alias}==null)?"":"of "+$F{dept_alias})+": "+ $V{sub_grp_dept_COUNT}.toString()]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="130" height="14"/>
+				<textElement textAlignment="Left" markup="none">
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["All Companies"]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="0" y="28" width="130" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="14" width="130" height="14"/>
+				<textElement/>
+				<text><![CDATA[Asset MasterList]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="20">
+			<staticText>
+				<reportElement x="49" y="0" width="81" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[ASSET CODE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="638" y="0" width="114" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[REMARKS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="541" y="0" width="48" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[SERIAL NO.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="488" y="0" width="53" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[DATE ACCQUIRED]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="589" y="0" width="49" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[ASSET MODEL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="0" width="110" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[DESCRIPTION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="49" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[ASSET NO.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="240" y="0" width="60" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[CATEGORY	]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="449" y="0" width="39" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[STATUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="0" width="149" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[CURRENT CUSTODIAN]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="638" y="0" width="114" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{remarks}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="49" y="0" width="81" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{asset_code}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="589" y="0" width="49" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{asset_model}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="0" width="110" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{asset_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="49" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{asset_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="240" y="0" width="60" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{category_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="449" y="0" width="39" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{status}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="488" y="0" width="53" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_acquired}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="541" y="0" width="48" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{asset_serial}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="149" height="25"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{current_cust}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20">
+			<textField>
+				<reportElement x="355" y="0" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="435" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="12"/>
+	</summary>
+</jasperReport>

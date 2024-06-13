@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCV_check" pageWidth="612" pageHeight="792" columnWidth="577" leftMargin="25" rightMargin="10" topMargin="20" bottomMargin="20" uuid="03986757-377c-4b59-b630-6e17b8e06d30">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="pv_amt" class="java.lang.String"/>
+	<parameter name="payee" class="java.lang.String"/>
+	<parameter name="pv_date" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+$P{pv_amt} as pv_amt,
+$P{payee} as payee,
+$P{pv_date} as pv_date,
+upper(
+replace(
+	replace(
+		replace(
+			replace(cash_words($P{pv_amt}::money), 'zero cents',
+			'xx / 100'),
+		'dollars','pesos'),
+	'cent','centavo'),
+'cents','centavos')) as amount_word]]>
+	</queryString>
+	<field name="pv_amt" class="java.lang.String"/>
+	<field name="payee" class="java.lang.String"/>
+	<field name="pv_date" class="java.lang.String"/>
+	<field name="amount_word" class="java.lang.String"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="89">
+			<textField isStretchWithOverflow="true" pattern="dd MMMMM yyyy" isBlankWhenNull="true">
+				<reportElement x="63" y="24" width="337" height="28" uuid="f91dc1a7-c058-4e5c-b3cc-964a902208c4"/>
+				<textElement verticalAlignment="Top" markup="none">
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["*** "+$P{payee}+" ***"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
+				<reportElement x="429" y="11" width="103" height="14" uuid="1af2bcb7-fc3d-4eca-bf44-aaf16566f59a"/>
+				<textElement verticalAlignment="Top" markup="none">
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pv_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="429" y="25" width="115" height="13" uuid="91450ff4-351a-4b03-bd7d-06ed9099fd99"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["*"+$P{pv_amt}+"*"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement x="48" y="52" width="484" height="27" uuid="3b52e9e6-1252-4ab2-b30c-ddfd7e39282c"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["***"+$F{amount_word}+"***"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="53"/>
+	</columnFooter>
+	<summary>
+		<band height="72"/>
+	</summary>
+</jasperReport>

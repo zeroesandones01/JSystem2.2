@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptSalesPerfReport_subtable" pageWidth="612" pageHeight="792" columnWidth="577" leftMargin="25" rightMargin="10" topMargin="20" bottomMargin="20" uuid="03986757-377c-4b59-b630-6e17b8e06d30">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="proj_id" class="java.lang.String"/>
+	<parameter name="agent_id" class="java.lang.String"/>
+	<parameter name="posn_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="date_from" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="date_to" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dept_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="div_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="coord_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pmt_stage_alias" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+
+distinct on (proj_name, division_alias, dept_alias)
+
+a.proj_name, a.division_alias, a.dept_alias, sum(a.NSP) as NSP,
+(coalesce(sum(a.NSP),0) + coalesce(sum(a.canc_NSP),0)) as net_prod,
+sum(a.canc_NSP) canc_NSP, count(a.pbl_id) as items
+
+from(
+
+
+select
+
+l.proj_name,
+m.division_alias,
+c.dept_alias,
+(case when a.status_id = 'I' then null else coalesce(j.net_sprice,0) end) as NSP,
+(case when a.status_id = 'I' then -1*coalesce(j.net_sprice,0) else null end) as canc_NSP,
+trim(g.description) as unit_desc,
+a.pbl_id,
+a.seq_no
+
+from rf_sold_unit a
+left join mf_sellingagent_info b on a.sellingagent = b.agent_id
+left join mf_department c on b.dept_id = c.dept_code
+left join ( select distinct on (pbl_id, seq_no) pbl_id, seq_no, tran_date from rf_buyer_status
+	where byrstatus_id = '01' and status_id = 'A' group by pbl_id, seq_no, tran_date ) h on a.pbl_id = h.pbl_id and a.seq_no = h.seq_no
+left join ( select distinct on (pbl_id, seq_no) pbl_id, seq_no, tran_date from rf_buyer_status
+	where byrstatus_id = '17' and status_id = 'A' group by pbl_id, seq_no, tran_date ) hh on a.pbl_id = hh.pbl_id and a.seq_no = hh.seq_no
+left join (select distinct on (pbl_id, seq_no) pbl_id, seq_no,  gross_sprice, discount, vat, net_sprice
+		from rf_client_price_history a
+		order by pbl_id, seq_no, tran_date desc) j on a.pbl_id = j.pbl_id and a.seq_no = j.seq_no
+left join mf_unit_info g on a.pbl_id = g.pbl_id and a.projcode = g.proj_id
+left join mf_project l on a.projcode = l.proj_id
+left join mf_division m on b.sales_div_id = m.division_code
+
+where (case when $P{proj_id} = '' or $P{proj_id} is null then a.pbl_id is not null else trim(a.projcode) = $P{proj_id} end)
+and (case when $P{dept_id} = '' or $P{dept_id} is null then a.pbl_id is not null else trim(b.dept_id) = $P{dept_id} end)
+and (case when $P{agent_id} = '' or $P{agent_id} is null then a.pbl_id is not null else trim(b.agent_id) = $P{agent_id} end)
+and (case when $P{div_id} = '' or $P{div_id} is null then a.pbl_id is not null else trim(b.sales_div_id) = $P{div_id} end)
+and (case when $P{posn_id} = '' or $P{posn_id} is null then a.pbl_id is not null else trim(b.salespos_id) = $P{posn_id} end)
+and (case when $P{coord_id} = '' or $P{coord_id} is null then a.pbl_id is not null else trim(b.bdo_id) = $P{coord_id} end)
+and (case when $P{pmt_stage_alias} = 'OR' then h.tran_date >= $P{date_from} and h.tran_date <= $P{date_to}
+	else hh.tran_date >= $P{date_from} and hh.tran_date <= $P{date_to} end)
+and (case when $P{pmt_stage_alias} = 'OR' then h.tran_date is not null else hh.tran_date is not null end)
+
+order by l.proj_name, m.division_alias, c.dept_alias
+
+) a
+
+group by proj_name, division_alias, dept_alias]]>
+	</queryString>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="division_alias" class="java.lang.String"/>
+	<field name="dept_alias" class="java.lang.String"/>
+	<field name="nsp" class="java.math.BigDecimal"/>
+	<field name="net_prod" class="java.math.BigDecimal"/>
+	<field name="canc_nsp" class="java.math.BigDecimal"/>
+	<field name="items" class="java.lang.Long"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="sub_nsp" class="java.lang.Double" resetType="Group" resetGroup="project" calculation="Sum">
+		<variableExpression><![CDATA[$F{nsp}]]></variableExpression>
+	</variable>
+	<variable name="sub_can_nsp" class="java.lang.Double" resetType="Group" resetGroup="project" calculation="Sum">
+		<variableExpression><![CDATA[$F{canc_nsp}]]></variableExpression>
+	</variable>
+	<variable name="tot_nsp" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{nsp}]]></variableExpression>
+	</variable>
+	<variable name="tot_canc_nsp" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{canc_nsp}]]></variableExpression>
+	</variable>
+	<variable name="sub_item" class="java.lang.Integer" resetType="Group" resetGroup="project" calculation="Sum">
+		<variableExpression><![CDATA[$F{items}]]></variableExpression>
+	</variable>
+	<variable name="tot_item" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{items}]]></variableExpression>
+	</variable>
+	<variable name="sub_net_prod" class="java.lang.Double" resetType="Group" resetGroup="project" calculation="Sum">
+		<variableExpression><![CDATA[$F{net_prod}]]></variableExpression>
+	</variable>
+	<variable name="tot_net_prod" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{net_prod}]]></variableExpression>
+	</variable>
+	<group name="project">
+		<groupExpression><![CDATA[$F{proj_name}]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<textField pattern="MM/dd/yy" isBlankWhenNull="true">
+					<reportElement x="69" y="6" width="138" height="13" uuid="6a068ed4-2848-4433-8bb8-3e6530e07718"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7" isBold="true" isItalic="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{proj_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+					<reportElement x="282" y="0" width="60" height="13" uuid="db06599d-e113-4db2-8c52-2af9dfa83875"/>
+					<box rightPadding="1">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{sub_can_nsp}]]></textFieldExpression>
+				</textField>
+				<textField pattern="MM/dd/yy" isBlankWhenNull="true">
+					<reportElement x="69" y="0" width="108" height="13" uuid="29e2601c-5a6e-4fe2-b9e8-d35425a56c7d"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Subtotal :"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+					<reportElement x="220" y="0" width="62" height="13" uuid="e64127ce-5db2-431c-af9b-378e8a7a139a"/>
+					<box rightPadding="1">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{sub_nsp}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+					<reportElement x="342" y="0" width="55" height="13" uuid="52403922-dada-41a4-80fb-6f9e4a755299"/>
+					<box rightPadding="1">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{tot_net_prod}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0;(-#,##0)" isBlankWhenNull="true">
+					<reportElement x="177" y="0" width="43" height="13" uuid="4b8cb3b3-b1c7-4c9e-9348-c195eb2472ce"/>
+					<box rightPadding="1">
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{sub_item}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="14"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="37" splitType="Stretch">
+			<staticText>
+				<reportElement x="69" y="21" width="48" height="15" uuid="67d163fd-57e6-4238-bc0f-e7e404376f95"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIV.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="117" y="21" width="60" height="15" uuid="1ff13c85-7d44-4e89-805f-ae5c98ded9c0"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GROUP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="177" y="21" width="43" height="15" uuid="f8275f66-10de-4451-bf9a-eff93c248440"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No of UNITS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="220" y="21" width="62" height="15" uuid="c100eb0e-e96b-4006-bea2-1ad7fcc6a72f"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NSP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="282" y="21" width="60" height="15" uuid="1337babf-1bce-4e99-9900-4f98ea959cab"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Canceled]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="342" y="21" width="55" height="15" uuid="cd86d6d6-acf0-4a8d-9718-2710f6084643"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Net Production]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="69" y="21" width="328" height="15" uuid="fbf82c91-157a-4a4d-a89e-3bbf0baef7af"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="69" y="6" width="328" height="15" uuid="53c0eb38-5045-45bd-ae36-8f07bee02ec0"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SALES PERFORMANCE SUMMARY]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement x="69" y="0" width="48" height="13" uuid="3b52e9e6-1252-4ab2-b30c-ddfd7e39282c"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{division_alias}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="117" y="0" width="60" height="13" uuid="7cc76f8e-8c58-4e96-96ee-750b7f32a5f8"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dept_alias}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="342" y="0" width="55" height="13" uuid="91450ff4-351a-4b03-bd7d-06ed9099fd99"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{net_prod}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(-#,##0)" isBlankWhenNull="true">
+				<reportElement x="177" y="0" width="43" height="13" uuid="adec95ef-15d3-4f4f-87b3-5907ac40ef10"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{items}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="220" y="0" width="62" height="13" uuid="a23dfed3-c2e7-4d42-af46-4fdbd8daa611"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nsp}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="282" y="0" width="60" height="13" uuid="a038a639-3fd6-4c69-b5b5-577cd476f6fb"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{canc_nsp}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="16">
+			<textField pattern="#,##0;(-#,##0)" isBlankWhenNull="true">
+				<reportElement x="177" y="0" width="43" height="13" uuid="b409c6c2-f429-4f45-a9a1-dc7625e55ffe"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{tot_item}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement x="69" y="0" width="108" height="13" uuid="1776018a-6228-4790-b43d-2d056717e890"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total :"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="342" y="0" width="55" height="13" uuid="988e3a3b-cbfe-4692-97b8-3cdeae5bba6f"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{tot_net_prod}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="282" y="0" width="60" height="13" uuid="cfb07324-eef4-468e-b98e-2ef3d58cd046"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{tot_canc_nsp}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="220" y="0" width="62" height="13" uuid="89bb5895-0128-41e1-87df-1d8aff702ac1"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{tot_nsp}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<summary>
+		<band height="1"/>
+	</summary>
+</jasperReport>

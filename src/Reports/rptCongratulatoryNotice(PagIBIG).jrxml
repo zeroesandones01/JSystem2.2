@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCongratulatoryNotice(PagIBIG)" pageWidth="612" pageHeight="936" columnWidth="532" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="144"/>
+	<parameter name="notice_type_id" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["91"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="batch_no" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["0000000012"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="company" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["CENQHOMES DEVELOPMENT CORPORATION"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="company_address" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["4th Flr. Anita Bldg., 1300 Quezon Avenue corner Timog Avenue, Quezon City"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="prepared_by" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["aagonzales"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT get_client_name(a.entity_id, true) as client_name, get_client_name(a.entity_id, false) as client_name2, TRIM(c.proj_name) as project_name, TRIM(a.entity_id) as client_id, TRIM(d.description) as unit_id,
+  TRIM(g.addr_no) as addr_no, TRIM(g.street) as street, TRIM(g.barangay) as barangay, TRIM(h.city_name) as city_name, TRIM(i.municipality_name) as municipality_name, TRIM(j.province_name) as province_name,
+  sp_center_format(0, TRIM(e.part_desc)) as particular, --50
+  sp_center_format(0, TRIM(f.model_desc)) as model, --50
+  sp_center_format(0, to_char(a.billingduedate, 'FMMONTH')) as month_due, --30
+  sp_center_format(0, to_char(a.billingduedate, 'FMMonth dd, yyyy')) as due_date, --50
+  sp_center_format(0, '533-8459 or 534-2237 local 75') as contact_no, --50
+  sp_center_format(0, 'collection@acerhomes.com') as email, --60
+  (SELECT sp_center_format(0, to_char(MAX(trans_date), 'FMMonth dd, yyyy'))
+     FROM rf_payments
+     WHERE entity_id = a.entity_id
+     AND proj_id = a.projcode
+     AND pbl_id = a.pbl_id
+     AND seq_no = a.seq_no) as last_payment, k.company_name, k.company_alias,
+  a.entity_id, a.projcode, a.pbl_id, a.seq_no
+
+FROM rf_client_notices a
+LEFT JOIN rf_entity b ON b.entity_id = a.entity_id
+LEFT JOIN mf_project c ON c.proj_id = a.projcode
+LEFT JOIN mf_unit_info d ON d.proj_id = a.projcode AND d.pbl_id = a.pbl_id
+LEFT JOIN mf_client_ledger_part e ON e.part_id = a.part_id
+LEFT JOIN mf_product_model f ON f.model_id = d.model_id
+LEFT JOIN rf_entity_address g ON g.entity_id = a.entity_id AND g.pref_billing
+LEFT JOIN mf_city h ON h.city_id = g.city_id
+LEFT JOIN mf_municipality i ON i.municipality_id = g.municipality_id
+LEFT JOIN mf_province j ON j.province_id = g.province_id
+LEFT JOIN mf_company k ON k.co_id = c.co_id
+
+WHERE a.notice_id = $P{notice_type_id}
+AND a.batch_no = $P{batch_no}
+
+ORDER BY get_client_name(a.entity_id);]]>
+	</queryString>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="client_name2" class="java.lang.String"/>
+	<field name="project_name" class="java.lang.String"/>
+	<field name="client_id" class="java.lang.String"/>
+	<field name="unit_id" class="java.lang.String"/>
+	<field name="addr_no" class="java.lang.String"/>
+	<field name="street" class="java.lang.String"/>
+	<field name="barangay" class="java.lang.String"/>
+	<field name="city_name" class="java.lang.String"/>
+	<field name="municipality_name" class="java.lang.String"/>
+	<field name="province_name" class="java.lang.String"/>
+	<field name="particular" class="java.lang.String"/>
+	<field name="model" class="java.lang.String"/>
+	<field name="month_due" class="java.lang.String"/>
+	<field name="due_date" class="java.lang.String"/>
+	<field name="contact_no" class="java.lang.String"/>
+	<field name="email" class="java.lang.String"/>
+	<field name="last_payment" class="java.lang.String"/>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="company_alias" class="java.lang.String"/>
+	<field name="entity_id" class="java.lang.String"/>
+	<field name="projcode" class="java.lang.String"/>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="seq_no" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="100" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="532" height="70"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="142" splitType="Stretch">
+			<textField>
+				<reportElement x="399" y="0" width="133" height="15"/>
+				<box rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="399" y="16" width="133" height="15"/>
+				<box rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{unit_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="399" y="32" width="133" height="15"/>
+				<box rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_id}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="0" y="0" width="246" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="44" width="246" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="113" width="330" height="15"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("Dear {0}:", $F{client_name2})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="331" y="0" width="62" height="15"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Project]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="331" y="16" width="62" height="15"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Unit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="331" y="32" width="62" height="15"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Client ID]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="59" width="246" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("{0} {1}", $F{addr_no}, $F{street})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="74" width="246" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{barangay}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="89" width="246" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{city_name} == null ? ($F{municipality_name} == null ? $F{province_name}:msg("{0}, {1}", $F{municipality_name}, $F{province_name})):msg("{0} City", $F{city_name})]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="250">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="10" width="532" height="20"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Tahoma"/>
+					<paragraph tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Greetings!\n\n\n" +
+
+"Thank you for trusting "+ $F{company_name} +"to build your dream house. Rest assured that we will try to reciprocate your trust with honest to goodness service and quality living environment.\n\n\n" +
+
+"Please take note of the following to avoid penalties and ensure worry free processing of your housing loan with Pag-IBIG:"]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement positionType="Float" x="30" y="40" width="502" height="20"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="20" y="0" width="482" height="20"/>
+					<textElement markup="styled">
+						<font fontName="Tahoma"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Stated below is your payment schedule for your reference. Penalties and surcharges will be charged to your account once you failed to settle your amount due as scheduled.\n"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="0" y="0" width="20" height="20"/>
+					<box topPadding="2"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA["•"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="50" y="66" width="400" height="20"/>
+				<subreport isUsingCache="false">
+					<reportElement positionType="Float" x="0" y="0" width="400" height="20"/>
+					<subreportParameter name="pbl_id">
+						<subreportParameterExpression><![CDATA[$F{pbl_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="seq_no">
+						<subreportParameterExpression><![CDATA[$F{seq_no}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="proj_id">
+						<subreportParameterExpression><![CDATA[$F{projcode}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="entity_id">
+						<subreportParameterExpression><![CDATA[$F{client_id}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression class="java.io.InputStream"><![CDATA[this.getClass().getResourceAsStream("/Reports/subrptCongratulatoryNotice(PagIBIG).jasper")]]></subreportExpression>
+				</subreport>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="30" y="93" width="502" height="20"/>
+				<textField>
+					<reportElement positionType="Float" x="0" y="0" width="20" height="20"/>
+					<box topPadding="2"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA["•"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="20" y="0" width="482" height="20"/>
+					<textElement markup="styled">
+						<font fontName="Tahoma"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The documents you have submitted have validity periods. Please expect our loans personnel to call you from time to time to ask you for the updated documents. W e highly advise you to keep copies of your various proof of income (ie. CEC) in case the need arises.\n"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="30" y="113" width="502" height="20"/>
+				<textField>
+					<reportElement positionType="Float" x="0" y="0" width="20" height="20"/>
+					<box topPadding="2"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA["•"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="20" y="0" width="482" height="20"/>
+					<textElement markup="styled">
+						<font fontName="Tahoma"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Any changes on the following must be communicated to us immediately for record and document updating: (1)marital status (2)employment (3)addresses - (residence and office) (4)contact numbers and (5)e-mail address.\n"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="133" width="532" height="20"/>
+				<textElement markup="styled">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Let us work closely together to ensure that your dream home will become a reality soon.\n\n\n\n\n" +
+
+"Very truly yours,\n\n\n\n" +
+
+"Nelia Flores\n" +
+"Head - Client Servicing Dept"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement x="280" y="0" width="252" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Batch No. " + $P{batch_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="256" height="12"/>
+				<textElement markup="styled">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("<font face=\"Dot Font\">{0}</font>/{1}", $F{company_alias}, $P{prepared_by}.toUpperCase())]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

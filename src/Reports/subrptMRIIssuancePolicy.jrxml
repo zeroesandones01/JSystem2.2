@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptMRIIssuancePolicy" pageWidth="572" pageHeight="792" columnWidth="572" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.9487171000000014"/>
+	<property name="ireport.x" value="307"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="proj_alias" class="java.lang.String"/>
+	<field name="unit_desc" class="java.lang.String"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="date_enrolled" class="java.util.Date"/>
+	<field name="date_approved" class="java.util.Date"/>
+	<field name="policy_no" class="java.lang.String"/>
+	<field name="reference_no" class="java.lang.String"/>
+	<field name="invoice_no" class="java.lang.String"/>
+	<field name="amt_insured" class="java.math.BigDecimal"/>
+	<field name="premium" class="java.math.BigDecimal"/>
+	<field name="stage" class="java.lang.String"/>
+	<variable name="subtotalInsuranceInvoice" class="java.math.BigDecimal" resetType="Group" resetGroup="grpInvoice" calculation="Sum">
+		<variableExpression><![CDATA[$F{amt_insured}]]></variableExpression>
+	</variable>
+	<variable name="subtotalPremiumInvoice" class="java.math.BigDecimal" resetType="Group" resetGroup="grpInvoice" calculation="Sum">
+		<variableExpression><![CDATA[$F{premium}]]></variableExpression>
+	</variable>
+	<variable name="subtotalInsuranceStage" class="java.math.BigDecimal" resetType="Group" resetGroup="grpStage" calculation="Sum">
+		<variableExpression><![CDATA[$V{subtotalInsuranceInvoice}]]></variableExpression>
+	</variable>
+	<variable name="subtotalPremiumStage" class="java.math.BigDecimal" resetType="Group" resetGroup="grpStage" calculation="Sum">
+		<variableExpression><![CDATA[$V{subtotalPremiumInvoice}]]></variableExpression>
+	</variable>
+	<variable name="totalInsuranceAmt" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{subtotalInsuranceStage}]]></variableExpression>
+	</variable>
+	<variable name="totalPremium" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{subtotalPremiumStage}]]></variableExpression>
+	</variable>
+	<group name="grpStage">
+		<groupExpression><![CDATA[$F{stage}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<textField>
+					<reportElement x="1" y="0" width="226" height="12"/>
+					<textElement verticalAlignment="Middle" markup="html">
+						<font size="7" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{stage}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<staticText>
+					<reportElement x="0" y="1" width="45" height="13"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL:]]></text>
+				</staticText>
+				<line>
+					<reportElement x="1" y="0" width="571" height="1"/>
+				</line>
+				<textField evaluationTime="Group" evaluationGroup="grpStage" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="456" y="1" width="58" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{subtotalInsuranceStage}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="grpStage" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="514" y="1" width="58" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{subtotalPremiumStage}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="1" y="13" width="571" height="1"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="grpInvoice">
+		<groupExpression><![CDATA[$F{invoice_no}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<textField>
+					<reportElement x="0" y="0" width="270" height="12"/>
+					<textElement verticalAlignment="Middle" markup="html">
+						<font size="7" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<html><b>Invoice No:   " + $F{invoice_no} + "</b></html>"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<line>
+					<reportElement x="1" y="0" width="571" height="1"/>
+				</line>
+				<staticText>
+					<reportElement x="0" y="1" width="45" height="13"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL:]]></text>
+				</staticText>
+				<textField evaluationTime="Group" evaluationGroup="grpInvoice" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="456" y="1" width="58" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{subtotalInsuranceInvoice}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="grpInvoice" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="514" y="1" width="58" height="13"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{subtotalPremiumInvoice}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="457" y="0" width="58" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amt_insured}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="339" y="0" width="61" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{reference_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="88" y="0" width="93" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="227" y="0" width="46" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_approved}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="514" y="0" width="58" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{premium}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="400" y="0" width="58" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="181" y="0" width="46" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_enrolled}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1" y="0" width="34" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{proj_alias}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="35" y="0" width="53" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{unit_desc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="273" y="0" width="66" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{policy_no}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="14">
+			<staticText>
+				<reportElement x="0" y="1" width="66" height="13"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GRAND TOTAL:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="0" width="571" height="1"/>
+			</line>
+			<line>
+				<reportElement x="1" y="13" width="571" height="1"/>
+			</line>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="456" y="0" width="58" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalInsuranceAmt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="514" y="1" width="58" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalPremium}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

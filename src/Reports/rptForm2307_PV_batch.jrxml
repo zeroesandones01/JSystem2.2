@@ -1,0 +1,4706 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptForm2307_PV_batch" pageWidth="612" pageHeight="1008" columnWidth="573" leftMargin="18" rightMargin="21" topMargin="20" bottomMargin="20" uuid="3032b0dd-6c7a-408b-9680-027d2b1dcd3a">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="303"/>
+	<parameter name="co_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="bir_logo" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="arrow1" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="arrow2" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="arrow3" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="arrow4" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="arrow5" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="arrow6" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="arrow7" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="arrow8" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="arrow9" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="arrow10" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="arrow11" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="arrow12" class="java.io.InputStream" isForPrompting="false"/>
+	<parameter name="year" class="java.lang.String"/>
+	<parameter name="month_from" class="java.lang.String"/>
+	<parameter name="month_to" class="java.lang.String"/>
+	<parameter name="day_from" class="java.lang.String"/>
+	<parameter name="day_to" class="java.lang.String"/>
+	<parameter name="payee" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pv_num" class="java.lang.String"/>
+	<parameter name="acct_id" class="java.lang.String"/>
+	<parameter name="entity_type_id" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+
+a.tin_1,
+a.tin_2,
+a.tin_3,
+a.tin_4,
+a.client,
+a.address,
+a.co_tin_1,
+a.co_tin_2,
+a.co_tin_3,
+a.co_tin_4,
+a.tin_no,
+a.company_name,
+a.co_address,
+sum(a.wtax) as wtax,
+sum(coalesce(a.sum_tax_1,0)) sum_tax_1,
+sum(coalesce(a.sum_tax_2,0)) sum_tax_2,
+sum(coalesce(a.sum_tax_3,0)) sum_tax_3,
+(sum(coalesce(a.sum_tax_1,0))+sum(coalesce(a.sum_tax_2,0))+sum(coalesce(a.sum_tax_3,0))) as sum_total
+
+from (
+
+select
+
+a.rplf_no,
+trim(to_char(a.pv_date, 'MM')) as month,
+trim(to_char(a.pv_date, 'dd')) as day,
+trim(to_char(a.pv_date, 'yy')) as year,
+substr(trim(replace(a.tin,'-','')), 1, 3) as tin_1,
+substr(trim(replace(a.tin,'-','')), 4, 3) as tin_2,
+substr(trim(replace(a.tin,'-','')), 7, 3) as tin_3,
+substr(trim(replace(a.tin,'-','')), 10, 3) as tin_4,
+a.tin,
+a.client,
+a.address,
+substr(trim(replace(b.tin_no,'-','')), 1, 3) as co_tin_1,
+substr(trim(replace(b.tin_no,'-','')), 4, 3) as co_tin_2,
+substr(trim(replace(b.tin_no,'-','')), 7, 3) as co_tin_3,
+substr(trim(replace(b.tin_no,'-','')), 10, 3) as co_tin_4,
+b.tin_no,
+upper(trim(aa.entity_name)) as company_name,
+upper(trim(c.addr_no)||' '||trim(c.street)||','||trim(c.barangay)||','||trim(d.city_name)) as co_address,
+sum(wtax_amt) as wtax,
+(case when trim(to_char(a.pv_date, 'MM')) in ('01','04','07','10') then sum(a.exp_amt) else 0 end ) as sum_tax_1,
+(case when trim(to_char(a.pv_date, 'MM')) in ('02','05','08','11') then sum(a.exp_amt) else 0 end ) as sum_tax_2,
+(case when trim(to_char(a.pv_date, 'MM')) in ('03','06','09','12') then sum(a.exp_amt) else 0 end ) as sum_tax_3
+
+from (
+
+select
+
+b.entity_id1,
+upper(trim(c.entity_name)) as client,
+a.rplf_no,
+d.cv_no,
+b.rplf_date,
+d.pv_date,
+a.wtax_amt,
+(a.exp_amt  - a.wtax_amt) as exp_amt,
+trim(to_char(b.rplf_date, 'MM')) as period,
+b.rplf_type_id,
+replace(f.tin_no,'-','') as tin,
+upper(trim(g.addr_no)||' '||trim(g.street)||','||trim(g.barangay)||','||trim(h.city_name)) as address,
+a.co_id,
+(case when a.co_id = $P{co_id} then '1212121212' else '' end) as co_entity
+
+from (select * from rf_request_detail where status_id = 'A') a
+left join ( select * from rf_request_header where rplf_type_id = '04'  and status_id != 'I' ) b on a.rplf_no =b.rplf_no and a.co_id = b.co_id
+left join rf_entity c on a.entity_id = c.entity_id
+join (select * from rf_pv_header where status_id = 'P') d on b.rplf_no = d.rplf_no and b.co_id = d.co_id
+left join (select * from rf_cv_header where status_id != 'I') e on d.cv_no = e.cv_no and d.co_id = e.co_id
+left join rf_entity_id_no f on a.entity_id = f.entity_id
+left join rf_entity_address g on a.entity_id = g.entity_id
+left join mf_city h on g.city_id = h.city_id
+
+where a.wtax_amt > 0
+and d.pv_date >= '2014-01-01 00:00:00'
+and a.co_id = $P{co_id}
+--and e.date_paid is not null
+--and b.rplf_no in (select rplf_no from rf_ewt_remittance)
+and to_char(d.pv_date,'yy') = $P{year}
+and to_char(d.pv_date,'MM')::int >= $P{month_from}::int
+and to_char(d.pv_date,'MM')::int <= $P{month_to}::int
+and d.pv_no not in (select pv_no from rf_form2307_monitoring where date_received is not null)
+and ( case when $P{payee} = '' then a.wtax_amt > 0 else a.entity_id = $P{payee} end )
+and ( case when $P{pv_num} = '' then a.wtax_amt > 0 else d.pv_no = $P{pv_num} end )
+and (case when $P{acct_id} = '' then a.rplf_no is not null else a.acct_id like $P{acct_id} end)
+and (case when $P{entity_type_id} = '' then a.rplf_no is not null else b.entity_type_id = $P{entity_type_id} end)
+
+UNION ALL
+
+select
+
+b.entity_id1,
+upper(trim(c.entity_name)) as client,
+a.rplf_no,
+d.cv_no,
+b.rplf_date,
+d.pv_date,
+a.wtax_amt,
+(a.exp_amt  - a.wtax_amt) as exp_amt,
+trim(to_char(b.rplf_date, 'MM')) as period,
+b.rplf_type_id,
+replace(replace(f.tin_no,'-',''),' ','') as tin,
+upper(trim(g.addr_no)||' '||trim(g.street)||','||trim(g.barangay)||','||trim(h.city_name)) as address,
+a.co_id,
+(case when a.co_id = '02' then '1212121212' else '' end) as co_entity
+
+from (select * from rf_request_detail where status_id = 'A') a
+left join ( select * from rf_request_header where rplf_type_id != '04'  and status_id != 'I' ) b on a.rplf_no =b.rplf_no and a.co_id = b.co_id
+left join rf_entity c on b.entity_id1 = c.entity_id
+join (select * from rf_pv_header where status_id = 'P') d on b.rplf_no = d.rplf_no and b.co_id = d.co_id
+left join (select * from rf_cv_header where status_id != 'I') e on d.cv_no = e.cv_no and d.co_id = e.co_id
+left join rf_entity_id_no f on b.entity_id1 = f.entity_id
+left join rf_entity_address g on a.entity_id = g.entity_id
+left join mf_city h on g.city_id = h.city_id
+
+where a.wtax_amt > 0
+and b.rplf_date >= '2014-01-01 00:00:00'
+and a.co_id = $P{co_id}
+--and e.date_paid is not null
+and to_char(d.pv_date,'yy') = $P{year}
+and to_char(d.pv_date,'MM')::int >= $P{month_from}::int
+and to_char(d.pv_date,'MM')::int <= $P{month_to}::int
+and d.pv_no not in (select pv_no from rf_form2307_monitoring where date_received is not null)
+and ( case when $P{payee} = '' then a.wtax_amt > 0 else b.entity_id1 = $P{payee} end )
+and ( case when $P{pv_num} = '' then a.wtax_amt > 0 else d.pv_no = $P{pv_num} end )
+and (case when $P{acct_id} = '' then a.rplf_no is not null else a.acct_id like $P{acct_id} end)
+and (case when $P{entity_type_id} = '' then a.rplf_no is not null else b.entity_type_id = $P{entity_type_id} end)
+
+) a
+
+left join rf_entity aa on a.co_entity = aa.entity_id
+left join rf_entity_id_no b on a.co_entity = b.entity_id
+left join rf_entity_address c on a.co_entity = c.entity_id
+left join mf_city d on c.city_id = d.city_id
+
+group by a.rplf_no, a.pv_date, a.tin, a.client, a.address, b.tin_no, aa.entity_name, c.addr_no,c.street,c.barangay,d.city_name
+
+) a
+
+group by
+a.tin_1,
+a.tin_2,
+a.tin_3,
+a.tin_4,
+a.client,
+a.address,
+a.co_tin_1,
+a.co_tin_2,
+a.co_tin_3,
+a.co_tin_4,
+a.tin_no,
+a.company_name,
+a.co_address
+
+order by a.client]]>
+	</queryString>
+	<field name="tin_1" class="java.lang.String"/>
+	<field name="tin_2" class="java.lang.String"/>
+	<field name="tin_3" class="java.lang.String"/>
+	<field name="tin_4" class="java.lang.String"/>
+	<field name="client" class="java.lang.String"/>
+	<field name="address" class="java.lang.String"/>
+	<field name="co_tin_1" class="java.lang.String"/>
+	<field name="co_tin_2" class="java.lang.String"/>
+	<field name="co_tin_3" class="java.lang.String"/>
+	<field name="co_tin_4" class="java.lang.String"/>
+	<field name="tin_no" class="java.lang.String"/>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="co_address" class="java.lang.String"/>
+	<field name="wtax" class="java.math.BigDecimal"/>
+	<field name="sum_tax_1" class="java.math.BigDecimal"/>
+	<field name="sum_tax_2" class="java.math.BigDecimal"/>
+	<field name="sum_tax_3" class="java.math.BigDecimal"/>
+	<field name="sum_total" class="java.math.BigDecimal"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<group name="Payee" isStartNewPage="true" isResetPageNumber="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{client}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="63">
+			<image>
+				<reportElement x="-1" y="8" width="38" height="35" uuid="41203fc1-607c-4c09-ad81-0d42ff80dfcc"/>
+				<imageExpression><![CDATA[$P{bir_logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="183" y="9" width="211" height="22" uuid="c1408265-ae6f-4b26-9cb9-c0d8bf99ea1a"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="19" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Certificate of Creditable]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="485" y="10" width="76" height="36" uuid="8d322f42-87c5-4cac-87a3-32a069765e4e"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="27" isBold="false"/>
+				</textElement>
+				<text><![CDATA[2307]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="485" y="46" width="80" height="10" uuid="d8a6172e-cf32-4f40-8d38-f11bfd8d84cf"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[March 2003 (ENCS)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="189" y="33" width="205" height="22" uuid="49432ff1-58a0-4bba-85aa-bceb4b3ece7d"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="19" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Tax Withheld At Source]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="39" y="9" width="114" height="10" uuid="0e5d7402-4ce6-4635-9482-23bb98396df5"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Republika ng Pilipinas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="39" y="19" width="109" height="10" uuid="bc5e6d7b-1eb8-4247-9851-bb965ddfd0a6"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Kagawaran ng Pananalapi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="39" y="29" width="133" height="21" uuid="d07acdff-4fba-4618-af79-3f510e09966a"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Kagawaran ng Rentas Internas]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="62" width="577" height="1" uuid="bfb1c3a5-2fcb-40a2-a94b-1509aefe3c0b"/>
+			</line>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="836" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="513" y="118" width="61" height="16" uuid="1bc6778d-4a43-4229-8d03-26ff86792f44"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="105" y="45" width="34" height="16" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="572d7c67-2f8e-4fc7-a4ab-f5bbd25f1ca4"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="236" width="575" height="12" backcolor="#999999" uuid="3e01ed9b-f0af-45f0-85aa-d0275ff7878b"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Details of Monthly Income Payments and Tax Withheld for the Quarter]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="28" width="577" height="12" backcolor="#999999" uuid="de80b374-72b4-473f-b2e3-8d4a01316b42"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Payee Information]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="141" width="577" height="12" backcolor="#999999" uuid="de75ab6c-8558-4dbf-aeca-fa23e82fe54d"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Payor Information]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="154" width="577" height="80" backcolor="#999999" uuid="19bb5edf-eb70-423f-aae4-26dd300f5347"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="40" width="577" height="100" backcolor="#999999" uuid="f53ba548-7606-4877-ab68-befb40858515"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="577" height="27" backcolor="#999999" uuid="3aecc475-4e3d-494d-bcaf-141148239ebb"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="74" y="4" width="31" height="20" uuid="75c2dba9-3cd9-4af5-951a-79efd0e13cfc"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{month_from}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="105" y="4" width="31" height="20" uuid="d314d589-f581-445b-b733-fb4b8cf0ef4e"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{day_from}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="136" y="4" width="31" height="20" uuid="cff1556a-dbcb-4a90-bbcb-3abb86e217f3"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{year}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="289" y="4" width="31" height="20" uuid="b7d3d4bf-2595-497f-b39b-6ed54fc18b4f"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{month_to}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="351" y="4" width="31" height="20" uuid="f575a9a9-affe-471e-9879-014df8c122cb"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{year}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="12" y="3" width="52" height="10" uuid="98612197-7646-4fca-8b19-4cdbdf48b7f9"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[For the Period ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="13" width="52" height="10" uuid="74f0fd07-3de9-4554-9cb1-5d469903d40e"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[From]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="237" y="14" width="41" height="10" uuid="4c42d2c7-536e-425a-9cea-9b63ef31af3b"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[To ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="166" y="14" width="55" height="10" uuid="36b5eed8-0175-47ea-bade-2ba26a1e4ec9"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[(MM/DD/YY)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="381" y="13" width="55" height="10" uuid="7bd00fc8-fe75-427b-a33d-b81aeb175113"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[(MM/DD/YY)]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="105" y="64" width="469" height="18" uuid="c36b4922-a95c-4458-b744-5f3a35954429"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{client}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="15" y="66" width="74" height="16" uuid="6a74960a-aa25-4845-99ff-9f15dc337caa"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Payee's Name]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="105" y="96" width="355" height="18" uuid="443990d1-28db-41e9-9e0d-795d9079b703"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{address}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="96" width="90" height="16" uuid="602c85c3-ebae-4a4c-a7ba-bffd96bcb25c"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Registered Address]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="513" y="91" width="61" height="16" uuid="bc9058bd-7c0e-4f79-b742-4dc178448345"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="474" y="90" width="39" height="16" uuid="b3d2c9e0-a2d5-407d-b116-de48818a8e53"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Zip Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="119" y="84" width="341" height="12" uuid="073a67f1-8541-48b9-9491-450ed291c634"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[(Last Name, First Name, Middle Name for Individuals) (Registered Name for Non-Individuals)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="119" width="82" height="16" uuid="d733e732-acf8-4c3f-98a8-7dc51c18fd65"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Foreign Address]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="105" y="118" width="355" height="18" uuid="7d7e0b68-549d-4e55-a13e-9ff86ce76f58"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="474" y="117" width="39" height="16" uuid="12a6e66a-1a4d-4a49-b4ba-30a215c87119"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Zip Code]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="27" width="577" height="1" uuid="01283350-88f3-4a07-a8da-0dab485e2cdf"/>
+			</line>
+			<line>
+				<reportElement x="0" y="140" width="577" height="1" uuid="d9d36b1d-d7ea-4c4a-b155-00fb3a99a9a8"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="105" y="178" width="469" height="18" uuid="50dff46b-6487-4ee9-81d5-9467cdf0982f"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="119" y="200" width="341" height="12" uuid="e99c6df7-f9f2-4858-b8e6-7d3966ff79ad"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[(Last Name, First Name, Middle Name for Individuals) (Registered Name for Non-Individuals)]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="105" y="212" width="355" height="18" uuid="7819ca1b-31a0-411e-ac50-63c4d1fdfb81"/>
+				<box leftPadding="3" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{co_address}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="474" y="205" width="39" height="16" uuid="dc9e9eca-1de8-47b1-b2f3-ab157a6deb02"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Zip Code]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="513" y="206" width="61" height="16" uuid="5882f1a7-0b72-41f2-9b60-148ec580572b"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<line>
+				<reportElement x="0" y="234" width="577" height="1" uuid="faf2fef7-6804-4825-9074-2ffe1f2a06b2"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="282" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="68a1e12b-6d78-4757-9804-5e6d84711731"/>
+				<box leftPadding="2" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Payments made by top 10,000 private"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="249" width="136" height="33" backcolor="#999999" uuid="548716a7-76aa-494e-b800-775f9e843bc7"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Income Payment Subject to Expanded Withholding Tax]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="248" width="577" height="1" uuid="bed3af31-1ca6-43f5-aa54-1bd9144d7827"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="28" width="56" height="13" backcolor="#999999" uuid="efdc9508-27ee-4a56-a246-bc6218a07716"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  PART I]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="40" width="577" height="1" uuid="1d0ed38e-4f86-4bc5-9fc5-7d5193d63601"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="236" width="52" height="12" backcolor="#999999" uuid="8e0ab4a4-5e5b-409a-bab5-3c308b23af79"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  PART II]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="136" y="249" width="71" height="33" backcolor="#999999" uuid="dc407964-a81f-4fa8-8f2b-35ddf4eeb30e"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ATC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="207" y="249" width="260" height="14" backcolor="#999999" uuid="b5423165-9b3d-4603-88d5-24146e57a431"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AMOUNT OF INCOME PAYMENTS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="207" y="263" width="65" height="9" backcolor="#999999" uuid="b3f8102e-3f62-49b6-946c-13482d343acd"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[1st Month of]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="282" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="601a1a70-32d5-47dc-8ccc-1d91b091f24a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["WC 160"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="282" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="77aab9d9-2628-4fac-810c-30345a1cba84"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sum_tax_2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="282" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="8ac64d83-ee66-4d96-a280-834d71955b7c"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sum_tax_3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="282" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="982515ba-c72d-4a1f-93eb-06e2161eba26"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{wtax}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="294" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="9d382156-1cea-44b4-878d-d1740ba99e2b"/>
+				<box leftPadding="2" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["corporations to their local/resident"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="294" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="663028bb-b4c7-4bab-8c68-cfeb822b9f20"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="294" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="b86faa53-7d3a-413b-8e3f-ffe21582c4e3"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="294" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="ff14b232-ecf9-490f-b7e2-cab74bbcc65f"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="294" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="d645a302-9343-4a36-b8df-54e79fef45b7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="294" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="13cfd2d6-ce8b-4b57-ac94-87d1dff61001"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="306" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="d7352f00-7d0e-48c1-ae27-fcc326f3e18a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="306" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="6f543bbf-4137-4b62-9cdf-05b0972131f4"/>
+				<box leftPadding="2" rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["suppliers of services."]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="306" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="3dd83b47-a311-4725-a5ee-4047871fd83a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="306" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="439717c3-2932-438c-b48b-242d7a38a2dc"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="306" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="01f87af9-12da-4d9d-b468-3bb0d4916ed5"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="306" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="8aa751c4-33c3-46b5-9988-3bdaccdc4180"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="318" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="a6258dd1-b689-419d-be75-0cef3243dbe9"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="318" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="a606cc51-9d09-447c-9460-3756c05909a1"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="318" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="737bf2c0-e072-4f89-a7c3-d61f70a6800c"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="318" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="729f6a4a-9d66-4d9a-85b7-c0ae34f1fb60"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="318" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="5ab4b0cc-bd8f-49a3-a79a-9b150cbfcb9a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="318" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="0da6d94f-58bb-4333-92e8-9fd12bea495b"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="330" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="727a2021-07ac-4d00-951b-47a8c28628a5"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="330" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="e50672cb-b2e1-47ee-9c79-a242b1179f10"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="330" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="c71165fb-2045-4b05-918a-8587d0d084e7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="330" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="ea1a40ba-4a37-409c-bdb5-72171bace3b6"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="330" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="da359c9a-e6cb-4d6b-b655-05c6d84646a7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="330" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="8d566718-11b2-4cff-82ea-39ac59a37ad6"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="342" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="d7bb24b0-f069-4831-84cf-0cd42b4053b5"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="342" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="ec2cf7ef-fe3b-4ad3-bf29-d5fe35e6c4f7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="342" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="d58a711d-448d-4960-ac23-0e1ab1fd5434"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="342" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="a17bbe43-9aec-4b19-8119-66b08a48db41"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="342" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="d11e7c89-52b9-4219-a27d-9514dfc7bfc3"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="342" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="26352a9c-4592-463d-af58-90892d9866bf"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="354" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="42a14db9-5dff-4da2-a61b-1f51a7ac9425"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="354" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="39122bf0-baf5-44b9-aad7-e1e2abd375fd"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="354" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="f31a8ef9-b0e5-46ca-b626-266f6e2534a3"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="354" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="12a261f7-ba45-41ba-90bc-e742226014e6"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="354" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="f97be2aa-fc2a-4b1e-b046-2fc9eefabe43"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="354" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="d90e6e43-24e3-41c2-b434-ee89f04803e1"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="366" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="683f84f3-0447-48c3-b8e1-619852153406"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="390" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="d22de58a-13da-436b-95d5-cf8f39fd4516"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="378" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="c4cc984b-05be-4575-bc3b-f3831ba230bd"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="402" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="4dc570b0-146d-4e0b-8df8-96f10eb761c1"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="378" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="d3d72789-55d4-4068-9b75-7391b0990258"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="402" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="3ad5b791-a4ba-49eb-a52a-61f145efe970"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="366" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="37d83c5e-27ed-4162-a1c3-352f2e9c469d"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="402" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="f31315fb-33de-4d6f-bdf2-5a6636bace60"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="390" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="7951d98c-4639-4b56-aba3-1211850d4712"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="366" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="50beddf3-e507-4447-9c5a-9fcc34266240"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="378" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="ea2da302-beb3-4c39-a09e-509a7e5dfc37"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="366" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="c8fc81c8-415f-4467-8050-bdd26b782c10"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="402" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="7ce74b92-235a-48b3-83e2-52944780e76d"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="378" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="5aed96dc-ae69-44b3-9bac-460aa46dd5f8"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="366" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="08db3940-4054-4af0-bc27-6e8d9b385d3a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="390" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="dd72a05f-5658-45b9-b4b1-2e877cf309d2"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="402" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="b9dfc9d2-5a0c-451f-a408-7af1f5d4bfdc"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="378" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="2c7ce61f-1f99-4139-a0b3-d7a9afc7f9a1"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="390" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="a8821703-b2c4-48de-95f6-f7364fdc9255"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="390" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="c2ddc0dc-a39c-406d-a216-b5a18fb9fc69"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="402" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="93dc9e50-02c3-4638-a2fa-149bfddf6eb7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="378" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="bd374153-8737-48c7-87d3-920f5421b9d4"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="366" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="bbe8e9a0-eff5-41b0-90ce-e597ba6dbe78"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="390" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="1a1553f8-5f38-472e-a947-0ddcbd7267d4"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="414" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="6ad25ac0-4075-46a1-b20c-792a8f008cf7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="438" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="8f6774ba-1e0f-43ce-95ca-e6a5fb732a51"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="426" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="6520e2e0-c88e-4fd8-a13f-8063e7ab22c5"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="450" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="04a3e823-49b6-43ab-808b-03ad0e0901fd"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="426" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="8aa22d49-516f-404f-af17-b732fc17e9bc"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="450" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="6f6e3f07-d4d8-43c3-91ca-bc4d69415599"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="414" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="a79522d5-1da1-45b6-8984-d24e17ae36ab"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="450" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="cbce43b7-b940-44a8-8fda-b9b4df7b7ec2"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="438" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="a4405d52-8d2a-4ffa-bcb5-8cd75ca8494a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="414" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="090ab471-5453-45f3-a09c-d0809666223c"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="426" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="95b05b47-f3ec-40ed-ab75-c578d09e87d0"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="414" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="e982470d-fa17-4296-9d45-ce8b465e3aac"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="450" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="d263aedd-5663-4a94-8578-cc53c8301508"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="414" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="ece682ca-88f9-4f85-b78f-184460a8c91f"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="438" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="2e7ff1ff-01a6-4377-b858-c44201a3da31"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="450" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="0688a071-5b46-4237-a994-6bda0dcf8c12"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="426" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="2ad8553a-c49b-43d3-bdba-cd51af1c1f5c"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="438" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="277c4dae-1e14-4b31-a0ab-32d24225ffeb"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="438" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="0571daeb-d3cc-4b5f-8f42-8e5b7d723bc2"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="450" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="2fefac27-a9b2-4ec5-8f9c-00f531285e6e"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="426" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="ba605520-0589-44dc-8f3b-2858ede919cb"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="414" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="f28d03cf-d54c-4bb6-bce7-f4cc55997200"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="438" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="359193b8-4b4c-45d3-b32a-4a37217b23df"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="462" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="c5a89629-1da8-46d6-8614-f520728bebf1"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="462" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="a38f3bf0-498c-4173-aad6-69dc76aa48c4"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="462" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="49807604-8379-4ed8-a79d-50962254b5b4"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="462" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="3a658288-e1f6-4ff0-b0e4-40b4595a0950"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="462" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="9ead0d74-dab7-46be-8b25-c1034df67c80"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="462" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="5add2a6c-2905-4c4d-8fc2-655c1e742af3"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="474" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="f013f7a7-4382-4a11-a057-3ca821212c06"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sum_tax_3}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="0" y="474" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="11d141c8-a4d7-4728-befa-5af3e54eb844"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="474" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="23efead2-abef-4fc2-aff9-1a8a582e10da"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{wtax}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="474" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="e5ba6234-2b19-44bb-a063-95b9bc097752"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="474" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="7c73e6a0-3cc7-4470-9887-69ea0edd6990"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sum_tax_2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="474" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="1deaa804-fdd0-49f0-96ef-6fa3f372d06e"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sum_tax_1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="337" y="486" width="65" height="25" forecolor="#000000" backcolor="#999999" uuid="5c6c7959-0132-44df-8bb7-8303d9486ae7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="0" y="486" width="136" height="25" forecolor="#000000" backcolor="#999999" uuid="6a5b4d23-07bf-4bd0-997b-a05ed1bc8bd7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Monthly Payments Subject to Withholding of Busines Tax (Government & Private)"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="467" y="486" width="110" height="25" forecolor="#000000" backcolor="#999999" uuid="351819da-6d1e-4c38-8b1e-aa9ed68d5895"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="136" y="486" width="71" height="25" forecolor="#000000" backcolor="#999999" uuid="952c376a-daca-4ca9-94d0-99033c1a0c46"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="272" y="486" width="65" height="25" forecolor="#000000" backcolor="#999999" uuid="e5141a30-a5a6-4dc6-85e1-f53fa1e4cdc5"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="207" y="486" width="65" height="25" forecolor="#000000" backcolor="#999999" uuid="009f4158-e642-470f-ac2f-eaaef4309ee6"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="511" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="be6c531a-9e76-4242-bc33-b785b8d1bc1e"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="511" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="2dcf4a6c-b5e2-4ef4-b56f-3be5d328e2dd"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="511" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="b0842820-226c-490a-9033-ae488e5aefb0"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="511" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="8b2fd982-c697-4492-96e9-f7ce1d1b17f7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="511" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="36c367e3-c77a-405b-867c-dee6f190f84a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="511" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="2cc95a7a-0156-44c1-a0ae-40e29127779a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="523" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="115e9540-e4bf-4316-88ab-135418fe46a8"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="523" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="8e76c61c-04c1-4970-a0eb-fc6c36c55990"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="523" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="0fd6c2b4-38d6-41ad-9288-9fb3618b162b"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="523" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="50642aa4-e24f-4dba-a912-c18d6eeee076"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="523" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="d3bc87aa-b35b-4405-9890-29f4a86b7953"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="523" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="fa91f914-1af8-46d6-b4db-6d4b5d535bbf"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="535" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="4cd14904-6327-47a6-9839-68daae9aa571"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="535" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="0bd1ec7f-3812-4765-a798-2dd40f552cad"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="535" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="7e4b89f4-f581-417c-b4fb-3ccd6dd1fa0c"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="535" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="16dd9790-ed5f-4586-a357-fa5bd5b8944c"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="535" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="98108430-d8ff-49cd-8827-ce840691f08e"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="535" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="9d5940c1-58ec-475b-9901-3f4c44db0d38"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="547" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="851b0be0-a0f5-4f14-8ee8-73afdbf37eb0"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="547" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="9770af04-29a8-4727-8b2a-0dd925920bef"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="547" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="b17214d9-e1fd-4daa-b735-3127fbe1146f"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="547" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="befb5d33-a734-4616-8b51-bdf42bf7881f"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="547" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="f199afc1-caeb-43ca-bcb1-72bd31cb60bb"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="547" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="487581bc-7b17-4d1c-8c17-c6b0ea861437"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="559" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="9b8c5f4c-b83b-4d02-9c37-94b962dadc7f"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="559" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="51f20647-d163-40ab-9d6e-c06c42ea33b3"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="559" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="40645d55-0d23-4dff-be54-c8874653285e"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="559" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="9503bd67-2906-4461-9e8e-d6e33a1b1afa"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="559" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="272075a2-c7b4-49d1-ba32-2a31eecda28f"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="559" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="27aa5fae-bd4e-4867-872e-97991f78006d"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="571" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="02582f5b-a35e-44dc-a069-aaad1cbabfc6"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="571" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="c7a3052c-9c3d-4309-b9d1-7f0f4985ebb7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="571" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="13bcbda4-abca-46df-acea-540428727628"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="571" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="12a4cab0-ad8b-443e-9389-cf35d0591dc8"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="571" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="717e9ce8-289c-4811-9c4a-a36752b39482"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="571" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="34fdd3ca-98fe-4f41-8df5-dfd01b3e0723"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="583" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="6ac43668-c1a7-4a0c-bc47-9ffc2b5be7d6"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="583" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="ac275726-601e-4fea-ba5e-7d650e34f116"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="583" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="aa9ecf34-d5da-4b52-9c4f-e93435889f69"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="583" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="8ae17bd4-4ce8-4534-ae87-cb7b8fbcbc5b"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="583" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="93ed1134-8f30-4f67-8827-7b9a54e7bbca"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="583" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="ac7c73bb-b4f7-4d92-b6a8-81c27afa0a45"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="595" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="83b294a5-61e5-464e-a5bf-9e1b4bf705f0"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="595" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="d0fa9e2a-05b7-40d9-818f-25e73431aa6e"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="595" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="44c76077-283f-4575-8c44-e824db6b82b5"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="595" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="e80f6709-2623-40ff-b4ac-b39478b6d548"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="595" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="08086645-439e-4841-820e-a5b1a5e6be45"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="595" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="9d3cca44-4ee0-4c88-b417-9082c6bea129"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="607" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="a7208bb9-3000-4402-ac56-2d77db2abe5a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="607" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="1d8e1faa-e7f3-4d24-9939-6bd206d46f0c"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="607" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="1137da44-daaa-4634-a3cc-162fa5a33171"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="607" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="a9e93fa1-1e66-41d8-8c0e-cf68465973b4"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="607" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="69b64667-41e7-4324-b19c-6c7e39780fe2"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="607" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="007e3e98-edff-4954-ae25-55a589006531"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="619" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="ebc3cb70-b545-4e2b-85f3-c98cffc3507e"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="619" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="c8f85d00-2525-409a-a9d7-d2f624a3c7dc"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="619" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="82eafb29-3251-42bf-be31-118f7545ee59"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="619" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="a94c4a47-f541-4f8e-be08-c270bc5bf1bc"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="619" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="ca266afc-17d3-43ae-aa36-913020b6ceda"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="619" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="d5c7af30-44e8-4b2f-a6c9-76105b453eca"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="691" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="a1405c25-193b-4aaa-8afe-d13be2fc70aa"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="691" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="64063790-5b31-4d90-b634-b122552fbc22"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="691" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="3742a00e-25db-4328-ae18-2e1d07529349"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="691" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="681e8abe-4bd7-40c0-b3f7-28c3e8bd39d7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="691" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="b27e63a5-b2ab-4bd6-b5b6-b2c52da21917"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="0" y="691" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="f6e65d95-900e-472f-a40a-fc6fcf60a78e"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="631" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="52d4b9f3-e2c6-4e25-8cfa-d0a7a85eff55"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="631" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="7ee45580-d388-4de5-b747-ed1aac4c8b66"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="631" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="00b092f0-6f16-43c1-8914-74b5cdef1463"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="631" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="089e034b-44d4-4bfd-9148-ee820a9839cf"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="631" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="7d6e319f-20b5-4909-9197-dae4009b12fd"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="631" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="925fa225-dfdd-48c3-8712-961a5f09329a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="643" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="b668a8a8-a3d2-4ff1-b305-40b0c76c73d8"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="643" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="85e573e1-429d-4a2b-a7ac-6c23b3c52828"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="643" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="b3fbd457-fc83-4cb7-a8d4-106a1a5bb895"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="643" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="7518ebc6-d1df-4644-ac92-ecd840a23a9d"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="643" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="cc925a61-d6d8-41b3-b0dc-34af533d0034"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="643" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="47312b6e-27f0-4d8b-bced-a429d42b7520"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="655" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="abd77b66-3e38-448f-9d40-866b16f4e99d"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="655" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="dabc0afd-0462-4b91-825b-934a2f8806b5"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="655" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="b761724f-3273-43e7-8811-577d1a5ae548"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="655" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="0fdee674-f82b-4681-a86c-0624f1d9b320"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="655" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="a6ce3949-e4ee-433c-9e6d-573350c6f493"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="655" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="20a300f4-e8e7-4dda-98eb-98edfcf9a85b"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="667" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="2d2eb815-b85c-42f0-bda9-148f23fadd93"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="667" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="f4485135-9764-4e32-a2b3-f0542682e995"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="667" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="47850a18-56e3-4008-8169-00aef8ea6099"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="667" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="5c254d10-3c29-47a1-8968-be8aeecf8454"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="667" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="315ae676-33c5-4aad-9c08-5aae805699f6"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="667" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="9fabd568-cb8b-49e7-a243-0be0d9862376"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="679" width="136" height="12" forecolor="#000000" backcolor="#999999" uuid="29da7104-94d3-4c1e-8e76-add1e35a49a5"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="679" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="b5340699-6472-49c4-9b19-7d37cf91dff4"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="136" y="679" width="71" height="12" forecolor="#000000" backcolor="#999999" uuid="527f213d-8b36-42c9-b56d-49a5995016e7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="337" y="679" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="ace88cfc-12f2-4942-a55a-a0aafb0cf08e"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="467" y="679" width="110" height="12" forecolor="#000000" backcolor="#999999" uuid="57f2b28e-2389-4a40-b9bd-7a9809d4048a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="679" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="14dbf7b3-ca0f-40fe-9f96-b64d455ac3d3"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="709" width="577" height="11" uuid="01025715-7088-4689-b99e-2501c89aa27e"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[     We declare, under the penalties of perjury, that this certificate has been made in good faith, verified by me, and to the best of my knowledge and belief, is true]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="734" width="187" height="20" uuid="d1ea12c0-fb29-4901-bb12-0d3ff1634ac2"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[for : VICTOR MANARANG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="754" width="187" height="13" uuid="0917216b-8b30-49aa-bcd2-729c06dea2e6"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Payor/Payor's Authorized Representative]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="91" y="767" width="187" height="13" uuid="b2f5844e-d85e-4048-844c-9b1fd0e42315"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[(Signature Over Printed Name)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="67" y="734" width="15" height="10" uuid="a69030fa-a640-4465-8a46-ef3e0712694f"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[9]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="351" y="754" width="187" height="13" uuid="e2bf04a6-f93e-4068-b114-252813240e7b"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Title/Position of SIgnatory]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="351" y="734" width="187" height="20" uuid="b500c649-3ea8-4c06-a7be-2ceb13b8429b"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[PRESIDENT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="326" y="734" width="25" height="13" uuid="2b3d9e99-d1a1-407e-8ca0-4f42b81a80b1"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[10]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="775" width="577" height="13" uuid="a1ced1b4-5336-46ae-b2b6-865a89e63d2e"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="793" width="187" height="13" uuid="7640821c-bcd2-4003-83bc-2792e999cb09"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Conforme:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="3" width="15" height="10" uuid="fa0ffb2e-c580-4265-b8f8-c71db8f8a4d8"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-64" y="13" width="15" height="10" uuid="7e3386ac-ab95-4bcb-ae63-93b30387d2eb"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="45" width="15" height="10" uuid="64076e3f-78a6-4088-94c3-27b05c2cd3c6"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="65" width="15" height="10" uuid="a49f77a6-895f-4ac7-95d4-d8caaed761f8"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[3]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="95" width="15" height="10" uuid="62f7dc8c-73d6-4e74-82e5-69fc30d54dd3"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[4]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="119" width="15" height="10" uuid="b7033c77-1d68-41cb-8f56-00e50169ddbf"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[5]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="158" width="15" height="10" uuid="7027e569-3eb5-4cd1-a710-b3bcc9472c4f"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[6]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="178" width="15" height="10" uuid="22fb6380-3478-433c-bb1f-93c2a1e0ad8a"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[7]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="212" width="15" height="10" uuid="cc4e855c-7251-49d4-a8ca-198525b12419"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[8]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="463" y="89" width="15" height="10" uuid="54bdb6cb-55a7-4153-a243-0d16420b078d"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[4A]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="463" y="116" width="15" height="10" uuid="0f0025ac-4938-4001-bb51-30efceed2917"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[5A]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="463" y="204" width="15" height="10" uuid="51248085-3001-4df3-ae05-c05454aea39d"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[8A]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="44" width="85" height="10" uuid="c402b6a8-a63b-463d-a9a5-317c4e89dff0"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Taxpayer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="54" width="84" height="10" uuid="59c51e27-8520-4e41-be3e-0e8a3e7dc2bc"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Identification Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="212" width="90" height="16" uuid="a2de56df-279f-4b9e-a3a7-2ac49e157b4f"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Registered Address]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="180" width="74" height="16" uuid="4455e30f-0c94-4d41-8b68-8a6795b1117b"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Payor's Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="158" width="85" height="10" uuid="aa7ff5cf-ff23-4527-bb4a-9ef01c424fe7"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Taxpayer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="168" width="84" height="10" uuid="cb9d9aed-e947-4b77-902c-de143312df22"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Identification Number]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="153" width="577" height="1" uuid="f0b63740-244b-42ae-ae02-b9ba4cb72c77"/>
+			</line>
+			<line>
+				<reportElement x="90" y="20" width="1" height="4" uuid="c4433b70-3bdb-46af-92a7-0e550f178bd8"/>
+			</line>
+			<line>
+				<reportElement x="121" y="20" width="1" height="4" uuid="bf3a09d2-2f99-4ee8-bb48-1de8885620a1"/>
+			</line>
+			<line>
+				<reportElement x="152" y="20" width="1" height="4" uuid="2f2e8be2-6687-4d58-bf4c-ca4d453000fd"/>
+			</line>
+			<line>
+				<reportElement x="305" y="20" width="1" height="4" uuid="f5b747fc-be21-48ca-a23a-49457caece43"/>
+			</line>
+			<line>
+				<reportElement x="365" y="20" width="1" height="4" uuid="7e161257-fa9a-41d7-87d6-7f64d51818c8"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="320" y="4" width="31" height="20" uuid="40efb5ae-cae5-4cca-8f22-eb77c3079888"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{day_to}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="336" y="20" width="1" height="4" uuid="89e4cf1f-d4ba-4466-8518-8e45301a8a47"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="139" y="45" width="6" height="16" backcolor="#999999" uuid="15e5a112-960f-4703-9b51-d067f313b845"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="223" y="45" width="6" height="16" backcolor="#999999" uuid="1e1333b8-4fd2-46f7-84dd-3f2206758136"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="183" y="45" width="6" height="16" backcolor="#999999" uuid="b1898f23-cafd-4c66-bc18-f76778761472"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="105" y="45" width="34" height="16" backcolor="#FFFFFF" uuid="e40f89e1-f7d7-4691-9781-683e1f17e20a"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Courier New" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tin_1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="115" y="57" width="1" height="4" uuid="fe8a6cb9-4981-4276-9a6c-82ee089dc9ef"/>
+			</line>
+			<line>
+				<reportElement x="127" y="57" width="1" height="4" uuid="e9c28f60-0eb6-4af5-a0b1-e7df04d5c4dd"/>
+			</line>
+			<textField>
+				<reportElement mode="Opaque" x="145" y="45" width="38" height="16" backcolor="#FFFFFF" uuid="9c952004-6024-4105-a1d1-cc07d76969f1"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Courier New" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tin_2}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="157" y="57" width="1" height="4" uuid="9585d886-e7fe-4b35-8783-6551635dcc95"/>
+			</line>
+			<line>
+				<reportElement x="171" y="57" width="1" height="4" uuid="2d8b825c-2583-4a14-aa85-a09fe39d13b1"/>
+			</line>
+			<textField>
+				<reportElement mode="Opaque" x="189" y="45" width="34" height="16" backcolor="#FFFFFF" uuid="761be4d0-2ed3-45f8-8cfc-ca76776914a6"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Courier New" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tin_3}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="200" y="57" width="1" height="4" uuid="a30a9534-0248-4c27-bb39-38fb4fd215f5"/>
+			</line>
+			<line>
+				<reportElement x="211" y="57" width="1" height="4" uuid="eedabdbd-817e-4ef2-b717-4a407e351755"/>
+			</line>
+			<textField>
+				<reportElement mode="Opaque" x="229" y="45" width="34" height="16" backcolor="#FFFFFF" uuid="ed799951-2eaf-45e5-bb0a-5fe66a7e4fea"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Courier New" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tin_4}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="251" y="57" width="1" height="4" uuid="3853e741-40af-44de-b954-e4f86bb560e0"/>
+			</line>
+			<line>
+				<reportElement x="239" y="57" width="1" height="4" uuid="dcaf8507-c9af-4b91-8229-3baec82bf795"/>
+			</line>
+			<textField>
+				<reportElement mode="Opaque" x="105" y="156" width="34" height="16" backcolor="#FFFFFF" uuid="a5f0d4b6-ace2-42b6-b505-cb3a492a82d2"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Courier New" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{co_tin_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="139" y="156" width="6" height="16" backcolor="#999999" uuid="19a5db1f-6025-49a4-a883-bcc97c2a44c0"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="145" y="156" width="38" height="16" backcolor="#FFFFFF" uuid="e9240a38-163d-42c2-8d13-d525fb764b49"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Courier New" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{co_tin_2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="183" y="156" width="6" height="16" backcolor="#999999" uuid="7c5e096e-8ada-41f1-bd68-5bf8513de1e5"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="189" y="156" width="34" height="16" backcolor="#FFFFFF" uuid="790a2030-fdba-4592-b12c-e687ba0abf60"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Courier New" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{co_tin_3}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="223" y="156" width="6" height="16" backcolor="#999999" uuid="6cce0a65-8428-4103-ba1e-f5ef7f954925"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="229" y="156" width="34" height="16" backcolor="#FFFFFF" uuid="156fcec4-bba8-4d8e-bbed-b9a73d73f42e"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Courier New" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{co_tin_4}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="115" y="168" width="1" height="4" uuid="8e2fb626-1754-4a2d-8590-37aa16a47849"/>
+			</line>
+			<line>
+				<reportElement x="127" y="168" width="1" height="4" uuid="bd5150f6-6f7a-4acc-b2f3-4a43027a7488"/>
+			</line>
+			<line>
+				<reportElement x="157" y="168" width="1" height="4" uuid="d86310b0-1da0-4835-8a12-634de13aed54"/>
+			</line>
+			<line>
+				<reportElement x="170" y="168" width="1" height="4" uuid="39aa79dd-bb8a-4cba-a2ba-2d2c73b871e5"/>
+			</line>
+			<line>
+				<reportElement x="200" y="168" width="1" height="4" uuid="0d195624-ffb5-48e2-961b-9483c8310d6c"/>
+			</line>
+			<line>
+				<reportElement x="212" y="168" width="1" height="4" uuid="c5fa6166-b1c8-420f-b4b4-e12157236257"/>
+			</line>
+			<line>
+				<reportElement x="240" y="168" width="1" height="4" uuid="f3f8bf98-03a4-451d-9a9b-823fb848467b"/>
+			</line>
+			<line>
+				<reportElement x="251" y="168" width="1" height="4" uuid="3ba3159a-cd42-482f-afd2-361825943bbf"/>
+			</line>
+			<line>
+				<reportElement x="526" y="103" width="1" height="4" uuid="d18f67b6-841c-4f85-94ad-5aaa774ee2ce"/>
+			</line>
+			<line>
+				<reportElement x="542" y="103" width="1" height="4" uuid="a7e52b15-6fb4-4490-8690-c93e4fe0a8a7"/>
+			</line>
+			<line>
+				<reportElement x="557" y="103" width="1" height="4" uuid="3793855b-d873-4303-8ea5-679ceefb4d70"/>
+			</line>
+			<line>
+				<reportElement x="526" y="130" width="1" height="4" uuid="fa5a8c2e-22c7-49b4-ad94-a6ec7c1541fa"/>
+			</line>
+			<line>
+				<reportElement x="543" y="130" width="1" height="4" uuid="24bf8b3c-6e25-4271-b0f1-92f8cb30bd1a"/>
+			</line>
+			<line>
+				<reportElement x="558" y="130" width="1" height="4" uuid="9770f936-b9b7-4d1e-acdf-48d8b3b66858"/>
+			</line>
+			<staticText>
+				<reportElement x="91" y="803" width="187" height="13" uuid="ca029159-d7a5-45b3-a5f4-16dc9d848cba"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Payor/Payor's Authorized Representative]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="783" width="187" height="20" uuid="dbddc10a-c0f2-4b41-aa0c-2576b857a582"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="814" width="187" height="13" uuid="ae27b6f9-9631-4282-a62a-0b7817195772"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[(Signature Over Printed Name)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="351" y="808" width="187" height="13" uuid="da8db0b8-8168-46d2-9b41-90b0bfe6dee9"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Date Signed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="351" y="786" width="187" height="20" uuid="b316dece-4d29-4bce-a06e-0bbcd7aedc4e"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-1" y="721" width="577" height="13" uuid="9e64122d-b9b0-4dbe-a53d-bfd8f9d74ece"/>
+				<textElement verticalAlignment="Top" markup="none">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[and correct, pursuant to the provisions of the National Revenue Code, as amended, and the regulations issued under authority thereof.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="513" y="118" width="61" height="16" uuid="b7efbe3f-6cfd-4c1a-ae95-9af7a1624257"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="207" y="282" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="7db1ddff-097d-4a11-b56b-7f5013cff259"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sum_tax_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="207" y="272" width="65" height="10" backcolor="#999999" uuid="6bf0b668-3f5e-42b1-900f-070bcefbae0f"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[the Quarter]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="272" y="263" width="65" height="9" backcolor="#999999" uuid="5b6ae28c-f59e-4b5d-94e2-cf671924cc5c"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[2nd Month of]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="272" y="272" width="65" height="10" backcolor="#999999" uuid="a19a9bf1-65b0-4dc3-8f20-243ada5b828f"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[the Quarter]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="337" y="263" width="65" height="9" backcolor="#999999" uuid="02d00d49-46c3-411a-8b1f-b8c95ebc78c6"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[3rd Month of]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="337" y="272" width="65" height="10" backcolor="#999999" uuid="b134626d-59d0-445d-9a1a-3dabe23d8410"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[the Quarter]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="467" y="263" width="110" height="9" backcolor="#999999" uuid="797a95f3-6d58-4fd8-9a68-f2fbd0ff1d73"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tax Withheld]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="467" y="272" width="110" height="10" backcolor="#999999" uuid="8b607c0f-1c24-402a-8741-2fafe1bb858d"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[For the Quarter]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="467" y="249" width="110" height="14" backcolor="#999999" uuid="53ead6ba-a5fb-432c-9ada-8e6153ddb336"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="105" y="45" width="158" height="16" uuid="cd7ef3aa-0aae-4584-9609-27a9d338af04"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="105" y="156" width="158" height="16" uuid="40b90892-b186-4466-a630-7a7444347dbc"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="527" y="130" width="1" height="4" uuid="9548c5df-7798-48cd-93cc-e4af2bc51a99"/>
+			</line>
+			<line>
+				<reportElement x="542" y="130" width="1" height="4" uuid="e31cb2b2-7184-4cf8-b62e-b917b2710755"/>
+			</line>
+			<line>
+				<reportElement x="557" y="130" width="1" height="4" uuid="560da09d-28e3-4e4f-abbf-e23448cdc6a9"/>
+			</line>
+			<line>
+				<reportElement x="528" y="218" width="1" height="4" uuid="fc846b8e-3f18-491c-a78b-7364b7f33e99"/>
+			</line>
+			<line>
+				<reportElement x="543" y="218" width="1" height="4" uuid="c52b02e6-47c3-4c80-83d3-cf2806bdd5a8"/>
+			</line>
+			<line>
+				<reportElement x="558" y="218" width="1" height="4" uuid="ba47d1c9-d4cb-425a-a752-2d77500ea54e"/>
+			</line>
+			<image>
+				<reportElement x="64" y="12" width="10" height="9" uuid="38e257c6-75bb-4a18-b12d-44c4ccd53560"/>
+				<imageExpression><![CDATA[$P{arrow1}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="278" y="13" width="10" height="9" uuid="fd30ace9-ee72-4896-a87c-13c4eec7962b"/>
+				<imageExpression><![CDATA[$P{arrow2}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="95" y="51" width="10" height="9" uuid="ec935181-888c-445c-857b-a914782529b3"/>
+				<imageExpression><![CDATA[$P{arrow3}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="95" y="72" width="10" height="9" uuid="a08f9fdf-d87a-446f-9f21-7fc08d153a6f"/>
+				<imageExpression><![CDATA[$P{arrow4}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="95" y="103" width="10" height="9" uuid="cecf8702-82a1-4461-ab07-36c54624d63e"/>
+				<imageExpression><![CDATA[$P{arrow5}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="95" y="125" width="10" height="9" uuid="eca10e8b-7612-4ab5-af01-50481111e5ae"/>
+				<imageExpression><![CDATA[$P{arrow6}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="94" y="163" width="10" height="9" uuid="69800eb3-fbb0-4fef-a20d-b4aba1ced098"/>
+				<imageExpression><![CDATA[$P{arrow7}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="94" y="187" width="10" height="9" uuid="d376809e-e115-4210-bd10-0ad896a88b9f"/>
+				<imageExpression><![CDATA[$P{arrow8}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="94" y="219" width="10" height="9" uuid="7af49300-3ff9-4b62-b323-b76a145465e0"/>
+				<imageExpression><![CDATA[$P{arrow9}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="503" y="99" width="10" height="9" uuid="83682e96-840b-4337-9af6-85b4c1053725"/>
+				<imageExpression><![CDATA[$P{arrow10}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="503" y="125" width="10" height="9" uuid="0d8720c7-b46f-46f5-917f-778184dd8adb"/>
+				<imageExpression><![CDATA[$P{arrow11}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="503" y="214" width="10" height="9" uuid="40cead9f-c830-4267-9e94-c6f6770f46dc"/>
+				<imageExpression><![CDATA[$P{arrow12}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="272" y="426" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="45c7f021-ba5c-463a-859d-7789770d3d08"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="462" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="dd10efc0-2166-41cd-8323-72fd8afecf26"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="378" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="2efe419f-27ef-4724-9e80-01961904cc73"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="354" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="c3588721-3e03-4662-a83e-6e57ce0c97ab"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="450" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="6d3609bd-237d-4985-8427-cdd85ee92090"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="402" y="272" width="65" height="10" backcolor="#999999" uuid="12426dca-ac3b-459b-b190-f263ad0d918c"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="330" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="1d07699a-0ed3-4919-bb87-c656b92f6850"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="414" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="14dcf2f9-30c7-4155-9576-5ead4406c426"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="318" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="82bdaf9a-2e9c-4a41-948d-b69aaf6e163c"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="390" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="2d49d9a2-b5ae-4840-b0d9-2a7514727fa0"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="342" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="a8a17c09-a208-443d-b5ca-2449984eebb1"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="474" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="754b1be7-8ee8-4b08-906b-078d240c9307"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sum_total}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="366" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="7f227007-f7fd-475e-9f90-6b7670d4f168"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="306" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="0f15332f-d330-4cda-b305-ae08407a7f79"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="294" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="f74b416e-65a4-4acd-84bc-98fcb1a83eba"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="438" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="44aad6b9-89dd-499b-ab8c-8ffca062dd66"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="426" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="b78e8b16-64d6-43a0-b537-dfd9450e475a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="402" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="3ee4c790-b21b-43fb-9c68-17db51250ef0"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="402" y="263" width="65" height="9" backcolor="#999999" uuid="ccb546c3-6afa-4af4-8eed-8208d4f357a2"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="282" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="fbc195bb-a403-49ab-824b-3821d7bfb25d"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sum_total}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="595" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="1c599014-deb2-41f4-81ea-fd71f2a78697"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="643" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="a17b700f-7df6-472d-9e7d-4f9f45b56293"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="511" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="5b905479-357b-46b4-9754-8e372a69eaf5"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="523" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="be149992-6a6c-4491-b5cf-9b9c53885f58"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="583" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="c892ca07-13fe-4f20-ac2f-057fd29e169c"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="547" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="fbea24f7-70b9-410e-8c35-1bdcfd5cddf3"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="667" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="597c17d0-aa93-487a-9915-517f2eeeef73"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="559" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="4b234fe1-5569-48c1-afbc-90e69a1a80c1"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="679" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="b39240ee-3d09-4117-82e4-75540a4beb8b"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="607" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="63f7d5fc-b07b-4ef9-95e4-a1538aa3401f"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="571" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="a31f3515-6be0-4b0d-a234-048f9ad867f0"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="691" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="cb90db6c-80ee-4d7c-a05c-164652b68f92"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="631" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="e03aed74-2f78-4164-9026-151c113aace3"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="402" y="486" width="65" height="25" forecolor="#000000" backcolor="#999999" uuid="33945353-14d7-4f22-96de-95cd5c16b72e"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="655" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="a925b147-ac2a-4dd6-92bb-1b45cd67bae6"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="619" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="f26d6b28-0cb7-4255-9914-14cf6900838a"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="402" y="535" width="65" height="12" forecolor="#000000" backcolor="#999999" uuid="ea29a634-d623-48f1-a6de-eb896c64cce0"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

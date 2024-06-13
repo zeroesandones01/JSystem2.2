@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptORTransferTax" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.1000000000000019"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="177"/>
+	<parameter name="p_background" class="java.io.InputStream">
+		<defaultValueExpression><![CDATA[this.getClass().getClassLoader().getResourceAsStream("Images/TransferTaxOR.jpg")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_entity_id" class="java.lang.String"/>
+	<parameter name="p_pbl_id" class="java.lang.String"/>
+	<parameter name="p_seq_no" class="java.lang.Integer"/>
+	<parameter name="p_proj_id" class="java.lang.String"/>
+	<parameter name="p_client" class="java.lang.String"/>
+	<parameter name="p_date" class="java.util.Date"/>
+	<parameter name="p_cav_no" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from view_transfer_tax_or($P{p_entity_id}, $P{p_pbl_id}, $P{p_seq_no}, $P{p_proj_id})]]>
+	</queryString>
+	<field name="c_nsp" class="java.math.BigDecimal"/>
+	<field name="c_tax_dec_lot" class="java.lang.String"/>
+	<field name="c_tax_dec_house" class="java.lang.String"/>
+	<field name="c_tt_amt" class="java.math.BigDecimal"/>
+	<field name="c_inwords" class="java.lang.String"/>
+	<background>
+		<band height="740">
+			<image scaleImage="FillFrame" hAlign="Center" isUsingCache="true" onErrorType="Blank">
+				<reportElement x="46" y="0" width="520" height="738"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{p_background}]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<detail>
+		<band height="428" splitType="Stretch">
+			<staticText>
+				<reportElement x="175" y="250" width="81" height="15" forecolor="#C8C8C8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font fontName="Franklin Gothic Medium" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Transfer Tax]]></text>
+			</staticText>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="174" y="265" width="202" height="30" isPrintWhenDetailOverflows="true" forecolor="#C8C8C8"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" markup="styled">
+					<font fontName="Franklin Gothic Medium" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["SALE-" + $F{c_nsp} + " " + "TD#" + $F{c_tax_dec_lot} + "/" + $F{c_tax_dec_house}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="192" y="207" width="226" height="15" forecolor="#C8C8C8"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font fontName="Franklin Gothic Medium" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{p_client}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="192" y="179" width="70" height="15" forecolor="#C8C8C8"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font fontName="Franklin Gothic Medium" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{p_date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="262" y="164" width="140" height="30" forecolor="#C8C8C8"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Helvetica" size="15" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{p_cav_no}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement x="215" y="386" width="140" height="24" isPrintWhenDetailOverflows="true" forecolor="#C8C8C8"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
+					<font fontName="Franklin Gothic Medium" size="8" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_inwords}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="329" y="250" width="97" height="15" forecolor="#C8C8C8"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font fontName="Franklin Gothic Medium" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_tt_amt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="329" y="361" width="97" height="15" forecolor="#C8C8C8"/>
+				<textElement verticalAlignment="Middle" markup="styled">
+					<font fontName="Franklin Gothic Medium" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_tt_amt}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

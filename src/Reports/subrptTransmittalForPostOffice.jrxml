@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptTransmittalForPostOffice" pageWidth="936" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="936" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="batch_no" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="subreport_connection" class="java.sql.Connection" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[$P{REPORT_CONNECTION}]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT UNNEST(string_to_array($P{batch_no}, ',')) as batch_no;]]>
+	</queryString>
+	<field name="batch_no" class="java.lang.String"/>
+	<variable name="batch_no" class="java.lang.String">
+		<variableExpression><![CDATA[$F{batch_no}]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{batch_no}]]></initialValueExpression>
+	</variable>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<subreport isUsingCache="false" runToBottom="true">
+				<reportElement positionType="Float" x="0" y="0" width="936" height="25" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{batch_no}]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="batch_no">
+					<subreportParameterExpression><![CDATA[$F{batch_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="subreport_connection">
+					<subreportParameterExpression><![CDATA[$P{subreport_connection}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$F{batch_no}]]></connectionExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[this.getClass().getResourceAsStream("/Reports/rptTransmittalForPostOffice.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

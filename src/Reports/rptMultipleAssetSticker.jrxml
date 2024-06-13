@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptMultipleAssetSticker" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="110"/>
+	<property name="ireport.y" value="68"/>
+	<parameter name="assetToPrint" class="java.lang.String"/>
+	<parameter name="custodian" class="java.lang.String"/>
+	<parameter name="co_logo_vdc" class="java.io.InputStream"/>
+	<parameter name="co_name" class="java.lang.String"/>
+	<parameter name="emp_code" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="co_logo_cdc" class="java.io.InputStream"/>
+	<parameter name="co_logo_adc" class="java.io.InputStream"/>
+	<queryString>
+		<![CDATA[select * from
+(
+select *, ROW_NUMBER () OVER  ( order by
+	--a.asset_no::varchar,
+	a.asset_code_1) as marker
+from
+(
+	select  ROW_NUMBER() OVER ( order BY
+	a.asset_code ,
+	a.asset_no::varchar,
+	a.asset_name,
+	to_char(a.asset_no, 'FM00000000'),
+	c.entity_name,
+	(case when d.company_name is null then 'ACERHOMES DEVELOPMENT CORPORATION' else d.company_name end),
+	lower(format('%s%s%s',left(c.first_name,1),left(c.middle_name,1),c.last_name)),a.date_acquired) AS "ROW",
+	a.asset_code as asset_code_1,
+	a.asset_no::varchar as asset_no_1,
+	a.asset_name as asset_name_1,
+	to_char(a.asset_no, 'FM00000000') as anum_1,
+	c.entity_name as entity_name_1,
+	(case when d.company_name is null then 'ACERHOMES DEVELOPMENT CORPORATION' else d.company_name end) as company_name_1,
+	lower(format('%s%s%s',left(c.first_name,1),left(c.middle_name,1),c.last_name)) as cuser_1,a.date_acquired as date_acquired_1,coalesce(remarks2,'') as remarks2_1
+	from tbl_asset  a
+	left join em_employee b on a.current_cust::int=b.emp_code::int
+	left join rf_entity as c on b.entity_id=c.entity_id
+	left join mf_company d on b.co_id=d.co_id
+	where a.asset_no::int in (select asset_no::int from tmp_asset where emp_code =$P{emp_code} )
+) a where "ROW" % 2 = 1
+)  a
+left join
+(
+select *, ROW_NUMBER () OVER  ( order by
+	--a.asset_no::varchar,
+	a.asset_code_2) as marker
+from
+(select  ROW_NUMBER() OVER ( order BY
+	a.asset_code,
+	a.asset_no::varchar,
+	a.asset_name,
+	to_char(a.asset_no, 'FM00000000'),
+	c.entity_name,
+	(case when d.company_name is null then 'ACERHOMES DEVELOPMENT CORPORATION' else d.company_name end),
+	lower(format('%s%s%s',left(c.first_name,1),left(c.middle_name,1),c.last_name)),a.date_acquired) AS "ROW",
+	a.asset_code as asset_code_2,
+	a.asset_no::varchar as asset_no_2,
+	a.asset_name as asset_name_2,
+	to_char(a.asset_no, 'FM00000000') as anum_2,
+	c.entity_name as entity_name_2,
+	(case when d.company_name is null then 'ACERHOMES DEVELOPMENT CORPORATION' else d.company_name end) as company_name_2,
+	lower(format('%s%s%s',left(c.first_name,1),left(c.middle_name,1),c.last_name)) as cuser_2,a.date_acquired as date_acquired_2,coalesce(remarks2,'') as remarks2_2
+	from tbl_asset  a
+	left join em_employee b on a.current_cust::int=b.emp_code::int
+	left join rf_entity as c on b.entity_id=c.entity_id
+	left join mf_company d on b.co_id=d.co_id
+	where a.asset_no::int in (select asset_no::int from tmp_asset where emp_code = $P{emp_code})) a where "ROW" % 2 = 0
+)  b
+on a.marker=b.marker]]>
+	</queryString>
+	<field name="ROW" class="java.lang.Long"/>
+	<field name="asset_code_1" class="java.lang.String"/>
+	<field name="asset_no_1" class="java.lang.String"/>
+	<field name="asset_name_1" class="java.lang.String"/>
+	<field name="anum_1" class="java.lang.String"/>
+	<field name="entity_name_1" class="java.lang.String"/>
+	<field name="company_name_1" class="java.lang.String"/>
+	<field name="cuser_1" class="java.lang.String"/>
+	<field name="date_acquired_1" class="java.sql.Date"/>
+	<field name="remarks2_1" class="java.lang.String"/>
+	<field name="marker" class="java.lang.Long"/>
+	<field name="asset_code_2" class="java.lang.String"/>
+	<field name="asset_no_2" class="java.lang.String"/>
+	<field name="asset_name_2" class="java.lang.String"/>
+	<field name="anum_2" class="java.lang.String"/>
+	<field name="entity_name_2" class="java.lang.String"/>
+	<field name="company_name_2" class="java.lang.String"/>
+	<field name="cuser_2" class="java.lang.String"/>
+	<field name="date_acquired_2" class="java.sql.Date"/>
+	<field name="remarks2_2" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="21" splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="143" splitType="Stretch">
+			<frame>
+				<reportElement x="8" y="0" width="254" height="134"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Dashed"/>
+					<topPen lineWidth="0.5" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.5" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.5" lineStyle="Dashed"/>
+				</box>
+			</frame>
+			<textField>
+				<reportElement x="20" y="39" width="110" height="36"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{asset_code_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="53" y="39" width="54" height="8"/>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Asset Code]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="20" y="75" width="230" height="26"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{asset_name_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="98" y="75" width="68" height="10"/>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Asset Name]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="20" y="101" width="230" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{entity_name_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="98" y="101" width="68" height="10"/>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Custodian]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="20" y="118" width="110" height="10"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{remarks2_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="130" y="118" width="120" height="10"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_acquired_1}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="130" y="37" width="120" height="36"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="true" checksumRequired="false" barHeight="80">
+					<jr:codeExpression><![CDATA[$F{asset_no_1}]]></jr:codeExpression>
+					<jr:applicationIdentifierExpression><![CDATA[$F{anum_1}]]></jr:applicationIdentifierExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField>
+				<reportElement x="53" y="13" width="185" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name_1}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" isUsingCache="true">
+				<reportElement x="19" y="13" width="34" height="9"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<imageExpression class="java.io.InputStream"><![CDATA[(($F{company_name_1}.equals("CENQHOMES DEVELOPMENT CORPORATION"))?$P{co_logo_cdc}:($F{company_name_1}.equals("VERDANTPOINT DEVELOPMENT CORPORATION"))?$P{co_logo_vdc}:$P{co_logo_adc})]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="324" y="118" width="110" height="10"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isItalic="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{remarks2_2}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement x="311" y="0" width="254" height="134"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Dashed"/>
+					<topPen lineWidth="0.5" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.5" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.5" lineStyle="Dashed"/>
+				</box>
+			</frame>
+			<textField isBlankWhenNull="true">
+				<reportElement x="324" y="39" width="110" height="36"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{asset_code_2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="324" y="75" width="230" height="26"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{asset_name_2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="348" y="39" width="54" height="8"/>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Asset Code]]></text>
+			</staticText>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="434" y="118" width="120" height="10"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_acquired_2}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="434" y="37" width="120" height="36"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="true" checksumRequired="false" barHeight="80">
+					<jr:codeExpression><![CDATA[$F{asset_no_2}]]></jr:codeExpression>
+					<jr:applicationIdentifierExpression><![CDATA[$F{anum_2}]]></jr:applicationIdentifierExpression>
+				</jr:barbecue>
+			</componentElement>
+			<staticText>
+				<reportElement x="402" y="75" width="68" height="10"/>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Asset Name]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="324" y="101" width="230" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{entity_name_2}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" isUsingCache="true">
+				<reportElement x="323" y="13" width="34" height="9"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<imageExpression class="java.io.InputStream"><![CDATA[(($F{company_name_2}.equals("CENQHOMES DEVELOPMENT CORPORATION"))?$P{co_logo_cdc}:($F{company_name_2}.equals("VERDANTPOINT DEVELOPMENT CORPORATION"))?$P{co_logo_vdc}:$P{co_logo_adc})]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="357" y="13" width="185" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name_2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="402" y="101" width="68" height="10"/>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Custodian]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

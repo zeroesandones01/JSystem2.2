@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptListofCancellableAccounts" pageWidth="936" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="916" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10">
+	<property name="ireport.zoom" value="1.2418426461183216"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="71"/>
+	<parameter name="company" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logo" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="project" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="sales" class="java.util.ArrayList">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="buyer" class="java.util.ArrayList">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="status" class="java.util.ArrayList">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="listEntityID" class="java.util.ArrayList" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="listProjID" class="java.util.ArrayList"/>
+	<parameter name="listPBL" class="java.util.ArrayList"/>
+	<parameter name="listSeq" class="java.util.ArrayList" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select * from (select
+project as proj_name,
+stagegroup as status_group,
+buyer as client_name,
+resdate as tr_date,
+unit,
+telno as contact_no,
+grosstcp as gross_tcp,
+defaultdate as default_date,
+get_nod_date(a.entity_id,a.projcode,a.pbl_id,a.seq_no) as nod_date,
+get_nofd_date(a.entity_id,a.projcode,a.pbl_id,a.seq_no) as nofd_date,
+noc as ntc_date,
+(select date_paid from rf_client_ledger
+where entity_id = a.entity_id
+and proj_id = a.projcode
+and pbl_id = a.pbl_id
+and seq_no = a.seq_no
+and status_id = 'A'
+order by date_paid desc  limit 1) as payment_made,
+CASE WHEN _get_client_buyertype(entity_id,projcode,a.pbl_id,seq_no) = '02' THEN 'IHF'
+     WHEN _get_client_buyertype(entity_id,projcode,a.pbl_id,seq_no) = '04' THEN 'PAGIBIG'
+     WHEN _get_client_buyertype(entity_id,projcode,a.pbl_id,seq_no) = '03' THEN 'CASH'
+     WHEN _get_client_buyertype(entity_id,projcode,a.pbl_id,seq_no) = '05' THEN 'BANK FINANCE'
+     ELSE NULL END as buyer_type,
+reason,
+agent,
+grp as other_status,
+cancdate as cancel_date,
+divname,
+grpname as per_division,
+soldtobank,
+(case when coalesce(stagepart,null) = '0' then null else coalesce(stagepart,null) end ) as stagepart,
+stageno,
+aging,
+stage_seq,
+projcode
+from tmp_cancellable_accounts a
+where not exists(Select entity_id from rf_cancellation where entity_id = a.entity_id  and proj_id = a.projcode and pbl_id = a.pbl_id and seq_no = a.seq_no and status_id = 'A')
+--and  $X{IN,divname,sales}
+--and stagepart NOT ILIKE 'MA%'
+and $X{IN,entity_id,listEntityID}
+and $X{IN,projcode,listProjID}
+and $X{IN,pbl_id,listPBL}
+and $X{IN,seq_no::VARCHAR,listSeq}
+
+
+
+order by divname,per_division, status_group, soldtobank ,stage_seq,getinteger(stagepart),stageno ,  aging asc ,client_name asc ) a
+--where $X{IN,buyer_type,buyer}
+--and $X{IN,status_group,status}]]>
+	</queryString>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="status_group" class="java.lang.String"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="tr_date" class="java.sql.Timestamp"/>
+	<field name="unit" class="java.lang.String"/>
+	<field name="contact_no" class="java.lang.String"/>
+	<field name="gross_tcp" class="java.math.BigDecimal"/>
+	<field name="default_date" class="java.sql.Timestamp"/>
+	<field name="nod_date" class="java.sql.Timestamp"/>
+	<field name="nofd_date" class="java.sql.Timestamp"/>
+	<field name="ntc_date" class="java.sql.Timestamp"/>
+	<field name="payment_made" class="java.sql.Timestamp"/>
+	<field name="buyer_type" class="java.lang.String"/>
+	<field name="reason" class="java.lang.String"/>
+	<field name="agent" class="java.lang.String"/>
+	<field name="other_status" class="java.lang.String"/>
+	<field name="cancel_date" class="java.sql.Timestamp"/>
+	<field name="divname" class="java.lang.String"/>
+	<field name="per_division" class="java.lang.String"/>
+	<field name="soldtobank" class="java.lang.String"/>
+	<field name="stagepart" class="java.lang.String"/>
+	<field name="stageno" class="java.lang.Integer"/>
+	<field name="aging" class="java.lang.String"/>
+	<field name="stage_seq" class="java.lang.Integer"/>
+	<field name="projcode" class="java.lang.String"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<group name="grpSalesDivision">
+		<groupExpression><![CDATA[$F{divname}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="127" height="18"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{divname}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="grpPerGroupDivision" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{per_division}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField isBlankWhenNull="true">
+					<reportElement x="4" y="0" width="123" height="18"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{per_division}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="0" width="917" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="grpStatus">
+		<groupExpression><![CDATA[$F{status_group}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField isBlankWhenNull="true">
+					<reportElement x="7" y="0" width="120" height="18"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{status_group}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="grpSoldtoBank">
+		<groupExpression><![CDATA[$F{soldtobank}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField isBlankWhenNull="true">
+					<reportElement x="9" y="0" width="118" height="18"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{soldtobank}.equals("A") ? "NOT YET SOLD TO BANK"
+: $F{soldtobank}.equals("B") ? "SOLD TO BANK"
+: $F{soldtobank}.equals("C") ? "BUYBACK" : ""]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="19"/>
+	</title>
+	<pageHeader>
+		<band height="54" splitType="Stretch">
+			<textField isStretchWithOverflow="true" evaluationTime="Auto">
+				<reportElement positionType="Float" x="835" y="41" width="80" height="12"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + ($V{CURRENT_PAGE_NUMBER} == null ? $V{PAGE_NUMBER}:$V{CURRENT_PAGE_NUMBER}) + " of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="627" y="29" width="288" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Date/Time : "+ new SimpleDateFormat("MMM dd, yyyy | h:mm a").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="-1" y="41" width="288" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Tahoma" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["As of : " +new SimpleDateFormat("MMM dd, yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-1" y="29" width="177" height="12"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[List of Cancellable Accounts -]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="176" y="29" width="197" height="12"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{proj_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="328" height="19"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="52" splitType="Stretch">
+			<staticText>
+				<reportElement x="17" y="14" width="110" height="18"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Buyer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="127" y="14" width="50" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Date Rsvd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="177" y="14" width="70" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Unit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="247" y="14" width="65" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Contact No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="312" y="14" width="64" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Gross TCP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="376" y="14" width="45" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Default Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="421" y="14" width="40" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[NOD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="461" y="14" width="40" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[NOFD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="501" y="14" width="40" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[NTC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="581" y="14" width="28" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[PAGIBIG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="609" y="14" width="143" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Reason for Cancellation]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="752" y="14" width="95" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Selling Agent]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="847" y="14" width="30" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Other<br>Status</br>]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="421" y="0" width="120" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[NOTICES SENT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="0" width="125" height="14"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Project Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="877" y="14" width="40" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Orig Date of Cancellation]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="32" width="127" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{proj_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="541" y="14" width="40" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Payment<br>Made</br>]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="0" width="915" height="32"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement markup="styled">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="45" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="12" y="0" width="115" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{stagepart}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="15" y="15" width="112" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{aging}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="15" y="30" width="112" height="15"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="127" y="30" width="54" height="15"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{tr_date}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="181" y="30" width="70" height="15"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{unit}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="251" y="30" width="65" height="15"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{contact_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="316" y="30" width="60" height="15"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{gross_tcp}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="376" y="30" width="45" height="15"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{default_date}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="421" y="30" width="40" height="15"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{nod_date}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="461" y="30" width="40" height="15"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{nofd_date}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="501" y="30" width="40" height="15"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{ntc_date}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="581" y="30" width="28" height="15"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font fontName="SansSerif" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer_type}.equals("IHF") ? "" : "<html>&#10004;</html>"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="609" y="30" width="143" height="15"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{reason}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="752" y="30" width="95" height="15"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{agent}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="847" y="30" width="30" height="15"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{other_status}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="877" y="30" width="40" height="15"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{cancel_date}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="541" y="30" width="40" height="15"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{payment_made}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="32" width="389" height="9"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Note : Client's request shall be submitted 5 days before date of cancellation.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="45" width="615" height="9"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Legend : NOD - Notice of Default           NOFD - Notice of Final Demand           NOC - Notice of Cancellation             NEC - Notice of Effectivity of Cancellation]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="706" y="15" width="100" height="9"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["N - With Notice Construct"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="706" y="24" width="100" height="9"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["T - Turned - Over"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="706" y="33" width="100" height="9"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["M - Moved - In"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="706" y="44" width="65" height="9"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["/F - Loan Filed "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="771" y="44" width="70" height="9"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["/A - NOA Realesed"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="845" y="44" width="70" height="9"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["/R - Loan Realesed"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="672" y="23" width="30" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Other<br>Status]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-1" y="13" width="917" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

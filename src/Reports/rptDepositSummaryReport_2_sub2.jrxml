@@ -1,0 +1,706 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptDepositSummaryReport_2_sub2" pageWidth="612" pageHeight="792" columnWidth="574" leftMargin="28" rightMargin="10" topMargin="20" bottomMargin="20" uuid="03986757-377c-4b59-b630-6e17b8e06d30">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="44"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="trans_no" class="java.lang.Integer"/>
+	<parameter name="date_from" class="java.util.Date"/>
+	<parameter name="date_to" class="java.util.Date"/>
+	<parameter name="proj_name" class="java.lang.String"/>
+	<parameter name="branch_name" class="java.lang.String"/>
+	<parameter name="status_name" class="java.lang.String"/>
+	<parameter name="proj_id" class="java.lang.String"/>
+	<parameter name="branch_id" class="java.lang.String"/>
+	<parameter name="status_id" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select distinct on (a.proj_alias, a.phase)
+(a.proj_alias||a.phase) as proj,
+a.proj_name,
+a.phase,
+sum(a.date_check_amt) as dc_amount,
+sum(a.pdc_amt) as pdc_amt,
+sum(a.cash_amt) as cash_amt,
+sum(a.ocp_amt) as other_amt,
+sum(a.tot_amt) as tot_amt,
+(select to_char(dep_date,'MM-dd-yyyy') from cs_dp_header where cash_date = $P{date_from}::date) as deposit_date,
+(select b.bank_acct_no
+	from cs_dp_header a
+	left join mf_bank_account b on a.bank_acct_id = b.bank_acct_id
+	where cash_date = $P{date_from}::date) as bank_acct_no
+
+from (
+
+select
+trim(a.proj_name)as proj_name,
+a.proj_alias,
+trim(a.phase)as phase,
+sum(a.dated_check) as date_check_amt,
+sum (a.post_dated_check)as pdc_amt,
+sum(a.cash_amount) as cash_amt,
+sum(a.other_amount) as ocp_amt,
+sum(a.amount) as tot_amt
+
+
+from
+
+	( select i.partdesc,
+		c.dated_check,
+		c.post_dated_check,
+		( case when c.cash_amount = 0.00 then null else c.cash_amount end) as cash_amount,
+		( case when c.check_amount = 0.00 then null else c.check_amount end) as check_amount,
+		( case when c.other_amount = 0.00 then null else c.other_amount end) as other_amount,
+		c.amount,
+		c.trans_date,
+		c.branch_id,
+		f.company_name,
+		g.proj_name,
+		h.phase,
+		c.branch_id,
+		j.branch_name,
+		g.proj_alias
+
+	from
+		--table c
+		(
+
+		-----start of rf_payments
+		select (
+
+		case when a.true_or_no is null or a.true_or_no = '' then a.true_ar_no else a.true_or_no end) as receipt_no,
+		a.pbl_id,
+		a.entity_name,
+		a.particulars,
+		a.bank_id,
+		a.bank_branch_id,
+		a.check_no,
+		a.check_date,
+		a.pymnt_type,
+		(case when a.or_date = a.actual_date then (coalesce(a.cash_amount,0) - coalesce(a.other_cash_payment,0)) else
+			(case when a.cash_amount is null or a.ar_no is not null or a.ar_no != ''  then null else
+			(coalesce(a.cash_amount,0) - coalesce(a.other_cash_payment,0)) end) end ) as cash_amount,
+		(case when a.or_date = a.actual_date then (coalesce(a.check_amount,0) - coalesce(a.other_cash_payment,0)) else
+			(case when a.check_amount is null  or a.ar_no is not null or a.ar_no != ''  then null else
+			(coalesce(a.check_amount,0) - coalesce(a.other_cash_payment,0)) end) end ) as check_amount,
+		(case when a.or_date = a.actual_date then null else
+			(case when a.ar_no is not null || a.ar_no != '' then a.amount else 0.00 end) + coalesce(a.other_cash_payment,0) end ) as other_amount,
+		(case when check_date <= a.trans_date and a.pymnt_type = 'B' then coalesce(a.check_amount,0) - coalesce(a.other_cash_payment,0) else null end) as dated_check,
+		(case when check_date > a.trans_date and a.pymnt_type = 'B' then coalesce(a.check_amount,0) - coalesce(a.other_cash_payment,0) else null end) as post_dated_check,
+		a.amount,
+		a.pay_rec_id,
+		0 as tra_header_id,
+		a.or_doc_id,
+		a.pr_doc_id,
+		a.trans_date,
+		a.branch_id,
+		a.co_id,
+		a.proj_id,
+		a.seq_no,
+		a.entity_id ,
+		a.receipt_type,
+		a.ar_no,
+		a.pre_ar_no
+
+			from
+
+			( select
+				(case when a.or_no is null || trim(a.or_no) = '' then trim(a.ar_no) else trim(a.or_no) end) as receipt_no,
+			b.entity_name,
+			trim(c.particulars)as particulars,
+			a.bank_id,
+			a.bank_branch_id,
+			a.check_no,
+			a.check_date,
+			a.pymnt_type,
+			(case when a.pymnt_type = 'B' then a.amount else null end) as check_amount,
+			(case when a.pymnt_type = 'A' then a.amount else null end) as cash_amount,
+			(case when a.receipt_id is null or a.receipt_id = '' then null else coalesce(e.amount,null) end) as other_cash_payment,  --credited payments from holding. etc.
+			a.amount,
+			(case when or_doc_id is null or trim(or_doc_id) = '' then null else a.or_no end) as true_or_no,
+			(case when or_doc_id is null or trim(or_doc_id) = '' then (case when a.or_no is null or a.or_no = '' then a.ar_no else a.or_no end)
+				else null end) as true_ar_no,
+			a.pay_rec_id,
+			a.or_doc_id,
+			a.pr_doc_id,
+			a.trans_date,
+			a.branch_id,
+			a.co_id,
+			a.proj_id,
+			a.pbl_id,
+			a.seq_no,
+			a.entity_id ,
+			d.receipt_type,
+			a.ar_no,
+			( case when a.ar_no is null or a.ar_no = '' then a.receipt_id else a.ar_no end ) as pre_ar_no,
+			to_char(a.actual_date, 'MM-dd-yyyy') as actual_date ,
+			to_char(a.or_date, 'MM-dd-yyyy') as or_date
+
+
+		          	  from
+
+			   ( select * from rf_payments
+where trans_date::date >= $P{date_from}::date and  trans_date::date <= $P{date_to}::date
+and (case when $P{branch_name} = 'All' then trans_date is not null else branch_id = $P{branch_id} end)
+and (case when $P{proj_name} = 'All' then trans_date is not null else proj_id = $P{proj_id} end)
+order by or_doc_id desc, pr_doc_id ) a
+
+				left join rf_entity b on a.entity_id = b.entity_id
+				left join mf_pay_particular c on a.pay_part_id = c.pay_part_id
+				left join (select distinct on (client_seqno) * from rf_pay_detail) d on a.client_seqno = d.client_seqno
+				left join (select distinct on (pbl_id, seq_no) pbl_id, seq_no, sum(total_amt_paid) as amount
+					from rf_tra_header where status_id = 'P'  group by pbl_id, seq_no )  e
+					on a.pbl_id = e.pbl_id and a.seq_no = e.seq_no
+
+				) a
+
+	-----end of rf_payments
+
+	UNION ALL
+
+	-----start of tra_header
+
+		select
+
+		a.receipt_no,
+		b.pbl_id,
+		c.entity_name,
+		trim(d.particulars) as particular,
+		a.bank,
+		a.branch,
+		a.check_no,
+		a.check_date,
+		(case when a.check_no is null or  a.check_no = ''  then 'A' else 'B' end ) as pymnttype,
+		(case when a.check_no is null or  a.check_no = ''  then a.amount else null end ) as cash_amount,
+		(case when a.check_no is null or  a.check_no = ''  then null else a.amount end ) as check_amount,
+		null as other_cash_payment,
+		null as dated_check,
+		null as post_dated_check,
+		a.amount,
+		0 as pay_rec_id,
+		b.tra_header_id,
+		(case when b.receipt_type = '01' or b.receipt_type = '08' then b.receipt_type else ''  end) as or_doc_id,
+		(case when b.receipt_type = '03' then b.receipt_type else ''  end) as pr_doc_id,
+		a.tran_date,
+		a.branch_id,
+		b.co_id,
+		b.proj_id,
+		b.seq_no,
+		b.entity_id,
+		'03' as receipt_type,
+		'' as ar_no,
+		'' as pre_ar_no
+
+		from   ( select * from rf_tra_detail
+where tran_date::date >= $P{date_from}::date and  tran_date::date <= $P{date_to}::date
+order by receipt_type desc
+			) a
+			join (select * from rf_tra_header
+where (case when $P{proj_name} = 'All' then trans_date is not null else proj_id = $P{proj_id} end)
+and (case when $P{branch_name} = 'All' then trans_date is not null else branch_id = $P{branch_id} end)
+			) b on a.client_seqno = b.client_seqno
+			left join rf_entity c on b.entity_id = c.entity_id
+			left join mf_pay_particular d on a.part_id = d.pay_part_id
+
+	-----end of tra-header/detail
+
+UNION ALL
+
+	-----start of rt_pay_header
+
+		select
+
+		a.receipt_no,
+		b.pbl_id,
+		c.entity_name,
+		trim(d.particulars) as particular,
+		a.bank,
+		a.branch,
+		a.check_no,
+		a.check_date,
+		(case when a.check_no is null or  a.check_no = ''  then 'A' else 'B' end ) as pymnttype,
+		(case when a.check_no is null or  a.check_no = ''  then a.amount else 0 end ) as cash_amount,
+		(case when a.check_no is null or  a.check_no = ''  then 0 else a.amount end ) as check_amount,
+		null as other_cash_payment,
+		null as dated_check,
+		null as post_dated_check,
+		a.amount,
+		0 as pay_rec_id,
+		b.pay_header_id,
+		(case when a.receipt_type = '01' then a.receipt_type else '' end) as or_doc_id,
+		(case when a.receipt_type = '03' then a.receipt_type else '' end) as pr_doc_id,
+		b.trans_date,
+		b.branch_id,
+		b.co_id,
+		b.proj_id,
+		b.seq_no,
+		b.entity_id,
+		'03' as receipt_type,
+		'' as ar_no,
+		'' as pre_ar_no
+
+
+			from   ( select * from rf_pay_detail
+where part_type in (SELECT TRIM(pay_part_id)::VARCHAR FROM mf_pay_particular WHERE group_id = '06' AND status_id = 'A')
+) a
+			join (select * from rf_pay_header
+where trans_date::date >= $P{date_from}::date and  trans_date::date <= $P{date_to}::date
+and (case when $P{proj_name} = 'All' then trans_date is not null else proj_id = $P{proj_id} end)
+and (case when $P{branch_name} = 'All' then trans_date is not null else branch_id = $P{branch_id} end)
+) b on a.client_seqno = b.client_seqno
+			left join rf_entity c  on b.entity_id = c.entity_id
+			left join mf_pay_particular d on a.part_type = d.pay_part_id
+
+
+
+		-----end of rt_pay_detail
+
+		) c
+
+		left join mf_bank e
+		on c.bank_id = e.bank_id
+
+		left join mf_company f
+		on c.co_id = f.co_id
+
+		left join mf_project g
+		on c.proj_id = g.proj_id
+
+		left join mf_unit_info h
+		on c.pbl_id = h.pbl_id
+
+		left join mf_pay_particular i
+		on c.particulars = i.particulars
+
+		left join (select distinct on (branch_id) branch_id, branch_name from mf_office_branch) j
+		on c.branch_id = j.branch_id
+
+		order by  proj_name, phase, c.particulars
+	) a
+
+group by proj_name, proj_alias, phase, partdesc
+
+order by proj_name, partdesc
+
+) a
+
+group by a.proj_alias, a.proj_name, a.phase]]>
+	</queryString>
+	<field name="proj" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="phase" class="java.lang.String"/>
+	<field name="dc_amount" class="java.math.BigDecimal"/>
+	<field name="pdc_amt" class="java.math.BigDecimal"/>
+	<field name="cash_amt" class="java.math.BigDecimal"/>
+	<field name="other_amt" class="java.math.BigDecimal"/>
+	<field name="tot_amt" class="java.math.BigDecimal"/>
+	<field name="deposit_date" class="java.lang.String"/>
+	<field name="bank_acct_no" class="java.lang.String"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="cash_subtot" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{cash_amt}]]></variableExpression>
+	</variable>
+	<variable name="check_subtot" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{dc_amount}]]></variableExpression>
+	</variable>
+	<variable name="pdc_subtot" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{pdc_amt}]]></variableExpression>
+	</variable>
+	<variable name="other_subtot" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{other_amt}]]></variableExpression>
+	</variable>
+	<variable name="total_subtot" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{tot_amt}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="46">
+			<staticText>
+				<reportElement x="142" y="0" width="100" height="23" uuid="c100eb0e-e96b-4006-bea2-1ad7fcc6a72f"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cash]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="23" width="92" height="23" uuid="53c0eb38-5045-45bd-ae36-8f07bee02ec0"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bank Account Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="142" y="23" width="50" height="23" uuid="5f8bd9dd-3629-4c95-85e5-2e1e13c26e06"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="192" y="23" width="50" height="23" uuid="542a45fb-7405-46b5-807a-d7034a9fb903"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date Deposited]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="242" y="23" width="50" height="23" uuid="ef57b9d9-76bc-4ab8-a94a-1f821ac69e25"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="242" y="0" width="100" height="23" uuid="abbb1cfd-b664-45db-8ea2-74fa789968fc"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dated Check]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="292" y="23" width="50" height="23" uuid="095976f7-597a-44d1-8d54-737cf8a6bd84"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date Deposited]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="392" y="23" width="50" height="23" uuid="caefea89-4274-47d4-906e-43656e9705fb"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Other Payments]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="342" y="23" width="50" height="23" uuid="14e32f13-fe08-42c3-a712-55653d29c76a"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PDC Received]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="442" y="23" width="74" height="23" uuid="c3e7e9af-861b-4d5e-86a3-43bb4562cb58"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="23" width="50" height="23" uuid="9e12a967-f8e9-4557-b1a3-2f8e205b3924"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Project]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="92" height="17" uuid="3b52e9e6-1252-4ab2-b30c-ddfd7e39282c"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bank_acct_no}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="392" y="0" width="50" height="17" uuid="91450ff4-351a-4b03-bd7d-06ed9099fd99"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{other_amt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="342" y="0" width="50" height="17" uuid="a038a639-3fd6-4c69-b5b5-577cd476f6fb"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pdc_amt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="242" y="0" width="50" height="17" uuid="adec95ef-15d3-4f4f-87b3-5907ac40ef10"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dc_amount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="292" y="0" width="50" height="17" uuid="a23dfed3-c2e7-4d42-af46-4fdbd8daa611"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dc_amount} == null ? null : $F{deposit_date}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="192" y="0" width="50" height="17" uuid="1409a0f7-2694-4df3-a3d2-ff3fb62cf167"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cash_amt} == null ? null : $F{deposit_date} ]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="142" y="0" width="50" height="17" uuid="b22d8df1-83ff-43d1-8f69-a571862d5902"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cash_amt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="92" y="0" width="50" height="17" uuid="96603527-9599-49f0-b6ac-949e1730cddc"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{proj}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="442" y="0" width="74" height="17" uuid="150b3099-12f4-440b-8ee0-851c1c8ed59f"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tot_amt}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="17">
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="142" y="0" width="50" height="17" uuid="c9a36a2b-0d91-4ffb-b876-1ca3307d596b"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{cash_subtot}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="392" y="0" width="50" height="17" uuid="77992c5a-1c14-4134-b7ec-d6d14640076e"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{other_subtot}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="342" y="0" width="50" height="17" uuid="a788da12-d5ca-477c-acda-503a91776a69"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{pdc_subtot}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="292" y="0" width="50" height="17" uuid="caaca9bc-b6a0-4c3d-b0f3-a57eab46e115"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="192" y="0" width="50" height="17" uuid="f4f44146-bc2a-4942-83a2-023318858144"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="242" y="0" width="50" height="17" uuid="f1c80d88-a2ee-45ea-97e5-6c1d89eebb54"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{check_subtot}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="142" height="17" uuid="db566797-8ae7-4d1a-bce9-626e8d0cb057"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="442" y="0" width="74" height="17" uuid="87fe3767-ce1f-4653-80b2-8058ca2168fb"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total_subtot}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

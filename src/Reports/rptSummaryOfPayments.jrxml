@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptSummaryOfPayments" pageWidth="612" pageHeight="792" columnWidth="532" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="342"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="logo" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="company" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="entity_id" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="proj_id" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="pbl_id" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="seq_no" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="entity_name" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="proj_name" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="unit_desc" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="payment_scheme" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="sales_group" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="selling_unit" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="house_model" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="type_group_id" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="prepared_by" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="with_comm_promo" class="java.lang.Boolean" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Boolean("false")]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT a.pymnt_type, a.trans_date, b.partdesc, (CASE WHEN a.or_doc_id IS NOT NULL THEN a.or_no END) as or_no,
+(CASE WHEN a.or_doc_id IS NULL THEN a.or_no ELSE a.ar_no END) as ar_no,
+(CASE WHEN a.si_no IS NOT NULL THEN a.si_no END) as si_no,
+
+(CASE WHEN a.pymnt_type = 'A' THEN NULL ELSE FORMAT('%s - %s', c.bank_alias, d.bank_branch_location) END) as bank_branch, a.check_no, a.check_date, coalesce(g.checkstat_desc, e.checkstat_desc) as checkstat_desc,
+a.amount, a.remarks, (SELECT tran_date FROM rf_buyer_status WHERE entity_id = $P{entity_id} AND proj_id = $P{proj_id} AND pbl_id = $P{pbl_id} AND seq_no = $P{seq_no} AND byrstatus_id = '17' AND status_id = 'A') as reservation_date, (SELECT b.status_desc FROM rf_buyer_status a LEFT JOIN mf_buyer_status b ON b.byrstatus_id = a.byrstatus_id WHERE a.entity_id = $P{entity_id} AND a.proj_id = $P{proj_id} AND a.pbl_id = $P{pbl_id} AND a.seq_no = $P{seq_no} AND a.status_id = 'A' ORDER BY tran_date DESC LIMIT 1) as current_status,
+(SELECT tran_date FROM rf_buyer_status WHERE entity_id = $P{entity_id} AND proj_id = $P{proj_id} AND pbl_id = $P{pbl_id} AND seq_no = $P{seq_no} AND byrstatus_id = '18' AND status_id = 'A') as date_completion
+FROM rf_payments a
+LEFT JOIN mf_pay_particular b ON b.pay_part_id = a.pay_part_id
+LEFT JOIN mf_bank c ON c.bank_id = a.bank_id
+LEFT JOIN mf_bank_branch d ON d.bank_id = a.bank_id AND d.bank_branch_id = a.bank_branch_id
+LEFT JOIN mf_check_status e ON e.checkstat_id = a.check_stat_id
+left join rf_payments f on (a.receipt_id = f.or_no or a.receipt_id = f.ar_no) and a.check_no = f.check_no and a.amount = f.amount
+LEFT JOIN mf_check_status g ON f.check_stat_id = g.checkstat_id
+WHERE a.entity_id = $P{entity_id} AND a.proj_id = $P{proj_id} AND a.pbl_id = $P{pbl_id}
+AND a.seq_no = $P{seq_no}
+and a.status_id NOT IN ('X')
+--AND a.status_id IN ('A')
+ORDER BY a.actual_date::DATE, a.check_date;]]>
+	</queryString>
+	<field name="pymnt_type" class="java.lang.String"/>
+	<field name="trans_date" class="java.sql.Timestamp"/>
+	<field name="partdesc" class="java.lang.String"/>
+	<field name="or_no" class="java.lang.String"/>
+	<field name="ar_no" class="java.lang.String"/>
+	<field name="si_no" class="java.lang.String"/>
+	<field name="bank_branch" class="java.lang.String"/>
+	<field name="check_no" class="java.lang.String"/>
+	<field name="check_date" class="java.sql.Timestamp"/>
+	<field name="checkstat_desc" class="java.lang.String"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="remarks" class="java.lang.String"/>
+	<field name="reservation_date" class="java.sql.Timestamp"/>
+	<field name="current_status" class="java.lang.String"/>
+	<field name="date_completion" class="java.sql.Timestamp"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="totalPmtMade" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<variable name="totalCash" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{pymnt_type}.equals( "A" ) ? $F{amount}:null]]></variableExpression>
+	</variable>
+	<variable name="totalCheck" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{pymnt_type}.equals( "B" ) ? $F{amount}:null]]></variableExpression>
+	</variable>
+	<group name="grpTotal">
+		<groupFooter>
+			<band height="15">
+				<staticText>
+					<reportElement x="0" y="0" width="532" height="15"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement/>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="256" y="0" width="206" height="15"/>
+					<box rightPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[msg("Total Payments Made (All)      {0}", new DecimalFormat("#,##0.00").format($V{totalPmtMade}))]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="0" width="253" height="15"/>
+					<box leftPadding="5"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="Tahoma" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[msg("Actual Payments Made (Cash/Good Checks)      {0}", new DecimalFormat("#,##0.00").format($V{totalPmtMade}))]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="70">
+				<staticText>
+					<reportElement positionType="Float" x="6" y="10" width="150" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[new Boolean("false")]]></printWhenExpression>
+					</reportElement>
+					<textElement verticalAlignment="Bottom" markup="none">
+						<font fontName="Tahoma" size="9" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Summary:]]></text>
+				</staticText>
+				<frame>
+					<reportElement positionType="Float" x="6" y="25" width="250" height="20" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[new Boolean("false")]]></printWhenExpression>
+					</reportElement>
+					<rectangle radius="5">
+						<reportElement positionType="Float" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="250" height="20"/>
+					</rectangle>
+					<subreport>
+						<reportElement x="0" y="0" width="250" height="20"/>
+						<subreportParameter name="pbl_id">
+							<subreportParameterExpression><![CDATA[$P{pbl_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="seq_no">
+							<subreportParameterExpression><![CDATA[$P{seq_no}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="proj_id">
+							<subreportParameterExpression><![CDATA[$P{proj_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="entity_id">
+							<subreportParameterExpression><![CDATA[$P{entity_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression class="java.io.InputStream"><![CDATA[this.getClass().getResourceAsStream("/Reports/subrptSummaryOfPayments.jasper")]]></subreportExpression>
+					</subreport>
+				</frame>
+				<frame>
+					<reportElement positionType="Float" x="276" y="25" width="250" height="20" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[new Boolean("false")]]></printWhenExpression>
+					</reportElement>
+					<rectangle radius="5">
+						<reportElement positionType="Float" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="250" height="20"/>
+					</rectangle>
+					<subreport>
+						<reportElement x="0" y="0" width="250" height="20"/>
+						<subreportParameter name="pbl_id">
+							<subreportParameterExpression><![CDATA[$P{pbl_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="seq_no">
+							<subreportParameterExpression><![CDATA[$P{seq_no}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="proj_id">
+							<subreportParameterExpression><![CDATA[$P{proj_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="entity_id">
+							<subreportParameterExpression><![CDATA[$P{entity_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression class="java.io.InputStream"><![CDATA[this.getClass().getResourceAsStream($P{type_group_id}.equals("04") ? "/Reports/subrptSummaryOfPayments_PagIBIG.jasper":"/Reports/subrptSummaryOfPayments_IHF.jasper")]]></subreportExpression>
+					</subreport>
+				</frame>
+				<frame>
+					<reportElement positionType="Float" x="0" y="50" width="532" height="20">
+						<printWhenExpression><![CDATA[$P{with_comm_promo}]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<pen lineWidth="0.25" lineStyle="Dashed"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<subreport>
+						<reportElement positionType="Float" x="0" y="0" width="532" height="20"/>
+						<subreportParameter name="pbl_id">
+							<subreportParameterExpression><![CDATA[$P{pbl_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="entity_id">
+							<subreportParameterExpression><![CDATA[$P{entity_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="proj_id">
+							<subreportParameterExpression><![CDATA[$P{proj_id}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="seq_no">
+							<subreportParameterExpression><![CDATA[$P{seq_no}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression class="java.io.InputStream"><![CDATA[this.getClass().getResourceAsStream("/Reports/subrptSummaryOfPayments_CommissionPromo.jasper")]]></subreportExpression>
+					</subreport>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="160">
+			<textField>
+				<reportElement x="0" y="0" width="532" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[(( $P{proj_id}.equals("019"))?"VERDANTPOINT DEVELOPMENT CORPORATION":$P{company})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="39" width="532" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box>
+					<pen lineWidth="0.0" lineColor="#110909"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0" lineColor="#110909"/>
+					<bottomPen lineWidth="0.0" lineColor="#110909"/>
+					<rightPen lineWidth="0.0" lineColor="#110909"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="14" isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[S U M M A R Y   OF   P A Y M E N T S]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="77" width="50" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Account No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="89" width="50" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="101" width="50" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Project]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="113" width="50" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Unit]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="50" y="77" width="200" height="12"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg(": {0}", $P{entity_id})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="50" y="89" width="200" height="12"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg(": {0}", $P{entity_name})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="50" y="101" width="200" height="12"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg(": {0}", $P{proj_name})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="50" y="113" width="200" height="12"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg(": {0}", $P{unit_desc})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="262" y="77" width="70" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Payment Scheme :  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="262" y="89" width="70" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Sales Group :  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="262" y="101" width="70" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Selling Unit :  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="262" y="113" width="70" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[House Model :  ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="332" y="77" width="200" height="12"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{payment_scheme}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="332" y="89" width="200" height="12"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{sales_group}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="332" y="101" width="200" height="12"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{selling_unit}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="332" y="113" width="200" height="12"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{house_model}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="130" width="133" height="25"/>
+				<box topPadding="1" leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Reservation Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="266" y="130" width="133" height="25"/>
+				<box topPadding="1" leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Date of Completion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="133" y="130" width="133" height="25"/>
+				<box topPadding="1" leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Current Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="399" y="130" width="133" height="25"/>
+				<box topPadding="1" leftPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Date of Cancellation]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="62" width="198" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["As of: " + new SimpleDateFormat("EEE MMM dd, yyyy hh:mm a").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Auto">
+				<reportElement positionType="Float" x="462" y="24" width="70" height="10"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + ($V{CURRENT_PAGE_NUMBER} == null ? $V{PAGE_NUMBER}:$V{CURRENT_PAGE_NUMBER}) + " of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy" isBlankWhenNull="true">
+				<reportElement x="0" y="143" width="133" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{reservation_date}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="133" y="143" width="133" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{current_status}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy" isBlankWhenNull="true">
+				<reportElement x="266" y="143" width="133" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{date_completion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="12" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="35" height="12"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Trans. Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="35" y="0" width="75" height="12"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Particulars]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="109" y="0" width="30" height="12"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[OR #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="139" y="0" width="30" height="12"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[AR #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="198" y="0" width="84" height="12"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Bank-Branch]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="282" y="0" width="40" height="12"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Check #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="322" y="0" width="35" height="12"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Check Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="357" y="0" width="50" height="12"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Check Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="0" width="55" height="12"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="462" y="0" width="70" height="12"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Remarks]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="168" y="0" width="30" height="12"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[SI #]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="35" height="13"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{trans_date}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="35" y="0" width="75" height="13"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{partdesc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="109" y="0" width="30" height="13"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{or_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="139" y="0" width="30" height="13"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ar_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="198" y="0" width="84" height="13"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bank_branch}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="282" y="0" width="40" height="13"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{check_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="322" y="0" width="35" height="13"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{check_date}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="357" y="0" width="50" height="13"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{checkstat_desc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="407" y="0" width="55" height="13"/>
+				<box rightPadding="2">
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="462" y="0" width="70" height="13"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{remarks}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="169" y="0" width="30" height="13"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{si_no}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="50">
+			<staticText>
+				<reportElement x="6" y="0" width="120" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Prepared by:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="6" y="20" width="120" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{prepared_by}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="142" y="20" width="120" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="142" y="0" width="120" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Checked by:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="379" y="20" width="120" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Orly Basilia \n"+
+"Accounting Specialist"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="379" y="0" width="120" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="7"/>
+				</textElement>
+				<text><![CDATA[Approved by:]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+</jasperReport>

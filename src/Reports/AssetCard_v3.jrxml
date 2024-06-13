@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AssetCard_v3" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="756" leftMargin="18" rightMargin="18" topMargin="8" bottomMargin="8">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="144"/>
+	<parameter name="emp_code" class="java.lang.Integer"/>
+	<parameter name="co_logo" class="java.io.InputStream"/>
+	<parameter name="company_name" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="co_alias" class="java.lang.String"/>
+	<parameter name="item_found" class="java.lang.Boolean"/>
+	<parameter name="asset_filter" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select format('%s, %s %s.',c.last_name, c.first_name,left(c.middle_name,1))as current_cust,
+format('%s / %s', e.division_alias,f.dept_alias) as div_dept,
+h.category_name,
+a.asset_code,
+a.asset_name,
+to_char(a.asset_no,'FM00000000'),
+a.item_found,
+a.date_scanned,
+trim(i.loc_name) as loc_name, a.asset_no::varchar as old_asset
+from tbl_asset  a
+left join em_employee b on a.current_cust=b.emp_code::int
+left join rf_entity c on b.entity_id=c.entity_id
+left join rf_location d on b.loc_id=d.loc_id
+left join mf_division e on b.div_code=e.division_code
+left join mf_department f on b.dept_code=f.dept_code
+left join tbl_item g on a.item_id=g.item_id
+left join tbl_category h on g.category_id=h.category_id
+left join tbl_asset_location i on a.loc_id= i.loc_id
+where a.current_cust=$P{emp_code}
+and a.status in('ACTIVE','A')
+and a.remarks not in('DISPOSED','RETIRED')
+and a.item_found in ('true','false')
+and (case when $P{item_found}='true' then item_found='true' else item_found in ('true','false') end )
+and (case when $P{asset_filter} = 'Fixed Asset' then asset_cost >= 5000
+	when $P{asset_filter} = 'Non-fixed Asset' then asset_cost < 5000
+   end)
+and asset_no not in (select asset_no from tbl_nonfixedasset where status_id = 'Active' and asset_no is not null )
+
+
+UNION
+
+
+select format('%s, %s %s.',c.last_name, c.first_name,left(c.middle_name,1))as current_cust,
+format('%s / %s', e.division_alias,f.dept_alias) as div_dept,
+h.category_name,
+null,
+a.object_name,
+a.object_id as to_char,
+a.item_found,
+a.date_scanned,
+trim(i.loc_name) as loc_name, a.asset_no::varchar as old_asset
+from tbl_nonfixedasset  a
+left join em_employee b on a.current_cust::int=b.emp_code::int
+left join rf_entity c on b.entity_id=c.entity_id
+left join rf_location d on b.loc_id=d.loc_id
+left join mf_division e on b.div_code=e.division_code
+left join mf_department f on b.dept_code=f.dept_code
+left join tbl_item g on a.item_id::int=g.item_id
+left join tbl_category h on g.category_id=h.category_id
+left join tbl_asset_location i on a.loc_id= i.loc_id
+where a.current_cust::int=$P{emp_code}
+and a.status_id in('Active','A')
+and a.remarks not in('DISPOSED','RETIRED')
+and a.item_found in ('true','false')
+and (case when $P{item_found}='true' then item_found='true' else item_found in ('true','false') end )
+and (case when $P{asset_filter} = 'Fixed Asset' then asset_cost >= 5000
+	when $P{asset_filter} = 'Non-fixed Asset' then asset_cost >= 1500 and asset_cost < 5000
+    end)]]>
+	</queryString>
+	<field name="current_cust" class="java.lang.String"/>
+	<field name="div_dept" class="java.lang.String"/>
+	<field name="category_name" class="java.lang.String"/>
+	<field name="asset_code" class="java.lang.String"/>
+	<field name="asset_name" class="java.lang.String"/>
+	<field name="to_char" class="java.lang.String"/>
+	<field name="item_found" class="java.lang.Boolean"/>
+	<field name="date_scanned" class="java.sql.Timestamp"/>
+	<field name="loc_name" class="java.lang.String"/>
+	<field name="old_asset" class="java.lang.String"/>
+	<group name="grpCategory">
+		<groupExpression><![CDATA[$F{category_name}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="170" height="17"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true" isItalic="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{category_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="756" height="17"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Bottom"/>
+					<text><![CDATA[]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<image hAlign="Center" vAlign="Bottom">
+				<reportElement x="0" y="1" width="79" height="39"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{co_logo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="79" y="1" width="677" height="39"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="18" isBold="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="89" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="756" height="35"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{asset_filter}+" Card Listing"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="79" y="35" width="185" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{current_cust}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="79" y="53" width="185" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{div_dept}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="35" width="79" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CUSTODIAN:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="53" width="79" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIV./DEPT.:]]></text>
+			</staticText>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="628" y="35" width="125" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="628" y="55" width="80" height="18"/>
+				<textElement textAlignment="Right" verticalAlignment="Top"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="708" y="55" width="45" height="18"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="68" height="24"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Asset No.	]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="136" y="1" width="117" height="24"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Asset Code	]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="246" y="0" width="296" height="24"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Asset Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="542" y="1" width="89" height="24"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date Scanned]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="631" y="1" width="125" height="24"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Location]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="68" y="1" width="68" height="24"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Old Asset No.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="68" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{to_char}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="136" y="0" width="110" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{asset_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="246" y="0" width="296" height="14"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{asset_name}+(($F{item_found}==true)?"":"   (Not Found)")]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="542" y="0" width="89" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_scanned}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="631" y="0" width="125" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{loc_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="68" y="0" width="68" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{old_asset}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="26"/>
+	</pageFooter>
+	<summary>
+		<band height="240">
+			<staticText>
+				<reportElement x="13" y="145" width="157" height="15"/>
+				<textElement/>
+				<text><![CDATA[Noted by:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="196" width="157" height="15"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="9" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="196" width="157" height="15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Administrative Management Division]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="577" y="115" width="165" height="15"/>
+				<textElement/>
+				<text><![CDATA[Conforme:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="577" y="145" width="165" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="none">
+					<font size="9" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{current_cust}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="578" y="160" width="164" height="15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Custodian]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="578" y="196" width="165" height="15"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="9" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="13" y="18" width="729" height="67"/>
+				<textElement textAlignment="Justified" markup="none"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["	I agree that the assets listed in this card are under my custodianship and that I shall exercise due diligence and care so that the same shall always be properly maintained and in good working conditions.Furthermore, I agree to abide by any sanction that "+$P{co_alias}+" may impose upon me including but not limited to salary deduction in the amount to be determined by "+$P{co_alias}+" management in case of damage or loss of said asset."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="577" y="196" width="165" height="15"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Finance Department]]></text>
+			</staticText>
+			<rectangle radius="10">
+				<reportElement mode="Transparent" x="0" y="0" width="756" height="237"/>
+			</rectangle>
+		</band>
+	</summary>
+</jasperReport>

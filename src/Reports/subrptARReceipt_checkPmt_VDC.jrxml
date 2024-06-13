@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptARReceipt_preview_VDC" pageWidth="331" pageHeight="792" columnWidth="331" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.7715610000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="client_seqno" class="java.lang.String"/>
+	<parameter name="ar_no" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT b.receipt_no, a.entity_id, a.proj_id, a.pbl_id, a.trans_date, a.total_amt_paid, b.part_type, SUM(b.amount) as amount, b.bank, b.branch, b.acct_no, b.check_no, b.check_date
+FROM rf_pay_header a
+LEFT JOIN rf_pay_detail b ON b.client_seqno = a.client_seqno
+WHERE a.client_seqno = $P{client_seqno}
+and (b.receipt_no = $P{ar_no} or b.ar_no = $P{ar_no})
+AND b.bank is not null
+GROUP BY b.receipt_no, a.entity_id, a.proj_id, a.pbl_id, a.trans_date, a.total_amt_paid, b.part_type, b.bank, branch, b.acct_no, b.check_no, b.check_date]]>
+	</queryString>
+	<field name="receipt_no" class="java.lang.String"/>
+	<field name="entity_id" class="java.lang.String"/>
+	<field name="proj_id" class="java.lang.String"/>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="trans_date" class="java.sql.Timestamp"/>
+	<field name="total_amt_paid" class="java.math.BigDecimal"/>
+	<field name="part_type" class="java.lang.String"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="bank" class="java.lang.String"/>
+	<field name="branch" class="java.lang.String"/>
+	<field name="acct_no" class="java.lang.String"/>
+	<field name="check_no" class="java.lang.String"/>
+	<field name="check_date" class="java.sql.Timestamp"/>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField pattern="#,##0.00;(#,##0.00)">
+				<reportElement x="259" y="0" width="52" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="0" y="0" width="95" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{check_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="95" y="0" width="80" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{check_date}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="175" y="0" width="84" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acct_no}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

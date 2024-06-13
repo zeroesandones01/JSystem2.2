@@ -1,0 +1,433 @@
+package Reports.Accounting;
+
+import interfaces._GUI;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+
+import org.jdesktop.swingx.JXPanel;
+
+import Accounting.Disbursements.RequestForPayment;
+import Buyers.CreditandCollections._RealTimeDebit;
+import Database.pgSelect;
+import DateChooser._JDateChooser;
+import Functions.FncGlobal;
+import Functions.FncLookAndFeel;
+import Functions.FncReport;
+import Functions.FncSystem;
+import Functions.UserInfo;
+import Lookup.LookupEvent;
+import Lookup.LookupListener;
+import Lookup._JLookup;
+import components.JTBorderFactory;
+import components._JInternalFrame;
+
+public class PagibigClientsStatusReportMR extends _JInternalFrame implements
+		ActionListener, _GUI {
+
+	private static final long serialVersionUID = -2836622833433936737L;
+	static String title = "PAGIBIG Clients Status (MR)";
+	Dimension frameSize = new Dimension(500, 264);
+	
+	static Border lineRed = BorderFactory.createLineBorder(Color.RED);
+	
+	private JLabel lblCompany;
+	private JLabel lblProject;
+	private JLabel lblPhase;
+	
+	private _JLookup txtCoID;
+	private _JLookup txtProID;
+	private _JLookup txtPhaseID;
+			
+	private JTextField txtCompany;
+	private JTextField txtProject;
+	private JTextField txtPhase;
+	
+	private _JDateChooser dteDateFrom;
+	
+	private JButton btnPreview;
+	private JButton btnExport;
+	
+	private JComboBox cboStatus;
+	
+	DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	
+	public PagibigClientsStatusReportMR() {
+		super(title, true, true, false, true);
+		initGUI();
+	}
+
+	public PagibigClientsStatusReportMR(String title) {
+		super(title);
+		initGUI();
+	}
+
+	public PagibigClientsStatusReportMR(String title, boolean resizable,
+			boolean closable, boolean maximizable, boolean iconifiable) {
+		super(title, resizable, closable, maximizable, iconifiable);
+		initGUI();
+	}
+
+	public void initGUI() {
+		this.setTitle(title);
+		this.setSize(frameSize);
+		
+		JXPanel panMain = new JXPanel(new BorderLayout(5, 5));
+		getContentPane().add(panMain, BorderLayout.CENTER);
+		panMain.setPreferredSize(frameSize);
+		panMain.setBorder(new EmptyBorder(5, 5, 5, 5));
+		{
+			JXPanel panNorth = new JXPanel(new BorderLayout(5, 5));
+			panMain.add(panNorth, BorderLayout.PAGE_START);
+			panNorth.setPreferredSize(new Dimension(0, 189));
+			{
+				JXPanel panNorth1 = new JXPanel(new BorderLayout(5, 5));
+				panNorth.add(panNorth1, BorderLayout.PAGE_START);
+				panNorth1.setPreferredSize(new Dimension(0, 124));
+				panNorth1.setBorder(JTBorderFactory.createTitleBorder("Project and Company", FncLookAndFeel.systemFont_Bold.deriveFont(10f)));
+				{
+					{
+						JXPanel panLabel = new JXPanel(new GridLayout(3, 2, 5, 5));
+						panNorth1.add(panLabel, BorderLayout.LINE_START);
+						panLabel.setPreferredSize(new Dimension(160, 90));
+						{
+							{
+								lblCompany = new JLabel("Company");
+								panLabel.add(lblCompany);
+								lblCompany.setHorizontalAlignment(JTextField.LEFT);
+							}
+							{
+								txtCoID = new _JLookup("");
+								panLabel.add(txtCoID);
+								txtCoID.setHorizontalAlignment(JTextField.CENTER);
+								txtCoID.setLookupSQL(CompanySQL());
+								txtCoID.setReturnColumn(0);
+								txtCoID.addLookupListener(new LookupListener() {
+									public void lookupPerformed(LookupEvent e) {
+										Object[] data = ((_JLookup) e.getSource()).getDataSet();
+										if (data != null) {
+											txtCompany.setText(data[1].toString());
+											txtProID.setLookupSQL(ProjectSQL(txtCoID.getValue()));
+											
+											btnPreview.setEnabled(true);
+											btnExport.setEnabled(true);
+										} else {
+											btnPreview.setEnabled(false);
+											btnExport.setEnabled(false);									
+										}
+									}
+								});
+							}
+						}
+						{
+							{
+								lblProject = new JLabel("Project");
+								panLabel.add(lblProject);
+								lblProject.setHorizontalAlignment(JTextField.LEFT);
+							}
+							{
+								txtProID = new _JLookup("");
+								panLabel.add(txtProID);
+								txtProID.setHorizontalAlignment(JTextField.CENTER);
+								txtProID.setLookupSQL(ProjectSQL(""));
+								txtProID.setReturnColumn(0);
+								txtProID.addLookupListener(new LookupListener() {
+									public void lookupPerformed(LookupEvent e) {
+										Object[] data = ((_JLookup) e.getSource()).getDataSet();
+										if (data != null) {
+											txtProject.setText(data[2].toString());
+											txtPhaseID.setLookupSQL(sqlPhase(txtProID.getValue()));
+										}
+									}
+								});
+							}
+						}
+						{
+							{
+								lblPhase = new JLabel("Phase");
+								panLabel.add(lblPhase);
+								lblPhase.setHorizontalAlignment(JTextField.LEFT);
+							}
+							{
+								txtPhaseID = new _JLookup("");
+								panLabel.add(txtPhaseID);
+								txtPhaseID.setHorizontalAlignment(JTextField.CENTER);
+								txtPhaseID.setLookupSQL(sqlPhase(txtProID.getValue()));
+								txtPhaseID.setReturnColumn(0);
+								txtPhaseID.addLookupListener(new LookupListener() {
+									public void lookupPerformed(LookupEvent e) {
+										Object[] data = ((_JLookup) e.getSource()).getDataSet();
+										if (data != null) {
+											txtPhase.setText(data[1].toString());
+										}
+									}
+								});
+								txtPhaseID.addKeyListener(new KeyListener() {
+									public void keyTyped(KeyEvent e) {
+										if (e.getKeyChar()==KeyEvent.VK_BACK_SPACE) {
+											txtPhaseID.setValue("");
+											txtPhase.setText("All Phase");
+										}
+									}
+									
+									public void keyReleased(KeyEvent e) {
+										
+									}
+									
+									public void keyPressed(KeyEvent e) {
+										
+									}
+								});
+							}
+						}
+					}
+					{
+						JXPanel panBox = new JXPanel(new GridLayout(3, 1, 5, 5));
+						panNorth1.add(panBox, BorderLayout.CENTER);
+						{
+							{
+								txtCompany = new JTextField("");
+								panBox.add(txtCompany, BorderLayout.CENTER);
+								txtCompany.setHorizontalAlignment(JTextField.CENTER);
+							}
+							{
+								txtProject = new JTextField("");
+								panBox.add(txtProject, BorderLayout.CENTER);
+								txtProject.setHorizontalAlignment(JTextField.CENTER);
+							}
+							{
+								txtPhase = new JTextField("");
+								panBox.add(txtPhase, BorderLayout.CENTER);
+								txtPhase.setHorizontalAlignment(JTextField.CENTER);
+							}	
+						}
+					}
+				}
+				{
+					JXPanel panNorth2 = new JXPanel(new BorderLayout(5, 5));
+					panNorth.add(panNorth2, BorderLayout.CENTER);
+					{
+						JXPanel panDate = new JXPanel(new BorderLayout(5, 5));
+						panNorth2.add(panDate, BorderLayout.LINE_START);
+						panDate.setPreferredSize(new Dimension(200, 0));
+						panDate.setBorder(JTBorderFactory.createTitleBorder("Cut-Off Date", FncLookAndFeel.systemFont_Bold.deriveFont(10f)));
+						{
+							dteDateFrom = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+							panDate.add(dteDateFrom, BorderLayout.CENTER);
+							dteDateFrom.setDate(null);
+							dteDateFrom.setEnabled(true);
+							dteDateFrom.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
+						}
+						JXPanel panStatus = new JXPanel(new BorderLayout(5, 5));
+						panNorth2.add(panStatus, BorderLayout.CENTER);
+						panStatus.setBorder(JTBorderFactory.createTitleBorder("Status", FncLookAndFeel.systemFont_Bold.deriveFont(10f)));
+						{
+							String strCombo[] =	{"All", "56 - TCT Forwarded to RD for Annotation", "17 - Temporary Reserved", "01 - Officially Reserved", "18 - Documents Complete", 
+									"31 - Loan Filed (PagIbig)", "43 - Loan Rtnd (First Filing w/ Findings)", "35 - Notice Of Approval (NOA) Released", 
+									"56 - TCT Forwarded to RD for Annotation", "46 - TCT Annotated", "48 - Post Approval (Refiling)", "32 - Loan Released"};
+							
+							cboStatus = new JComboBox(strCombo);
+							panStatus.add(cboStatus, BorderLayout.CENTER);
+						}
+					}	
+				}
+			}
+			JXPanel panCenter = new JXPanel(new BorderLayout(5, 5));
+			panMain.add(panCenter, BorderLayout.CENTER);
+			{
+				JXPanel panButton = new JXPanel(new GridLayout(1, 1, 5, 5));
+				panCenter.add(panButton, BorderLayout.CENTER);
+				{
+					btnPreview = new JButton("Preview");
+					panButton.add(btnPreview);
+					btnPreview.setActionCommand("Preview");;
+					btnPreview.addActionListener(this);
+					btnPreview.setEnabled(true);
+				}
+				{
+					btnExport = new JButton("Export");
+					//panButton.add(btnExport);
+					btnExport.setActionCommand("Export");;
+					btnExport.addActionListener(this);
+					btnExport.setEnabled(true);
+				}
+			}
+		}
+		Setdefaults();
+	}
+	
+	private void FillCombo() {
+
+	}
+	
+	private static String CompanySQL() {
+		return "SELECT TRIM(co_id)::VARCHAR as \"ID\", TRIM(company_name) as \"Company Name\", " +
+			   "TRIM(company_alias)::VARCHAR as \"Alias\", company_logo as \"Logo\" FROM mf_company order by co_id ";
+	}
+	
+	public static String ProjectSQL(String strCo){
+		return "SELECT proj_id, proj_alias, proj_name\n" +
+			   "FROM mf_project\n" +
+			   "WHERE (co_id = '"+strCo+"' OR '"+strCo+"' = '"+strCo+"')\n" +
+			   "ORDER BY proj_name";
+	}
+	
+    public void actionPerformed(ActionEvent e) {
+		String strStatus = "";
+		strStatus = (String) cboStatus.getSelectedItem();
+		strStatus = strStatus.substring(0, 2);
+		
+		if (strStatus.equals("Al")) {
+			strStatus = "";
+		}
+		
+		if (e.getActionCommand().equals("Preview")) {		
+			strStatus = (String) cboStatus.getSelectedItem();
+			strStatus = strStatus.substring(0, 2);
+			
+			if (strStatus.equals("Al")) {
+				strStatus = "";
+			}
+			
+			String strDate = "";
+			String company_logo = RequestForPayment.sql_getCompanyLogo();
+			
+			System.out.println("");
+			System.out.println("SELECT * \n" +
+				"FROM view_hdmf_status_mr ('"+txtCoID.getText()+"', '"+txtProID.getText()+"', '"+txtPhase.getText()+"', '"+dteDateFrom.getText()+"', '"+strStatus+"') A\n" +
+				"ORDER BY A.c_status");
+			
+			strDate = df.format(dteDateFrom.getDate());
+			strDate = "As Of: " + strDate;
+			
+			Map<String, Object> mapParameters = new HashMap<String, Object>();
+			mapParameters.put("co_id", txtCoID.getText());
+			mapParameters.put("co_name", txtCompany.getText());
+			mapParameters.put("dateFrom", dteDateFrom.getText());
+			mapParameters.put("dateParam", strDate);
+			mapParameters.put("project_id", txtProID.getText());
+			mapParameters.put("user_name", UserInfo.EmployeeCode);
+			mapParameters.put("project", txtProject.getText());
+			mapParameters.put("status", strStatus);
+			mapParameters.put("logo", this.getClass().getClassLoader().getResourceAsStream("Images/" + company_logo));
+			mapParameters.put("phase", txtPhaseID.getValue());
+			String SQL = "SELECT *, 1::INTEGER as \"Group Count\"\n"
+					+ "FROM view_hdmf_status_mr('"+txtCoID.getText()+"', '"+txtProID.getText()+"', '"+txtPhaseID.getValue()+"', '"+dteDateFrom.getText()+"', '"+strStatus+"') A\n"
+					+ "ORDER BY A.c_status_sequence, A.c_name";
+			FncSystem.out("rpt_hdmf_status_report_mr.jasper", SQL);
+			FncReport.generateReport("/Reports/rpt_hdmf_status_report_mr.jasper", "PAGIBIG Clients Status Report", "", mapParameters);
+		} else if (e.getActionCommand().equals("Export")) {
+			CreateXLS(strStatus);
+		}
+    }
+    
+	private void Setdefaults() {
+		String strCount = "";
+		Integer intCount = 0;
+		
+		/*	Company Default	*/
+		strCount = GetValue("SELECT TRIM(COUNT(*)::CHAR(1)) FROM mf_company");
+		intCount = Integer.parseInt(strCount);
+		
+		if (intCount > 1) {
+			txtCoID.setValue("02");
+			txtCompany.setText("CENQHOMES DEVELOPMENT CORPORATION");
+		} else {
+			txtCoID.setValue(GetValue("SELECT co_id FROM mf_company LIMIT 1"));
+			txtCompany.setText(GetValue("SELECT company_name FROM mf_company WHERE co_id = '"+txtCoID.getText()+"'"));
+		}
+		
+		/*	Project Default	*/
+		strCount = GetValue("SELECT TRIM(COUNT(*)::CHAR(1)) FROM mf_project");
+		intCount = Integer.parseInt(strCount);
+		
+		if (intCount > 1) {
+			txtProID.setValue("015");
+			txtProject.setText("TERRAVERDE RESIDENCES");
+		} else {
+			txtProID.setValue(GetValue("SELECT proj_id FROM mf_project LIMIT 1"));
+			txtProject.setText(GetValue("SELECT proj_name FROM mf_project WHERE proj_id = '"+txtProID.getText()+"'"));
+		}
+		
+		txtPhaseID.setValue("");
+		txtPhase.setText("");
+	}
+	
+	public static String GetValue(String SQL) {
+		String strValue = "";
+		pgSelect sqlExec = new pgSelect();
+		
+		sqlExec.select(SQL);
+
+		if (sqlExec.isNotNull()) {
+			strValue = (String) sqlExec.getResult()[0][0];
+		} else {
+			strValue = "";
+		}
+		
+		return strValue;
+	}
+	
+	private void CreateXLS(String strStatus) {
+		FncGlobal.startProgress("Generating Report");
+		new Thread(new Runnable() {
+			public void run() {
+				String strStat = "";
+				strStat = (String) cboStatus.getSelectedItem();
+				strStat = strStat.substring(0, 2);
+				
+				if (strStat.equals("Al")) {
+					strStat = "";
+				}
+				
+				String[] strHead = {
+						"",
+						txtCompany.getText(), 
+						txtProject.getText(), 
+						"As Of: " + dteDateFrom.getDate(), 
+						""
+				};
+				String[] strCol = {"Status", "Phase", "Block", "Lot", "Name", "House Model", "Loanable Amount", "Payment Status", "Payment Type", "DP Term", "Outstanding Balance", "House %", 
+						"House Date", "Pagibig Inspection", "TCT Date", "TAXDEC Lot", "TAXDEC House", "Complete Date", "Filed HDMF", "NOA Released", "NOA Signed", 
+						"DOA fwd to HDMF", "DOA Signed", "TCT fwd to RD", "TCT Annotated", "Post Filing", "Loan Released", "Full DP", "HDMF Date", "HDMF OK"};
+				String strSQL = "SELECT c_status, c_phase, c_block, c_lot, c_name, c_model, c_loanable_amount, c_payment_status, c_payment_type, c_dp_term, c_outstanding, c_house_pctg, \n" + 
+						"c_house_date, c_pagibig_insp, c_tct_date, c_taxdec_lot, c_taxdec_house, c_complete_date, c_filed_hdmf, c_noa_rlsd, c_noa_signed, \n" +
+						"c_doa_fwd_hdmf, c_doa_signed, c_tct_fwd_rd, c_tct_annotated, c_post_filing, c_loan_released, c_full_dp, c_hdmf_date, c_hdmf_ok \n" +
+						"FROM view_hdmf_status_mr('"+txtCoID.getValue()+"', '"+txtProID.getValue()+"', '"+dteDateFrom.getDate().toString()+"', '"+strStat+"') A \n" +
+						"ORDER BY A.c_status_sequence, A.c_name";
+				
+				System.out.println("");
+				System.out.println(strSQL);
+				
+				FncGlobal.CreateXLSwithHeaders(strCol, strSQL, "PAGIBIG Clients Status Report (MR) ", 5, strHead);
+				FncGlobal.stopProgress();
+			}
+		}).run();
+	}
+	
+	private String sqlPhase(String strProject) {
+		return "select distinct x.phase, 'PHASE ' || phase \n" +
+			"from mf_unit_info x \n" +
+			"inner join mf_project y on x.proj_id = y.proj_id \n" +
+			"where (x.proj_id = '"+strProject+"' or '"+strProject+"' = '' or '"+strProject+"' = 'null') \n" +
+			"order by x.phase";
+	}
+}

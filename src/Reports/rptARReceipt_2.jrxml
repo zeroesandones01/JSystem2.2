@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptARReceipt_2" pageWidth="572" pageHeight="396" columnWidth="572" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.2100000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="187"/>
+	<parameter name="client_seqno" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ar_no" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="prepared_by" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="credit_ar_no" class="java.lang.String"/>
+	<parameter name="recpt_type" class="java.lang.String"/>
+	<parameter name="credited_amount" class="java.lang.Double"/>
+	<queryString>
+		<![CDATA[SELECT distinct on (c_or_no) * FROM view_ar_receipt_v2($P{client_seqno}, $P{ar_no});]]>
+	</queryString>
+	<field name="c_or_no" class="java.lang.String"/>
+	<field name="c_entity_name" class="java.lang.String"/>
+	<field name="c_proj_alias" class="java.lang.String"/>
+	<field name="c_description" class="java.lang.String"/>
+	<field name="c_tin_no" class="java.lang.String"/>
+	<field name="c_address" class="java.lang.String"/>
+	<field name="c_trans_date" class="java.sql.Timestamp"/>
+	<field name="c_total_amount" class="java.math.BigDecimal"/>
+	<field name="c_total_amount_words" class="java.lang.String"/>
+	<field name="c_amount" class="java.math.BigDecimal"/>
+	<field name="c_amount_words" class="java.lang.String"/>
+	<field name="c_particulars" class="java.lang.String"/>
+	<field name="c_acct_no" class="java.lang.String"/>
+	<field name="c_check_no" class="java.lang.String"/>
+	<field name="c_check_date" class="java.sql.Timestamp"/>
+	<field name="c_bank" class="java.lang.String"/>
+	<field name="c_branch" class="java.lang.String"/>
+	<detail>
+		<band height="376">
+			<subreport>
+				<reportElement x="51" y="188" width="503" height="14"/>
+				<subreportParameter name="ar_no">
+					<subreportParameterExpression><![CDATA[$P{ar_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="client_seqno">
+					<subreportParameterExpression><![CDATA[$P{client_seqno}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[this.getClass().getResourceAsStream("/Reports/subrptARReceipt.jasper")]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="415" y="76" width="108" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("Receipt#: {0}", $F{c_or_no})]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy hh:mm aaa">
+				<reportElement x="415" y="88" width="108" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_trans_date}.toString()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="96" y="88" width="298" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("{0} -- [{1} {2}]", $F{c_entity_name}, $F{c_proj_alias}==null ? "No Proj |":$F{c_proj_alias}, $F{c_description}==null ? "No Unit":$F{c_description})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="71" y="100" width="323" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_tin_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="71" y="112" width="323" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_address}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="66" y="148" width="340" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_total_amount_words}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="425" y="148" width="129" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_total_amount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="425" y="245" width="129" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_total_amount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="418" y="271" width="116" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Times New Roman" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{prepared_by}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="71" y="285" width="292" height="14"/>
+				<subreportParameter name="ar_no">
+					<subreportParameterExpression><![CDATA[$P{ar_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="client_seqno">
+					<subreportParameterExpression><![CDATA[$P{client_seqno}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[this.getClass().getResourceAsStream("/Reports/subrptARReceipt_checkPmt.jasper")]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="71" y="271" width="292" height="14"/>
+				<subreportParameter name="recpt_type">
+					<subreportParameterExpression><![CDATA[$P{recpt_type}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="credited_amount">
+					<subreportParameterExpression><![CDATA[$P{credited_amount}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ar_no">
+					<subreportParameterExpression><![CDATA[$P{ar_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="client_seqno">
+					<subreportParameterExpression><![CDATA[$P{client_seqno}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="credit_ar_no">
+					<subreportParameterExpression><![CDATA[$P{credit_ar_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[this.getClass().getResourceAsStream("/Reports/subrptARReceipt_cashPmt.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

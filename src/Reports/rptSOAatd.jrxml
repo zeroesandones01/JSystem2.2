@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptSOAatd" pageWidth="612" pageHeight="650" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.3310000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="102"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.1" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.2" value="pageHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.(uniqueValue)" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.collapse.row.span" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.wrap.text" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.graphics" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.auto.fit.column" value="true"/>
+	<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.auto.fit.row" value="true"/>
+	<parameter name="company" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="logo" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="prepared_by" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["AAGONZALES"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="co_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="payee1" class="java.lang.String"/>
+	<parameter name="cur_date" class="java.util.Date"/>
+	<parameter name="dept" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="div" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="entity_id" class="java.lang.String"/>
+	<parameter name="soa_year" class="java.lang.String"/>
+	<parameter name="soa_index" class="java.lang.Integer"/>
+	<parameter name="over_min" class="java.lang.Integer"/>
+	<parameter name="over_max" class="java.lang.Integer"/>
+	<parameter name="overdue_deduction" class="java.sql.Time"/>
+	<parameter name="for_atd" class="java.lang.String"/>
+	<parameter name="entity_idv2" class="java.util.ArrayList">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dept_alias" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT * FROM view_liquidation_soa_foratd_v3($P{cur_date}, $P{soa_year}, $P{entity_id}, $P{soa_index}, $P{over_min}, $P{over_max}, $P{co_id}) order by c_entity_name, c_date_rlsd]]>
+	</queryString>
+	<field name="c_entity_id" class="java.lang.String"/>
+	<field name="c_entity_name" class="java.lang.String"/>
+	<field name="c_dept_alias" class="java.lang.String"/>
+	<field name="c_div_alias" class="java.lang.String"/>
+	<field name="c_cv_no" class="java.lang.String"/>
+	<field name="c_pv_no" class="java.lang.String"/>
+	<field name="c_date_rlsd" class="java.sql.Timestamp"/>
+	<field name="c_remarks" class="java.lang.String"/>
+	<field name="c_days_overdue" class="java.lang.Double"/>
+	<field name="c_sum" class="java.math.BigDecimal"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="tot_amount" class="java.math.BigDecimal" resetType="Group" resetGroup="grpEntity" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_sum}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<group name="grpTotal"/>
+	<group name="grpEntity" isStartNewPage="true" isResetPageNumber="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{c_entity_id}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<textField>
+					<reportElement isPrintRepeatedValues="false" x="15" y="0" width="204" height="13"/>
+					<textElement textAlignment="Left" markup="none">
+						<font fontName="Tahoma" isBold="true" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{c_entity_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="19">
+				<textField pattern="#,##0.00">
+					<reportElement isPrintRepeatedValues="false" x="460" y="0" width="112" height="13"/>
+					<textElement textAlignment="Right" markup="none">
+						<font fontName="Tahoma" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{tot_amount}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="29">
+			<textField>
+				<reportElement x="0" y="0" width="572" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["CENQHOMES DEVELOPMENT CORPORATION"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="164" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="40" height="13"/>
+				<textElement markup="none">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="13" width="40" height="13"/>
+				<textElement markup="none">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[To :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="26" width="40" height="13"/>
+				<textElement markup="none">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Thru :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="39" width="40" height="13"/>
+				<textElement markup="none">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[From :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="52" width="40" height="13"/>
+				<textElement markup="none">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Re :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="75" width="572" height="58"/>
+				<textElement markup="styled">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Sir/Madam : \n\n" +
+
+"       This is to endorse the unliquidated advances subject for salary deduction on the next applicable payroll\n" +
+"   period. Please refer to the list below:"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="15" y="151" width="96" height="13"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Tahoma" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Name of employee]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="151" width="83" height="13"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Tahoma" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Date Released]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="151" width="96" height="13"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Tahoma" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[PV number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="151" width="112" height="13"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Tahoma" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Amount unliquidated]]></text>
+			</staticText>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="60" y="0" width="512" height="13"/>
+				<textElement>
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="60" y="13" width="512" height="13"/>
+				<textElement>
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_dept_alias} != null ? $F{c_dept_alias} : $F{c_div_alias}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="60" y="26" width="512" height="13"/>
+				<textElement>
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Division Head"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="60" y="39" width="512" height="13"/>
+				<textElement>
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["FAD"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="60" y="52" width="512" height="13"/>
+				<textElement>
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Endorsement of unliquidated advances for salary deduction"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15">
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="230" y="0" width="83" height="13"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Tahoma" isBold="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{c_date_rlsd}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="354" y="0" width="96" height="13"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Tahoma" isBold="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_pv_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="460" y="0" width="112" height="13"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="Tahoma" isBold="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_sum}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="199">
+			<textField>
+				<reportElement x="0" y="0" width="572" height="199"/>
+				<textElement markup="styled">
+					<font fontName="Tahoma" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["<b>For your reference.\n\n</b>" +
+
+"<b>Prepared by:\n\n</b>" +
+
+"<b>" + $P{prepared_by} + "\n</b>" +
+"Accounting Staff\n\n" +
+
+"<b>Checked by:\n\n</b>" +
+
+"<b>Rosalie Mercader\n</b>" +
+"Accounting Staff\n\n" +
+
+"<b>Noted by:\n\n</b>" +
+
+"<b>Maricel Puyo                     Mr. Hans Yeh</b>\n" +
+"FAD Head                                 COO"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

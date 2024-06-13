@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="936" columnWidth="486" leftMargin="72" rightMargin="54" topMargin="72" bottomMargin="72">
+	<property name="ireport.zoom" value="1.6528925619834822"/>
+	<property name="ireport.x" value="44"/>
+	<property name="ireport.y" value="827"/>
+	<style name="style1"/>
+	<parameter name="Names" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT concat_ws(' ', concat_ws(', ', A.Last_Name, A.First_Name), A.Middle_Name) as entity_name, B.entity_name as broker_name, C.prc_id,
+C.date_prc_id::DATE, C.hlurb_regist_no,
+CASE
+	WHEN RIGHT(TRIM(DATE_PART('day', A.out_date)::CHAR(200)), 1) = '1'
+		THEN concat_ws('', TRIM(DATE_PART('day', A.out_date)::CHAR(2)), 'st'::CHAR(2))
+	WHEN RIGHT(TRIM(DATE_PART('day', A.out_date)::CHAR(200)), 1) = '2'
+		THEN concat_ws('', TRIM(DATE_PART('day', A.out_date)::CHAR(2)), 'nd'::CHAR(2))
+	WHEN RIGHT(TRIM(DATE_PART('day', A.out_date)::CHAR(200)), 1) = '3'
+		THEN concat_ws('', DATE_PART('day', A.out_date)::CHAR(2), 'rd'::CHAR(2))
+	ELSE concat_ws('', TRIM(DATE_PART('day', A.out_date)::CHAR(2)), 'th'::CHAR(2))
+END as Day,
+TO_CHAR(to_timestamp (DATE_PART('month', A.out_date)::CHAR::text, 'MM'), 'Month') as Month,
+RIGHT(DATE_PART('YEAR', A.out_date)::CHAR(4), 2) as Year
+FROM rf_gov_doc_delta A
+LEFT JOIN rf_entity B ON A.overriding_id = B.entity_id
+LEFT JOIN rf_entity_id_no C ON A.overriding_id = C.entity_id
+WHERE status = 'Released to BDT' AND tobeprinted = '1'
+ORDER BY A.last_name, A.first_name, A.middle_name]]>
+	</queryString>
+	<field name="entity_name" class="java.lang.String"/>
+	<field name="broker_name" class="java.lang.String"/>
+	<field name="prc_id" class="java.lang.String"/>
+	<field name="date_prc_id" class="java.sql.Date"/>
+	<field name="hlurb_regist_no" class="java.lang.String"/>
+	<field name="day" class="java.lang.String"/>
+	<field name="month" class="java.lang.String"/>
+	<field name="year" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="178" splitType="Stretch">
+			<staticText>
+				<reportElement x="7" y="64" width="473" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SALESPERSON'S]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="84" width="473" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ENGAGEMENT / EMPLOYMENT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="104" width="473" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Pusuant to Sections 11 and 12 of Presidential Decree No. 957]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="124" width="473" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[as implemented by Board Resolution No. 922, Series of 2014]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="0" width="473" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[PRLD.0018-A.02]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="2" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="527" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="486" height="523"/>
+				<staticText>
+					<reportElement x="7" y="20" width="473" height="20"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[To the Chairman ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="7" y="40" width="473" height="20"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Housing and Land Use Regulatory Board ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="7" y="60" width="473" height="20"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Quezon City ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="7" y="160" width="352" height="20"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+					<text><![CDATA[ in the practice of real estate service as a salesperson with respect to ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="7" y="120" width="106" height="20"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font size="10"/>
+					</textElement>
+					<text><![CDATA[This is to certify that ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="7" y="380" width="474" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font isUnderline="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{broker_name}]]></textFieldExpression>
+				</textField>
+				<textField pattern="MMMMM dd, yyyy">
+					<reportElement x="7" y="0" width="473" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma"/>
+					</textElement>
+					<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="7" y="180" width="172" height="20"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[DEVELOPMENT CORPORATION]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="7" y="260" width="68" height="20"/>
+					<textElement verticalAlignment="Middle" markup="none"/>
+					<text><![CDATA[Issued this ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="7" y="400" width="474" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["Printed Name and Signature"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="7" y="430" width="474" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["Broker"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="7" y="450" width="474" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["Designation"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="7" y="480" width="474" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["4th Flr. Anita Bldg., 1300 Quezon Avenue corner Timog Avenue, Quezon City"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="7" y="500" width="474" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["Name of Office, Business Address"]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="125" y="400" width="240" height="1"/>
+				</line>
+				<line>
+					<reportElement x="125" y="449" width="240" height="1"/>
+				</line>
+				<line>
+					<reportElement x="49" y="500" width="392" height="1"/>
+				</line>
+				<staticText>
+					<reportElement x="7" y="280" width="473" height="20"/>
+					<textElement verticalAlignment="Middle" markup="none"/>
+					<text><![CDATA[Quezon Avenue corner Timog Avenue, Quezon City.]]></text>
+				</staticText>
+				<line>
+					<reportElement x="7" y="19" width="221" height="1"/>
+				</line>
+				<line>
+					<reportElement x="7" y="40" width="221" height="1"/>
+				</line>
+				<line>
+					<reportElement x="7" y="59" width="221" height="1"/>
+				</line>
+				<line>
+					<reportElement x="7" y="79" width="221" height="1"/>
+				</line>
+				<textField>
+					<reportElement x="113" y="120" width="313" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font size="10" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{entity_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="426" y="120" width="55" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font size="10"/>
+					</textElement>
+					<text><![CDATA[has been]]></text>
+				</staticText>
+				<line>
+					<reportElement x="113" y="139" width="313" height="1"/>
+				</line>
+				<staticText>
+					<reportElement x="7" y="140" width="112" height="20"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ENGAGED/EMPLOYED]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="119" y="140" width="109" height="20"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[and is authorized by]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="426" y="140" width="55" height="20"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font size="10"/>
+					</textElement>
+					<text><![CDATA[to engage]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="228" y="140" width="198" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font size="10" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{broker_name}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="228" y="160" width="198" height="1"/>
+				</line>
+				<staticText>
+					<reportElement x="359" y="160" width="123" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CENQHOMES]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="179" y="180" width="303" height="20"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+					<text><![CDATA[located at 4th Flr. Anita Bldg., 1300 Quezon Avenue]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="7" y="200" width="474" height="20"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+					<text><![CDATA[corner Timog Avenue, Quezon City.]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="75" y="260" width="45" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{day}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="120" y="260" width="40" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+					<text><![CDATA[ day of ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="160" y="260" width="115" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{month}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="275" y="260" width="27" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+					<text><![CDATA[ , 20 ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="302" y="260" width="27" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{year}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="329" y="260" width="151" height="20"/>
+					<textElement verticalAlignment="Middle" markup="none"/>
+					<text><![CDATA[ in 4th Flr. Anita Bldg., 1300]]></text>
+				</staticText>
+				<line>
+					<reportElement x="75" y="280" width="45" height="1"/>
+				</line>
+				<line>
+					<reportElement x="160" y="280" width="115" height="1"/>
+				</line>
+				<line>
+					<reportElement x="302" y="279" width="27" height="1"/>
+				</line>
+				<line>
+					<reportElement x="345" y="280" width="135" height="1"/>
+				</line>
+				<line>
+					<reportElement x="7" y="300" width="261" height="1"/>
+				</line>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="21" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="17" splitType="Stretch"/>
+	</summary>
+</jasperReport>

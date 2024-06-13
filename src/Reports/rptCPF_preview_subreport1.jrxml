@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCPF_preview_subreport1" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="110e6ff3-de03-4611-84e4-ea0492e77ed1">
+	<queryString language="SQL">
+		<![CDATA[select
+
+a.rplf_no,
+'' as type,
+b.rplf_date,
+c.liq_no,
+c.jv_no,
+e.liq_amt,
+'' as due_to_from,
+a.part_desc
+
+
+from rf_request_detail a
+left join rf_request_header b on a.rplf_no = b.rplf_no and a.co_id = b.co_id
+left join rf_liq_header c on a.rplf_no = c.rplf_no
+left join rf_liq_detail d on c.liq_no = d.liq_no
+join cm_ca_liquidation e on a.rplf_no = e.ca_rplf_no
+
+]]>
+	</queryString>
+	<field name="rplf_no" class="java.lang.String"/>
+	<field name="type" class="java.lang.String"/>
+	<field name="rplf_date" class="java.sql.Timestamp"/>
+	<field name="liq_no" class="java.lang.String"/>
+	<field name="jv_no" class="java.lang.String"/>
+	<field name="liq_amt" class="java.math.BigDecimal"/>
+	<field name="due_to_from" class="java.lang.String"/>
+	<field name="part_desc" class="java.lang.String"/>
+	<group name="rplf_no">
+		<groupExpression><![CDATA[$F{rplf_no}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

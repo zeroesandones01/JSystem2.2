@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptPMDFD_Transmittal2" pageWidth="936" pageHeight="612" orientation="Landscape" columnWidth="900" leftMargin="22" rightMargin="14" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="107"/>
+	<parameter name="batch_no" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[$P{batch_no}]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT *,case
+when
+(select byrstatus_id from rf_buyer_status where entity_id = a.entity_id AND proj_id = a.projcode and pbl_id = a.pbl_id and seq_no = a.seq_no
+and TRIM(byrstatus_id) = '36' and status_id = 'A') = '36' and a.notice_id = '94' and a.projcode = '015' then 'P' when a.province is null then 'M' else 'P' end AS address_type FROM
+(select
+d.notice_alias as title,
+_get_client_name(a.entity_id) as addressee,
+(case when (select byrstatus_id from rf_buyer_status where entity_id = a.entity_id AND proj_id = a.projcode and pbl_id = a.pbl_id and seq_no = a.seq_no
+and byrstatus_id = '36' and status_id = 'A') = '36' and d.notice_id = '94' then
+TRIM(g.description || ' ' || f.proj_name)ELSE get_client_address_billing(c.entity_id )end) as address,--DCRF 2522
+(case when (select byrstatus_id from rf_buyer_status where entity_id = a.entity_id AND proj_id = a.projcode and pbl_id = a.pbl_id and seq_no = a.seq_no
+and byrstatus_id = '36' and status_id = 'A') = '36' and d.notice_id = '94' then
+TRIM(f.municipality)ELSE COALESCE((select city_name from mf_city where city_id = e.city_id), j.municipality_name)end) as City, --DCRF 2522
+(case when (select byrstatus_id from rf_buyer_status where entity_id = a.entity_id AND proj_id = a.projcode and pbl_id = a.pbl_id and seq_no = a.seq_no
+and byrstatus_id = '36' and status_id = 'A') = '36' and d.notice_id = '94' then
+TRIM(f.province) ELSE (select province_name from mf_province  where province_id  = e.province_id)END) as province, --DCRF 2522
+c.entity_name as contact_person,
+(select unnest(mobile) from rf_contacts where entity_id = a.entity_id) as mobile_no,
+(select unnest(email) from rf_contacts where entity_id = a.entity_id) as email_add,
+b.batch_no as ref1,
+a.entity_id as ref2,
+f.proj_alias as ref3,
+g.description as ref4,
+company_name,
+(case when (select byrstatus_id from rf_buyer_status where entity_id = a.entity_id AND proj_id = a.projcode and pbl_id = a.pbl_id and seq_no = a.seq_no
+and byrstatus_id = '36' and status_id = 'A') = '36' and d.notice_id = '94' and a.projcode = '015' then
+(Select zip_code from rf_entity_address where municipality_id = '892' limit 1)
+when (select byrstatus_id from rf_buyer_status where entity_id = a.entity_id AND proj_id = a.projcode and pbl_id = a.pbl_id and seq_no = a.seq_no
+and byrstatus_id = '36' and status_id = 'A') = '36' and d.notice_id = '94' and a.projcode IN ('017','018','019') then
+(Select zip_code from rf_entity_address where municipality_id = '543' limit 1)
+ELSE get_zip_code(a.entity_id) END )as zipcode, --DCRF 2522
+case when e.province_id is null then 'Luzon' else l.island end AS island,
+get_employee_name(preparedby) as prepared_by,
+(case when $P{batch_no} = '0000002150' then '2021-06-25'::DATE ELSE CURRENT_DATE end) as as_of_date
+ , a.entity_id as entity_id, a.projcode as projcode, a.pbl_id as pbl_id, a.seq_no as seq_no, d.notice_id as notice_id, b.batch_no as batch_no, g.phase, g.block, g.lot
+from rf_sold_unit a
+inner join rf_client_notices b on a.entity_id = b.entity_id and a.projcode = b.projcode and a.pbl_id = b.pbl_id and a.seq_no = b.seq_no
+LEFT JOIN tmp_dues_for_collection m on m.entity_id = a.entity_id and m.proj_id = a.projcode and m.pbl_id = a.pbl_id and m.seq_no = a.seq_no
+left join rf_entity c on a.Entity_id = c.entity_id
+left join mf_notice_type d on b.notice_id = d.notice_id
+left join rf_entity_address e on  a.Entity_id = e.entity_id and e.pref_billing and e.status_id ='A' and coalesce(e.proj_server, '') = coalesce(a.proj_server, '') and coalesce(e.server_id, '') = coalesce(a.server_id)
+left join mf_project f on a.projcode=f.proj_id
+left join mf_unit_info g on a.pbl_id=g.pbl_id  and g.proj_id = b.projcode
+LEFT JOIN mf_company h ON h.co_id = f.co_id
+LEFT JOIN mf_city i on i.city_id = e.city_id
+LEFT JOIN mf_municipality j on j.municipality_id = e.municipality_id
+LEFT JOIN mf_province k on k.province_id = e.province_id
+LEFT JOIN mf_region l on l.region_id = k.region_id
+where b.batch_no IN ($P{batch_no})
+and b.status_id = 'A'
+and (case when m.rpt_total_balance < 0 and m.water_balance < 0 then (m.rpt_total_balance + m.water_balance) < -1000
+						when m.rpt_total_balance >= 0 and m.water_balance < 0 THEN m.water_balance < -1000
+						when m.water_balance >= 0 and m.rpt_total_balance < 0 then m.rpt_total_balance < -1000
+				   else false end)
+
+) A
+order by getinteger(A.phase), getinteger(A.block), getinteger(A.lot)]]>
+	</queryString>
+	<field name="title" class="java.lang.String"/>
+	<field name="addressee" class="java.lang.String"/>
+	<field name="address" class="java.lang.String"/>
+	<field name="city" class="java.lang.String"/>
+	<field name="province" class="java.lang.String"/>
+	<field name="contact_person" class="java.lang.String"/>
+	<field name="mobile_no" class="java.lang.String"/>
+	<field name="email_add" class="java.lang.String"/>
+	<field name="ref1" class="java.lang.String"/>
+	<field name="ref2" class="java.lang.String"/>
+	<field name="ref3" class="java.lang.String"/>
+	<field name="ref4" class="java.lang.String"/>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="zipcode" class="java.lang.String"/>
+	<field name="island" class="java.lang.String"/>
+	<field name="prepared_by" class="java.lang.String"/>
+	<field name="as_of_date" class="java.sql.Date"/>
+	<field name="entity_id" class="java.lang.String"/>
+	<field name="projcode" class="java.lang.String"/>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="seq_no" class="java.lang.Integer"/>
+	<field name="notice_id" class="java.lang.String"/>
+	<field name="batch_no" class="java.lang.String"/>
+	<field name="phase" class="java.lang.String"/>
+	<field name="block" class="java.lang.String"/>
+	<field name="lot" class="java.lang.String"/>
+	<field name="address_type" class="java.lang.String"/>
+	<pageHeader>
+		<band height="158" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="2" y="0" width="898" height="70"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="128" width="71" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Batch No.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="75" y="128" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{batch_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="45" y="88" width="246" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{as_of_date}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="88" width="42" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[As of :]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="0" width="28" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ITEM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="0" width="45" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TITLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="75" y="0" width="105" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ADDRESSEE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="0" width="101" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ADDRESS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="320" y="0" width="70" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CITY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="0" width="70" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROVINCE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="0" width="85" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONTACT PERSON]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="545" y="0" width="75" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOBILE NO.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="620" y="0" width="85" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EMAIL ADDRESS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="705" y="0" width="52" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REF 1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="757" y="0" width="52" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REF 2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="809" y="0" width="30" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REF 3]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="839" y="0" width="63" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REF 4]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="281" y="0" width="39" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ZIP CODE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="30" y="0" width="45" height="30"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{title}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="75" y="0" width="105" height="30"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{addressee}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="180" y="0" width="101" height="30"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{address}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="2" y="0" width="28" height="30"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="320" y="0" width="70" height="30"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{city} == null ? $F{province} : $F{city}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="460" y="0" width="85" height="30"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{contact_person}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="545" y="0" width="75" height="30"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{mobile_no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="620" y="0" width="85" height="30"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{email_add}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="705" y="0" width="52" height="30"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ref1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="757" y="0" width="52" height="30"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ref2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="809" y="0" width="30" height="30"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ref3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="839" y="0" width="63" height="30"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ref4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="390" y="0" width="70" height="30"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{province} == null ? $F{city} : $F{province}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="281" y="0" width="39" height="30"/>
+				<box leftPadding="0">
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{zipcode}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="161">
+			<textField>
+				<reportElement x="72" y="103" width="219" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Prepared by"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="72" y="83" width="219" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{prepared_by}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="27" y="33" width="178" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[msg("TOTAL: {0}", $V{REPORT_COUNT})]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptAssetSticker" columnCount="3" printOrder="Horizontal" pageWidth="612" pageHeight="792" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="190" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.callouts" value="##Fri Jul 13 11:58:00 PHT 2018"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style1"/>
+	<subDataset name="dataset1"/>
+	<parameter name="custodian" class="java.lang.String"/>
+	<parameter name="assetToPrint" class="java.lang.String"/>
+	<parameter name="co_logo" class="java.io.InputStream"/>
+	<parameter name="no_sticker" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from view_asset_sticker($P{assetToPrint},$P{no_sticker})]]>
+	</queryString>
+	<field name="c_asset_code" class="java.lang.String"/>
+	<field name="c_asset_no" class="java.lang.String"/>
+	<field name="c_asset_name" class="java.lang.String"/>
+	<field name="c_anum" class="java.lang.String"/>
+	<field name="c_nme" class="java.lang.String"/>
+	<field name="c_cuser" class="java.lang.String"/>
+	<field name="c_date_acquired" class="java.sql.Timestamp"/>
+	<field name="c_co_logo" class="java.lang.String"/>
+	<field name="c_company_name" class="java.lang.String"/>
+	<group name="group1">
+		<groupExpression><![CDATA[$V{PAGE_NUMBER}]]></groupExpression>
+	</group>
+	<detail>
+		<band height="50" splitType="Prevent">
+			<componentElement>
+				<reportElement x="19" y="0" width="120" height="37"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="true" checksumRequired="false" barHeight="80">
+					<jr:codeExpression><![CDATA["Asset no: "+$F{c_asset_no}]]></jr:codeExpression>
+					<jr:applicationIdentifierExpression><![CDATA[$F{c_asset_no}]]></jr:applicationIdentifierExpression>
+				</jr:barbecue>
+			</componentElement>
+			<frame>
+				<reportElement x="20" y="0" width="119" height="48"/>
+				<box>
+					<pen lineStyle="Dashed"/>
+					<topPen lineWidth="0.5" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.5" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.5" lineStyle="Dashed"/>
+				</box>
+			</frame>
+			<textField>
+				<reportElement x="20" y="37" width="119" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_cuser}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="20" y="37" width="20" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["A"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

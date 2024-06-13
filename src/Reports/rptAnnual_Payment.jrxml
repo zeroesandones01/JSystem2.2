@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptAnnua_Payment" pageWidth="936" pageHeight="612" orientation="Landscape" columnWidth="880" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" uuid="03986757-377c-4b59-b630-6e17b8e06d30">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="company" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="prepared_by" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["AAGONZALES"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="co_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="proj_id" class="java.lang.String"/>
+	<parameter name="month" class="java.lang.String"/>
+	<parameter name="year" class="java.lang.String"/>
+	<parameter name="period_id" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\workspace\\JSystem2.2\\src\\Reports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="proj_name" class="java.lang.String"/>
+	<parameter name="phase" class="java.lang.String"/>
+	<parameter name="phase_no" class="java.lang.String"/>
+	<parameter name="boi_reg_no" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+
+row_number() over(PARTITION BY a.pbl_id, a.seq_no ORDER BY a.pbl_id, a.seq_no) as entry_no,
+trim(description) as unit_desc,
+trim(b.entity_name) as client_name,
+O.issued_date as takeout_date,
+trim(j.type_alias_too) as mode_of_pmt,
+e.sellingprice as selling_price,
+(coalesce(-1*h.prin_paid,0) + coalesce(hh.prin_paid,0))  as prin_payment_2015,
+(coalesce(-1*k.prin_paid,0) + coalesce(kk.prin_paid,0))  as prin_payment_2016,
+(coalesce(-1*l.prin_paid,0) + coalesce(ll.prin_paid,0))  as prin_payment_2017,
+(coalesce(-1*m.prin_paid,0) + coalesce(mm.prin_paid,0))  as prin_payment_2018,
+(coalesce(-1*n.prin_paid,0) + coalesce(nn.prin_paid,0))  as prin_payment_2019,
+a.pbl_id,
+a.seq_no,
+(((coalesce(-1*h.prin_paid,0) + coalesce(hh.prin_paid,0)) +
+(coalesce(-1*k.prin_paid,0) + coalesce(kk.prin_paid,0)) +
+(coalesce(-1*l.prin_paid,0) + coalesce(ll.prin_paid,0)) +
+(coalesce(-1*m.prin_paid,0) + coalesce(mm.prin_paid,0)) +
+(coalesce(-1*n.prin_paid,0) + coalesce(nn.prin_paid,0)))/e.sellingprice)*100 as perc_completion
+
+
+from ( select distinct on (proj_id, pbl_id, seq_no) proj_id, pbl_id, seq_no, co_id, sum(trans_amt)as prin_amt, entity_id
+	from rf_crb_detail where acct_id in ( '01-02-01-000' , '01-02-02-000', '02-01-01-000' ) and status_id = 'A' and trans_amt < 0
+	--and (rb_id, pay_rec_id, doc_id) in (select rb_id, pay_rec_id, doc_id from rf_crb_header where posted_date is not null)
+	and case when $P{proj_id} = '' then rb_id is not null else proj_id = $P{proj_id} end
+	and case when $P{phase_no} = 'ALL' then rb_id is not null else phase = $P{phase_no} end
+	group by proj_id, pbl_id, seq_no, co_id, entity_id ) a
+
+left join rf_entity b on a.entity_id = b.entity_id
+
+left join mf_unit_info c on a.pbl_id = c.pbl_id and a.proj_id = c.proj_id
+
+left join ( select entity_id, projcode, pbl_id, seq_no, doc_id, date_notarized from rf_buyer_documents where doc_id in ('39', '06') and status_id = 'A' )
+	d on a.entity_id = d.entity_id and a.proj_id = d.projcode and a.pbl_id = d.pbl_id and a.seq_no = d.seq_no
+
+left join (select * from rf_sold_unit where status_id = 'A') e on a.proj_id = e.projcode and a.pbl_id = e.pbl_id and a.seq_no = e.seq_no
+
+left join (select distinct on (proj_id, pbl_id, seq_no, co_id) proj_id, pbl_id, seq_no, co_id, sum(trans_amt) as prin_paid
+	from rf_crb_detail where acct_id in ( '01-02-01-000' , '01-02-02-000', '02-01-01-000' ) and status_id = 'A' and trans_amt < 0 and rb_fiscal_year = '2015'
+	group by proj_id, pbl_id, seq_no, co_id) h on a.proj_id = h.proj_id and a.pbl_id = h.pbl_id and a.seq_no = h.seq_no and a.co_id = h.co_id
+
+left join (select distinct on (project_id, pbl_id, seq_no, co_id) project_id, pbl_id, seq_no, co_id, sum(tran_amt) as prin_paid
+	from rf_jv_detail where acct_id in ( '01-02-01-000' , '01-02-02-000', '02-01-01-000' ) and status_id = 'A' and bal_side = 'C'
+	and (jv_no, co_id) in (select jv_no, co_id from rf_jv_header where fiscal_yr = '2015')
+	group by project_id, pbl_id, seq_no, co_id) hh on a.proj_id = hh.project_id and a.pbl_id = hh.pbl_id and a.seq_no = hh.seq_no and a.co_id = hh.co_id
+
+left join (select distinct on (proj_id, pbl_id, seq_no, co_id) proj_id, pbl_id, seq_no, co_id, sum(trans_amt) as prin_paid
+	from rf_crb_detail where acct_id in ( '01-02-01-000' , '01-02-02-000', '02-01-01-000' ) and status_id = 'A' and trans_amt < 0 and rb_fiscal_year = '2016'
+	group by proj_id, pbl_id, seq_no, co_id) k on a.proj_id = k.proj_id and a.pbl_id = k.pbl_id and a.seq_no = k.seq_no and a.co_id = k.co_id
+
+left join (select distinct on (project_id, pbl_id, seq_no, co_id) project_id, pbl_id, seq_no, co_id, sum(tran_amt) as prin_paid
+	from rf_jv_detail where acct_id in ( '01-02-01-000' , '01-02-02-000', '02-01-01-000' ) and status_id = 'A' and bal_side = 'C'
+	and (jv_no, co_id) in (select jv_no, co_id from rf_jv_header where fiscal_yr = '2016')
+	group by project_id, pbl_id, seq_no, co_id) kk on a.proj_id = kk.project_id and a.pbl_id = kk.pbl_id and a.seq_no = kk.seq_no and a.co_id = kk.co_id
+
+left join (select distinct on (proj_id, pbl_id, seq_no, co_id) proj_id, pbl_id, seq_no, co_id, sum(trans_amt) as prin_paid
+	from rf_crb_detail where acct_id in ( '01-02-01-000' , '01-02-02-000', '02-01-01-000' ) and status_id = 'A' and trans_amt < 0 and rb_fiscal_year = '2017'
+	group by proj_id, pbl_id, seq_no, co_id) l on a.proj_id = l.proj_id and a.pbl_id = l.pbl_id and a.seq_no = l.seq_no and a.co_id = l.co_id
+
+left join (select distinct on (project_id, pbl_id, seq_no, co_id) project_id, pbl_id, seq_no, co_id, sum(tran_amt) as prin_paid
+	from rf_jv_detail where acct_id in ( '01-02-01-000' , '01-02-02-000', '02-01-01-000' ) and status_id = 'A' and bal_side = 'C'
+	and (jv_no, co_id) in (select jv_no, co_id from rf_jv_header where fiscal_yr = '2017')
+	group by project_id, pbl_id, seq_no, co_id) ll on a.proj_id = ll.project_id and a.pbl_id = ll.pbl_id and a.seq_no = ll.seq_no and a.co_id = ll.co_id
+
+left join (select distinct on (proj_id, pbl_id, seq_no, co_id) proj_id, pbl_id, seq_no, co_id, sum(trans_amt) as prin_paid
+	from rf_crb_detail where acct_id in ( '01-02-01-000' , '01-02-02-000', '02-01-01-000' ) and status_id = 'A' and trans_amt < 0 and rb_fiscal_year = '2018'
+	group by proj_id, pbl_id, seq_no, co_id) m on a.proj_id = m.proj_id and a.pbl_id = m.pbl_id and a.seq_no = m.seq_no and a.co_id = m.co_id
+
+left join (select distinct on (project_id, pbl_id, seq_no, co_id) project_id, pbl_id, seq_no, co_id, sum(tran_amt) as prin_paid
+	from rf_jv_detail where acct_id in ( '01-02-01-000' , '01-02-02-000', '02-01-01-000' ) and status_id = 'A' and bal_side = 'C'
+	and (jv_no, co_id) in (select jv_no, co_id from rf_jv_header where fiscal_yr = '2018')
+	group by project_id, pbl_id, seq_no, co_id) mm on a.proj_id = mm.project_id and a.pbl_id = mm.pbl_id and a.seq_no = mm.seq_no and a.co_id = mm.co_id
+
+left join (select distinct on (proj_id, pbl_id, seq_no, co_id) proj_id, pbl_id, seq_no, co_id, sum(trans_amt) as prin_paid
+	from rf_crb_detail where acct_id in ( '01-02-01-000' , '01-02-02-000', '02-01-01-000' ) and status_id = 'A' and trans_amt < 0 and rb_fiscal_year = '2019'
+	group by proj_id, pbl_id, seq_no, co_id) n on a.proj_id = n.proj_id and a.pbl_id = n.pbl_id and a.seq_no = n.seq_no and a.co_id = n.co_id
+
+left join (select distinct on (project_id, pbl_id, seq_no, co_id) project_id, pbl_id, seq_no, co_id, sum(tran_amt) as prin_paid
+	from rf_jv_detail where acct_id in ( '01-02-01-000' , '01-02-02-000', '02-01-01-000' ) and status_id = 'A' and bal_side = 'C'
+	and (jv_no, co_id) in (select jv_no, co_id from rf_jv_header where fiscal_yr = '2019')
+	group by project_id, pbl_id, seq_no, co_id) nn on a.proj_id = nn.project_id and a.pbl_id = nn.pbl_id and a.seq_no = nn.seq_no and a.co_id = nn.co_id
+
+left join (select pmt_scheme_id, unnest(type_id) as type_id  from mf_payment_scheme) i on e.pmt_scheme_id = i.pmt_scheme_id
+
+left join mf_buyer_type j on i.type_id = j.type_id
+
+left join (select a.rb_id, b.issued_date, a.co_id, a.proj_id, a.pbl_id, a.seq_no
+	from ( select distinct on (rb_id, co_id, pay_rec_id, pbl_id, seq_no) rb_id, co_id, proj_id, pay_rec_id, pbl_id, seq_no from rf_crb_detail
+	where acct_id = '06-01-01-000' and trans_amt < 0 and status_id = 'A' ) a
+	left join rf_crb_header b on a.rb_id = b.rb_id and a.co_id = b.co_id and a.pay_rec_id = b.pay_rec_id ) O on a.proj_id = O.proj_id and a.pbl_id = O.pbl_id and a.seq_no = O.seq_no and a.co_id = O.co_id
+
+
+order by b.entity_name]]>
+	</queryString>
+	<field name="entry_no" class="java.lang.Long"/>
+	<field name="unit_desc" class="java.lang.String"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="takeout_date" class="java.sql.Timestamp"/>
+	<field name="mode_of_pmt" class="java.lang.String"/>
+	<field name="selling_price" class="java.math.BigDecimal"/>
+	<field name="prin_payment_2015" class="java.math.BigDecimal"/>
+	<field name="prin_payment_2016" class="java.math.BigDecimal"/>
+	<field name="prin_payment_2017" class="java.math.BigDecimal"/>
+	<field name="prin_payment_2018" class="java.math.BigDecimal"/>
+	<field name="prin_payment_2019" class="java.math.BigDecimal"/>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="seq_no" class="java.lang.Integer"/>
+	<field name="perc_completion" class="java.math.BigDecimal"/>
+	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="perc_comp_15" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{prin_payment_2015}]]></variableExpression>
+	</variable>
+	<variable name="perc_comp_16" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{prin_payment_2016}]]></variableExpression>
+	</variable>
+	<variable name="perc_comp_17" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{prin_payment_2017}]]></variableExpression>
+	</variable>
+	<variable name="perc_comp_18" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{prin_payment_2018}]]></variableExpression>
+	</variable>
+	<variable name="count" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{entry_no}]]></variableExpression>
+	</variable>
+	<variable name="perc_comp_19" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{prin_payment_2019}]]></variableExpression>
+	</variable>
+	<variable name="nsp" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{selling_price}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="52">
+			<textField isBlankWhenNull="true">
+				<reportElement x="79" y="3" width="298" height="10" uuid="e6c239db-f704-445a-adeb-dac4a57229a1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{company}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement x="79" y="14" width="298" height="10" uuid="8ebe23d0-01df-468f-b132-da6f11ad369b"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Annual Payment"]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement x="79" y="36" width="343" height="10" uuid="6fc75ff7-904c-4d1c-bc8c-8b11d3807a28"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{proj_name} + " / " + "Phase " + $P{phase_no}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="3" width="77" height="10" uuid="1f80bc5c-a3a4-48ac-800e-fd4e2b044331"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Firm Name :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="14" width="77" height="10" uuid="b8eef38f-5c2a-44a1-951e-f9eb94fdc4f2"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Report :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="25" width="77" height="10" uuid="1fa2b94e-d424-4df6-a624-e4f253379c6e"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[BOI Reg. No. :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="36" width="77" height="10" uuid="b329b829-dc48-4af0-8d79-9b9d737b57b8"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Registered Activity :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" evaluationTime="Auto">
+				<reportElement positionType="Float" x="704" y="36" width="176" height="11" uuid="95d5c972-1436-4b4b-9a4c-74e3346036fb"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + ($V{CURRENT_PAGE_NUMBER} == null ? $V{PAGE_NUMBER}:$V{CURRENT_PAGE_NUMBER}) + " of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement x="79" y="25" width="343" height="10" uuid="b6b17339-71a9-48bf-a451-e6a8743aea59"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["BOI CR No. " + $P{boi_reg_no}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="880" height="42" uuid="ec9c529a-c987-4fff-957e-2b4fe1cc4c07"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="30" height="42" forecolor="#000000" backcolor="#CCFFCC" uuid="b1e70f2c-2b95-4149-b8c6-9cb3815ca50a"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="30" y="0" width="75" height="42" backcolor="#CCFFCC" uuid="67d163fd-57e6-4238-bc0f-e7e404376f95"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unit Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="105" y="0" width="171" height="42" backcolor="#CCFFCC" uuid="f430980f-2dc4-48bc-aa91-b7d7326559ca"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Client Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="333" y="0" width="92" height="42" backcolor="#CCFFCC" uuid="2ae2ce88-2d30-48d9-b75d-7ede633f7799"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mode of Payment]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="276" y="0" width="57" height="42" backcolor="#CCFFCC" uuid="d4e49bfa-5a29-4d04-b4b9-1ad8dc13dc61"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Take Out Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="815" y="0" width="65" height="42" backcolor="#CCFFCC" uuid="e53bea82-d228-4719-8639-dd69cddbb742"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[% Completion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="490" y="13" width="65" height="29" backcolor="#CCFFCC" uuid="c80f281f-bf58-43de-a46f-c2c76f86c570"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Percentage of Completion (2015)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="425" y="0" width="65" height="42" backcolor="#CCFFCC" uuid="b7468e99-efe2-4bb3-88d3-260ea134ebce"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Contract / Package / Selling Price]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="490" y="0" width="325" height="13" backcolor="#CCFFCC" uuid="c80c3bdc-40fd-4fe4-9d69-6fbe5c5f7b82"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Recognized/Realized/Collected and Declared Cash/Installment Sales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="555" y="13" width="65" height="29" backcolor="#CCFFCC" uuid="6c41acd5-8ad6-4cd3-b054-2692638451aa"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Percentage of Completion (2016)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="620" y="13" width="65" height="29" backcolor="#CCFFCC" uuid="7c64135f-9ed3-4aec-a946-a4d9684f4f37"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Percentage of Completion (2017)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="685" y="13" width="65" height="29" backcolor="#CCFFCC" uuid="bba22da1-d8e5-4acb-9523-e55b7f996134"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Percentage of Completion (2018)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="750" y="13" width="65" height="29" backcolor="#CCFFCC" uuid="6a8fc2c9-ba58-4508-84f8-f61512bb80ee"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Percentage of Completion (2019)]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="30" height="11" uuid="e0ac2783-ee07-43d4-8d65-29960c56dad5"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{count}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="105" y="0" width="171" height="11" uuid="3b52e9e6-1252-4ab2-b30c-ddfd7e39282c"/>
+				<box leftPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{client_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="30" y="0" width="75" height="11" uuid="7cc76f8e-8c58-4e96-96ee-750b7f32a5f8"/>
+				<box leftPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unit_desc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement x="333" y="0" width="92" height="11" uuid="5e159715-24b1-4ef8-bd18-88dff2b4d9b0"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mode_of_pmt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="MM/dd/yyyy" isBlankWhenNull="true">
+				<reportElement x="276" y="0" width="57" height="11" uuid="91450ff4-351a-4b03-bd7d-06ed9099fd99"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{takeout_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="490" y="0" width="65" height="11" uuid="ac98031d-1789-4708-b2df-d69290c97274"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prin_payment_2015}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="620" y="0" width="65" height="11" uuid="9892efed-1261-4e0f-8a58-50c4a305c095"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prin_payment_2017}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="815" y="0" width="65" height="11" uuid="a403aa0c-8ea3-4129-9a4e-1f4a6c1e250a"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{perc_completion}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="425" y="0" width="65" height="11" uuid="2a07017c-f14d-497b-a289-75b85cb079b0"/>
+				<box rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{selling_price}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="555" y="0" width="65" height="11" uuid="373c37ab-fa11-4c10-9b03-9a7a44445a00"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prin_payment_2016}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="685" y="0" width="65" height="11" uuid="a99ea85f-f79f-435e-9888-0b5f4409ff22"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prin_payment_2018}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="750" y="0" width="65" height="11" uuid="2d88df95-bcb0-407a-8151-f7d38977e7e3"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prin_payment_2019}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="6"/>
+	</columnFooter>
+	<lastPageFooter>
+		<band height="5"/>
+	</lastPageFooter>
+	<summary>
+		<band height="114">
+			<textField isBlankWhenNull="true">
+				<reportElement x="128" y="0" width="297" height="13" uuid="11c734c9-1fb8-485c-81fa-2a258774ed42"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="144" height="13" uuid="f788798e-12f5-44f4-bf0b-6e82008ce141"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" Total Units :  " + $V{count}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="555" y="0" width="65" height="13" uuid="698efee1-9b89-4c8c-b929-7a83ef7351dd"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{perc_comp_16}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="620" y="0" width="65" height="13" uuid="5a61e29c-6e95-4549-8190-090b02988fda"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{perc_comp_17}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="490" y="0" width="65" height="13" uuid="72e6aad1-9a70-463b-8081-966634cc54fd"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{perc_comp_15}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="685" y="0" width="65" height="13" uuid="9991557d-f471-41fb-a303-13a1a6587e2e"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{perc_comp_18}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="815" y="0" width="65" height="13" uuid="1a22dd11-4bf6-49e0-b198-b8de4dbba50d"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="62" width="177" height="10" uuid="0efd322d-da4b-4ce5-8ffd-50337a91bb32"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[________________________________________]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1" y="72" width="178" height="12" uuid="5bafe841-9137-4239-956e-0731f2e18d59"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prepared_by}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="34" width="77" height="10" uuid="e43d1275-503c-45ba-980b-0f716d9a7783"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Prepared by:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="638" y="72" width="177" height="10" uuid="dcd16bc6-77df-4fe3-afa8-d8c7a9125172"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[________________________________________]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="638" y="44" width="77" height="10" uuid="8145db6b-f362-4a5d-bc0e-60785743670e"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Certified Correct by:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="638" y="82" width="177" height="10" uuid="91746344-3042-4e0f-8571-925dd5075cca"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JOHNNY L. CORPUZ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="638" y="92" width="177" height="10" uuid="4a41bc52-b402-4cb9-bc59-0350ddb08483"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Vice-President]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="638" y="102" width="177" height="10" uuid="db44a9a7-db16-4f90-8140-81aaac69a92a"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Authorized Representative]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="750" y="0" width="65" height="13" uuid="623ce0e3-aadb-4b86-a31b-469ef96b5065"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{perc_comp_19}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="425" y="0" width="65" height="13" uuid="e5314920-7897-4643-a7e3-eca3f3a3e06d"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{nsp}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

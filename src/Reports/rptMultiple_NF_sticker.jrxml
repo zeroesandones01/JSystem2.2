@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptMultiple_NF_sticker" columnCount="3" printOrder="Horizontal" pageWidth="612" pageHeight="792" columnWidth="190" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="40"/>
+	<parameter name="assetToPrint" class="java.lang.String"/>
+	<parameter name="custodian" class="java.lang.String"/>
+	<parameter name="co_name" class="java.lang.String"/>
+	<parameter name="emp_code" class="java.lang.String"/>
+	<parameter name="asset_type" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from
+(
+select *, ROW_NUMBER () OVER  ( order by
+	--a.asset_no::varchar,
+	a.asset_name_1::text) as marker
+from
+(
+	select  ROW_NUMBER() OVER ( order BY
+ 	null ,
+ 	null,
+ 	null,
+	a.object_id,
+	c.entity_name,
+	(case when d.company_name is null then 'ACERHOMES DEVELOPMENT CORPORATION' else d.company_name end),
+	--UPPER(format('%s%s%s',c.last_name, left(c.first_name,1),left(c.middle_name,1))),a.date_acquired) AS "ROW",
+	(c.last_name || ', ' || left(c.first_name, 1)|| '.' || left(c.middle_name, 1) || '.'), a.date_acquired) AS "ROW",
+ 	null,
+	a.object_id::varchar as asset_no_1,
+	a.object_name as asset_name_1,
+	to_char(getinteger(a.object_id), 'FM00000000') as anum_1,
+	c.entity_name as entity_name_1,
+	(case when d.company_name is null then 'ACERHOMES DEVELOPMENT CORPORATION' else d.company_name end) as company_name_1,
+	--UPPER(format('%s%s%s',c.last_name, left(c.first_name,1),left(c.middle_name,1))) as cuser_1,a.date_acquired as date_acquired_1
+	(c.last_name || ', ' || left(c.first_name, 1)|| '.' || left(c.middle_name, 1) || '.') as cuser_1,a.date_acquired as date_acquired_1,
+	(case when a.asset_cost >= 5000 then 'A' when a.asset_cost >= 1500 and a.asset_cost < 5000 then 'B' when a.asset_cost < 1500 then 'C' end) as c_letter_coding,
+	'' as title_code
+	from tbl_nonfixedasset  a
+	left join em_employee b on a.current_cust::int=b.emp_code::int
+	left join rf_entity as c on b.entity_id=c.entity_id
+	left join mf_company d on b.co_id=d.co_id
+	where getinteger(a.object_id) in (select asset_no::int from tmp_asset where emp_code = $P{emp_code} and asset_type = 'Non-fixed Asset' ) and a.status_id = 'Active'
+
+	) a
+)  a]]>
+	</queryString>
+	<field name="ROW" class="java.lang.Long"/>
+	<field name="?column?" class="java.lang.String"/>
+	<field name="asset_no_1" class="java.lang.String"/>
+	<field name="asset_name_1" class="java.lang.String"/>
+	<field name="anum_1" class="java.lang.String"/>
+	<field name="entity_name_1" class="java.lang.String"/>
+	<field name="company_name_1" class="java.lang.String"/>
+	<field name="cuser_1" class="java.lang.String"/>
+	<field name="date_acquired_1" class="java.sql.Date"/>
+	<field name="c_letter_coding" class="java.lang.String"/>
+	<field name="title_code" class="java.lang.String"/>
+	<field name="marker" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="50" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="120" height="50"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.5" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.5" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.5" lineStyle="Dashed"/>
+				</box>
+			</frame>
+			<textField>
+				<reportElement x="1" y="40" width="119" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{cuser_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="0" width="119" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{asset_no_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

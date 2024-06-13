@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptColorConfirmationLetter1" printOrder="Horizontal" pageWidth="359" pageHeight="27" columnWidth="359" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="pbl_id" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT *
+FROM mf_color_scheme
+WHERE color_scheme_id IN (SELECT unnest(color_scheme_id)
+                          FROM mf_unit_info
+                          WHERE pbl_id = $P{pbl_id});]]>
+	</queryString>
+	<field name="color_scheme_id" class="java.lang.String"/>
+	<field name="color_scheme_desc" class="java.lang.String"/>
+	<field name="vb_code" class="java.lang.String"/>
+	<field name="status_id" class="java.lang.String"/>
+	<field name="created_by" class="java.lang.String"/>
+	<field name="date_created" class="java.sql.Timestamp"/>
+	<field name="edited_by" class="java.lang.String"/>
+	<field name="date_edited" class="java.sql.Timestamp"/>
+	<detail>
+		<band height="27" splitType="Prevent">
+			<frame>
+				<reportElement x="104" y="6" width="150" height="15"/>
+				<rectangle>
+					<reportElement x="0" y="0" width="15" height="15"/>
+				</rectangle>
+				<textField>
+					<reportElement x="15" y="0" width="135" height="15"/>
+					<box leftPadding="3">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="none"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{color_scheme_desc}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptPCOSTDisbursement_Req_BP" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.1000000000000025"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="112"/>
+	<parameter name="p_batch_no" class="java.lang.String"/>
+	<parameter name="p_emp_code" class="java.lang.String"/>
+	<parameter name="p_co_name" class="java.lang.String"/>
+	<parameter name="p_co_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="p_proj_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select * from view_pcost_disbursement_request_bp($P{p_batch_no},$P{p_co_id},$P{p_proj_id}, $P{p_emp_code})]]>
+	</queryString>
+	<field name="c_particular" class="java.lang.String"/>
+	<field name="c_buyer" class="java.lang.String"/>
+	<field name="c_rplf_no" class="java.lang.String"/>
+	<field name="c_pcost_amt" class="java.math.BigDecimal"/>
+	<field name="c_payee_name" class="java.lang.String"/>
+	<field name="c_request_by" class="java.lang.String"/>
+	<field name="c_dept_alias" class="java.lang.String"/>
+	<field name="c_unit" class="java.lang.String"/>
+	<variable name="total_amt" class="java.math.BigDecimal" resetType="Group" resetGroup="grpParticular" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_pcost_amt}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<group name="grpParticular" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{c_rplf_no}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField>
+					<reportElement positionType="Float" x="1" y="0" width="385" height="18"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{c_particular}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="301">
+				<staticText>
+					<reportElement positionType="Float" x="386" y="0" width="83" height="17"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[TOTAL:      ]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement x="469" y="0" width="104" height="17"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{c_pcost_amt}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="83" width="115" height="17"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Requested by:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="114" y="83" width="113" height="17"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Checked by:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" mode="Transparent" x="226" y="83" width="114" height="17"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Approved by:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="453" y="83" width="119" height="17"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Payment Received by:]]></text>
+				</staticText>
+				<line>
+					<reportElement positionType="Float" x="12" y="116" width="92" height="1"/>
+				</line>
+				<textField>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="100" width="115" height="17"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{c_request_by}]]></textFieldExpression>
+				</textField>
+				<rectangle radius="10">
+					<reportElement positionType="Float" x="1" y="134" width="572" height="167"/>
+				</rectangle>
+				<textField>
+					<reportElement positionType="Float" x="12" y="178" width="551" height="46"/>
+					<textElement textAlignment="Justified">
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["I hereby authorize "+$P{p_co_name}+" to deduct from my salary for the period of ___________ the amount of ________________________________ (P_________) upon non-liquidation of my cash advances for ___________ as specified in the company policy."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="199" y="143" width="186" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[AUTHORITY TO DEDUCT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="358" y="270" width="205" height="17"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Printed name and signature]]></text>
+				</staticText>
+				<line>
+					<reportElement positionType="Float" x="124" y="116" width="92" height="1"/>
+				</line>
+				<line>
+					<reportElement positionType="Float" x="238" y="116" width="92" height="1"/>
+				</line>
+				<staticText>
+					<reportElement positionType="Float" mode="Transparent" x="339" y="83" width="115" height="17"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Doc. Received by:]]></text>
+				</staticText>
+				<line>
+					<reportElement positionType="Float" x="350" y="116" width="92" height="1"/>
+				</line>
+				<line>
+					<reportElement positionType="Float" x="468" y="116" width="92" height="1"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="171" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="51" width="20" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="1" y="67" width="20" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="1" y="83" width="20" height="16"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="21" y="50" width="183" height="17"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[  Check Payment]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="66" width="183" height="17"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[  Cash Advance (CA) in check]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="82" width="183" height="17"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[  Cash Fund Advance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="266" y="50" width="183" height="17"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[  Cash Fund Reimbursement]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="266" y="66" width="183" height="17"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[  Cash Fund Replenishment]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="246" y="51" width="20" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="246" y="67" width="20" height="16"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="1" y="113" width="48" height="17"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[PAYEE:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="132" width="48" height="17"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Dept:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="449" y="112" width="36" height="17"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="48" y="113" width="324" height="17"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_payee_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="49" y="132" width="102" height="17"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_dept_alias}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="484" y="112" width="88" height="17"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("MMM dd, yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="384" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{p_co_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="17" width="261" height="20"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DISBURSEMENT REQUEST]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="0" width="384" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Particulars]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="385" y="0" width="83" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RPLF no.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="468" y="0" width="104" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Prevent">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="1" y="0" width="385" height="18">
+					<printWhenExpression><![CDATA[!$F{c_buyer}.equals("") || !$F{c_unit}.equals("")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_buyer} + " (" + $F{c_unit} + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="386" y="0" width="83" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_rplf_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="468" y="0" width="105" height="17" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[null]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

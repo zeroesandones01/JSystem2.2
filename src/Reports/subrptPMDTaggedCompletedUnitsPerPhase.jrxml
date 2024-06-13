@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptPMDTaggedCompletedUnitsPerPhase" pageWidth="64800" pageHeight="62064" orientation="Landscape" columnWidth="64800" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.9230756500000017"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="proj_id" class="java.lang.String"/>
+	<parameter name="date_fr" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{date_fr}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="date_to" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="phase_no" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select distinct on (y.phase_summary) * from(
+		Select E.phase as phase_summary, count (E.lot)::int as phase_count from
+		(select b.pbl_id, b.unitstatus_id, a.description, b.status_date, a.phase, a.block, a.lot, to_char(b.status_date,'MM-dd-YYYY') as completion_date
+		from mf_unit_info a
+		left join rf_unit_status b on a.pbl_id = b.pbl_id
+		where (a.phase = $P{phase_no} or $P{phase_no} = '')
+		and b.unitstatus_id = '02' and b.status_date::date between $P{date_fr}::date and $P{date_to}::date
+AND b.status_id = 'A'
+		order by a.phase, a.block::int, a.lot::int, b.status_date)E
+		group by E.phase)y]]>
+	</queryString>
+	<field name="phase_summary" class="java.lang.String"/>
+	<field name="phase_count" class="java.lang.Integer"/>
+	<variable name="total" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{phase_count}]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="5" splitType="Prevent"/>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Prevent">
+			<textField isStretchWithOverflow="true" pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="5" y="1" width="60" height="11" backcolor="#F6F6D7"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.75" lineColor="#F1EAEA"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{phase_summary}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="66" y="1" width="66" height="11" backcolor="#F6F6D7"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.75" lineColor="#F1EAEA"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{phase_count}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="13" splitType="Prevent">
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="66" y="1" width="66" height="11" backcolor="#F6F6D7"/>
+				<box leftPadding="2">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.75" lineColor="#F1EAEA"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="5" y="1" width="60" height="11" backcolor="#F6F6D7"/>
+				<box leftPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.75" lineColor="#F1EAEA"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Total"]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

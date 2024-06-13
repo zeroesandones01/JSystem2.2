@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.241842646118334"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="96"/>
+	<property name="ireport.background.image.properties" value="true,true,0.25,-8,-8,0,0,2566,4216"/>
+	<style name="style1"/>
+	<parameter name="batch_no" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT B.entity_id, A.c_last_name, A.c_first_name, A.c_middle_name,
+UPPER(TRIM(A.c_permaaddress)) || CASE WHEN COALESCE(A.c_city, '') != '' THEN ', ' ELSE '' END || UPPER(COALESCE(TRIM(A.c_city), '')) as c_PermaAddress,
+A.c_mobile, A.c_email, '5342237' as BusinessNumber, A.c_tin,
+(
+SELECT CASE WHEN length(id_desc)::INT > 24::INT THEN Y.id_alias ELSE Y.id_desc END AS id_alias
+FROM rf_entity_submitted_id X
+INNER JOIN mf_client_valid_id Y ON X.id_type::INTEGER = Y.id_no::INTEGER
+WHERE X.entity_id = B.entity_id AND (Y.id_no::INTEGER = 9 OR '' = '' AND X.default_id = true) ORDER BY Y.id_no::INTEGER ASC LIMIT 1
+) as IDType,
+(
+SELECT X.id_no
+FROM rf_entity_submitted_id X
+INNER JOIN mf_client_valid_id Y ON X.id_type::INTEGER = Y.id_no::INTEGER
+WHERE X.entity_id = B.entity_id AND (Y.id_no::INTEGER = 9 OR '' = '' AND X.default_id = true) ORDER BY Y.id_no::INTEGER ASC LIMIT 1
+) as IDNo, A.c_residence
+FROM tmp_rtd_printing A
+INNER JOIN rf_entity B ON A.c_last_name = B.last_name AND A.c_first_name = B.first_name AND A.c_middle_name = B.middle_name
+INNER JOIN mf_project C ON A.c_project = C.proj_name
+INNER JOIN mf_unit_info D ON C.proj_id = D.proj_id AND TRIM(A.c_unit) = TRIM(D.description)
+INNER JOIN rf_sold_unit E ON B.entity_id = E.entity_id AND C.proj_id = E.projcode AND D.pbl_id = E.pbl_id
+LEFT JOIN rf_rtd_enrolled F ON B.entity_id = F.c_entity_id AND C.proj_id = F.c_proj_id AND D.pbl_id = F.c_pbl_id AND E.seq_no::INT = F.c_seq_no::INT
+WHERE (COALESCE(F.batch_no, '') = $P{batch_no} OR $P{batch_no} = '') AND F.tobeprinted::INTEGER = 1::INTEGER
+ORDER BY A.c_last_name, A.c_first_name, A.c_middle_name]]>
+	</queryString>
+	<field name="entity_id" class="java.lang.String"/>
+	<field name="c_last_name" class="java.lang.String"/>
+	<field name="c_first_name" class="java.lang.String"/>
+	<field name="c_middle_name" class="java.lang.String"/>
+	<field name="c_permaaddress" class="java.lang.String"/>
+	<field name="c_mobile" class="java.lang.String"/>
+	<field name="c_email" class="java.lang.String"/>
+	<field name="businessnumber" class="java.lang.String"/>
+	<field name="c_tin" class="java.lang.String"/>
+	<field name="idtype" class="java.lang.String"/>
+	<field name="idno" class="java.lang.String"/>
+	<field name="c_residence" class="java.lang.String"/>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="792" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="14" y="64" width="390" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_last_name} + ", " + $F{c_first_name} + " " + $F{c_middle_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="14" y="93" width="390" height="14"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_permaaddress}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="148" width="66" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_mobile}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="142" y="148" width="83" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["5342237"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="225" y="148" width="82" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["5333155"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="307" y="142" width="96" height="27"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_email}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="14" y="121" width="390" height="14"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_permaaddress}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="187" width="142" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{idtype}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="142" y="187" width="134" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{idno}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="276" y="187" width="108" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_tin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="66" y="148" width="76" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_residence}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

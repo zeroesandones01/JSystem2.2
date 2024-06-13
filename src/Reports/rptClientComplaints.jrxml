@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptClientComplaints" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="11"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="prepared_by" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="filterproject" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="proj_id" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select trim(a.compl_no) as complaint_no, a.date_complained,
+get_client_name(entity_id) as client_name, get_employee_name(a.comp_rcvd_by) as received_by,
+trim(format('%s-%s-%s'::text, btrim(e.phase::text), btrim(e.block::text), btrim(e.lot::text))::character varying) as pbl , trim(get_project_name(a.projcode)) as proj_name,
+trim(b.dept_alias) as addressed_to, c.ctgry_desc, d.complain_source as complaint_source
+from rf_client_complaints a
+left join mf_department b on b.dept_code = a.comp_addressed_to
+left join mf_complaint_category c on c.ctgry_code = a.category_code
+left join mf_complaint_sources d on d.src_id = a.src_id
+left join mf_unit_info e on e.pbl_id = a.pbl_id
+WHERE compl_no not in (select compl_no from rf_complain_accomplishment)
+--filters the complaints based on the project id
+AND (CASE WHEN $P{filterproject} THEN a.projcode = $P{proj_id} ELSE TRUE END)
+order by compl_no, date_complained]]>
+	</queryString>
+	<field name="complaint_no" class="java.lang.String"/>
+	<field name="date_complained" class="java.sql.Timestamp"/>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="received_by" class="java.lang.String"/>
+	<field name="pbl" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="addressed_to" class="java.lang.String"/>
+	<field name="ctgry_desc" class="java.lang.String"/>
+	<field name="complaint_source" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="27" splitType="Stretch">
+			<staticText>
+				<reportElement x="223" y="0" width="285" height="26"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LIST OF ACTIVE COMPLAINTS]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="5" width="752" height="1"/>
+			</line>
+			<line>
+				<reportElement x="1" y="27" width="751" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="1" y="5" width="90" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Complaint No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="508" y="7" width="112" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Addressed to]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="91" y="5" width="126" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Complaint by]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="632" y="5" width="98" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Complaint Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="237" y="6" width="78" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PBL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="6" width="193" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Project]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="77" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{complaint_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="78" y="0" width="159" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="620" y="0" width="131" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ctgry_desc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="508" y="1" width="112" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{addressed_to}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="237" y="0" width="78" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{pbl}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="0" width="193" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{proj_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="632" y="1" width="80" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="712" y="1" width="40" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="20">
+			<staticText>
+				<reportElement x="6" y="0" width="59" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<text><![CDATA[Prepared by:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="65" y="0" width="110" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{prepared_by}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

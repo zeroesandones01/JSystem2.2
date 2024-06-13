@@ -1,0 +1,757 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptDeedOfRestrictions" pageWidth="612" pageHeight="936" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="149"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="entity_id" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["0000000100"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="proj_id" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["015"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pbl_id" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["241"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="seq_no" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT sp_center_format(0, FORMAT('%s %s. %s', TRIM(c.first_name), substr(TRIM(c.middle_name), 1, 1), TRIM(c.last_name))) as client_name, get_client_address(a.entity_id) as client_address, d.proj_name, b.phase, b.block, b.lot, b.lotarea, b.floorarea, e.model_desc, e.model_class, e.with_color_scheme, f.company_name, f.company_address, g.*, f.company_logo
+
+FROM rf_sold_unit a
+LEFT JOIN mf_unit_info b ON b.proj_id = a.projcode and b.pbl_id = a.pbl_id
+LEFT JOIN rf_entity c ON c.entity_id = a.entity_id
+LEFT JOIN mf_project d ON d.proj_id = a.projcode
+LEFT JOIN mf_product_model e ON e.model_id = a.model_id
+LEFT JOIN mf_company f ON f.co_id = d.co_id
+LEFT JOIN view_acknowledgement_part(a.entity_id, a.projcode, a.pbl_id, a.seq_no) g ON g.entity_id = a.entity_id
+
+WHERE a.entity_id = $P{entity_id}
+AND a.projcode = $P{proj_id}
+AND a.pbl_id = $P{pbl_id}
+AND a.seq_no = $P{seq_no};]]>
+	</queryString>
+	<field name="client_name" class="java.lang.String"/>
+	<field name="client_address" class="java.lang.String"/>
+	<field name="proj_name" class="java.lang.String"/>
+	<field name="phase" class="java.lang.String"/>
+	<field name="block" class="java.lang.String"/>
+	<field name="lot" class="java.lang.String"/>
+	<field name="lotarea" class="java.math.BigDecimal"/>
+	<field name="floorarea" class="java.math.BigDecimal"/>
+	<field name="model_desc" class="java.lang.String"/>
+	<field name="model_class" class="java.lang.String"/>
+	<field name="with_color_scheme" class="java.lang.Boolean"/>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="company_address" class="java.lang.String"/>
+	<field name="entity_id" class="java.lang.String"/>
+	<field name="proj_id" class="java.lang.String"/>
+	<field name="pbl_id" class="java.lang.String"/>
+	<field name="seq_no" class="java.lang.Integer"/>
+	<field name="client_id_presented" class="java.lang.String"/>
+	<field name="client_id_no" class="java.lang.String"/>
+	<field name="client_tin_no" class="java.lang.String"/>
+	<field name="signatory_name" class="java.lang.String"/>
+	<field name="signatory_id_presented" class="java.lang.String"/>
+	<field name="signatory_id_no" class="java.lang.String"/>
+	<field name="signatory_tin_no" class="java.lang.String"/>
+	<field name="signatory_position" class="java.lang.String"/>
+	<field name="company_logo" class="java.lang.String"/>
+	<variable name="signatory" class="java.lang.String">
+		<variableExpression><![CDATA["CORPUZ, JOHNNY LIWANAG"]]></variableExpression>
+		<initialValueExpression><![CDATA["CORPUZ, JOHNNY LIWANAG"]]></initialValueExpression>
+	</variable>
+	<variable name="position" class="java.lang.String">
+		<variableExpression><![CDATA["VP - MARKETING"]]></variableExpression>
+		<initialValueExpression><![CDATA["VP - MARKETING"]]></initialValueExpression>
+	</variable>
+	<group name="grpDetail" isStartNewPage="true">
+		<groupHeader>
+			<band height="114">
+				<textField isStretchWithOverflow="true">
+					<reportElement x="0" y="0" width="572" height="30"/>
+					<textElement markup="styled">
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["\n<b>KNOW ALL MEN BY THESE PRESENTS:</b>\n\n" +
+
+"This Deed of Restrictions is made and entered into on ______________ at Quezon City, Philippines, by and between:\n\n" +
+
+"<b>"+$F{company_name}+"</b>, a corporation duly orgamized and existing under and by virtue of the laws of the Republic of the Philippines, with office address at <u><b>   "+ $F{company_address} + "   </b></u> owner and developer of Cenqhomes represented herein by its <u><b>   "+ $V{signatory} +"   </b></u>, <u><b>   "+ $V{position} +"   </b></u> hereinafter referred to as the DEVELOPER,\n"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="0" y="30" width="572" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["-and-"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="42" width="572" height="30"/>
+					<textElement markup="styled">
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["<u><b>   "+ $F{client_name} +"   </b></u>, of legal age, Filipino, married / single, with address at <u><b>   "+ $F{client_address} + "   </b></u>, hereinafter referred to as the HOMEOWNER.\n"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="0" y="72" width="572" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["WITNESSETH:"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="0" y="84" width="572" height="30"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["\n<b>WHEREAS, "+ $F{company_name} +"</b> is the <b>OWNER</b> and <b>DEVELOPER</b> of <u><b>   "+ $F{proj_name} +"   </b></u> (the \"Subdivision\") located at Barangay San Isidro, Rodriguez, Rizal;\n\n" +
+
+"WHEREAS, for the purpose of enhancing the property value and attractiveness of the Subdivision and every part thereof, the DEVELOPER intends to establish common construction and design standards, and set forth guidelines on the use, occupancy and maintenance of the property;\n\n" +
+
+"NOW THEREFORE, the DEVELOPER hereby declares that the saleable house and lot units or lot units only (the \"property\") of the subdivision shall be held, conveyed, encumbered, used, sold and improved subject to the following limitations, conditions, restrictions and easements (the \"Restrictions\"). All fo the restrictions shall be binding upon all saleable house and lot units or lot units only, to all owners, their succesors and assigns and all parties acquiring any right, title or interest in or to any part of the subdivision (the \"HOMEOWNER\").\n"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="470">
+				<textField isStretchWithOverflow="true">
+					<reportElement x="10" y="0" width="562" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["6. GENERAL PROVISION\n"]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement positionType="Float" x="30" y="15" width="542" height="12"/>
+					<staticText>
+						<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+						<textElement>
+							<font fontName="Times New Roman" size="9"/>
+						</textElement>
+						<text><![CDATA[6.1]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true">
+						<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+						<textElement textAlignment="Justified">
+							<font fontName="Times New Roman" size="9"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA["Period of Restriction. This DEED OF RESTRICTIONS shall run with and bind the subdivision and shall be binding on the owners, their representatives, heirs, grantees, assignees, successors for a term of twenty five (25) years from the date this Deed is recorded except for the retriction set forth in Section 2 hereof which is permanent and perpetual restrictions.\n"]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement positionType="Float" x="30" y="27" width="542" height="12"/>
+					<staticText>
+						<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+						<textElement>
+							<font fontName="Times New Roman" size="9"/>
+						</textElement>
+						<text><![CDATA[6.2]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true">
+						<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+						<textElement textAlignment="Justified">
+							<font fontName="Times New Roman" size="9"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA["Enforcement of Restriction. The DEVELOPER, its assignee, succesors and/or authorized representatives shall have the right to enter and inspect any property during reasonable hours of the day and upon due notice, to ensure and ascertain compliance with the DEED OF RESTRICTIONS.\n\n"+
+
+"The DEED OF RESTRICTIONS may be enjoined and/or enforced by court action by the DEVELOPER, its assignee, corporate succesor and/or authorized representatives.\n\n"+
+
+"In the event of any violation of the herein restrictions, the DEVELOPER may send a notice of violation stating the nature of violation committed and the expected action to be taken by the HOMEOWNER. Upon receipt of such notice, the HOMEOWNER is expected to act on the violations to ensure compliance of the restrictions.\n\n"+
+
+"In cases of delinquent payment of fees, the DEVELOPER may also send a notice of delinquent payment. Upon receipt of such notice, the HOMEOWNER is expected to pay corresponding fees due.\n\n"+
+
+"The DEVELOPER, its assignee, corporate successor and/or authorized representatives reserves the right to impose penalty upon such Homeowner or violator and/or resort to other remedies, such as cutting of waterline of the HOMEOWNER, confiscation of goods or merchandise, demolition of the structure built not in accordance with the plans approved by the DEVELOPER, disallowing use of the facilities of the Subdivision and any such action deemed necessary to enforce the restrictions. Imposition of penalties and/or other remedies will be done without the need of court order.\n"]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement positionType="Float" x="30" y="39" width="542" height="12"/>
+					<staticText>
+						<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+						<textElement>
+							<font fontName="Times New Roman" size="9"/>
+						</textElement>
+						<text><![CDATA[6.3]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true">
+						<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+						<textElement textAlignment="Justified">
+							<font fontName="Times New Roman" size="9"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA["Amendments. The DEVELOPER shall have the unilateral right to amend, revise, modify and change any of the terms and conditions of this DEED OF RESTRICTIONS and the Homeowner agrees and undertakes to abide by and comply with the aforementioned amendment, revisions, modifications and changes.\n"]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement positionType="Float" x="30" y="51" width="542" height="12"/>
+					<staticText>
+						<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+						<textElement>
+							<font fontName="Times New Roman" size="9"/>
+						</textElement>
+						<text><![CDATA[6.4]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true">
+						<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+						<textElement textAlignment="Justified">
+							<font fontName="Times New Roman" size="9"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA["Separability. Should any provision or portions thereof shal remain unaffected and in full force and effect.\n"]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement positionType="Float" x="30" y="63" width="542" height="12"/>
+					<staticText>
+						<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+						<textElement>
+							<font fontName="Times New Roman" size="9"/>
+						</textElement>
+						<text><![CDATA[6.5]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true">
+						<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+						<textElement textAlignment="Justified">
+							<font fontName="Times New Roman" size="9"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA["Headings. The headings used in this Deed are for convinience only and are not to be used to interpret the meaning of any of the provisions of this Deed.\n"]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement positionType="Float" x="30" y="75" width="542" height="12"/>
+					<staticText>
+						<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+						<textElement>
+							<font fontName="Times New Roman" size="9"/>
+						</textElement>
+						<text><![CDATA[6.6]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true">
+						<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+						<textElement textAlignment="Justified">
+							<font fontName="Times New Roman" size="9"/>
+						</textElement>
+						<textFieldExpression class="java.lang.String"><![CDATA["In case there shall be conflict in the interpretation of these restrictions, the interpertation of the DEVELOPER shall prevail.\n\n"]]></textFieldExpression>
+					</textField>
+				</frame>
+				<textField>
+					<reportElement positionType="Float" x="10" y="87" width="562" height="12"/>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["IN WITNESS WHEREOF, the Parties have executed this Deed this _____ day of _______________"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="112" width="250" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["AGREED AND ACCEPTED"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="135" width="250" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["By:"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="300" y="112" width="250" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="150" width="250" height="20"/>
+					<box>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="Dialog" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="170" width="250" height="20"/>
+					<box>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="Dialog" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="190" width="250" height="12"/>
+					<box topPadding="1">
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Marital Consent"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="300" y="150" width="250" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font fontName="Dialog" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["CORPUZ, JOHNNY LIWANAG"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="300" y="170" width="250" height="12"/>
+					<box topPadding="1">
+						<topPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="Times New Roman" size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Vice President - Marketing"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="205" width="552" height="30"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["SIGNED IN THE PRESENCE OF"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="235" width="250" height="15"/>
+					<box>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="312" y="235" width="250" height="15"/>
+					<box>
+						<bottomPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[""]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="249" width="552" height="30"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["ACKNOWLEDGMENT"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="281" width="552" height="20"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["       BEFORE ME, a Notary Public, for and in __________________________________________ personally appeared\n\n"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="306" width="242" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["NAME"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="321" width="242" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{client_name}.trim()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="336" width="242" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{signatory_name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="252" y="306" width="100" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["ID PRESENTED"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="252" y="321" width="100" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{client_id_presented}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="252" y="336" width="100" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{signatory_id_presented}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="352" y="306" width="120" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["ID NO."]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="352" y="321" width="120" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{client_id_no}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="352" y="336" width="120" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{signatory_id_no}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="472" y="306" width="90" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["TIN"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="472" y="321" width="90" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{client_tin_no}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="472" y="336" width="90" height="15"/>
+					<box>
+						<pen lineWidth="0.25"/>
+						<topPen lineWidth="0.25"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.25"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Dialog" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{signatory_tin_no}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="10" y="358" width="552" height="32"/>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Known to me to be same persons who executed the foregoing instrument and they acknowledged to me that the same is their voluntary act and deed as well as that of the corporation herein represented.\n\n"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="390" width="115" height="12"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Doc. No.____________"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="401" width="115" height="12"/>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Page No.___________"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="412" width="115" height="12"/>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Book No.___________"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="10" y="423" width="115" height="12"/>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Series of 201________"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="392" y="390" width="100" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["NOTARY PUBLIC"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="66" splitType="Stretch">
+			<textField>
+				<reportElement x="110" y="0" width="352" height="40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="40" width="352" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["DEED OF RESTRICTIONS"]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
+				<reportElement x="10" y="0" width="100" height="50"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<imageExpression class="java.io.InputStream"><![CDATA[this.getClass().getClassLoader().getResourceAsStream("Images/"+ $F{company_logo})]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="63" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="10" y="0" width="562" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["1. ASSOCIATION (HOA)\n"]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement positionType="Float" x="30" y="15" width="542" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<text><![CDATA[1.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The DEVELOPER may initiate the organization of a HOMEOWNERS' ASSOCIATION (the \"Association\") among the homeowners of the subdivision for the purpose of promoting and protecting their mutual interest and assist in their community development. The ASSOCIATION, or the local government unit (LGU) or such other person or entity designated or named by the DEVELOPER shall take over the responsibility of common areas / facilities of the subdivision upon donation or turn over by the DEVELOPER of such common areas ad facilities to the association, LGU or other person or entity. Thereafter, the ASSOCIATION, LGU or such other person or entity may undertake such projects and to promote the general welfare of the homeowners.\n"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="30" y="27" width="542" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<text><![CDATA[1.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The HOMEOWNERS undertakes and binds himself to become a member of ASSOCIATION. As such, the HOMEOWNER shall abide by the rules and regulation of the association, most particularly on the paymemt of the association dues and assesments. Said dues and assesments shall constitute a lien on the property, junior only to the liens of the government and to volutantarily mortgages for sufficient consideration.\n"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="30" y="39" width="542" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<text><![CDATA[1.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["In the meantime that the ownership of the facilities and utilities for water supply, street lighting, roads, drainage, and landscape parks and other facilities and amenities that may be put up for the members of the Association are not yet transferred to the concerned entity, the ASSOCIATION may conduct the affairs and activities of the association related with the proper operation, maintenance, regulation, and enforcement of the rules and regulation of the association as well as this DEED OF RESTRICTIONS subject to the control and supervision of the DEVELOPER. It is understood that the authority to impose and adjust fees, charges, dues and assesments (such as but not limited to water, temporary electricalm use of facilities) shall exclusively belong to the DEVELOPER, and it is being clearly understood that the DEVELOPER may in due time, transfer after proper arrangements, ownership of such facilities to the designated entity.\n"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="30" y="51" width="542" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<text><![CDATA[1.4]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Upon the turn-over by the DEVELOPER of the management and maintenance of basic facilities, streets, lanes or open spaces, the receiving ASSOCIATION or LGU shall succeed the DEVELOPER in all matters pertaining to the said facilities, streets, lanes or open spaces, at the sole option of the DEVELOPER.\n"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="63">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="10" y="0" width="562" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["2. USE AND OCCUPANCY OF THE UNIT / LOTS\n"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="10" y="15" width="562" height="12"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["The residential property purchased from the DEVELOPER shall be used primarily fro residence and shall not be used for illegal, immoral or hazardous trace or activity. Any violation hereof shall give the DEVELOPER the right to re-acquire the unit under the same terms and conditions as it was acquired by the HOMEOWNER from the DEVELOPER.\n"]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement positionType="Float" x="30" y="27" width="542" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<text><![CDATA[2.1]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The HOMEOWNER shall, under no circumstances, allow or subdivide the lot to be used as an access of Right-of-Way to any adjacent or adjoining property outside the subdivision whether belonging to the owner or other person. In casse of violation, the DEVELOPER is authorized to block access or refuse Right Way to other properties. This restriction shall not be applied to the DEVELOPER.\n"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="30" y="39" width="542" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<text><![CDATA[2.2]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["The residential properties and with all the improvements shall not be sold, leased, subleased, encumbered, assigned or otherwise disposed or transferred by the HOMEOWNER to any party without the prior written consent and approval of the DEVELOPER pending the full payment of the purchase price.\n"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="30" y="51" width="542" height="12"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="20" height="12"/>
+					<textElement>
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<text><![CDATA[2.3]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="20" y="0" width="522" height="12"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Times New Roman" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Admission into Premises / Easement of the Right of Way. Every HOMEOWNER shall admit into premises the DEVELOPER'S representative and/or public utility entities to inspect, install or disconnect lines for light, telephone or wateer and other like facilities. The property shall be subject to a perpetual easement of right of way for these purposes.\n"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

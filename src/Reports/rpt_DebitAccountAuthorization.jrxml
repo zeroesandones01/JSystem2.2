@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="18" bottomMargin="18">
+	<property name="ireport.zoom" value="1.2418426461183405"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.background.image.properties" value="true,true,0.25,-8,-8,0,0,2566,4216"/>
+	<style name="style1"/>
+	<parameter name="batch_no" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT A.c_last_name, A.c_first_name, A.c_middle_name,
+
+CASE WHEN COALESCE((SELECT X.reference_name FROM rf_character_references X WHERE X.entity_id = B.entity_id AND status_id = 'A' ORDER BY rec_id DESC LIMIT 1), '') = ''
+THEN A.c_mobile ELSE COALESCE((SELECT X.reference_name FROM rf_character_references X WHERE X.entity_id = B.entity_id AND status_id = 'A' ORDER BY rec_id DESC LIMIT 1), '') END as RefName,
+
+CASE WHEN COALESCE((SELECT X.reference_name FROM rf_character_references X WHERE X.entity_id = B.entity_id AND status_id = 'A' ORDER BY rec_id DESC LIMIT 1), '') = ''
+THEN '' ELSE COALESCE((SELECT (CASE WHEN TRIM(COALESCE(X.tel_no, '')::CHAR(20))  = '' THEN '' ELSE ' Tel. No. ' || TRIM(COALESCE(X.tel_no, '')::CHAR(20)) END) FROM rf_character_references X
+WHERE X.entity_id = B.entity_id AND status_id = 'A' ORDER BY rec_id DESC LIMIT 1), '') END as RefNo,
+
+A.c_entity_id
+FROM tmp_rtd_printing A
+INNER JOIN rf_entity B ON A.c_last_name = B.last_name AND A.c_first_name = B.first_name AND A.c_middle_name = B.middle_name
+INNER JOIN mf_project C ON A.c_project = C.proj_name
+INNER JOIN mf_unit_info D ON C.proj_id = D.proj_id AND TRIM(A.c_unit) = TRIM(D.description)
+INNER JOIN rf_sold_unit E ON B.entity_id = E.entity_id AND C.proj_id = E.projcode AND D.pbl_id = E.pbl_id
+LEFT JOIN rf_rtd_enrolled F ON B.entity_id = F.c_entity_id AND C.proj_id = F.c_proj_id AND D.pbl_id = F.c_pbl_id AND E.seq_no::INT = F.c_seq_no::INT
+WHERE (COALESCE(F.batch_no, '') = $P{batch_no} OR $P{batch_no} = '') AND F.tobeprinted::INTEGER = 1::INTEGER
+ORDER BY A.c_last_name, A.c_first_name, A.c_middle_name]]>
+	</queryString>
+	<field name="c_last_name" class="java.lang.String"/>
+	<field name="c_first_name" class="java.lang.String"/>
+	<field name="c_middle_name" class="java.lang.String"/>
+	<field name="refname" class="java.lang.String"/>
+	<field name="refno" class="java.lang.String"/>
+	<field name="c_entity_id" class="java.lang.String"/>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="728" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="612" height="728"/>
+				<textField>
+					<reportElement positionType="Float" x="111" y="576" width="161" height="13"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{c_last_name} + ", " + $F{c_first_name} + " " + $F{c_middle_name}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="299" y="254" width="104" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{c_last_name} + ", " + $F{c_first_name} + " " + $F{c_middle_name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="298" y="166" width="210" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Wack-Wack Branch"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="61" y="166" width="237" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{c_last_name} + ", " + $F{c_first_name} + " " + $F{c_middle_name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="61" y="112" width="237" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["CENQHOMES DEVELOPMENT CORPORATION"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="298" y="112" width="210" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Wack-Wack Branch"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="298" y="208" width="210" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{refname} + $F{refno}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="61" y="208" width="238" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{c_entity_id}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

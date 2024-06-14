@@ -374,6 +374,7 @@ import Reports.ConstructionManagement.HouseAccomplishmentCMDApp;
 import Reports.ConstructionManagement.constructionManagementReports;
 import Reports.CreditAndCollections.AR_CreditPaymentReport;
 import Reports.CreditAndCollections.CancellationActiveReport;
+import Reports.CreditAndCollections.FSAcctsMonitoring;
 import Reports.CreditAndCollections.LoanRealeasedAccountsWithPN;
 import Reports.CreditAndCollections.RTSNoticesReport;
 import Reports.CreditAndCollections.StatusCancellationAccnts;
@@ -5020,9 +5021,22 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									}
 								});
 							}
-
-
-
+							{
+								JMenuItem menuFSAcctsMonitoring = new JMenuItem("Full Settled Accts Monitoring");
+								menuReportCreditCollections.add(menuFSAcctsMonitoring);
+								menuFSAcctsMonitoring.addActionListener(new ActionListener() {
+									
+									@Override
+									public void actionPerformed(ActionEvent e) {
+										if(isNotExisting("FSAcctsMonitoring")){
+											FSAcctsMonitoring fsam = new FSAcctsMonitoring();
+											addWindow(fsam, e);
+										}
+										
+									}
+								}
+								);				
+							}
 						}
 						{
 							JMenu menuReportLegalAndLiaisoning = new JMenu("Legal and Liaisoning");

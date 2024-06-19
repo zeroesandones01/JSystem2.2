@@ -137,6 +137,7 @@ import Accounting.Disbursements.RequestForPayment;
 import Accounting.Disbursements.RequestForPaymentv2;
 import Accounting.Disbursements.TagMCCVnumber;
 import Accounting.Disbursements.ePaymentFromAUB;
+import Accounting.Disbursements.reversalProccessing;
 import Accounting.FixedAssets.AddItem;
 import Accounting.FixedAssets.AssetCard;
 import Accounting.FixedAssets.AssetMonitoring;
@@ -2099,6 +2100,18 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 										if(isNotExisting("Tag MC number - Check Voucher")){
 											TagMCCVnumber tagmccvn = new TagMCCVnumber();
 											addWindow(tagmccvn, e);
+										}
+									}
+								});
+							}
+							{
+								JMenuItem menuitemreversal_proc = new JMenuItem("Reversal Processing");
+								menuDisbursement.add(menuitemreversal_proc);
+								menuitemreversal_proc.addActionListener(new ActionListener() {
+									public void actionPerformed(ActionEvent e) {										
+										if(isNotExisting("DocsProcessing")){
+											reversalProccessing rev_proc = new reversalProccessing();
+											addWindow(rev_proc, e);
 										}
 									}
 								});

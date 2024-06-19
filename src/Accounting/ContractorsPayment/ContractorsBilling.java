@@ -3545,7 +3545,7 @@ public class ContractorsBilling extends _JInternalFrame implements _GUI, ActionL
 					if ((modelMain.getValueAt(x, 0).toString().equals("02")
 							|| modelMain.getValueAt(x, 0).toString().equals("01")
 							|| modelMain.getValueAt(x, 0).toString().equals("03")
-							|| modelMain.getValueAt(x, 0).toString().equals("04")
+							|| modelMain.getValueAt(x, 0).toString().equals("04") //Edited by Erick 2024-06-19 DCRF 3007
 							|| modelMain.getValueAt(x, 0).toString().equals("")// ADDED BY ERICK DATE 2021-05-11 DCRF NO
 																				// 1622
 							|| modelMain.getValueAt(x, 15).toString().equals("Migrated from itsreal"))

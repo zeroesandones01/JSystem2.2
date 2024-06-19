@@ -307,8 +307,9 @@ public class DataChangeRequest extends _JInternalFrame implements _GUI, ActionLi
 					System.out.printf("value of UserInfo: %s%n", UserInfo.EmployeeCode);
 					System.out.printf("Value of comparison! : %s%n", !UserInfo.EmployeeCode.equals(m));
 					System.out.printf("Value of comparison false: %s%n", UserInfo.EmployeeCode.equals(m)== false);
-
-					if (UserInfo.EmployeeCode.equals(m) || UserInfo.ADMIN == false){
+					System.out.printf("Value of is Admin: %s%n", UserInfo.ADMIN);
+					
+					if (UserInfo.EmployeeCode.equals(m) || UserInfo.ADMIN){
 							String new_status = "";
 
 							if(!status.equals("DELETED")||!status.equals("INACTIVE")||!status.equals("COMPLETED")||!status.equals("ACTIVE"))

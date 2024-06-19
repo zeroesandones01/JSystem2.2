@@ -460,7 +460,7 @@ public class _NoticeToProceed extends _DB {
 				"'"+ ntp_no +"', --ntp_no\n" +
 				"nullif('"+ ntp_date +"', 'null')::timestamp, --ntp_date\n" +
 				"'"+ co_id +"', --co_id\n" +
-				"'"+ proj_id +"', --proj_id\n" +
+				" COALESCE(nullif('"+ proj_id +"', 'null'), ''), --proj_id\n" +
 				"'"+ entity_id +"', --entity_id\n" +
 				"nullif('"+ start_date +"', 'null')::timestamp, --start_date\n" +
 				"nullif('"+ finish_date +"', 'null')::timestamp, --finish_date\n" +

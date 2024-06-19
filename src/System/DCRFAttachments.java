@@ -111,7 +111,7 @@ public class DCRFAttachments extends JPanel implements _GUI {
 								final Dimension screenSize = toolkit.getScreenSize();
 								
 								if(UserInfo.EmployeeCode.equals("900876")) {
-									dialog.setSize(screenSize.width-100, screenSize.height-50);
+									dialog.setSize(screenSize.width/2-100, screenSize.height-50);
 								}else {
 									dialog.setSize(screenSize.width-100, screenSize.height-50);
 								}

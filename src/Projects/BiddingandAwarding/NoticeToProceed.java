@@ -553,67 +553,75 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 																	phase = "";
 																}
 																if (data != null) {
-
+																	
+																	String ntp_type_id = (String) data[0];
 																	String type_name = (String) data[1];
 																	String type_alias = "";
-																	if (lookupCompany.getValue().equals("03")
-																			&& (lookupProject.getValue().equals("016") )) {
-																		String strSubProjID = FncGlobal
-																				.GetString("select sub_proj_id \n"
-																						+ "from mf_sub_project \n"
-																						+ "where SPLIT_PART(sub_proj_alias, ',', 1) = (case when '"
-																						+ phase + "' = 'PH4A' then 'PH4-A' else '"+phase+"' end) \n"
-																						+ " and proj_id = '"
-																						+ lookupProject.getValue()
-																						+ "' AND status_id = 'A'");//ADDED STATUS ID BY LESTER DCRF 2718
-																		System.out.println("phase1:" + phase);
-																		type_alias = _NoticeToProceed.contractCode2(
-																				lookupCompany.getValue(),
-																				lookupProject.getValue(), strSubProjID,
-																				(String) data[0]);
-																		System.out.println("Phase :" + phase);
+																	
+																	
+																	if(ntp_type_id.equals("10")) {
+																		generateADM_ContractNo(lookupCompany.getValue(), ntp_type_id);
 																		txtNTPType.setText(String.format("%s (%s)",
 																				type_name, type_alias));
-																		sub_proj_id = FncGlobal.GetString(
-																				"select sub_proj_id from mf_sub_project where proj_id = '"
-																						+ lookupProject.getValue() + "'"
-																						+ " and SPLIT_PART(sub_proj_alias, ',', 1) = '"
-																						+ phase + "'");
+																	}else {
+																		if (lookupCompany.getValue().equals("03")
+																				&& (lookupProject.getValue().equals("016") )) {
+																			String strSubProjID = FncGlobal
+																					.GetString("select sub_proj_id \n"
+																							+ "from mf_sub_project \n"
+																							+ "where SPLIT_PART(sub_proj_alias, ',', 1) = (case when '"
+																							+ phase + "' = 'PH4A' then 'PH4-A' else '"+phase+"' end) \n"
+																							+ " and proj_id = '"
+																							+ lookupProject.getValue()
+																							+ "' AND status_id = 'A'");//ADDED STATUS ID BY LESTER DCRF 2718
+																			System.out.println("phase1:" + phase);
+																			type_alias = _NoticeToProceed.contractCode2(
+																					lookupCompany.getValue(),
+																					lookupProject.getValue(), strSubProjID,
+																					(String) data[0]);
+																			System.out.println("Phase :" + phase);
+																			txtNTPType.setText(String.format("%s (%s)",
+																					type_name, type_alias));
+																			sub_proj_id = FncGlobal.GetString(
+																					"select sub_proj_id from mf_sub_project where proj_id = '"
+																							+ lookupProject.getValue() + "'"
+																							+ " and SPLIT_PART(sub_proj_alias, ',', 1) = '"
+																							+ phase + "'");
 
-																		System.out.println("sub_proj_id1 :" + sub_proj_id);
+																			System.out.println("sub_proj_id1 :" + sub_proj_id);
 
-																		generateContractNo();
-																		KEYBOARD_MANAGER.focusNextComponent();
-																	} else {
-																		String strSubProjID = FncGlobal
-																				.GetString("select sub_proj_id \n"
-																						+ "from mf_sub_project \n"
-																						+ "where SPLIT_PART(sub_proj_alias, ',', 1) = (case when '"
-																						+ phase
-																						+ "' = 'PH4A' then 'PH4-A' else '"
-																						+ phase
-																						+ "' end) and proj_id = '"
-																						+ lookupProject.getValue()
-																						+ "' AND status_id = 'A'");//ADDED STATUS ID BY LESTER DCRF 2718
-																		System.out.println("phase1:" + phase);
-																		type_alias = _NoticeToProceed.contractCode2(
-																				lookupCompany.getValue(),
-																				lookupProject.getValue(), strSubProjID,
-																				(String) data[0]);
-																		System.out.println("Phase :" + phase);
-																		txtNTPType.setText(String.format("%s (%s)",
-																				type_name, type_alias));
-																		sub_proj_id = FncGlobal.GetString(
-																				"select sub_proj_id from mf_sub_project where proj_id = '"
-																						+ lookupProject.getValue() + "'"
-																						+ " and SPLIT_PART(sub_proj_alias, ',', 1) = '"
-																						+ phase + "'");
+																			generateContractNo();
+																			KEYBOARD_MANAGER.focusNextComponent();
+																		} else {
+																			String strSubProjID = FncGlobal
+																					.GetString("select sub_proj_id \n"
+																							+ "from mf_sub_project \n"
+																							+ "where SPLIT_PART(sub_proj_alias, ',', 1) = (case when '"
+																							+ phase
+																							+ "' = 'PH4A' then 'PH4-A' else '"
+																							+ phase
+																							+ "' end) and proj_id = '"
+																							+ lookupProject.getValue()
+																							+ "' AND status_id = 'A'");//ADDED STATUS ID BY LESTER DCRF 2718
+																			System.out.println("phase1:" + phase);
+																			type_alias = _NoticeToProceed.contractCode2(
+																					lookupCompany.getValue(),
+																					lookupProject.getValue(), strSubProjID,
+																					(String) data[0]);
+																			System.out.println("Phase :" + phase);
+																			txtNTPType.setText(String.format("%s (%s)",
+																					type_name, type_alias));
+																			sub_proj_id = FncGlobal.GetString(
+																					"select sub_proj_id from mf_sub_project where proj_id = '"
+																							+ lookupProject.getValue() + "'"
+																							+ " and SPLIT_PART(sub_proj_alias, ',', 1) = '"
+																							+ phase + "'");
 
-																		System.out.println("sub_proj_id2 :" + sub_proj_id);
-																		generateContractNo();
-																		KEYBOARD_MANAGER.focusNextComponent();
+																			System.out.println("sub_proj_id2 :" + sub_proj_id);
+																			generateContractNo();
+																			KEYBOARD_MANAGER.focusNextComponent();
+																		}
 																	}
-
 																}
 															}
 														});
@@ -1448,6 +1456,20 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 			}
 		}
 	}
+	
+	private void generateADM_ContractNo(String co_id, String ntp_type_id) {
+		String contract_no = "";
+		
+		pgSelect db = new pgSelect();
+		String SQL = "SELECT sp_ntp_generate_contract_no('"+co_id+"', '', '', '"+ntp_type_id+"')";
+		db.select(SQL);
+		
+		if(db.isNotNull()) {
+			contract_no = (String) db.getResult()[0][0];
+		}
+		
+		txtContractNo.setText(contract_no);
+	}
 
 	private ArrayList<String> getSelectedPhase() {
 		ArrayList<String> listSelectedPhase = new ArrayList<String>();
@@ -1615,9 +1637,11 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 		lblStatus.setText((String) data[21]);
 		txtTIN.setText((String) data[23]);
 		chkVAT.setSelected((Boolean) data[22]);
-
-		listPhase.setModel(new DefaultComboBoxModel(_NoticeToProceed
-				.getPhase(lookupNTPNo.getValue(), lookupCompany.getValue(), lookupProject.getValue()).toArray()));
+		
+		if(data[1].equals("10") == false) {
+			listPhase.setModel(new DefaultComboBoxModel(_NoticeToProceed
+					.getPhase(lookupNTPNo.getValue(), lookupCompany.getValue(), lookupProject.getValue()).toArray()));
+		}
 
 		dateStart.setDate((Date) data[12]);
 		dateFinish.setDate((Date) data[13]);
@@ -1757,7 +1781,7 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 					JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
-		if (lookupProject.getValue() == null) {
+		if (lookupProject.getValue() == null && lookupNTPType.getValue().equals("10") == false) {
 			JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Please select Project", "Save",
 					JOptionPane.WARNING_MESSAGE);
 			return false;

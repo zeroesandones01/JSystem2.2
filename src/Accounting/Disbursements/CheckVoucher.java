@@ -2358,7 +2358,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				"d.rplf_type_id as \"Request Type\" \n" + // 6
 
 				"from (select * from rf_pv_header where status_id = 'P' and co_id = '" + co_id
-				+ "' and proc_id = '3'  ";
+				+ "' and proc_id = '3' and cv_no is null ";
 		if (payee.equals("")) {
 		}
 

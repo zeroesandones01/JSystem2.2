@@ -267,10 +267,10 @@ public class _RegularBillingAndNotices {
 	public static String[] getRegularNoticeType(Map<String, String> mapNotices) {
 		
 		String SQL = "SELECT TRIM(notice_id), TRIM(notice_desc), TRIM(report_name)\n" + 
-					 "FROM mf_notice_type\n" + 
-				     "WHERE notice_id in ('31', '11', '88', '57', '62', '63', '69', '47', '126')\n" + 
-				     "AND status_id = 'A'\n" + 
-				     "ORDER BY notice_desc;";
+				 "FROM mf_notice_type\n" + 
+			     "WHERE notice_id in ('31', '11', '88', '57', '62', '63', '69', '47', '126', '144')\n" + 
+			     "AND status_id = 'A'\n" + 
+			     "ORDER BY notice_desc;";
 
 		pgSelect db = new pgSelect();
 		db.select(SQL);

@@ -139,18 +139,23 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 							{
 								pgSelect dbExec = new pgSelect(); 
 
-								dbExec.select("select a.\"order\"::int, a.\"order\" || ' - ' || UPPER(a.status_desc) \n" + 
-										"from (select (case when byrstatus_id = '146' then '1' when byrstatus_id = '147' \n" + 
-										"then '2' when byrstatus_id = '148' then '3' when byrstatus_id = '149' then '4' \n" +
-										"when byrstatus_id = '150' then '5' end)::varchar as \"order\", status_desc from mf_buyer_status \n" + 
-										"where byrstatus_id in ('146', '147', '148', '149', '150') and server_id is null )  a order by a.\"order\"::int");
-
+//								dbExec.select("select a.\"order\"::int, a.\"order\" || ' - ' || UPPER(a.status_desc) \n" + 
+//										"from (select (case when byrstatus_id = '146' then '1' when byrstatus_id = '147' \n" + 
+//										"then '2' when byrstatus_id = '148' then '3' when byrstatus_id = '149' then '4' \n" +
+//										"when byrstatus_id = '150' then '5' end)::varchar as \"order\", status_desc from mf_buyer_status \n" + 
+//										"where byrstatus_id in ('146', '147', '148', '149', '150') and server_id is null )  a order by a.\"order\"::int");
+//								
+								dbExec.select("select row_number() over (order by byrstatus_id) as row_number, FORMAT('%s - %s', (row_number() over()), UPPER(status_desc))\n" + 
+										"from mf_buyer_status\n" + 
+										"where byrstatus_id IN ('146', '147', '148', '149', '150','151', '152', '153', '154', '155', '156', '157')\n" + 
+										"order by byrstatus_id;");
+								
 								System.out.println(""); 
 								System.out.println("select a.\"order\"::int, a.\"order\" || ' - ' || UPPER(a.status_desc) \n" + 
 										"from (select (case when byrstatus_id = '146' then '1' when byrstatus_id = '147' \n" + 
 										"then '2' when byrstatus_id = '148' then '3' when byrstatus_id = '149' then '4' \n" +
 										"when byrstatus_id = '150' then '5' end)::varchar as \"order\", status_desc from mf_buyer_status \n" + 
-										"where byrstatus_id in ('146', '147', '148', '149', '150') and server_id is null)  a order by a.\"order\"::int");
+										"where byrstatus_id in ('146', '147', '148', '149', '150', '151', '152', '153', '154') and server_id is null)  a order by a.\"order\"::int");
 
 								cboStatus = new JComboBox(); 
 								panCBO.add(cboStatus, BorderLayout.CENTER); 
@@ -190,7 +195,32 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 												txtRemarks.setEditable(true);
 												dteFrom.setEnabled(true);
 											
-											} 
+											} else if (index==5) {
+												SQL_BATCH("151");
+												txtBat.setLookupSQL(SQL_BATCH("151"));
+												txtRemarks.setEditable(true);
+												dteFrom.setEnabled(true);
+											
+											} else if (index==6) {
+												SQL_BATCH("152");
+												txtBat.setLookupSQL(SQL_BATCH("152"));
+												txtRemarks.setEditable(true);
+												dteFrom.setEnabled(true);
+											
+											} else if (index==7) {
+												SQL_BATCH("153");
+												txtBat.setLookupSQL(SQL_BATCH("153"));
+												txtRemarks.setEditable(true);
+												dteFrom.setEnabled(true);
+											
+											} else if (index==8) {
+												SQL_BATCH("154");
+												txtBat.setLookupSQL(SQL_BATCH("154"));
+												txtRemarks.setEditable(true);
+												dteFrom.setEnabled(true);
+											
+											}
+											
 
 											tblREM.showColumns("Tag", "Name", "Unit", "Loan Amount", "Loan Released", "REM Notification", "MA Count",
 													"Circular No.", "entity_id", "proj_id", "pbl_id", "seq_no", "HLID", "MA Paid", "RetFee1", "RetFee2-1", 
@@ -405,6 +435,20 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 			SQL = "select * from view_hdmf_rem_fourth_or_taxes_gtog('"+txtBat.getText()+"','"+PagibigStatusMonitoring_v2.company_id+"','"+PagibigStatusMonitoring_v2.project_id+"','"+PagibigStatusMonitoring_v2.phase_id+"');";
 		}else if (index==4) {
 			SQL = "select * from view_hdmf_rem_fifth_car_frwd_gtog('"+txtBat.getText()+"','"+PagibigStatusMonitoring_v2.company_id+"','"+PagibigStatusMonitoring_v2.project_id+"','"+PagibigStatusMonitoring_v2.phase_id+"');";
+		}else if(index ==5) {
+			SQL = "select * from view_hdmf_rem_sixth_retfee_hdmf_g2g('"+txtBat.getText()+"','"+PagibigStatusMonitoring_v2.company_id+"','"+PagibigStatusMonitoring_v2.project_id+"','"+PagibigStatusMonitoring_v2.phase_id+"');";
+		}else if(index == 6) {
+			SQL = "select * from view_hdmf_rem_7th_retfee_hdmf_g2g('"+txtBat.getText()+"','"+PagibigStatusMonitoring_v2.company_id+"','"+PagibigStatusMonitoring_v2.project_id+"','"+PagibigStatusMonitoring_v2.phase_id+"');";
+		}else if(index == 7) {
+			SQL = "select * from view_hdmf_rem_8th_retfee_hdmf_g2g('"+txtBat.getText()+"','"+PagibigStatusMonitoring_v2.company_id+"','"+PagibigStatusMonitoring_v2.project_id+"','"+PagibigStatusMonitoring_v2.phase_id+"');";
+		} else if(index == 8) {
+			SQL = "select * from view_hdmf_rem_9th_retfee_hdmf_g2g('"+txtBat.getText()+"','"+PagibigStatusMonitoring_v2.company_id+"','"+PagibigStatusMonitoring_v2.project_id+"','"+PagibigStatusMonitoring_v2.phase_id+"');";
+		}else if(index == 9) {
+			SQL = "select * from view_hdmf_rem_10th_retfee_hdmf_g2g('"+txtBat.getText()+"','"+PagibigStatusMonitoring_v2.company_id+"','"+PagibigStatusMonitoring_v2.project_id+"','"+PagibigStatusMonitoring_v2.phase_id+"');";
+		}else if(index == 10) {
+			SQL = "select * from view_hdmf_rem_11th_retfee_hdmf_g2g('"+txtBat.getText()+"','"+PagibigStatusMonitoring_v2.company_id+"','"+PagibigStatusMonitoring_v2.project_id+"','"+PagibigStatusMonitoring_v2.phase_id+"');";
+		}else if(index == 11) {
+			SQL = "select * from view_hdmf_rem_12th_retfee_hdmf_g2g('"+txtBat.getText()+"','"+PagibigStatusMonitoring_v2.company_id+"','"+PagibigStatusMonitoring_v2.project_id+"','"+PagibigStatusMonitoring_v2.phase_id+"');";
 		}
 
 		FncTables.clearTable(modelremConversion);
@@ -467,6 +511,20 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 			strStatus = "149";	
 		} else if (index==4) {
 			strStatus = "150";	
+		}else if(index==5) {
+			strStatus = "151";	
+		}else if(index==6) {
+			strStatus = "152";	
+		}else if(index==7) {
+			strStatus = "153";	
+		}else if(index==8) {
+			strStatus = "154";	
+		}else if(index==9) {
+			strStatus = "155";	
+		}else if(index==10) {
+			strStatus = "156";	
+		}else if(index==11) {
+			strStatus = "157";	
 		}
 
 		strBat = GETBATCH(strStatus);
@@ -684,6 +742,22 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 
 		System.out.println("Combobox: " + txtBat.getValue());
 		System.out.println("Combobox: " + txtBat.getText());
+		
+		String co_id = hdmfMainMod.txtCoID.getValue();
+		
+		if (co_id.equals("01")) { // VERDANT
+			mapParameters.put("logo",
+					this.getClass().getClassLoader().getResourceAsStream("Images/" + "verdant_logo.bmp"));
+		} else if (co_id.equals("04")) { // ADC 
+				mapParameters.put("logo",
+						this.getClass().getClassLoader().getResourceAsStream("Images/" + "acer_logo.bmp"));
+		} else if (co_id.equals("05")) { // ADC 
+			mapParameters.put("logo",
+					this.getClass().getClassLoader().getResourceAsStream("Images/" + "eastmeridian_logo.bmp"));
+		} else {
+			mapParameters.put("logo",
+					this.getClass().getClassLoader().getResourceAsStream("Images/" + "cenq-new.png"));
+		}
 
 		if (intIndex==0) {
 			FncReport.generateReport("/Reports/rpt_hdmf_forEarlyConversion_gtog.jasper", "For Early Conversion (G-G)", "", mapParameters);
@@ -695,7 +769,9 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 			FncReport.generateReport("/Reports/rpt_hdmf_or_taxes_gtog.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
 		} else if (intIndex==4) {
 			FncReport.generateReport("/Reports/rpt_hdmf_car_frwd_gtog_v1.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
-		} 
+		}else if(intIndex == 5) {
+			FncReport.generateReport("/Reports/rptREMGTG_sixth.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
+		}
 	}
 
 	private static String generateBatchNo() {

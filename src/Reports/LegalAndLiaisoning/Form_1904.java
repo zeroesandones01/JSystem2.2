@@ -415,7 +415,11 @@ public class Form_1904 extends _JInternalFrame implements _GUI, ActionListener {
 											txtUnitDesc.setText(unit_desc);
 											txtProjID.setText(proj_id);
 											txtProject.setText(proj_name);
-											txtSeqNo.setText(seq_no.toString());
+											if(seq_no == null) {
+												txtSeqNo.setText("");
+											}else {
+												txtSeqNo.setText(seq_no.toString());
+											}
 											txtTIN_No.setText(tin_no);
 
 										}
@@ -673,7 +677,7 @@ public class Form_1904 extends _JInternalFrame implements _GUI, ActionListener {
 	}
 	
 	
-	private void editAmt() {
+	private void editAmt(final String form_name) {
 		{
 			pnlForm2000OTAmt = new JPanel(new BorderLayout(5,5));
 			pnlForm2000OTAmt.setPreferredSize(new Dimension(300,50));
@@ -701,8 +705,13 @@ public class Form_1904 extends _JInternalFrame implements _GUI, ActionListener {
 						
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							preview2000ot((BigDecimal)txtTaxDueAmt.getValued());
+							if(form_name.equals("2000-OT")) {
+								preview2000ot((BigDecimal)txtTaxDueAmt.getValued());								
+							}
 							
+							if(form_name.equals("2000")) {
+								preview2000((BigDecimal)txtTaxDueAmt.getValued());
+							}
 						}
 					});
 				}
@@ -731,7 +740,7 @@ public class Form_1904 extends _JInternalFrame implements _GUI, ActionListener {
 		
 		
 		pgSelect db = new pgSelect();
-		String SQL = "SELECT sp_save_form_2000ot_taxdue_amt('"+lookupClient.getValue()+"', '"+txtProjID.getText()+"', '"+txtUnitID.getText()+"', "+txtSeqNo.getText()+", "+tax_due_amt+", '"+UserInfo.EmployeeCode+"')";
+		String SQL = "SELECT sp_save_forms_1904_taxdue_amt('"+lookupClient.getValue()+"', '"+txtProjID.getText()+"', '"+txtUnitID.getText()+"', "+txtSeqNo.getText()+", '2000-OT' ,"+tax_due_amt+", '"+UserInfo.EmployeeCode+"')";
 		db.select(SQL);
 		FncSystem.out("SQL of Tax Due Amt", SQL);
 		
@@ -754,14 +763,22 @@ public class Form_1904 extends _JInternalFrame implements _GUI, ActionListener {
 		optionPaneWindow2.dispose();
 	}
 	
-	private void preview2000() {
+	private void preview2000(BigDecimal tax_due_amt) {
+		
 		// TODO Auto-generated method stub
+		
+		pgSelect db = new pgSelect();
+		String SQL = "SELECT sp_save_forms_1904_taxdue_amt('"+lookupClient.getValue()+"', '"+txtProjID.getText()+"', '"+txtUnitID.getText()+"', NULLIF('"+txtSeqNo.getText()+"', '')::INTEGER, '2000' ,"+tax_due_amt+", '"+UserInfo.EmployeeCode+"')";
+		db.select(SQL);
+		FncSystem.out("SQL of Tax Due Amt", SQL);
+		
 		
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
 		mapParameters.put("entity_id", lookupClient.getValue());
 		mapParameters.put("proj_id", txtProjID.getText());
 		mapParameters.put("unit_id", txtUnitID.getText());
-		mapParameters.put("seq_no", Integer.valueOf(txtSeqNo.getText()));
+		mapParameters.put("seq_no", txtSeqNo.getText().equals("") ? null : Integer.valueOf(txtSeqNo.getText()));
+		mapParameters.put("prepared_by", UserInfo.FullName);
 		//mapParameters.put("presenter", txtPresenter.getText().trim());
 		mapParameters.put("background", this.getClass().getClassLoader().getResourceAsStream("Images/"+ "2000.jpg"));
 
@@ -827,7 +844,7 @@ public class Form_1904 extends _JInternalFrame implements _GUI, ActionListener {
 		if(actionCommand.equals("2000ot")){
 			if(toPreview()){
 				//preview2000ot();
-				editAmt();
+				editAmt("2000-OT");
 				JOptionPane.showOptionDialog(getContentPane(), pnlForm2000OTAmt, "Edit Amount",
 						JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null, new Object[] {}, null);
 				
@@ -836,7 +853,10 @@ public class Form_1904 extends _JInternalFrame implements _GUI, ActionListener {
 		
 		if(actionCommand.equals("2000")){
 			if(toPreview()){
-				preview2000();
+				
+				editAmt("2000");
+				JOptionPane.showOptionDialog(getContentPane(), pnlForm2000OTAmt, "Edit Amount",
+						JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null, new Object[] {}, null);
 			}
 		}
 		

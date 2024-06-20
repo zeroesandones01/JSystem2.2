@@ -1718,7 +1718,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		enableButtons(false, false, false, false, true, true, false, false, false, false);
 		// lookupPaymentType.setLookupSQL(getPayment_type());
 		createPVtable(modelDV_pv, rowHeaderDV_pv, modelDV_pvtotal);
-		AddRow_acctEntries(0.00, "");
+		AddRow_acctEntries(0.00, "", "");
 		tabCenter.setSelectedIndex(2);
 
 		_JLookupTable dlg = new _JLookupTable(FncGlobal.homeMDI, null, "Payable Voucher", getPV_list(), false);
@@ -1751,7 +1751,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 			tagCheckPayee.setTag((String) pv_hdr[1]);
 			lookupPayeeType.setText((String) pv_hdr[4]);
 			tagPayeeType.setTag((String) pv_hdr[5]);
-			AddRow_acctEntries(amount, request_type);
+			AddRow_acctEntries(amount, request_type, (String) data[0]);
 
 			String default_payee = "";
 			if (!sql_getDefaultBroker(payee).equals("")) {
@@ -2898,7 +2898,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				tagCheckPayee.setTag((String) pv_hdr[1]);
 				lookupPayeeType.setText((String) pv_hdr[4]);
 				tagPayeeType.setTag((String) pv_hdr[5]);
-				AddRow_acctEntries(amount, "");
+				AddRow_acctEntries(amount, "", "");
 
 				txtDV_particular.setText(setPVRemarks(rem));
 
@@ -2952,7 +2952,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 			modelDV_pv.addRow(new Object[] { "", "", new BigDecimal(0.00) });
 			totalDV_pv(modelDV_pv, modelDV_pvtotal);
 			Double amount = Double.parseDouble(modelDV_pvtotal.getValueAt(0, 2).toString());
-			AddRow_acctEntries(amount, "");
+			AddRow_acctEntries(amount, "", "");
 			txtCheckAmt.setText(nf.format(amount));
 			adjustRowHeight_pv();
 		}
@@ -2966,7 +2966,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		adjustRowHeight_pv();
 	}
 
-	private void AddRow_acctEntries(Double amount, String request_type) {// used
+	private void AddRow_acctEntries(Double amount, String request_type, String pv_no) {// used
 
 		FncTables.clearTable(modelDV_acct_entries);// Code to clear modelMain.
 		DefaultListModel listModel = new DefaultListModel();// Creating DefaultListModel for rowHeader.
@@ -2991,7 +2991,16 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		}
 		
 		if(request_type.equals("04") || request_type.equals("14") || request_type.equals("16")) {
+			pgSelect db = new pgSelect();
+			String SQL = "SELECT * FROM sp_generate_cv_input_vat_clearing('"+lookupCompany.getValue()+"', '"+pv_no+"');";
+			db.select(SQL);
 			
+			if(db.isNotNull()) {
+				for(int x = 0; x<db.getRowCount(); x++) {
+					modelDV_acct_entries.addRow(db.getResult()[x]);
+					listModel.addElement(modelDV_acct_entries.getRowCount());
+				}
+			}
 		}
 
 		totalDV(modelDV_acct_entries, modelDV_accttotal);

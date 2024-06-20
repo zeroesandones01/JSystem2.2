@@ -44,8 +44,8 @@ select
 '' as pv_no,
 a.acct_id,
 b.acct_name,
-null as debit,
-a.tran_amt as credit,
+case when a.bal_side = 'D' THEN a.tran_amt else null end as debit,
+case when a.bal_side = 'C' THEN a.tran_amt else null end as credit,
 --trim(d.entity_name) as payee,
 (select y.entity_name from rf_pv_header x left join rf_entity y on x.entity_id1 = y.entity_id where x.cv_no = $P{cv_no} and x.co_id = $P{co_id} and x.status_id = 'P' limit 1) as payee,
 trim(get_employee_name((case when c.edited_by is null or c.edited_by = '' then c.created_by else c.edited_by end))) as prepared_by

@@ -417,7 +417,7 @@ public class pnlRB_RegularNotices extends JPanel implements ActionListener, _GUI
 	}
 	
 	private String SQL_PROJECT() {//XXX Project
-		String SQL = "SELECT TRIM(proj_id)::VARCHAR as \"ID\", TRIM(proj_name) as \"Project Name\", TRIM(proj_alias)::VARCHAR as \"Alias\" FROM mf_project WHERE co_id IN ('02', '01') ORDER BY proj_id;";
+		String SQL = "SELECT TRIM(proj_id)::VARCHAR as \"ID\", TRIM(proj_name) as \"Project Name\", TRIM(proj_alias)::VARCHAR as \"Alias\" FROM mf_project WHERE co_id IN ('02', '01', '04', '05') and status_id = 'A' ORDER BY proj_id;";
 		return SQL;
 	}
 

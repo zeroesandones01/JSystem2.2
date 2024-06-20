@@ -703,6 +703,8 @@ public class ChecksForWithdrawal extends _JInternalFrame implements
 		}
 	}
 	
+	
+	
 	private void Approve() {
 		String SQL = "";
 		if (tblWith.getRowCount() > 0) {
@@ -712,7 +714,7 @@ public class ChecksForWithdrawal extends _JInternalFrame implements
 					String strCheckOld = (String) modelWith.getValueAt(x, 0);
 					String strCheckDate = (String) modelWith.getValueAt(x, 6).toString();
 
-					String strPrev = _RealTimeDebit.GetValue("select check_stat_id from rf_payments where pymnt_type = 'B' and pay_rec_id::int = '"+intRec+"'::int and check_no = '"+strCheckOld+"' and status_id != 'I'");
+					String strPrev = GetValue("select check_stat_id from rf_payments where pymnt_type = 'B' and pay_rec_id::int = '"+intRec+"'::int and check_no = '"+strCheckOld+"' and status_id != 'I'");
 					
 					pgUpdate updPay = new pgUpdate();
 					SQL = "update rf_payments \n" +

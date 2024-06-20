@@ -310,7 +310,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 			mniopenDP = new JMenuItem("Open Docs Processing");
 			mnisetup2307 = new JMenuItem("Open Form 2307 Monitoring");
 			mniprint2307 = new JMenuItem("Preview Form 2307");
-			mniprintOR = new JMenuItem("Preview Official Receipt");
+			mniprintOR = new JMenuItem("Preview Invoice");
 			mniInactivate = new JMenuItem("Inactivate this PV");
 			mnieditePVdate = new JMenuItem("Edit PV Paid");
 			mnireversePV = new JMenuItem("Reverse PV");

@@ -2240,11 +2240,18 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 				mapParameters.put("signatory", option_signatory[signatory]);
 				mapParameters.put("tin", tin_signatory[signatory]);
 				mapParameters.put("prepared_by", UserInfo.Alias);
-
+				
 				if (lookupNTPType.getValue().equals("10") || lookupNTPType.getValue().equals("03")) {
-					System.out.print("rptSPContractADM");
-					FncReport.generateReport("/Reports/rptSPContractADM.jasper", print_type, txtCompany.getText(),
-							mapParameters);
+					if(lookupNTPNo.getValue().equals("002364")) {
+						System.out.print("rptSPContract_v2");
+						FncReport.generateReport("/Reports/rptSPContract_v2.jasper", print_type, txtCompany.getText(),
+								mapParameters);
+					}else {
+						System.out.print("rptSPContractADM");
+						FncReport.generateReport("/Reports/rptSPContractADM.jasper", print_type, txtCompany.getText(),
+								mapParameters);
+					}
+					
 				} else {
 					System.out.print("rptSPContract_v2");
 					FncReport.generateReport("/Reports/rptSPContract_v2.jasper", print_type, txtCompany.getText(),

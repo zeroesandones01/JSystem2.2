@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptSPContract" pageWidth="612" pageHeight="936" columnWidth="472" leftMargin="70" rightMargin="70" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.3310000000000013"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="_server" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="_dbase" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="logo" class="java.io.InputStream" isForPrompting="false">
@@ -34,10 +34,10 @@ get_client_address_for2307(a.entity_id) as address,
 initcap(trim(g.contactperson)) as contactperson,
 trim(g.position) as position,
 h.tin_no as tin,
-initcap(trim(c.proj_name)) as project,
-trim(c.barangay) as proj_barangay,
-trim(c.municipality) as proj_municipality,
-trim(c.province) as proj_province,
+coalesce(initcap(trim(c.proj_name)), '') as project,
+coalesce(trim(c.barangay), '') as proj_barangay,
+coalesce(trim(c.municipality), '') as proj_municipality,
+coalesce(trim(c.province), '') as proj_province,
 d._count,
 to_words(d._count::VARCHAR) AS  _word,
 f.contract_price as orig_contract_price,
@@ -69,10 +69,10 @@ a.ntp_type_id,
 	where ntp_no = $P{ntp_no}) as contract_type,
 (select distinct (work_desc ~* 'post') as post from co_ntp_detail where ntp_no = $P{ntp_no} limit 1) as post,
 (select distinct (work_desc ~* 'metering') as metering_center from co_ntp_detail where ntp_no = $P{ntp_no}) as metering_center,
-(CASE WHEN (SELECT COUNT(*) FROM co_ntp_detail WHERE ntp_no = a.ntp_no) > 1
+REPLACE((CASE WHEN (SELECT COUNT(*) FROM co_ntp_detail WHERE ntp_no = a.ntp_no) > 1
  THEN (SELECT ntp_subject_description FROM co_ntp_subjects WHERE ntp_no = a.ntp_no)
  ELSE (SELECT work_desc FROM co_ntp_detail WHERE ntp_no = a.ntp_no)
- END) as cse_heading,
+ END), '&', '&#038;') as cse_heading,
 (case when a.ntp_type_id = '07' THEN i.ntp_subject_description else a.oth_description end) as oth_description,
  a.entity_id
 FROM co_ntp_header a

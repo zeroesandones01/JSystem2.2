@@ -355,8 +355,10 @@ public class reversalProccessing extends _JInternalFrame implements _GUI, Action
 				+ "		where bal_side = 'D' and status_id = 'A' and co_id = '02'\n"
 				+ "	) a\n"
 				+ "	group by jv_no, co_id  ) b on trim(a.jv_no) = trim(b.jv_no) and a.co_id = b.co_id \n"
+				+ "left join rf_jv_header c on a.reversal_jv_no = c.jv_no and a.co_id = c.co_id \n"
 				+ "where a.status_id = 'P' and a.tran_id in ('00006','00071') and a.co_id = '"+lookupcompany.getValue()+"'\n"
 				+ "and  a.proc_id = 2\n"
+				+ "and case when c.status_id in ('A','F','P') then false else true end	\n"
 				+ "order by a.jv_no  desc";
 		
 		System.out.println("displayJV_forreversal: "+Strsql);

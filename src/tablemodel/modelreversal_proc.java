@@ -99,7 +99,7 @@ public class modelreversal_proc	 extends DefaultTableModel {
 		this.editable = editable;
 		if(editable){
 			COLUMN_EDITABLE = new boolean[] {
-					false, 	//
+					true, 	//
 					false,	//Document No.
 					false, 	//Amount
 					false,	//Created by

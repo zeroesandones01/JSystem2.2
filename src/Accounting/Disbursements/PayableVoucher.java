@@ -1822,11 +1822,30 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				+ lookupCompany.getValue() + "' and b.billing_no is not null \r\n" + "	and a.co_id = b.co_id"
 				+ "	group by a.div_id, a.dept_id, a.sect_id, a.project_id, a.sub_projectid,b.other_liqui_acct_id,c.acct_name, d.acct_id, d.ded_amt, a.other_liqui_amt ) a \r\n"
 				+ "group by  a.acct_id,a.div_id,a.dept_id,a.sect_id,a.project_id,a.sub_projectid,a.acct_name,a.other_liqui_amt \n"+
-				"\n" +
-				
+				"\n";
+				if(rplf_type_id.equals("14")) {
+					sql = sql + "\n\n"+
+							"UNION ALL \n"
+							+ "select \n"
+							+ "'01-02-22-000',\n"
+							+ "a.div_id,\n"
+							+ "a.dept_id,\n"
+							+ "a.sect_id,\n"
+							+ "a.project_id,\n"
+							+ "a.sub_projectid,\n"
+							+ "'Allowance for Uncollectible Advances',\n"
+							+ "0 as debit,\n"
+							+ "a.pv_amt as credit\n"
+							+ "from (\n"
+							+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \n"
+							+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(pv_amt) as pv_amt\n"
+							+ "from rf_request_detail \n"
+							+ "where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"' \n"
+							+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n";
+				}
 
 				// Accounts Payable - Trade
-				"union all \n"+ 
+				sql = sql + "union all \n"+ 
 				"\n" +
 				"select \r\n" + "'03-01-01-001',\r\n" + "a.div_id,\r\n" + "a.dept_id,\r\n"
 				+ "a.sect_id,\r\n" + "a.project_id,\r\n" + "a.sub_projectid,\r\n" + "'Accounts Payable - Trade',\r\n"
@@ -1837,26 +1856,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				+ lookupCompany.getValue() + "' \r\n"
 				+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n";
 				
-		if(rplf_type_id.equals("14")) {
-			sql = sql + "\n\n"+
-					"UNION ALL \n"
-					+ "select \n"
-					+ "'01-02-22-000',\n"
-					+ "a.div_id,\n"
-					+ "a.dept_id,\n"
-					+ "a.sect_id,\n"
-					+ "a.project_id,\n"
-					+ "a.sub_projectid,\n"
-					+ "'Allowance for Uncollectible Advances',\n"
-					+ "0 as debit,\n"
-					+ "a.pv_amt as credit\n"
-					+ "from (\n"
-					+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \n"
-					+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(pv_amt) as pv_amt\n"
-					+ "from rf_request_detail \n"
-					+ "where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"' \n"
-					+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a ";
-		}
+		
 
 		System.out.printf("displayDRF_toPVdetails");
 		System.out.printf("SQL #1: %s", sql);

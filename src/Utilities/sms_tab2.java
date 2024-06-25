@@ -126,7 +126,7 @@ public class sms_tab2 extends JXPanel implements _GUI {
 									"and coalesce(x.batch, '') != '' \n" + 
 									"and ((select a.dept_code from em_employee a where a.emp_code = '"+UserInfo.EmployeeCode+"') = y.dept_code or \n" + 
 									"(select a.dept_code from em_employee a where a.emp_code = '"+UserInfo.EmployeeCode+"') = '98') or \n" + 
-									"/*special ma'am nelia access; so that could do approvals for both pct and cc*/('"+UserInfo.EmployeeCode+"' = '987120' and y.dept_code in ('54', '103')) \n" + 
+									"/*special ma'am nelia access; so that could do approvals for both pct and cc*/('"+UserInfo.EmployeeCode+"' IN ('987120', '900791') and y.dept_code in ('54', '103')) \n" + 
 									"order by x.batch desc");
 							txtBat.setReturnColumn(0);
 							txtBat.addLookupListener(new LookupListener() {

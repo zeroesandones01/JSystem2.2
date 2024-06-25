@@ -9,6 +9,9 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.FileNotFoundException;
@@ -24,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -93,6 +97,9 @@ public class AddEditTransactionRemarks2 extends _JInternalFrame {
 	private _JDateChooser dteDateFrom;
 	private _JDateChooser dteDateTo;
 	private _JLookup lookupbatch;
+	private _JLookup lookuprplf;
+	private JRadioButton rbutton_rplf;
+	private JRadioButton rbutton_date;
 
 	public AddEditTransactionRemarks2() {
 		super("Add/Edit Remarks2", true, true, true, true);
@@ -111,33 +118,145 @@ public class AddEditTransactionRemarks2 extends _JInternalFrame {
 			pnlMain.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 			{
 				pnlPreview = new JPanel(new BorderLayout(5,5));
-				pnlPreview.setPreferredSize(new Dimension(600,80));
+				pnlPreview.setPreferredSize(new Dimension(600,110));
+				//pnlPreview.setPreferredSize(new Dimension(600,80));
 				{
-					JPanel pnlDate = new JPanel(new GridLayout(1,4,5,5));
-					pnlPreview.add(pnlDate, BorderLayout.CENTER);
+					JPanel button_option = new JPanel(new GridLayout(2, 1, 5, 5));
+					pnlPreview.add(button_option, BorderLayout.WEST);
+					button_option.setPreferredSize(new Dimension(50, 0));
 					{
-						JLabel lblDateFrom = new JLabel("Date From:", JLabel.CENTER);
-						pnlDate.add(lblDateFrom);
-						lblDateFrom.setFont(FncGlobal.sizeLabel);
+						rbutton_rplf = new JRadioButton();
+						button_option.add(rbutton_rplf);
+						rbutton_rplf.addItemListener(new ItemListener() {
+							
+							@Override
+							public void itemStateChanged(ItemEvent e) {
+								if(e.getStateChange() == ItemEvent.SELECTED) {
+									lookuprplf.setEnabled(true);
+									rbutton_date.setEnabled(false);
+									dteDateFrom.setDate(null);
+									dteDateTo.setDate(null);
+								}
+								if(e.getStateChange()==ItemEvent.DESELECTED){
+									lookuprplf.setEnabled(false);
+									rbutton_date.setEnabled(true);
+									lookuprplf.setValue(null);
+								}
+							}
+						});
 					}
 					{
-						dteDateFrom = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
-						pnlDate.add(dteDateFrom);						
-						dteDateFrom.setFont(FncGlobal.sizeTextValue);
-						dteDateFrom.setDate(FncGlobal.getDateToday());
-					}
-					{
-						JLabel lblDateTo = new JLabel("Date To:", JLabel.CENTER);
-						pnlDate.add(lblDateTo);
-						lblDateTo.setFont(FncGlobal.sizeLabel);
-					}
-					{
-						dteDateTo = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
-						pnlDate.add(dteDateTo);
-						dteDateTo.setFont(FncGlobal.sizeTextValue);
-						dteDateTo.setDate(FncGlobal.getDateToday());
+						rbutton_date = new JRadioButton();
+						button_option.add(rbutton_date);
+						rbutton_date.addItemListener(new ItemListener() {
+							
+							@Override
+							public void itemStateChanged(ItemEvent e) {
+								if(e.getStateChange() == ItemEvent.SELECTED) {
+									rbutton_rplf.setEnabled(false);
+									dteDateFrom.setDate(FncGlobal.getDateToday());
+									dteDateTo.setDate(FncGlobal.getDateToday());
+									dteDateFrom.setEnabled(true);
+									dteDateTo.setEnabled(true);
+									lookuprplf.setValue(null);
+								}
+								if(e.getStateChange() == ItemEvent.DESELECTED) {
+									rbutton_rplf.setEnabled(true);		
+									dteDateFrom.setDate(null);
+									dteDateTo.setDate(null);
+									dteDateFrom.setEnabled(false);
+									dteDateTo.setEnabled(false);
+								}
+							}
+						});
 					}
 				}
+				{
+					JPanel pnloption = new JPanel(new GridLayout(2,1,5,5));
+					pnlPreview.add(pnloption, BorderLayout.CENTER);
+					{
+						JPanel pnlrplf = new JPanel(new GridLayout(1, 4, 5, 5));
+						pnloption.add(pnlrplf);
+						{
+							JLabel lblrplf = new JLabel("RPLF NO.", JLabel.CENTER);
+							pnlrplf.add(lblrplf);
+							lblrplf.setFont(FncGlobal.sizeLabel);
+						}
+						{
+							
+							lookuprplf = new _JLookup();
+							pnlrplf.add(lookuprplf);
+							lookuprplf.setEnabled(false);
+							lookuprplf.setReturnColumn(0);
+							//lookuprplf.setLookupSQL(getrplf(lookupCompany.getValue(), lookupProject.getValue(), type));
+						}
+						{
+							JLabel lbl = new JLabel("");
+							pnlrplf.add(lbl);
+						}
+						{
+							JLabel lbl = new JLabel("");
+							pnlrplf.add(lbl);
+						}
+					}
+					{
+						JPanel pnlDate = new JPanel(new GridLayout(1,4,5,5));
+						pnloption.add(pnlDate);
+						{
+							JLabel lblDateFrom = new JLabel("Date From:", JLabel.CENTER);
+							pnlDate.add(lblDateFrom);
+							lblDateFrom.setFont(FncGlobal.sizeLabel);
+						}
+						{
+							dteDateFrom = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+							pnlDate.add(dteDateFrom);						
+							dteDateFrom.setFont(FncGlobal.sizeTextValue);
+							dteDateFrom.setEnabled(false);
+							//dteDateFrom.setDate(FncGlobal.getDateToday());//commment by erick 2024-05-03
+						}
+						{
+							JLabel lblDateTo = new JLabel("Date To:", JLabel.CENTER);
+							pnlDate.add(lblDateTo);
+							lblDateTo.setFont(FncGlobal.sizeLabel);
+						}
+						{
+							dteDateTo = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+							pnlDate.add(dteDateTo);
+							dteDateTo.setFont(FncGlobal.sizeTextValue);
+							dteDateTo.setEnabled(false);
+							//dteDateTo.setDate(FncGlobal.getDateToday()); //commment by erick 2024-05-03
+						}
+					}
+					
+				}
+//				{
+//					JPanel pnlDate = new JPanel(new GridLayout(2,4,5,5));
+//					pnlPreview.add(pnlDate, BorderLayout.CENTER);
+//					JPanel pnlgrid_1 = new JPanel();
+//					JPanel pnlgrid_2 = new JPanel();
+//					{
+//						JLabel lblDateFrom = new JLabel("Date From:", JLabel.CENTER);
+//						pnlDate.add(lblDateFrom);
+//						lblDateFrom.setFont(FncGlobal.sizeLabel);
+//					}
+//					{
+//						dteDateFrom = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+//						pnlDate.add(dteDateFrom);						
+//						dteDateFrom.setFont(FncGlobal.sizeTextValue);
+//						dteDateFrom.setDate(FncGlobal.getDateToday());
+//					}
+//					{
+//						JLabel lblDateTo = new JLabel("Date To:", JLabel.CENTER);
+//						pnlDate.add(lblDateTo);
+//						lblDateTo.setFont(FncGlobal.sizeLabel);
+//					}
+//					{
+//						dteDateTo = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+//						pnlDate.add(dteDateTo);
+//						dteDateTo.setFont(FncGlobal.sizeTextValue);
+//						dteDateTo.setDate(FncGlobal.getDateToday());
+//					}
+//				}
 				{
 					JPanel pnlButton = new JPanel(new GridLayout(1,6,5,5));
 					pnlPreview.add(pnlButton, BorderLayout.SOUTH);
@@ -301,6 +420,8 @@ public class AddEditTransactionRemarks2 extends _JInternalFrame {
 											}else {
 												lookupbatch.setLookupSQL(getbatch_tcost(lookupCompany.getValue(), lookupProject.getValue()));
 											}
+											
+											lookuprplf.setLookupSQL(getrplf(lookupCompany.getValue(), lookupProject.getValue()));
 										}	
 									}
 								});
@@ -569,6 +690,7 @@ public class AddEditTransactionRemarks2 extends _JInternalFrame {
 		mapParameters.put("p_user", UserInfo.EmployeeCode);
 		mapParameters.put("p_proj_name", proj_name);
 		mapParameters.put("p_requester", UserInfo.FullName2);
+		mapParameters.put("p_rplf", lookuprplf.getValue());
 
 		FncReport.generateReport("/Reports/rptTransactionRemarks_2.jasper", "Report", mapParameters);
 
@@ -807,6 +929,21 @@ public class AddEditTransactionRemarks2 extends _JInternalFrame {
 			}
 		};
 		sw.execute();
+	}
+	
+	public String getrplf (String co_id, String proj_id ) {
+		String type;
+		int index = tabPane.getSelectedIndex();
+		if(index == 0) {
+			type = "P";
+		}else {
+			type = "T";
+		}
+		return"select rplf_no, batch_no from tmp_transaction_remarks a\n"
+				+ "where status_id = 'A' \n"
+				+ "and co_id = '"+co_id+"'\n"
+				+ "and proj_id = '"+proj_id+"'\n"
+				+ "and trans_type = '"+type+"' ";
 	}
 	
 	public String getbatch_pcost(String co_id,String proj_id) {

@@ -55,6 +55,7 @@ public class reversalProccessing extends _JInternalFrame implements _GUI, Action
 	private _JTableMain tbldoc_reversal;
 	private JList rowheader_reversal;
 	protected String doctype;
+	private JButton btngenerate;
 	
 	public reversalProccessing() {
 		super(title, true, true, true, true);
@@ -225,9 +226,16 @@ public class reversalProccessing extends _JInternalFrame implements _GUI, Action
 				}
 			}
 			{
-				JPanel pnlsouth = new JPanel(new GridLayout(1, 3, 5, 5));
+				JPanel pnlsouth = new JPanel(new GridLayout(1, 4, 5, 5));
 				pnlmain.add(pnlsouth, BorderLayout.SOUTH);
 				pnlsouth.setPreferredSize(new Dimension(0, 35));
+				{
+					btngenerate = new JButton();
+					pnlsouth.add(btngenerate);
+					btngenerate.setActionCommand("generate");
+					btngenerate.setEnabled(false);
+					btngenerate.addActionListener(this);
+				}
 				{
 					btnSave = new JButton("Save");
 					pnlsouth.add(btnSave);
@@ -235,10 +243,7 @@ public class reversalProccessing extends _JInternalFrame implements _GUI, Action
 					btnSave.setEnabled(false);
 					btnSave.addActionListener(this);
 				}
-//				{
-//					btnPreview = new JButton("Preview");
-//					pnlsouth.add(btnPreview);
-//				}
+
 				{
 					btnRefresh = new JButton("Refresh");
 					pnlsouth.add(btnRefresh);

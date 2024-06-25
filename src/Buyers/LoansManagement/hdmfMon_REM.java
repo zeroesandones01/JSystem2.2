@@ -767,7 +767,7 @@ public class hdmfMon_REM extends JXPanel implements _GUI {
 									"values ('"+strUnitID+"', '65', '"+strDoc+"', '212', '"+strDate+"', '"+UserInfo.EmployeeCode+"', 'A', '"+UserInfo.EmployeeCode+"', now())", true);
 							dbBor.commit();
 						} else if (index==10) {
-							strDoc = FncGlobal.GetString("select doc_no \n" + 
+							strDoc = FncGlobal.GetString("select doc_no \n" +  //XXX ADD PROJ_ID TO GET PROPER DOC_NO
 									"from rf_tct_taxdec_monitoring_dl \n" + 
 									"where pbl_id = '"+strUnitID+"' and doc_type = '98' \n" + 
 									"limit 1"); 
@@ -777,7 +777,7 @@ public class hdmfMon_REM extends JXPanel implements _GUI {
 									"values ('"+strUnitID+"', '98', '"+strDoc+"', '212', '"+strDate+"', '"+UserInfo.EmployeeCode+"', 'A', '"+UserInfo.EmployeeCode+"', now())", true);
 							dbBor.commit();
 							
-							strDoc = FncGlobal.GetString("select doc_no \n" + 
+							strDoc = FncGlobal.GetString("select doc_no \n" + //XXX ADD PROJ_ID TO GET PROPER DOC_NO
 									"from rf_tct_taxdec_monitoring_dl \n" + 
 									"where pbl_id = '"+strUnitID+"' and doc_type = '67' \n" + 
 									"limit 1"); 

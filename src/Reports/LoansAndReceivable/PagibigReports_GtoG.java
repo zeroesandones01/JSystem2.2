@@ -82,6 +82,7 @@ public class PagibigReports_GtoG extends _JInternalFrame implements ActionListen
 		super(title);
 		initGUI();
 	}
+	
 
 	public PagibigReports_GtoG(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
 		super(title, resizable, closable, maximizable, iconifiable);
@@ -582,7 +583,8 @@ public class PagibigReports_GtoG extends _JInternalFrame implements ActionListen
 			mapParameters.put("project", txtProject.getText());
 			mapParameters.put("phase", strPhase);
 
-			FncReport.generateReport("/Reports/rpt_hdmf_rem_conversion_movement_report_gtog_new.jasper", strReport, "", mapParameters);
+			//FncReport.generateReport("/Reports/rpt_hdmf_rem_conversion_movement_report_gtog_new.jasper", strReport, "", mapParameters);
+			FncReport.generateReport("/Reports/rptHDMF_REMgtg_Conv_Movement.jasper", strReport, "", mapParameters);
 		
 		} else if (strReport.equals("1 - REM Conversion Status Report (G to G)")) {
 			mapParameters.put("co_id", txtCoID.getText());

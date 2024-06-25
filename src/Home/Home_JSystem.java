@@ -176,6 +176,7 @@ import Buyers.ClientServicing.CreditOfPayment;
 import Buyers.ClientServicing.CreditPaymentItsReal;
 import Buyers.ClientServicing.DocumentsMonitoring;
 import Buyers.ClientServicing.HoldingAndReservation;
+import Buyers.ClientServicing.IHF_FS_Discount_Tagging;
 import Buyers.ClientServicing.Add_Edit_Holidays;
 import Buyers.ClientServicing.OrderOfPayment;
 import Buyers.ClientServicing.OtherRequest;
@@ -3012,6 +3013,20 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 										if(isNotExisting("TaggingOfCashSurrenderValue")){
 											TaggingOfCashSurrenderValue tocsv = new TaggingOfCashSurrenderValue();
 											addWindow(tocsv, e);
+										}
+									}
+								});
+							}
+							{
+								JMenuItem menuitemIHFFSPromo = new JMenuItem("IHF FS Promo");
+								menuCreditCollection.add(menuitemIHFFSPromo);
+								menuitemIHFFSPromo.addActionListener(new ActionListener() {
+									
+									@Override
+									public void actionPerformed(ActionEvent e) {
+										if(isNotExisting("IHF_FS_Discount_Tagging")) {
+											IHF_FS_Discount_Tagging ihf_fs_disc = new IHF_FS_Discount_Tagging();
+											addWindow(ihf_fs_disc);
 										}
 									}
 								});

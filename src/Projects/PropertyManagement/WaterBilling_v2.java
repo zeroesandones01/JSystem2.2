@@ -1393,7 +1393,8 @@ public class WaterBilling_v2 extends _JInternalFrame implements _GUI, ActionList
 					Totl_Rdng = Curr_Rdng - Prev_Rdng;
 					garbage_fee = 0.00;
 					//modelWBilling.setValueAt(BigDecimal.valueOf(Totl_Rdng*39.00), x, 5);
-					modelWBilling.setValueAt(BigDecimal.valueOf(Totl_Rdng*70.00), x, 5); //ADJUSTMENT DUE TO DCRF 2797
+					//modelWBilling.setValueAt(BigDecimal.valueOf(Totl_Rdng*70.00), x, 5); //ADJUSTMENT DUE TO DCRF 2797
+					modelWBilling.setValueAt(BigDecimal.valueOf(Totl_Rdng*50.00), x, 5); //ADJUSTMENT DUE TO DCRF 2797
 					modelWBilling.setValueAt(BigDecimal.valueOf(garbage_fee), x, 6);
 				}
 				

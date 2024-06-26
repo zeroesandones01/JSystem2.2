@@ -458,7 +458,7 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 						
 						if(isRetFeeOnline(client_seqno)) {
 							FncReport.generateReport("/Reports/rpt_RetFeeOL_CDC.jasper", "Sales Invoice", String.format("SI No.: %s", si_no), mapParameters);
-						} else if(co_id.equals("01") || co_id.equals("04")) {
+						} else if(co_id.equals("01") || co_id.equals("04") || co_id.equals("05")){
 							FncReport.generateReport("/Reports/rptSalesInvoice_VDC.jasper", "Sales Invoice", String.format("SI No.: %s", si_no), mapParameters);
 						}else if(co_id.equals("02")) {
 							FncReport.generateReport("/Reports/rptSalesInvoice_CDC.jasper", "Sales Invoice", String.format("SI No.: %s", si_no), mapParameters);

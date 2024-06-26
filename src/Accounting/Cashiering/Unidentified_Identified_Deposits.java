@@ -2892,7 +2892,7 @@ implements _GUI, ActionListener, MouseListener {
 				+ "'',\n"
 				+ "entity_id, '', ''\n"
 				+ "from rf_entity\n"
-				+ "where entity_id IN ('0504063223')) a\n"
+				+ "where entity_id IN ('0504063223', '6511006234')) a\n"
 				+ "\n"
 				+ "\n"
 				+ "";
@@ -2906,7 +2906,7 @@ implements _GUI, ActionListener, MouseListener {
 				"trim(particulars) as \"Particular\", \r\n" + 
 				"trim(partdesc) as \"Description\" \r\n" + 		
 				"from mf_pay_particular\r\n"   +
-				"where pay_part_id IN ('197', '223', '224', '268', '033', '262', '263', '041', '040', '042', '182', '147', '221', '198', '281') \n"+
+				"where pay_part_id IN ('197', '223', '224', '268', '033', '262', '263', '041', '040', '042', '182', '147', '221', '198', '281', '179') \n"+
 				"and status_id = 'A' \r\n"+
 				"order by particulars " ;
 		// ADDED 182 BY JARI CRUZ ASOF DEC 28 2022 DCRF# 2406
@@ -3401,7 +3401,7 @@ implements _GUI, ActionListener, MouseListener {
 		String sqlDetail = 
 				"update tf_unidentified_dep set " +
 						"pbl_id = '"+pbl_id+"', " +
-						"seq_no = '"+seq_no+"', " +
+						"seq_no = NULLIF('"+seq_no+"', '')::INTEGER, " +
 						"entity_id = '"+entity_id+"', " +
 						"proj_id = '"+proj_id+"', "+
 						"payment_part = '"+lookupIden_payment.getText().trim()+"',  " +
@@ -3487,7 +3487,7 @@ implements _GUI, ActionListener, MouseListener {
 					"where coalesce(entity_id, '') = '' and status_id = 'P'", false);
 			db.commit();
 
-			journalize_dd_v2(dateFormat.format(Calendar.getInstance().getTime()), batch_no);
+			journalize_dd_v2(lookupCompany.getValue(),dateFormat.format(Calendar.getInstance().getTime()), batch_no);
 			previewDirectDepositBatch(batch_no);
 			JOptionPane.showMessageDialog(getContentPane(),"Deposits successfully approved and posted.","Information",JOptionPane.INFORMATION_MESSAGE);
 			displayForApproval(modelApproval, rowHeaderApproval, modelApproval_total);
@@ -3664,7 +3664,7 @@ implements _GUI, ActionListener, MouseListener {
 
 	}
 	
-	private void journalize_dd_v2(String strDate, String batch_no) {
+	private void journalize_dd_v2(String co_id, String strDate, String batch_no) {
 		pgSelect dbSel = new pgSelect();
 		pgSelect dbSel1 = new pgSelect();
 		pgUpdate dbExec = new pgUpdate(); 

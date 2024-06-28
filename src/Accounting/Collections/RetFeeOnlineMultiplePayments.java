@@ -878,8 +878,12 @@ private void cancelRetFeeMP() {
 	
 	private String getARNo() {
 		String ar_no = "";
-		String SQL = "SELECT get_receipt_no_to_issue('" + lookupCompany.getValue() + "', '03', '" + UserInfo.branch_id
+//		String SQL = "SELECT get_receipt_no_to_issue('" + lookupCompany.getValue() + "', '03', '" + UserInfo.branch_id
+//				+ "', '" + UserInfo.EmployeeCode + "')";
+		
+		String SQL = "SELECT get_receipt_no_to_issue('" + lookupCompany.getValue() + "', '01', '" + UserInfo.branch_id
 				+ "', '" + UserInfo.EmployeeCode + "')";
+		
 		pgSelect db = new pgSelect();
 		db.select(SQL);
 		if (db.isNotNull()) {

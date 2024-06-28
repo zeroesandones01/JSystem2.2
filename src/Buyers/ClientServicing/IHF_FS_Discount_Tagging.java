@@ -73,7 +73,7 @@ public class IHF_FS_Discount_Tagging extends _JInternalFrame implements _GUI, Ac
 	private _JXFormattedTextField txtDueAmt;
 
 	private JComboBox cmbPmtType;
-	private _JDateChooser datePromoStart;
+	private _JDateChooser dateActual;
 
 	private modelIHFPromo modelIHFPromo;
 	private JScrollPane scrollIHFPromo;
@@ -149,7 +149,7 @@ public class IHF_FS_Discount_Tagging extends _JInternalFrame implements _GUI, Ac
 						pnlTagPromo.add(pnlNorth, BorderLayout.NORTH);
 						pnlNorth.setBorder(JTBorderFactory.createTitleBorder("Client Information"));
 						{
-							JPanel pnlLabel = new JPanel(new GridLayout(5, 1, 3, 3));
+							JPanel pnlLabel = new JPanel(new GridLayout(6, 1, 3, 3));
 							pnlNorth.add(pnlLabel, BorderLayout.WEST);
 							{
 								JLabel lblClient = new JLabel("Client");
@@ -171,13 +171,13 @@ public class IHF_FS_Discount_Tagging extends _JInternalFrame implements _GUI, Ac
 								JLabel lblPymentType = new JLabel("Discount Percentage");
 								pnlLabel.add(lblPymentType);
 							}
-//							{
-//								JLabel lblDateStart = new JLabel("Date Start");
-//								pnlLabel.add(lblDateStart);
-//							}
+							{
+								JLabel lbldateCreditMemo = new JLabel("Credit Memo Date");
+								pnlLabel.add(lbldateCreditMemo);
+							}
 						}
 						{
-							JPanel pnlComponents = new JPanel(new GridLayout(5, 1, 3, 3));
+							JPanel pnlComponents = new JPanel(new GridLayout(6, 1, 3, 3));
 							pnlNorth.add(pnlComponents, BorderLayout.CENTER);
 							{
 								JPanel pnlClient = new JPanel(new BorderLayout(3, 3));
@@ -277,15 +277,16 @@ public class IHF_FS_Discount_Tagging extends _JInternalFrame implements _GUI, Ac
 									cmbPmtType.setPreferredSize(new Dimension(150, 0));
 								}
 							}
-//							{
-//								JPanel pnlDatePromo = new JPanel(new BorderLayout(3, 3));
-//								pnlComponents.add(pnlDatePromo);
-//								{
-//									datePromoStart = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
-//									pnlDatePromo.add(datePromoStart, BorderLayout.WEST);
-//									datePromoStart.setPreferredSize(new Dimension(150, 0));
-//								}
-//							}
+							{
+								JPanel pnlDatePromo = new JPanel(new BorderLayout(3, 3));
+								pnlComponents.add(pnlDatePromo);
+								{
+									dateActual = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+									pnlDatePromo.add(dateActual, BorderLayout.WEST);
+									dateActual.setPreferredSize(new Dimension(150, 0));
+									//dateActual.setDate(Calendar.g)
+								}
+							}
 						}
 					}
 					{
@@ -543,18 +544,20 @@ public class IHF_FS_Discount_Tagging extends _JInternalFrame implements _GUI, Ac
 		db.select(SQL);
 
 		Date start_date = (Date) db.getResult()[0][0];
-		datePromoStart.setDate(start_date);
+		dateActual.setDate(start_date);
 	}
 
 	private void tagNew() {
 		lookupClient.setEnabled(true);
 		cmbPmtType.setEnabled(true);
-//		datePromoStart.setEnabled(true);
-//		datePromoStart.getCalendarButton().setEnabled(true);
+		dateActual.setEnabled(true);
+		dateActual.getCalendarButton().setEnabled(true);
 		btnState(false, true, false, true);
 	}
 
 	private void tagCancel() {
+		dateActual.setEnabled(false);
+		dateActual.getCalendarButton().setEnabled(false);
 		lookupClient.setEnabled(false);
 		cmbPmtType.setEnabled(false);
 		lookupClient.setValue(null);

@@ -687,6 +687,8 @@ public class propertyManagementReports extends _JInternalFrame implements _GUI, 
 		} else {
 			txtProID.setValue(GetValue("SELECT proj_id FROM mf_project LIMIT 1"));
 			txtProject.setText(GetValue("SELECT proj_name FROM mf_project WHERE proj_id = '"+txtProID.getText()+"'"));
+			txtProID.setValue(null);
+			txtProject.setText("");
 		}
 		
 		txtCoID.setValue("02");

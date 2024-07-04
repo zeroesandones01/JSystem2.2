@@ -473,7 +473,7 @@ public class Cashflow extends _JInternalFrame implements ActionListener, Ancesto
 		mapParameters.put("prepared_by", UserInfo.Alias);
 		mapParameters.put("prepared_by_name", UserInfo.FullName);
 		mapParameters.put("report_date", dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL())));
-		mapParameters.put("logo", this.getClass().getClassLoader().getResourceAsStream("Images/"+ company_logo));
+		//mapParameters.put("logo", this.getClass().getClassLoader().getResourceAsStream("Images/"+ company_logo));
 		mapParameters.put("date_from",dteDateFrom.getDate());
 		mapParameters.put("date_to", dateDateTo.getDate());
 		mapParameters.put("proj_id", proj_id);

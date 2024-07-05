@@ -2311,8 +2311,20 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 	public static void edit() {
 		lblDateTrans.setEnabled(true);
 		lblDateNeeded.setEnabled(true);
-		dteRequest.setEnabled(true);
-		dteNeeded.setEnabled(true);
+		
+		if(UserInfo.EmployeeCode.equals("901284") || UserInfo.EmployeeCode.equals("900655") || UserInfo.ADMIN) {
+			dteRequest.setEnabled(true);
+			dteNeeded.setEnabled(true);
+			dteRequest.setEditable(true);
+			dteNeeded.setEditable(true);
+		}else {
+			dteRequest.setEnabled(false);
+			dteNeeded.setEnabled(false);
+			dteRequest.setEditable(false);
+			dteNeeded.setEditable(false);
+		}
+		
+		
 		lblPaymentType.setEnabled(true);
 		lookupPaymentType.setEnabled(true);
 		// lookupPaymentType.setEditable(true);
@@ -2335,8 +2347,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		modelPV_SL.setEditable(false);
 		to_do = "edit";
 
-		dteRequest.setEditable(true);
-		dteNeeded.setEditable(true);
+		
 
 	}
 

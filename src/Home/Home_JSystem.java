@@ -399,6 +399,7 @@ import Reports.LegalAndLiaisoning.RPTComputationReport;
 import Reports.LegalAndLiaisoning.RevolvingFundsReports;
 import Reports.LegalAndLiaisoning.TCTTaxDecForLiquidation;
 import Reports.LegalAndLiaisoning.TransferTaxReceipt;
+import Reports.LegalAndLiaisoning.TransferTaxDecMonitoring;
 import Reports.LegalAndLiaisoning.claimstub;
 import Reports.LoansAndReceivable.FI_Reports;
 import Reports.LoansAndReceivable.ListOfClientsWithPendingMSVS;
@@ -5291,6 +5292,21 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 								});
 							}
 							{
+								JMenuItem menuitemTransferTaxDecMonitoring = new JMenuItem("Transfer Tax Dec Monitoring");
+								menuReportLegalAndLiaisoning.add(menuitemTransferTaxDecMonitoring);
+								menuitemTransferTaxDecMonitoring.addActionListener(new ActionListener() {
+
+									@Override
+									public void actionPerformed(ActionEvent e) {
+										if(isNotExisting("TransferTaxDecMonitoring")){
+											TransferTaxDecMonitoring ttdc = new TransferTaxDecMonitoring();
+											addWindow(ttdc, e);
+										}
+									}
+
+								});
+							}				
+							{
 								JMenuItem menuitemclaimstub = new JMenuItem("Claim Stub Form");
 								menuReportLegalAndLiaisoning.add(menuitemclaimstub);
 								menuitemclaimstub.addActionListener(new ActionListener() {
@@ -5318,7 +5334,24 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									}
 								});
 							}
+//							{
+//								JMenuItem menuitemTransferTaxDecMonitoring = new JMenuItem("Transfer Tax Dec Monitoring");
+//								menuReportLegalAndLiaisoning.add(menuitemTransferTaxDecMonitoring);
+//								menuitemTransferTaxDecMonitoring.addActionListener(new ActionListener() {
+//
+//									@Override
+//									public void actionPerformed(ActionEvent e) {
+//										if(isNotExisting("TransferTaxDecMonitoring")){
+//											TransferTaxDecMonitoring ttdc = new TransferTaxDecMonitoring();
+//											addWindow(ttdc, e);
+//										}
+//									}
+//
+//								});
+//							}						
 						}
+						
+						
 						{
 							JMenu menuReportLoansManagement = new JMenu("Loans Management");
 							menuReportBuyers.add(menuReportLoansManagement);

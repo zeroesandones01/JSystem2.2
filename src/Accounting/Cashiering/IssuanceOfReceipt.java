@@ -1714,7 +1714,7 @@ public class IssuanceOfReceipt extends _JInternalFrame implements ActionListener
 					} else if (selectedTransaction.equals("CASH RETURN")
 							&& txtClientSequenceNo.getText().substring(0, 2).equals("GA")) {
 						if (_IssuanceOfReceipt.saveCashReturn(modelPaymentList, lookupClient.getValue(),
-								(BigDecimal) txtTotalAmount.getValued(), lookupCompany.getValue(), txtRemarks.getText())) {
+								(BigDecimal) txtTotalAmount.getValued(), lookupCompany.getValue(), txtRemarks.getText().trim().replace("'", "''"))) {
 							lookupClient.setEnabled(true);
 							lookupClient.setEditable(true);
 							lookupClient.setEditable(false);

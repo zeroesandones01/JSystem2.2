@@ -179,13 +179,12 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 							pnlNorthLookUp.add(lookupYear);
 							lookupYear.setReturnColumn(1);
 							lookupYear.addLookupListener(new LookupListener() {
-								public void lookupPerformed(LookupEvent event) {//XXX Year
+								public void lookupPerformed(LookupEvent event) {
 									Object[] data = ((_JLookup)event.getSource()).getDataSet();
 									if(data != null){
-//										txtYear.setText(data[1].toString());
 										manager.focusNextComponent();
 									}else{
-										JOptionPane.showMessageDialog(FncGlobal.homeMDI, "Please select project first.", "Phase", JOptionPane.WARNING_MESSAGE);
+										JOptionPane.showMessageDialog(FncGlobal.homeMDI, "Please select project first.", "Year", JOptionPane.WARNING_MESSAGE);
 									}
 								}
 							});
@@ -204,11 +203,6 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 							pnlNorthTxtField.add(txtProject);
 							txtProject.setEditable(false);
 						}
-//						{
-//							txtYear = new JXTextField("");
-//							pnlNorthTxtField.add(txtYear);
-//							txtYear.setEditable(false);	
-//						}
 					}
 				}
 			}		

@@ -2711,11 +2711,11 @@ public class ProcessingCostTransactionEntry extends _JInternalFrame implements _
 		}
 		btnBatch.setEnabled(false);
 		btnTSave.setEnabled(false);
-		if (UserInfo.EmployeeCode.equals("900705") || UserInfo.EmployeeCode.equals("900767")) {
-			pnlState(true, true, true, true, true);
-		}else {
-			pnlState(true, true, true, true, false);
-		}
+//		if (UserInfo.EmployeeCode.equals("900705") || UserInfo.EmployeeCode.equals("900767")) {
+//			pnlState(true, true, true, true, true);
+//		}else {
+//			pnlState(true, true, true, true, false);
+//		}
 	}
 
 

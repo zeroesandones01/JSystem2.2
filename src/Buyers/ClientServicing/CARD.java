@@ -1809,7 +1809,7 @@ public class CARD extends _JInternalFrame implements _GUI, AncestorListener, Sea
 												{
 													dateDues = new _JDateChooser("MM/dd/yyyy", "##/##/####", '_');
 													pnlWest.add(dateDues, BorderLayout.CENTER);
-													dateDues.setDate(FncGlobal.getDateToday());
+													dateDues.setDate(FncGlobal.getDateNow());
 													dateDues.setPreferredSize(new Dimension(100, 30));
 													dateDues.addDateListener(new DateListener() {
 														public void datePerformed(DateEvent event) {

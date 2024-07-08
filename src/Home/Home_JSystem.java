@@ -211,6 +211,7 @@ import Buyers.CreditandCollections.TagCancelledByPAGIBIG;
 import Buyers.CreditandCollections.Transmittal;
 import Buyers.CreditandCollections.pctReports;
 import Buyers.CreditandCollections.rtdDocuments;
+import Buyers.CreditandCollections.UDOASPrinting;
 import Buyers.LegalandLiaisoning.ForEditRealPropertyHouse;
 import Buyers.LegalandLiaisoning.OccupancyMonitoring;
 import Buyers.LegalandLiaisoning.ProcessingCostTransactionEntry;
@@ -3028,6 +3029,20 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 										if(isNotExisting("IHF_FS_Discount_Tagging")) {
 											IHF_FS_Discount_Tagging ihf_fs_disc = new IHF_FS_Discount_Tagging();
 											addWindow(ihf_fs_disc);
+										}
+									}
+								});
+							}
+							{
+								JMenuItem menuitemUDOASPrinting = new JMenuItem("UDOAS Printing");
+								menuCreditCollection.add(menuitemUDOASPrinting);
+								menuitemUDOASPrinting.addActionListener(new ActionListener() {
+									
+									@Override
+									public void actionPerformed(ActionEvent e) {
+										if(isNotExisting("UDOASPrinting")) {
+											UDOASPrinting udoasp= new UDOASPrinting();
+											addWindow(udoasp);
 										}
 									}
 								});

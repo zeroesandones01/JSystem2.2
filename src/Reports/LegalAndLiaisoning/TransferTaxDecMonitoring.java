@@ -279,10 +279,10 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 			Map<String, Object> mapTransferTaxDecMonitoring = new HashMap<String, Object>();
 			
 			//mapTransferTaxDecMonitoring.put("co_id", lookupCompany.getValue());
-			mapTransferTaxDecMonitoring.put("Company", lookupCompany.getValue());
+			mapTransferTaxDecMonitoring.put("Company", txtCompany.getText());
 			//mapTransferTaxDecMonitoring.put("company_alias", txtCompany.getToolTipText());
 			//mapTransferTaxDecMonitoring.put("proj_id", lookupProject.getValue());
-			mapTransferTaxDecMonitoring.put("Project", lookupProject.getValue());
+			mapTransferTaxDecMonitoring.put("Project", txtProject.getText());
 			mapTransferTaxDecMonitoring.put("Year", lookupYear.getValue());
 			//mapTransferTaxDecMonitoring.put("prepared_by", UserInfo.FullName);
 			//mapTransferTaxDecMonitoring.put("prepared_by_alias", UserInfo.Alias);

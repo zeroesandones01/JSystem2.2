@@ -225,6 +225,7 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 					{
 						btnPreview = new JButton("Preview");
 						pnlSouth.add(btnPreview);
+						btnPreview.setActionCommand("preview");
 						btnPreview.setAlignmentX(0.5f);
 						btnPreview.setAlignmentY(0.5f);
 						btnPreview.setMaximumSize(new Dimension(100, 30));
@@ -271,19 +272,28 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand();
 
-		if(action.equals("Preview")){
+		if(action.equals("preview")){
+			
+			String criteria = "Transfer Tax Dec Monitoring";		
+			String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
 			Map<String, Object> mapTransferTaxDecMonitoring = new HashMap<String, Object>();
-
-			mapTransferTaxDecMonitoring.put("co_id", lookupCompany.getValue());
-			mapTransferTaxDecMonitoring.put("company", txtCompany.getText());
-			mapTransferTaxDecMonitoring.put("company_alias", txtCompany.getToolTipText());
-			mapTransferTaxDecMonitoring.put("proj_id", lookupProject.getValue());
-			mapTransferTaxDecMonitoring.put("proj_id", lookupProject.getValue());
-			mapTransferTaxDecMonitoring.put("year", lookupYear.getValue());
-			mapTransferTaxDecMonitoring.put("prepared_by", UserInfo.FullName);
-			mapTransferTaxDecMonitoring.put("prepared_by_alias", UserInfo.Alias);
-			mapTransferTaxDecMonitoring.put("user_id", UserInfo.EmployeeCode);
-
+			
+			//mapTransferTaxDecMonitoring.put("co_id", lookupCompany.getValue());
+			mapTransferTaxDecMonitoring.put("Company", txtCompany.getText());
+			//mapTransferTaxDecMonitoring.put("company_alias", txtCompany.getToolTipText());
+			//mapTransferTaxDecMonitoring.put("proj_id", lookupProject.getValue());
+			mapTransferTaxDecMonitoring.put("Project", txtProject.getText());
+			mapTransferTaxDecMonitoring.put("Year", lookupYear.getValue());
+			//mapTransferTaxDecMonitoring.put("prepared_by", UserInfo.FullName);
+			//mapTransferTaxDecMonitoring.put("prepared_by_alias", UserInfo.Alias);
+			//mapTransferTaxDecMonitoring.put("user_id", UserInfo.EmployeeCode);
+			
+			System.out.println("company"+ lookupCompany.getValue());
+			System.out.println("project"+ lookupProject.getValue());
+			System.out.println("year"+ lookupYear.getValue());
+			
+			FncReport.generateReport("/Reports/rptTransferTaxDecMonitoring.jasper", reportTitle, lookupCompany.getValue(), mapTransferTaxDecMonitoring);		
+		
 		}
 	}
 

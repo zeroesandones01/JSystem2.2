@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptSPContract" pageWidth="612" pageHeight="936" columnWidth="472" leftMargin="70" rightMargin="70" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.366026910730142"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="103"/>
+	<property name="ireport.x" value="150"/>
+	<property name="ireport.y" value="803"/>
 	<parameter name="_server" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="_dbase" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="logo" class="java.io.InputStream" isForPrompting="false">
@@ -67,8 +67,8 @@ a.ntp_type_id,
 (CASE WHEN (SELECT COUNT(*) FROM co_ntp_detail WHERE ntp_no = a.ntp_no) > 1
  THEN (SELECT ntp_subject_description FROM co_ntp_subjects WHERE ntp_no = a.ntp_no)
  ELSE (SELECT work_desc FROM co_ntp_detail WHERE ntp_no = a.ntp_no)
- END) as cse_heading
-
+ END) as cse_heading,
+now() - '11 days'::INTERVAL as as_of_date
 FROM co_ntp_header a
 LEFT JOIN rf_entity b ON b.entity_id = a.entity_id
 LEFT JOIN mf_project c ON c.proj_id = a.proj_id
@@ -118,6 +118,7 @@ WHERE a.ntp_no = $P{ntp_no}]]>
 	<field name="post" class="java.lang.Boolean"/>
 	<field name="metering_center" class="java.lang.Boolean"/>
 	<field name="cse_heading" class="java.lang.String"/>
+	<field name="as_of_date" class="java.sql.Timestamp"/>
 	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
 		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
@@ -1181,7 +1182,7 @@ $F{address} + "\n" +
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Tahoma" size="7" isBold="false" isItalic="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["As of: " + new SimpleDateFormat("EEE MMM dd, yyyy hh:mm a").format(new java.util.Date())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["As of: " + new SimpleDateFormat("EEE MMM dd, yyyy hh:mm a").format($F{as_of_date})]]></textFieldExpression>
 			</textField>
 			<frame>
 				<reportElement x="165" y="10" width="120" height="10"/>

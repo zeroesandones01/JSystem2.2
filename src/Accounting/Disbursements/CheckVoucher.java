@@ -2098,7 +2098,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
 		mapParameters.put("pv_date", dateFormat.format(dteCheck.getDate()));
-		mapParameters.put("pv_amt", pv_amt.toString());
+		mapParameters.put("pv_amt", nf.format(Double.valueOf(pv_amt.toString())));
 		mapParameters.put("payee", check_payee.trim().toUpperCase());
 
 		if (txtBankAlias.getText().trim().equals("AUB")) {

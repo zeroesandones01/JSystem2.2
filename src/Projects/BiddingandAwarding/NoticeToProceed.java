@@ -2242,7 +2242,7 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 				mapParameters.put("prepared_by", UserInfo.Alias);
 				
 				if (lookupNTPType.getValue().equals("10") || lookupNTPType.getValue().equals("03")) {
-					if(lookupNTPNo.getValue().equals("002364") || lookupNTPNo.getValue().equals("002367") || lookupNTPNo.getValue().equals("002369") || lookupNTPNo.getValue().equals("002370")) {
+					if(lookupNTPNo.getValue().equals("002364") || lookupNTPNo.getValue().equals("002367") || lookupNTPNo.getValue().equals("002368") || lookupNTPNo.getValue().equals("002369") || lookupNTPNo.getValue().equals("002370")) {
 						System.out.print("rptSPContract_v2");
 						FncReport.generateReport("/Reports/rptSPContract_v2.jasper", print_type, txtCompany.getText(),
 								mapParameters);

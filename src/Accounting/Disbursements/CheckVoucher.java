@@ -1209,7 +1209,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		String sql = "-----display DV account entries\r\n" + "select distinct on(a.acct_id)\n" + "\n" + "a.acct_id,\n"
 				+ "coalesce(b.acct_name, c.acct_desc),\n"
 				+ "( case when a.bal_side = 'D' then a.tran_amt else '0' end ) as debit,\n"
-				+ "( case when a.bal_side = 'C' then a.tran_amt else '0' end ) as credit, a.corollary_entry \n" + "\n" + "\n"
+				+ "( case when a.bal_side = 'C' then a.tran_amt else '0' end ) as credit, coalesce(a.corollary_entry, false) \n" + "\n" + "\n"
 				+ "from rf_cv_detail a\n" + "left join mf_boi_chart_of_accounts b on a.acct_id = b.acct_id\n" +
 				// "left join mf_bank_account c on a.acct_id = c.acct_id \n" +
 				"left join mf_bank_account c on a.acct_id = c.acct_id and a.status_id=c.status_id \n" + // edited by

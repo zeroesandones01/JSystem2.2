@@ -2067,7 +2067,27 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		String criteria = "Check";
 		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
 
-		Double pv_amt = Double.parseDouble(modelDV_accttotal.getValueAt(0, 3).toString());
+		//Double pv_amt = Double.parseDouble(modelDV_accttotal.getValueAt(0, 3).toString());
+		
+		BigDecimal pv_amt = new BigDecimal(0.00);
+		
+		
+		for (int x = 0; x < modelDV_acct_entries.getRowCount(); x++) {
+			
+			Boolean isCorollary = (Boolean) modelDV_acct_entries.getValueAt(x, 4);
+			
+			
+			if(isCorollary == false) {
+
+
+				try {
+					pv_amt = pv_amt.add(((BigDecimal) modelDV_acct_entries.getValueAt(x, 3)));
+				} catch (NullPointerException e) {
+					pv_amt = pv_amt.add(new BigDecimal(0.00));
+				}
+			}
+		}
+				
 
 		String check_payee = "";
 		if (sql_getDefaultBroker(payee).equals("")) {
@@ -2078,7 +2098,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
 		mapParameters.put("pv_date", dateFormat.format(dteCheck.getDate()));
-		mapParameters.put("pv_amt", nf.format(pv_amt));
+		mapParameters.put("pv_amt", pv_amt.toString());
 		mapParameters.put("payee", check_payee.trim().toUpperCase());
 
 		if (txtBankAlias.getText().trim().equals("AUB")) {

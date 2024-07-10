@@ -957,6 +957,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 						tblDV_acct_entries.getColumnModel().getColumn(1).setPreferredWidth(300);
 						tblDV_acct_entries.getColumnModel().getColumn(2).setPreferredWidth(120);
 						tblDV_acct_entries.getColumnModel().getColumn(3).setPreferredWidth(120);
+						tblDV_acct_entries.hideColumns("Cor Entry");
 						tblDV_acct_entries.addMouseListener(this);
 						tblDV_acct_entries.addKeyListener(new KeyAdapter() {
 							public void keyReleased(KeyEvent evt) {
@@ -1208,7 +1209,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		String sql = "-----display DV account entries\r\n" + "select distinct on(a.acct_id)\n" + "\n" + "a.acct_id,\n"
 				+ "coalesce(b.acct_name, c.acct_desc),\n"
 				+ "( case when a.bal_side = 'D' then a.tran_amt else '0' end ) as debit,\n"
-				+ "( case when a.bal_side = 'C' then a.tran_amt else '0' end ) as credit\n" + "\n" + "\n"
+				+ "( case when a.bal_side = 'C' then a.tran_amt else '0' end ) as credit, a.corollary_entry \n" + "\n" + "\n"
 				+ "from rf_cv_detail a\n" + "left join mf_boi_chart_of_accounts b on a.acct_id = b.acct_id\n" +
 				// "left join mf_bank_account c on a.acct_id = c.acct_id \n" +
 				"left join mf_bank_account c on a.acct_id = c.acct_id and a.status_id=c.status_id \n" + // edited by
@@ -2826,19 +2827,23 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		BigDecimal credit = new BigDecimal(0.00);
 
 		for (int x = 0; x < modelMain.getRowCount(); x++) {
+			
+			Boolean isCorollary = (Boolean) modelMain.getValueAt(x, 4);
+			
+			
+			if(isCorollary == false) {
+				try {
+					debit = debit.add(((BigDecimal) modelMain.getValueAt(x, 2)));
+				} catch (NullPointerException e) {
+					debit = debit.add(new BigDecimal(0.00));
+				}
 
-			try {
-				debit = debit.add(((BigDecimal) modelMain.getValueAt(x, 2)));
-			} catch (NullPointerException e) {
-				debit = debit.add(new BigDecimal(0.00));
+				try {
+					credit = credit.add(((BigDecimal) modelMain.getValueAt(x, 3)));
+				} catch (NullPointerException e) {
+					credit = credit.add(new BigDecimal(0.00));
+				}
 			}
-
-			try {
-				credit = credit.add(((BigDecimal) modelMain.getValueAt(x, 3)));
-			} catch (NullPointerException e) {
-				credit = credit.add(new BigDecimal(0.00));
-			}
-
 		}
 
 		modelTotal.addRow(new Object[] { "Total", null, debit, credit });

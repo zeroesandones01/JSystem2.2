@@ -44,7 +44,8 @@ public class modelCV_acct_entries	 extends DefaultTableModel {
 			" Account ID  " ,	// 1
 			"Account Desc", 	// 2
 			"Debit",			// 3
-			"Credit"			// 4
+			"Credit",			// 4
+			"Cor Entry" //5
 			};
 
 	
@@ -59,8 +60,8 @@ public class modelCV_acct_entries	 extends DefaultTableModel {
 			String.class, 		//Account ID
 			String.class,		//Account Desc
 			BigDecimal.class, 	//Debit
-			BigDecimal.class 	//Credit
-			
+			BigDecimal.class, 	//Credit
+			Boolean.class
 	};
 
 	private void initThis() {
@@ -69,7 +70,8 @@ public class modelCV_acct_entries	 extends DefaultTableModel {
 				false, 		//Account ID
 				false,		//Account Desc
 				false, 		//Debit
-				false 		//Credit
+				false, 		//Credit
+				false
 		};
 	}
 
@@ -92,14 +94,16 @@ public class modelCV_acct_entries	 extends DefaultTableModel {
 					false, 		//Account ID
 					false,		//Account Desc
 					false, 		//Debit
-					false 		//Credit
+					false, 		//Credit
+					false
 			};
 		}else{
 			COLUMN_EDITABLE = new boolean[] {
 					false, 		//Account ID
 					false,		//Account Desc
 					false, 		//Debit
-					false 		//Credit
+					false, 		//Credit
+					false,
 			};
 		}
 	}

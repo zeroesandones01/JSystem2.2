@@ -1540,23 +1540,38 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 						+ "' and status_id = 'A' and vat_amt > 0 and co_id = '" + lookupCompany.getValue() + "' \r\n"
 						+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n";
 				if(rplf_type_id.equals("14")) {
-					sql = sql + "union all\r\n" + 
+//					sql = sql + "union all\r\n" + 
+//								"select \n"
+//								+ "'01-02-04-000',\n"
+//								+ "a.div_id,\n"
+//								+ "a.dept_id,\n"
+//								+ "a.sect_id,\n"
+//								+ "a.project_id,\n"
+//								+ "a.sub_projectid,\n"
+//								+ "'Advances to Officers and Employees',\n"
+//								+ "a.pv_amt as debit,\n"
+//								+ "0 as credit\n"
+//								+ "from (\n"
+//								+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \n"
+//								+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(pv_amt) as pv_amt\n"
+//								+ "from rf_request_detail \n"
+//								+ "where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"' \n"
+//								+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a ";
+					
+					
+					sql = sql + "UNION ALL \r\n"+
 								"select \n"
 								+ "'01-02-04-000',\n"
-								+ "a.div_id,\n"
-								+ "a.dept_id,\n"
-								+ "a.sect_id,\n"
-								+ "a.project_id,\n"
-								+ "a.sub_projectid,\n"
+								+ "NULL,\n"
+								+ "NULL,\n"
+								+ "NULL,\n"
+								+ "NULL,\n"
+								+ "NULL,\n"
 								+ "'Advances to Officers and Employees',\n"
-								+ "a.pv_amt as debit,\n"
+								+ "sum(a.pv_amt) as debit,\n"
 								+ "0 as credit\n"
-								+ "from (\n"
-								+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \n"
-								+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(pv_amt) as pv_amt\n"
-								+ "from rf_request_detail \n"
-								+ "where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"' \n"
-								+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a ";
+								+ "from rf_request_detail a\n"
+								+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"' ";
 				}
 			}else{
 				sql = sql + "union all\r\n" + "\r\n" + "select \r\n" + "'01-99-03-000',\r\n" + "a.div_id,\r\n"
@@ -1824,24 +1839,39 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				+ "group by  a.acct_id,a.div_id,a.dept_id,a.sect_id,a.project_id,a.sub_projectid,a.acct_name,a.other_liqui_amt \n"+
 				"\n";
 				if(rplf_type_id.equals("14")) {
+//					sql = sql + "\n\n"+
+//							"UNION ALL \n"
+//							+ "select \n"
+//							+ "'01-02-22-000',\n"
+//							+ "a.div_id,\n"
+//							+ "a.dept_id,\n"
+//							+ "a.sect_id,\n"
+//							+ "a.project_id,\n"
+//							+ "a.sub_projectid,\n"
+//							+ "'Allowance for Uncollectible Advances',\n"
+//							+ "0 as debit,\n"
+//							+ "a.pv_amt as credit\n"
+//							+ "from (\n"
+//							+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \n"
+//							+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(pv_amt) as pv_amt\n"
+//							+ "from rf_request_detail \n"
+//							+ "where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"' \n"
+//							+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n";
+					
 					sql = sql + "\n\n"+
-							"UNION ALL \n"
-							+ "select \n"
+							"UNION ALL \n"+
+							"select \n"
 							+ "'01-02-22-000',\n"
-							+ "a.div_id,\n"
-							+ "a.dept_id,\n"
-							+ "a.sect_id,\n"
-							+ "a.project_id,\n"
-							+ "a.sub_projectid,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
 							+ "'Allowance for Uncollectible Advances',\n"
 							+ "0 as debit,\n"
-							+ "a.pv_amt as credit\n"
-							+ "from (\n"
-							+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \n"
-							+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(pv_amt) as pv_amt\n"
-							+ "from rf_request_detail \n"
-							+ "where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"' \n"
-							+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n";
+							+ "sum(a.pv_amt) as credit\n"
+							+ "from rf_request_detail a\n"
+							+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"'\n";
 				}
 
 				// Accounts Payable - Trade

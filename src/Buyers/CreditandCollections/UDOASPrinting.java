@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -29,6 +32,7 @@ import Functions.FncGlobal;
 import Functions.FncReport;
 import Functions.FncSystem;
 import Functions.FncTables;
+import Functions.UserInfo;
 import Lookup.LookupEvent;
 import Lookup.LookupListener;
 import Lookup._JLookup;
@@ -38,6 +42,9 @@ import components._JTableMain;
 import interfaces._GUI;
 import tablemodel.modelUDOASPrinting;
 
+/**
+ * @author Monique Boriga
+ */
 public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListener {
 
 	private static final long serialVersionUID = 1L;
@@ -61,6 +68,7 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 	private _JTableMain tableUDOASPrinting;
 	private JList rowHeader;
 	private JButton btnPreview;
+	private JButton btnPrint;
 
 	public UDOASPrinting() {
 		super(title, true, true, false, true);
@@ -120,7 +128,6 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 											if (data != null) {
 
 												txtCompany.setText(data[1].toString());
-												btnGenerate.setEnabled(true);
 												lookupProject.setLookupSQL(SQL_PROJECT(data[0].toString()));
 											} else {
 												txtCompany.setText("");
@@ -145,6 +152,7 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 
 												txtProject.setText(data[1].toString());
 												lookupPhase.setLookupSQL(SQL_PHASE(data[0].toString()));
+												btnGenerate.setEnabled(true);
 											} else {
 												txtProject.setText("");
 											}
@@ -203,6 +211,7 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 								{
 									dateDateFrom = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
 									pnlDateCovered.add(dateDateFrom); 
+									dateDateFrom.setDate(FncGlobal.dateFormat("2000-01-01")); //INITIAL VALUE
 								}
 								{
 									JLabel lblDateTo = new JLabel("              Date To:"); 
@@ -210,7 +219,9 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 								}
 								{
 									dateDateTo = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
-									pnlDateCovered.add(dateDateTo); 
+									pnlDateCovered.add(dateDateTo);
+									dateDateTo.setDate(FncGlobal.getDateToday()); // INITIAL VALUE
+
 								}
 								{
 									pnlDateCovered.add(Box.createHorizontalBox());
@@ -226,6 +237,7 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 								pnlGenerate.add(btnGenerate); 
 								btnGenerate.addActionListener(this);
 								btnGenerate.setActionCommand(btnGenerate.getText());
+								btnGenerate.setEnabled(false);
 
 							}
 						}
@@ -264,17 +276,23 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 						pnlPrintUDOAS.add(pnlSouth, BorderLayout.SOUTH); 
 						pnlSouth.setPreferredSize(new Dimension(0, 50));
 						{
-							JPanel pnlPreview = new JPanel(); 
-							pnlSouth.add(pnlPreview, BorderLayout.EAST); 
-							pnlPreview.setPreferredSize(new Dimension(100, 0)); 
+							JPanel pnlControls = new JPanel(new GridLayout(1, 2, 5, 5)); 
+							pnlSouth.add(pnlControls, BorderLayout.EAST); 
+							pnlControls.setPreferredSize(new Dimension(160, 0)); 
 							{
 								btnPreview = new JButton("Preview"); 
-								pnlPreview.add(btnPreview);
+								pnlControls.add(btnPreview);
 								btnPreview.setEnabled(false);
-								btnPreview.setPreferredSize(new Dimension(80, 40));
 								btnPreview.setActionCommand(btnPreview.getText());
 								btnPreview.addActionListener(this); 
-							}	
+							}
+							{
+								btnPrint = new JButton("Print"); 
+								pnlControls.add(btnPrint); 
+								btnPrint.setEnabled(false); 
+								btnPrint.setActionCommand(btnPrint.getText());
+								btnPrint.addActionListener(this); 
+							}
 						}
 					}
 				}
@@ -287,24 +305,35 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 
 		if(actionCommand.equals("Generate")) {
 
-			new Thread(new Runnable() {
+			if (isNewProject(lookupProject.getValue()) && lookupPhase.getValue() == null) {
+				JOptionPane.showMessageDialog(getContentPane(),"Please select a phase","Warning Message",JOptionPane.WARNING_MESSAGE);	
+			} else {
 
-				@Override
-				public void run() {
-					FncGlobal.startProgress("Generating Accounts");
-					displayDataTable(modelUDOASPrinting, rowHeader);
-					btnPreview.setEnabled(true);
-					JOptionPane.showMessageDialog(getContentPane(),"Units Generated.","Information",JOptionPane.INFORMATION_MESSAGE);	
-					FncGlobal.stopProgress();
-					btnGenerate.setEnabled(false);
+				new Thread(new Runnable() {
 
-				}
-			}).start();
+					@Override
+					public void run() {
+						FncGlobal.startProgress("Generating Accounts");
+						displayDataTable(modelUDOASPrinting, rowHeader);
+						btnPreview.setEnabled(true);
+						btnPrint.setEnabled(true);
+						JOptionPane.showMessageDialog(getContentPane(),"Units Generated.","Information",JOptionPane.INFORMATION_MESSAGE);	
+						FncGlobal.stopProgress();
+						btnGenerate.setEnabled(false);
+
+					}
+				}).start();
+
+			}
 
 		}
 
 		if(actionCommand.equals("Preview")) {
-			previewUDOAS();
+			previewUDOAS();	
+		}
+
+		if(actionCommand.equals("Print")) {
+			printUDOAS();
 		}
 	}
 
@@ -325,56 +354,63 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 			}
 		}
 	}
-	
+
 	private void previewUDOAS() {
-		String selected_entity_id = "";
-		String selected_proj_id = "";
-		String selected_pbl_id = "";
-		String selected_seq_no = "";
+		if(selected_count() > 0) {
+			String selected_entity_id = "";	
+			String selected_proj_id = "";
+			String selected_pbl_id = "";
+			String selected_seq_no = "";
 
-		for (int i = 0; i < modelUDOASPrinting.getRowCount(); i++) {
-			boolean tag = (boolean) modelUDOASPrinting.getValueAt(i, 0);
-			if(tag) {
-				String entity_id = (String) modelUDOASPrinting.getValueAt(i, 11);
-				String proj_id = (String) modelUDOASPrinting.getValueAt(i, 12);
-				String pbl_id = (String) modelUDOASPrinting.getValueAt(i, 13);
-				Object seq_no = modelUDOASPrinting.getValueAt(i, 14);
-				
-				if(i == selected_count()) {
-					selected_entity_id += entity_id;
-					selected_proj_id += proj_id;
-					selected_pbl_id += pbl_id;
-					selected_seq_no += seq_no;
-				} else {
-					selected_entity_id += entity_id + ",";
-					selected_proj_id += proj_id + ",";
-					selected_pbl_id += pbl_id + ",";
-					selected_seq_no += seq_no + ",";
-				}
+			for (int i = 0; i < modelUDOASPrinting.getRowCount(); i++) {
+				boolean tag = (boolean) modelUDOASPrinting.getValueAt(i, 0);
+				if(tag) {
+					String entity_id = (String) modelUDOASPrinting.getValueAt(i, 11);
+					String proj_id = (String) modelUDOASPrinting.getValueAt(i, 12);
+					String pbl_id = (String) modelUDOASPrinting.getValueAt(i, 13);
+					Object seq_no = modelUDOASPrinting.getValueAt(i, 14);
+
+					if(i == selected_count()) {
+						selected_entity_id += entity_id;
+						selected_proj_id += proj_id;
+						selected_pbl_id += pbl_id;
+						selected_seq_no += seq_no;
+					} else {
+						selected_entity_id += entity_id + ",";
+						selected_proj_id += proj_id + ",";
+						selected_pbl_id += pbl_id + ",";
+						selected_seq_no += seq_no + ",";
+					}
+				} 
+			}	
+
+			Map<String, Object> mapParameters = new HashMap<String, Object>();
+
+			mapParameters.put("co_id", lookupCompany.getValue());
+			mapParameters.put("entity_id", selected_entity_id);
+			mapParameters.put("proj_id", selected_proj_id);
+			mapParameters.put("phase", lookupPhase.getValue());
+			mapParameters.put("pbl_id", selected_pbl_id); 
+			mapParameters.put("seq_no", selected_seq_no); 
+
+			// ADDED DUE TO LENGTH OF TECHNICAL DESCRIPTION
+			if(lookupProject.getValue().equals("015") || lookupPhase.getValue().equals("1-B") || (lookupProject.getValue().equals("017") && lookupPhase.getValue().equals("2")) || lookupProject.getValue().equals("018")) { //TV, ER 1-B, EB 2, EVE
+				FncReport.generateReport("/Reports/rptUDOAS_TV.jasper", "Unilateral DOAS TV", mapParameters);
+			} else {
+				FncReport.generateReport("/Reports/rptUDOAS.jasper", "Unilateral DOAS", mapParameters);
 			}
-		}
-		
-		Map<String, Object> mapParameters = new HashMap<String, Object>();
 
-		mapParameters.put("co_id", lookupCompany.getValue());
-		mapParameters.put("entity_id", selected_entity_id);
-		mapParameters.put("proj_id", selected_proj_id);
-		mapParameters.put("phase", lookupPhase.getValue());
-		mapParameters.put("pbl_id", selected_pbl_id); 
-		mapParameters.put("seq_no", selected_seq_no); 
+			System.out.println("Preview UDOAS Report");
+			String sql = "Select * from view_unilateral_doas('"+lookupCompany.getValue()+"', '"+selected_entity_id+"', '"+selected_proj_id+"', '"+lookupPhase.getValue()+"', '"+selected_pbl_id+"', '"+selected_seq_no+"');";
+			FncSystem.out("Unilateral DOAS Report: ", sql);
+			btnPreview.setEnabled(false);
 
-		// ADDED DUE TO LENGTH OF TECHNICAL DESCRIPTION
-		if(lookupProject.getValue().equals("015")){ //TERRAVERDE RESIDENCES 
-			FncReport.generateReport("/Reports/rptUDOAS_TV.jasper", "Unilateral DOAS TV", mapParameters);
 		} else {
-			FncReport.generateReport("/Reports/rptUDOAS.jasper", "Unilateral DOAS TV", mapParameters);
+			JOptionPane.showMessageDialog(getContentPane(), "Please select client(s)!", "Warning Message", JOptionPane.WARNING_MESSAGE);
+			btnPreview.setEnabled(true);
 		}
-		
-		System.out.println("Preview UDOAS Report");
-		String sql = "Select * from view_unilateral_doas('"+lookupCompany.getValue()+"', '"+selected_entity_id+"', '"+selected_proj_id+"', '"+lookupPhase.getValue()+"', '"+selected_pbl_id+"', '"+selected_seq_no+"');";
-		FncSystem.out("Unilateral DOAS Report: ", sql);
 	}
-	
+
 	private int selected_count() {
 		int count = 0;
 		for (int i = 0; i < modelUDOASPrinting.getRowCount(); i++) {
@@ -386,4 +422,66 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 		return count;
 	}
 
+	private void printUDOAS() {			
+		if(selected_count() > 0) {
+			if(JOptionPane.showConfirmDialog(getContentPane(), "Are you sure to print UDOAS?", "Print UDOAS", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+				tagUDOASToPrint();
+				previewUDOAS();
+				btnPreview.setEnabled(false);
+				btnPrint.setEnabled(false);
+				FncTables.clearTable(modelUDOASPrinting);
+			}
+		} else {
+			JOptionPane.showMessageDialog(getContentPane(), "Please select client(s)!", "Warning Message", JOptionPane.WARNING_MESSAGE);
+			btnPrint.setEnabled(true);
+		}
+	}
+
+	private void tagUDOASToPrint() {
+
+		ArrayList<String> listEntityID = new ArrayList<String>(); 
+		ArrayList<String> listProjID = new ArrayList<String>(); 
+		ArrayList<String> listPBLID = new ArrayList<String>(); 
+		ArrayList<Integer> listSeqNo = new ArrayList<Integer>(); 
+
+		for (int i = 0; i < modelUDOASPrinting.getRowCount(); i++) {
+			boolean tag = (boolean) modelUDOASPrinting.getValueAt(i, 0); 
+
+			if (tag) {
+				String entity_id = (String) modelUDOASPrinting.getValueAt(i, 11);
+				String proj_id = (String) modelUDOASPrinting.getValueAt(i, 12);
+				String pbl_id = (String) modelUDOASPrinting.getValueAt(i, 13);
+				Integer seq_no = (Integer) modelUDOASPrinting.getValueAt(i, 14);
+
+				listEntityID.add(String.format("'%s'", entity_id)); 
+				listProjID.add(String.format("'%s'", proj_id));
+				listPBLID.add(String.format("'%s'", pbl_id));
+				listSeqNo.add(seq_no);
+
+									System.out.printf("Value of listEntity_ID: %s%n", listEntityID);
+									System.out.printf("Value of listProjID: %s%n", listProjID);
+									System.out.printf("Value of listPBLID: %s%n", listPBLID);
+									System.out.printf("Value of listSeqNo: %s%n", listSeqNo);
+			} 
+		}
+
+		String entity_id = listEntityID.toString().replaceAll("\\[|\\]", ""); 
+		String proj_id = listProjID.toString().replaceAll("\\[|\\]", ""); 
+		String pbl_id = listPBLID.toString().replaceAll("\\[|\\]", ""); 
+		String seq_no = listSeqNo.toString().replaceAll("\\[|\\]", ""); 
+
+		pgSelect db = new pgSelect();
+		String sql = "SELECT fn_save_printed_udoas( ARRAY["+entity_id+"]::VARCHAR[], ARRAY["+proj_id+"]::VARCHAR[], ARRAY["+pbl_id+"]::VARCHAR[], ARRAY["+seq_no+"]::INT[], '"+ UserInfo.EmployeeCode +"')";
+		db.select(sql);
+
+		FncSystem.out("Display Print Tagging of UDOAS:", sql);
+	}
+
+	private boolean isNewProject(String proj_id) { //ADDED CONDITION FOR NEW PROJECTS THAT WILL HAVE CONFLICT ON PREVIEW OF REPORT 
+		if (lookupProject.getValue().equals("019") || lookupProject.getValue().equals("017")) {
+			return true; 
+		} else {
+			return false; 
+		}
+	}
 }

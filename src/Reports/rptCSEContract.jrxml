@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCSEContract" pageWidth="612" pageHeight="936" columnWidth="472" leftMargin="70" rightMargin="70" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.24184264611831"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="715"/>
 	<parameter name="logo" class="java.io.InputStream" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
@@ -50,8 +50,10 @@ date_part('day', timestamp_mi(timestamp_pl_interval(a.finish_date, INTERVAL '1 d
 initcap(to_words(date_part('day', timestamp_mi(timestamp_pl_interval(a.finish_date, INTERVAL '1 day'), a.start_date))::VARCHAR)) AS  working_days_word,
 initcap(trim(e.company_name)) as company,
 trim(e.company_address) as company_address,
+
+
 (select (select initcap(sub_proj_name) from mf_sub_project where proj_id = a.proj_id and sub_proj_alias = a.phase group by initcap(sub_proj_name))
-	from (select case when (sub_proj_id = '015' and proj_id = '019') THEN 'PH1-B' ELSE (SELECT regexp_split_to_table(contract_no, '-')) END as phase, proj_id
+	from (select regexp_split_to_table(contract_no, '-') as phase, proj_id
 		from co_ntp_header
 		where ntp_no = $P{ntp_no}) a
 	where a.phase ~* 'PH') as phase,
@@ -73,7 +75,7 @@ a.ntp_type_id,
 	end
 ) as cse_heading,
 
-now() - '11 days'::INTERVAL as as_of_date
+now() - '12 days'::INTERVAL as as_of_date
 FROM co_ntp_header a
 LEFT JOIN rf_entity b ON b.entity_id = a.entity_id
 LEFT JOIN mf_project c ON c.proj_id = a.proj_id
@@ -126,6 +128,7 @@ WHERE a.ntp_no = $P{ntp_no};]]>
 	<field name="post" class="java.lang.String"/>
 	<field name="metering_center" class="java.lang.Boolean"/>
 	<field name="cse_heading" class="java.lang.String"/>
+	<field name="as_of_date" class="java.sql.Timestamp"/>
 	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
 		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
@@ -1264,7 +1267,7 @@ $F{address} + "\n" +
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Tahoma" size="7" isBold="false" isItalic="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["As of: " + new SimpleDateFormat("EEE MMM dd, yyyy hh:mm a").format(new java.util.Date())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["As of: " + new SimpleDateFormat("EEE MMM dd, yyyy hh:mm a").format($F{as_of_date})]]></textFieldExpression>
 			</textField>
 			<frame>
 				<reportElement x="165" y="10" width="120" height="10"/>

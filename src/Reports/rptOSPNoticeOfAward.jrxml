@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptOSPNoticeOfAward" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="0.8705165431605946"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="191"/>
+	<property name="ireport.y" value="167"/>
 	<parameter name="ntp_no" class="java.lang.String">
 		<defaultValueExpression><![CDATA["000087"]]></defaultValueExpression>
 	</parameter>
@@ -19,7 +19,7 @@
 		<defaultValueExpression><![CDATA[this.getClass().getResourceAsStream("/Reports/subrptOSPContractUnits_NA.jasper")]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT * FROM view_ntp_osp_noticeofaward($P{ntp_no});]]>
+		<![CDATA[SELECT *, now() - '12 days'::INTERVAL as asof FROM view_ntp_osp_noticeofaward($P{ntp_no});]]>
 	</queryString>
 	<field name="c_award_date" class="java.sql.Timestamp"/>
 	<field name="c_contract_no" class="java.lang.String"/>
@@ -47,6 +47,7 @@
 	<field name="c_proj_municipality" class="java.lang.String"/>
 	<field name="c_proj_province" class="java.lang.String"/>
 	<field name="c_contact_no" class="java.lang.String"/>
+	<field name="asof" class="java.sql.Timestamp"/>
 	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
 		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
@@ -413,7 +414,7 @@ $F{c_position}]]></textFieldExpression>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["As of: " + new SimpleDateFormat("EEE MMM dd, yyyy hh:mm a").format(new java.util.Date())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["As of: " + new SimpleDateFormat("EEE MMM dd, yyyy hh:mm a").format($F{asof})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Auto">
 				<reportElement positionType="Float" x="0" y="3" width="200" height="12"/>

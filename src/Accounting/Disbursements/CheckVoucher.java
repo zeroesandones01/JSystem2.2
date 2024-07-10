@@ -2135,7 +2135,25 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		String criteria = "Disbursement Voucher";
 		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
 
-		Double dv_amt = Double.parseDouble(modelDV_accttotal.getValueAt(0, 3).toString());
+		Double dv_total_amt = Double.parseDouble(modelDV_accttotal.getValueAt(0, 3).toString());
+		
+		BigDecimal dv_amt = new BigDecimal(0.00);
+
+		for (int x = 0; x < modelDV_acct_entries.getRowCount(); x++) {
+			
+			Boolean isCorollary = (Boolean) modelDV_acct_entries.getValueAt(x, 4);
+			
+			
+			if(isCorollary == false) {
+
+
+				try {
+					dv_amt = dv_amt.add(((BigDecimal) modelDV_acct_entries.getValueAt(x, 3)));
+				} catch (NullPointerException e) {
+					dv_amt = dv_amt.add(new BigDecimal(0.00));
+				}
+			}
+		}
 
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
 		mapParameters.put("cv_no", lookupDV_no.getText().trim());
@@ -2144,7 +2162,9 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		mapParameters.put("check_no", txtCheckNo.getText().trim());
 		mapParameters.put("check_no", txtCheckNo.getText().trim());
 		mapParameters.put("due_date", dteCheck.getDate());
+		mapParameters.put("dv_total_amt", dv_total_amt);
 		mapParameters.put("dv_amt", dv_amt);
+		
 		mapParameters.put("dv_date", dteDV.getDate());
 		mapParameters.put("payee_", sql_getPV_payee().toUpperCase());
 		mapParameters.put("prepared_by", sql_getCV_preparedBy());
@@ -2828,10 +2848,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 
 		for (int x = 0; x < modelMain.getRowCount(); x++) {
 			
-			Boolean isCorollary = (Boolean) modelMain.getValueAt(x, 4);
 			
-			
-			if(isCorollary == false) {
 				try {
 					debit = debit.add(((BigDecimal) modelMain.getValueAt(x, 2)));
 				} catch (NullPointerException e) {
@@ -2843,7 +2860,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				} catch (NullPointerException e) {
 					credit = credit.add(new BigDecimal(0.00));
 				}
-			}
+		
 		}
 
 		modelTotal.addRow(new Object[] { "Total", null, debit, credit });
@@ -2984,14 +3001,14 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		String pay_type = lookupPaymentType.getText();
 		if (pay_type.equals("B")) {
 			modelDV_acct_entries
-					.addRow(new Object[] { acct_id, sql_getAcctDesc(), new BigDecimal(0.00), new BigDecimal(amount) });
+					.addRow(new Object[] { acct_id, sql_getAcctDesc(), new BigDecimal(0.00), new BigDecimal(amount), false});
 			listModel.addElement(modelDV_acct_entries.getRowCount());
 		} else if (pay_type.equals("A")) {
 			modelDV_acct_entries.addRow(new Object[] { "01-01-01-002", "Cash on Hand - Disbursement",
-					new BigDecimal(0.00), new BigDecimal(amount) });
+					new BigDecimal(0.00), new BigDecimal(amount), false });
 			listModel.addElement(modelDV_acct_entries.getRowCount());
 		} else {
-			modelDV_acct_entries.addRow(new Object[] { "", "", new BigDecimal(0.00), new BigDecimal(amount) });
+			modelDV_acct_entries.addRow(new Object[] { "", "", new BigDecimal(0.00), new BigDecimal(amount), false });
 			listModel.addElement(modelDV_acct_entries.getRowCount());
 		}
 		

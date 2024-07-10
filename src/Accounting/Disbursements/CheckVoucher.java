@@ -2343,7 +2343,9 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				+ "' = '' then true else to_char(cv_date,'yyyy') = '" + isCurrentYear + "' end) \r\n" + "		) a\r\n"
 				+ "left join rf_entity b on a.entity_id1=b.entity_id\r\n"
 				+ "left join rf_cv_detail c on a.cv_no = c.cv_no and a.co_id = c.co_id "
-				+ "left join mf_record_status d on a.status_id = d.status_id  " + "order by a.cv_no desc ";
+				+ "left join mf_record_status d on a.status_id = d.status_id  "
+				+ "where c.corollary_entry = false " 
+				+ "order by a.cv_no desc ";
 
 	}
 

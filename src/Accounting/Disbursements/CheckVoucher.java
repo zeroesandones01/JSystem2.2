@@ -3147,6 +3147,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 			String bal_side = "D";
 			Double debit = Double.parseDouble(modelDV_acct_entries.getValueAt(x, 2).toString());
 			Double credit = Double.parseDouble(modelDV_acct_entries.getValueAt(x, 3).toString());
+			Boolean corollary = (Boolean) modelDV_acct_entries.getValueAt(x, 4);
 			Double total = debit + credit;
 
 			if (debit > 0) {
@@ -3158,15 +3159,16 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 			String acct_id = "";
 			acct_id = modelDV_acct_entries.getValueAt(x, 0).toString().trim();
 
-			String sqlDetail = "INSERT into rf_cv_detail values (" + "'" + co_id + "',  \n" + // 1 co_id
+			String sqlDetail = "INSERT into rf_cv_detail (\n"
+					+ "	co_id, busunit_id, cv_no, tran_amt, bal_side, acct_id, old_acct_id, status_id, proj_sever, server_id, corollary_entry) values (" + "'" + co_id + "',  \n" + // 1 co_id
 					"'" + co_id + "',  \n" + // 2 busunit_id
 					"'" + rec_no + "',  \n" + // 3 cv_no
 					"" + total + ",  \n" + // 4 tran_amt
 					"'" + bal_side + "',  \n" + // 5 bal_side
 					"'" + acct_id + "',  \n" + // 6 acct_id
 					"null,  \n" + // 7 old_acct_id
-					"'A'  \n" + // 8 status_id
-					")   ";
+					"'A', null, null,  \n" + // 8 status_id
+					""+corollary+")   ";
 
 			System.out.printf("SQL #1: %s", sqlDetail);
 

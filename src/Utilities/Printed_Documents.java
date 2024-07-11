@@ -309,7 +309,8 @@ public class Printed_Documents extends _JInternalFrame implements _GUI, ActionLi
 			
 			System.out.printf("Display Value of Doc ID: %s%n", doc_id);
 			if(selected){
-				String SQL = "DELETE FROM rf_printed_documents WHERE entity_id = '"+entity_id+"' AND proj_id = '"+proj_id+"' AND pbl_id = '"+pbl_id+"' AND seq_no = "+seq_no+" AND doc_id = '"+doc_id+"' AND rec_id = "+rec_id+"";
+//				String SQL = "DELETE FROM rf_printed_documents WHERE entity_id = '"+entity_id+"' AND proj_id = '"+proj_id+"' AND pbl_id = '"+pbl_id+"' AND seq_no = "+seq_no+" AND doc_id = '"+doc_id+"' AND rec_id = "+rec_id+""; //MODIFIED BY MONIQUE DTD 07-11-2024
+				String SQL = "UPDATE rf_printed_documents SET status_id = 'I' WHERE entity_id = '"+entity_id+"' AND proj_id = '"+proj_id+"' AND pbl_id = '"+pbl_id+"' AND seq_no = "+seq_no+" AND doc_id = '"+doc_id+"' AND rec_id = "+rec_id+"";
 				db.executeUpdate(SQL, true);
 			}
 		}

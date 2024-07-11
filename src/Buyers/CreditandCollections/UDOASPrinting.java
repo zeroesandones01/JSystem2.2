@@ -69,6 +69,9 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 	private JList rowHeader;
 	private JButton btnPreview;
 	private JButton btnPrint;
+	private _JLookup lookupCompanyRpt;
+	private _JLookup lookupProjectRpt;
+	private _JLookup lookupPhaseRpt;
 
 	public UDOASPrinting() {
 		super(title, true, true, false, true);
@@ -296,6 +299,153 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 						}
 					}
 				}
+//				{
+//					JPanel PrintedUDOASReport = new JPanel(); 
+//					tabCenter.add("Printed UDOAS Report", PrintedUDOASReport); 
+//					{
+//						JPanel pnlNorth = new JPanel(new BorderLayout(5, 5)); 
+//						PrintedUDOASReport.add(pnlNorth, BorderLayout.NORTH); 
+//						pnlNorth.setPreferredSize(new Dimension(0, 180));
+//						pnlNorth.setBorder(JTBorderFactory.createTitleBorder("Generate Report"));
+//						{
+//							JPanel pnlCenter = new JPanel(new BorderLayout(5, 5)); 
+//							pnlNorth.add(pnlCenter, BorderLayout.CENTER); 
+//
+//							{
+//								JPanel pnlWestComp = new JPanel(new GridLayout(3, 2, 3, 3)); 
+//								pnlCenter.add(pnlWestComp, BorderLayout.WEST);
+//								pnlWestComp.setPreferredSize(new Dimension(200, 0));
+//								{
+//									JLabel lblCompany = new JLabel("   Company"); 
+//									pnlWestComp.add(lblCompany); 
+//								}
+//								{
+//									lookupCompanyRpt = new _JLookup(null,"Company", 0); 
+//									pnlWestComp.add(lookupCompanyRpt); 
+//									lookupCompanyRpt.setLookupSQL(_JInternalFrame.SQL_COMPANY());
+//									lookupCompanyRpt.addLookupListener(new LookupListener() {
+//
+//										@Override
+//										public void lookupPerformed(LookupEvent event) {
+//											Object data [] = ((_JLookup)event.getSource()).getDataSet();
+//											if (data != null) {
+//
+//												txtCompanyRpt.setText(data[1].toString());
+//												lookupProjectRpt.setLookupSQL(SQL_PROJECT(data[0].toString()));
+//											} else {
+//												txtCompanyRpt.setText("");
+//											}
+//
+//										}
+//									});
+//								}
+//								{
+//									JLabel lblProject = new JLabel("   Project"); 
+//									pnlWestComp.add(lblProject); 
+//								}
+//								{
+//									lookupProjectRpt = new _JLookup(null, "Project", 0);
+//									pnlWestComp.add(lookupProjectRpt); 
+//									lookupProjectRpt.addLookupListener(new LookupListener() {
+//
+//										@Override
+//										public void lookupPerformed(LookupEvent event) {
+//											Object data [] = ((_JLookup)event.getSource()).getDataSet();
+//											if (data != null) {
+//
+//												txtProjectRpt.setText(data[1].toString());
+//												lookupPhaseRpt.setLookupSQL(SQL_PHASE(data[0].toString()));
+//												btnGenerateRpt.setEnabled(true);
+//											} else {
+//												txtProjectRpt.setText("");
+//											}
+//
+//										}
+//									});
+//								}
+//								{
+//									JLabel lblPhase = new JLabel("   Phase"); 
+//									pnlWestComp.add(lblPhase); 
+//								}
+//								{
+//									lookupPhaseRpt = new _JLookup(null, "Phase", 0);
+//									pnlWestComp.add(lookupPhaseRpt); 
+//									lookupPhaseRpt.addLookupListener(new LookupListener() {
+//
+//										@Override
+//										public void lookupPerformed(LookupEvent event) {
+//											Object data [] = ((_JLookup)event.getSource()).getDataSet();
+//											if (data != null) {
+//
+//												txtPhaseRpt.setText(data[1].toString());
+//											} else {
+//												txtPhaseRpt.setText("");
+//											}
+//
+//										}
+//									});
+//								}
+//							}
+//
+//							{
+//								JPanel pnlEastComp = new JPanel(new GridLayout(3, 1, 3, 3)); 
+//								pnlCenter.add(pnlEastComp, BorderLayout.CENTER); 
+//								{
+//									txtCompany = new JTextField(); 
+//									pnlEastComp.add(txtCompany); 
+//								}
+//								{
+//									txtProject = new JTextField(); 
+//									pnlEastComp.add(txtProject); 
+//								}
+//								{
+//									txtPhase = new JTextField(); 
+//									pnlEastComp.add(txtPhase); 
+//								}
+//							}
+//							{
+//								JPanel pnlDateCovered = new JPanel(new GridLayout(1, 5, 5, 5));
+//								pnlCenter.add(pnlDateCovered, BorderLayout.SOUTH); 
+//								pnlDateCovered.setPreferredSize(new Dimension(0, 40));
+//								{
+//									JLabel lblDateFrom = new JLabel("   Date From:"); 
+//									pnlDateCovered.add(lblDateFrom); 
+//								}
+//								{
+//									dateDateFrom = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+//									pnlDateCovered.add(dateDateFrom); 
+//									dateDateFrom.setDate(FncGlobal.dateFormat("2000-01-01")); //INITIAL VALUE
+//								}
+//								{
+//									JLabel lblDateTo = new JLabel("              Date To:"); 
+//									pnlDateCovered.add(lblDateTo); 
+//								}
+//								{
+//									dateDateTo = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+//									pnlDateCovered.add(dateDateTo);
+//									dateDateTo.setDate(FncGlobal.getDateToday()); // INITIAL VALUE
+//
+//								}
+//								{
+//									pnlDateCovered.add(Box.createHorizontalBox());
+//								}
+//							}	
+//						}
+//						{
+//							JPanel pnlGenerate = new JPanel(new BorderLayout(5, 5));
+//							pnlNorth.add(pnlGenerate, BorderLayout.EAST); 
+//							pnlGenerate.setPreferredSize(new Dimension(150, 0));
+//							{
+//								btnGenerate = new JButton("Generate"); 
+//								pnlGenerate.add(btnGenerate); 
+//								btnGenerate.addActionListener(this);
+//								btnGenerate.setActionCommand(btnGenerate.getText());
+//								btnGenerate.setEnabled(false);
+//
+//							}
+//						}
+//					}
+//				}
 			}
 		}
 	} //XXX END OF INIT GUI

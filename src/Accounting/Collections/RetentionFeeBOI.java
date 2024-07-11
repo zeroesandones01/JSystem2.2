@@ -633,7 +633,6 @@ public class RetentionFeeBOI extends _JInternalFrame implements _GUI, ActionList
 
 																			}
 																		});
-																		txtReceiptTypeID.setEditable(false);
 																	}
 																	{
 																		//txtReceiptType = new JTextField("ORV"); COMMENTED BY MONIQUE TO CHANGE RECEIPT TYPE INTO SALES INVOICE (VAT) DTD 2022-07-07
@@ -1213,7 +1212,7 @@ public class RetentionFeeBOI extends _JInternalFrame implements _GUI, ActionList
 				tblRetention.getColumnModel().getColumn(6).setPreferredWidth(125);
 				tblRetention.getColumnModel().getColumn(7).setPreferredWidth(125);
 				tblRetention.getColumnModel().getColumn(8).setPreferredWidth(125);
-				tblRetention.getColumnModel().getColumn(9).setPreferredWidth(125);
+				tblRetention.getColumnModel().getColumn(9).setPreferredWidth(125);	
 				
 				tblRetention.getColumnModel().getColumn(0).setCellRenderer(new DateRenderer(sdf));
 			}

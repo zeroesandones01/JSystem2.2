@@ -614,14 +614,23 @@ public class RetentionFeeBOI extends _JInternalFrame implements _GUI, ActionList
 																	{
 																		//txtReceiptTypeID = new _JLookup("01"); COMMENTED BY MONIQUE TO CHANGE RECEIPT TYPE INTO SALES INVOICE (VAT) DTD 2022-07-07
 																		//txtReceiptTypeID = new _JLookup("307"); 
-																		txtReceiptTypeID = new _JLookup("03"); //DCRF 2193
+																		//txtReceiptTypeID = new _JLookup("03"); //DCRF 2193 //MODIFIED BY MONIQUE; SO THAT USER CAN SELECT RECEIPT TYPE; 07-11-24
+																		txtReceiptTypeID = new _JLookup("", "Receipt Type", 0);
 																		panReceiptTypeIDandLabel.add(txtReceiptTypeID, BorderLayout.CENTER);
-																		txtReceiptTypeID.setLookupSQL("");
-																		txtReceiptTypeID.setReturnColumn(0);
+																		txtReceiptTypeID.setLookupSQL("Select doc_id, doc_alias, doc_desc as description \n"
+																				+ "FROM mf_documents \n"
+																				+ "WHERE doc_id IN ('01', '03')\n"
+																				+ "AND status_id = 'A'; ");
 																		txtReceiptTypeID.setHorizontalAlignment(JTextField.CENTER);
 																		txtReceiptTypeID.addLookupListener(new LookupListener() {
 																			public void lookupPerformed(LookupEvent event) {
-																				
+																				Object data [] = ((_JLookup)event.getSource()).getDataSet();
+																				if (data != null) {
+																					txtReceiptType.setText(data[1].toString());
+																				} else {
+																					txtReceiptType.setText("");
+																				}
+
 																			}
 																		});
 																		txtReceiptTypeID.setEditable(false);
@@ -629,7 +638,8 @@ public class RetentionFeeBOI extends _JInternalFrame implements _GUI, ActionList
 																	{
 																		//txtReceiptType = new JTextField("ORV"); COMMENTED BY MONIQUE TO CHANGE RECEIPT TYPE INTO SALES INVOICE (VAT) DTD 2022-07-07
 																		//txtReceiptType = new JTextField("SIV");
-																		txtReceiptType = new JTextField("AR"); //DCRF 2193
+																		//txtReceiptType = new JTextField("AR"); //DCRF 2193 //COMMENTED BY MONIQUE; SO THAT USER CAN SELECT RECEIPT TYPE; 07-11-24
+																		txtReceiptType = new JTextField("");
 																		panReceiptTypeIDandLabel.add(txtReceiptType); 
 																		txtReceiptType.setHorizontalAlignment(JTextField.CENTER);
 																		txtReceiptType.setEditable(false);
@@ -1177,7 +1187,7 @@ public class RetentionFeeBOI extends _JInternalFrame implements _GUI, ActionList
 		
 		//txtReceiptType.setText("ORV"); COMMENTED BY MONIQUE TO CHANGE RECEIPT TYPE INTO SALES INVOICE (VAT) DTD 2022-07-07
 		//txtReceiptType.setText("SIV");
-		txtReceiptType.setText("AR"); // REFER TO DCRF #2193
+//		txtReceiptType.setText("AR"); // REFER TO DCRF #2193
 	}
 	
 	private void CreateDetailsTab() {

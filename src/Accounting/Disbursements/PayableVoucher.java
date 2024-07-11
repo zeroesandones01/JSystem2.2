@@ -1035,6 +1035,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 						tblPV_account = new _JTableMain(modelPV_account);
 						scrollPV_account.setViewportView(tblPV_account);
 						tblPV_account.getColumnModel().getColumn(1).setPreferredWidth(40);
+						tblPV_account.hideColumns("Cor Entry");
 						tblPV_account.addMouseListener(this);
 						tblPV_account.addKeyListener(new KeyAdapter() {
 							public void keyReleased(KeyEvent evt) {
@@ -1341,13 +1342,14 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		String sql = "---------display PV details\r\n" + "\r\n" + "select\r\n" + "a.acct_id,\r\n" + "a.div_id,\r\n"
 				+ "a.dept_id,\r\n" + "a.sect_id,\r\n" + "a.project_id,\r\n" + "a.sub_projectid,\r\n"
 				+ "b.acct_name,\r\n" + "(case when a.bal_side = 'D' then a.tran_amt else 0 end) as debit,\r\n"
-				+ "(case when a.bal_side = 'C' then a.tran_amt else 0 end) as credit,\r\n"
-				+ "get_div_alias(a.div_id),			\r\n" + "get_department_alias_new(a.dept_id),			\r\n"
-				+ "get_project_alias(a.project_id),			\r\n"
-		//		+ "get_sub_proj_alias(a.sub_projectid),			\r\n"
-				+ "f.sub_proj_id,	\n"
-				+ "(select get_client_name(entity_id2) from rf_pv_header where pv_no = a.pv_no and co_id =  '"
-				+ lookupCompany.getValue() + "')			\r\n" + "\r\n" + "from rf_pv_detail a\r\n"
+				+ "(case when a.bal_side = 'C' then a.tran_amt else 0 end) as credit, a.corollary_entry \r\n"
+//				+ "get_div_alias(a.div_id),			\r\n" + "get_department_alias_new(a.dept_id),			\r\n"
+//				+ "get_project_alias(a.project_id),			\r\n"
+//		//		+ "get_sub_proj_alias(a.sub_projectid),			\r\n"
+//				+ "f.sub_proj_id,	\n"
+//				+ "(select get_client_name(entity_id2) from rf_pv_header where pv_no = a.pv_no and co_id =  '"
+//				+ lookupCompany.getValue() + "')			\r\n" + "\r\n" 
+				+ "from rf_pv_detail a\r\n"
 				+ "left join mf_boi_chart_of_accounts b on a.acct_id = b.acct_id\r\n" + "\r\n" 
 				+ "left join mf_sub_project f on a.sub_projectid = f.sub_proj_id and a.project_id = f.proj_id and f.status_id ='A'"
 				+ "where trim(pv_no) = '"+ req_no + "' and a.status_id = 'A' and a.co_id = '" + lookupCompany.getValue() + "' \r\n"
@@ -1521,7 +1523,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		}
 		sql = sql +
 
-				"0.00  \r\n" + "\r\n" + "from rf_request_detail a \r\n"
+				"0.00, false  \r\n" + "\r\n" + "from rf_request_detail a \r\n"
 				+ "left join mf_boi_chart_of_accounts b on a.acct_id=b.acct_id \n " + "where a.rplf_no = '" + rplf_no
 				+ "' and a.status_id = 'A' and a.co_id = '" + lookupCompany.getValue() + "' \r\n"
 				+ "group by a.acct_id, a.div_id, a.dept_id, a.sect_id, a.project_id, a.sub_projectid, b.acct_name \n";
@@ -1533,7 +1535,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 			if(rplf_type_id.equals("04") || rplf_type_id.equals("14") || rplf_type_id.equals("16")) {
 				sql = sql + "union all\r\n" + "\r\n" + "select \r\n" + "'01-99-06-000',\r\n" + "a.div_id,\r\n"
 						+ "a.dept_id,\r\n" + "a.sect_id,\r\n" + "a.project_id,\r\n" + "a.sub_projectid,\r\n"
-						+ "'Input Vat - Clearing',\r\n" + "a.vat_amt, \r\n" + "0\r\n" + "from (\r\n"
+						+ "'Input Vat - Clearing',\r\n" + "a.vat_amt, \r\n" + "0, false\r\n" + "from (\r\n"
 						+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \r\n"
 						+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(vat_amt) as vat_amt\r\n"
 						+ "from rf_request_detail   \r\n" + "where rplf_no = '" + rplf_no
@@ -1569,14 +1571,14 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 								+ "NULL,\n"
 								+ "'Advances to Officers and Employees',\n"
 								+ "sum(a.pv_amt) as debit,\n"
-								+ "0 as credit\n"
+								+ "0 as credit, true\n"
 								+ "from rf_request_detail a\n"
 								+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"' ";
 				}
 			}else{
 				sql = sql + "union all\r\n" + "\r\n" + "select \r\n" + "'01-99-03-000',\r\n" + "a.div_id,\r\n"
 						+ "a.dept_id,\r\n" + "a.sect_id,\r\n" + "a.project_id,\r\n" + "a.sub_projectid,\r\n"
-						+ "'Input VAT',\r\n" + "a.vat_amt, \r\n" + "0\r\n" + "from (\r\n"
+						+ "'Input VAT',\r\n" + "a.vat_amt, \r\n" + "0, false\r\n" + "from (\r\n"
 						+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \r\n"
 						+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(vat_amt) as vat_amt\r\n"
 						+ "from rf_request_detail   \r\n" + "where rplf_no = '" + rplf_no
@@ -1596,7 +1598,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				"\n"+ 
 				"\n" + "select \n" + "'03-01-06-002',\n" + "a.div_id,\n" + "a.dept_id,\n"
 				+ "a.sect_id,\n" + "a.project_id,\n" + "a.sub_projectid,\n" + "'Withholding Tax Payable - Expanded',\n"
-				+ "0,\n" + "a.wtax_amt\n" + "from (\n"
+				+ "0,\n" + "a.wtax_amt, false\n" + "from (\n"
 				+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \n"
 				+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(wtax_amt) as wtax_amt\n"
 				+ "from rf_request_detail   \n" + "where rplf_no = '" + rplf_no
@@ -1609,7 +1611,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				"\n"+ 
 				"select \r\n" + "'03-01-13-000',\r\n" + "a.div_id,\r\n" + "a.dept_id,\r\n"
 				+ "a.sect_id,\r\n" + "a.project_id,\r\n" + "a.sub_projectid,\r\n" + "'Retentions Payable',\r\n"
-				+ "0,\r\n" + "a.retention_amt \r\n" + "from (\r\n"
+				+ "0,\r\n" + "a.retention_amt, false \r\n" + "from (\r\n"
 				+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \r\n"
 				+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(retention_amt) as retention_amt\r\n"
 				+ "from rf_request_detail   \r\n" + "where rplf_no = '" + rplf_no
@@ -1622,7 +1624,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				"\n"+ 
 				"\n" + "select \r\n" + "'01-02-07-001',\r\n" + "a.div_id,\r\n" + "a.dept_id,\r\n"
 				+ "a.sect_id,\r\n" + "a.project_id,\r\n" + "a.sub_projectid,\r\n"
-				+ "'Advances to Contractor - Down Payment',\r\n" + "0,\r\n" + "a.dp_recoup_amt \r\n" + "from (\r\n"
+				+ "'Advances to Contractor - Down Payment',\r\n" + "0,\r\n" + "a.dp_recoup_amt, false \r\n" + "from (\r\n"
 				+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \r\n"
 				+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(dp_recoup_amt) as dp_recoup_amt\r\n"
 				+ "from rf_request_detail   \r\n" + "where rplf_no = '" + rplf_no
@@ -1715,7 +1717,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				 "			else 'Advances to Contractors - Back Charges' \n"+ 
 				 "	end),\n" + 
 				 "	0,\n"+
-				 "	a.bc_liqui_amt\n"+ 
+				 "	a.bc_liqui_amt, false\n"+ 
 				 "	from (\n"+ 
 				 "	\n" +
 				 "		select \n"+ 
@@ -1755,7 +1757,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				"		y.sub_projectid,\n" + 
 				"		z.acct_name,\n" + 
 				"		0,\r\n" + 
-				"		x.liq_amt\n" + // added for partial deduction of backcharge
+				"		x.liq_amt, false\n" + // added for partial deduction of backcharge
 			   //" 		y.tran_amt\n" + //Replaced due to it always display full amount of JV...
 			   //        What if only partial is deducted?
 				"		from\n" + "		(\n"+
@@ -1818,7 +1820,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				"\n"+ 
 				"select \r\n" + "a.acct_id,\r\n" + "a.div_id,\r\n" + "a.dept_id,\r\n"
 				+ "a.sect_id,\r\n" + "a.project_id,\r\n" + "a.sub_projectid,\r\n" + "a.acct_name,\r\n" + "0,\r\n"
-				+ "sum(a.other_liqui_amt) \r\n" + "from (\r\n" +
+				+ "sum(a.other_liqui_amt), false \r\n" + "from (\r\n" +
 				// "select distinct on (a.div_id, a.dept_id, a.sect_id, a.project_id,
 				// a.sub_projectid, d.acct_id) \r\n" +
 				"select  \r\n"
@@ -1869,7 +1871,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 							+ "NULL,\n"
 							+ "'Allowance for Uncollectible Advances',\n"
 							+ "0 as debit,\n"
-							+ "sum(a.pv_amt) as credit\n"
+							+ "sum(a.pv_amt) as credit, true\n"
 							+ "from rf_request_detail a\n"
 							+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"'\n";
 				}
@@ -1879,7 +1881,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				"\n" +
 				"select \r\n" + "'03-01-01-001',\r\n" + "a.div_id,\r\n" + "a.dept_id,\r\n"
 				+ "a.sect_id,\r\n" + "a.project_id,\r\n" + "a.sub_projectid,\r\n" + "'Accounts Payable - Trade',\r\n"
-				+ "0,\r\n" + "a.pv_amt\r\n" + "from (\r\n"
+				+ "0,\r\n" + "a.pv_amt, false\r\n" + "from (\r\n"
 				+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \r\n"
 				+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(pv_amt) as pv_amt\r\n"
 				+ "from rf_request_detail \r\n" + "where rplf_no = '" + rplf_no + "' and status_id = 'A' and co_id = '"
@@ -3629,6 +3631,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 			String bal_side = "";
 			Double deb_amt = Double.parseDouble(modelPV_account.getValueAt(x, 7).toString());
 			Double cre_amt = Double.parseDouble(modelPV_account.getValueAt(x, 8).toString());
+			Boolean isCorollary = (Boolean) modelPV_account.getValueAt(x, 9);
 			Double amt = deb_amt + cre_amt;
 
 			if (amt == 0 && !rplf_type_id.equals("04")) {
@@ -3693,8 +3696,8 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 						"'" + UserInfo.EmployeeCode + "',  \n" + // 17 created_by
 						"now(),  \n" + // 18 date_created
 						"'' , \n" + // 19 edited_by
-						"null \n" + // 20 date_edited
-
+						"null, \n" + // 20 date_edited
+						""+isCorollary+" \n"+	
 						")   ";
 
 				System.out.printf("SQL #1: %s", sqlDetail);

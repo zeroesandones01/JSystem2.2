@@ -52,11 +52,7 @@ public class modelPVaccount_entries	 extends DefaultTableModel {
 			"Account Desc", 	// 6
 			"Debit",			// 7
 			"Credit",			// 8
-			"div",	// 9
-			"dep",	// 10
-			"proj",	// 11
-			"sub",	// 12
-			"availer"	// 13
+			"Cor Entry" //14
 			};
 
 	
@@ -77,11 +73,8 @@ public class modelPVaccount_entries	 extends DefaultTableModel {
 			Object.class, 		//Account Desc
 			BigDecimal.class,	//Debit
 			BigDecimal.class,	//Credit
-			String.class, 		// Ref No.
-			String.class, 		// Ref No.
-			String.class, 		// Ref No.
-			String.class, 		// Ref No.
-			String.class 		// Ref No.
+	
+			Boolean.class
 			
 	};
 
@@ -97,11 +90,8 @@ public class modelPVaccount_entries	 extends DefaultTableModel {
 				false, 	//Account Desc
 				false,	//Debit
 				false,	//Proj
-				false, 	//Sub	
-				false, 	//Account Desc
-				false,	//Debit
-				false,	//Credit
-				false	//Credit
+			
+				false
 		};
 	}
 
@@ -130,11 +120,8 @@ public class modelPVaccount_entries	 extends DefaultTableModel {
 					false, 	//Account Desc
 					false,	//Debit
 					false, 	//Sec
-					false,	//Proj
-					false, 	//Sub	
-					false, 	//Account Desc
-					false,	//Debit
-					false	//Credit
+					
+					false
 			};
 		}else{
 			COLUMN_EDITABLE = new boolean[] {
@@ -147,11 +134,8 @@ public class modelPVaccount_entries	 extends DefaultTableModel {
 					false, 	//Account Desc
 					false,	//Debit
 					false, 	//Sec
-					false,	//Proj
-					false, 	//Sub	
-					false, 	//Account Desc
-					false,	//Debit
-					false	//Credit
+					
+					false
 			};
 		}
 	}

@@ -3017,7 +3017,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		rowHeaderDV_acct_entries.setModel(listModel);// Setting of DefaultListModel into rowHeader.
 
 		modelDV_acct_entries.addRow(new Object[] { "03-01-01-001", "Accounts Payable - Trade", new BigDecimal(amount),
-				new BigDecimal(0.00) });
+				new BigDecimal(0.00), false});
 		listModel.addElement(modelDV_acct_entries.getRowCount());
 
 		String pay_type = lookupPaymentType.getText();

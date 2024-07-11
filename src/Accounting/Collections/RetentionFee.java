@@ -619,8 +619,8 @@ public class RetentionFee extends _JInternalFrame implements _GUI, ActionListene
 																	{
 																		//txtReceiptTypeID = new _JLookup("01"); //COMMENTED BY MONIQUE TO CHANGE RECEIPT TYPE INTO SALES INVOICE (VAT) DTD 2022-07-07
 																		//txtReceiptTypeID = new _JLookup("307"); //COMMENTED BY MONIQUE TO CHANGE RECEIPT TYPE INTO AR DTD 2022-09-29; DCRF #2193
-																		//txtReceiptTypeID = new _JLookup("03"); //COMMENTED BY MONIQUE; FOR USER TO SELECT RECEIPT TYPE
-																		txtReceiptTypeID = new _JLookup();
+																		//txtReceiptTypeID = new _JLookup("03"); //MODIFIED BY MONIQUE; SO THAT USER CAN SELECT RECEIPT TYPE; 07-11-24
+																		txtReceiptTypeID = new _JLookup("", "Receipt Type", 0); 
 																		panReceiptTypeIDandLabel.add(txtReceiptTypeID, BorderLayout.CENTER);
 																		txtReceiptTypeID.setLookupSQL("Select doc_id, doc_alias, doc_desc as description \n"
 																										+ "FROM mf_documents \n"
@@ -632,10 +632,7 @@ public class RetentionFee extends _JInternalFrame implements _GUI, ActionListene
 																			public void lookupPerformed(LookupEvent event) {
 																				Object data [] = ((_JLookup)event.getSource()).getDataSet();
 																				if (data != null) {
-																					
-																					txtReceiptTypeID.setText(data[0].toString());
 																					txtReceiptType.setText(data[1].toString());
-																	
 																				} else {
 																					txtReceiptType.setText("");
 																				}
@@ -647,7 +644,7 @@ public class RetentionFee extends _JInternalFrame implements _GUI, ActionListene
 																	{
 																		//txtReceiptType = new JTextField("ORV"); //COMMENTED BY MONIQUE TO CHANGE RECEIPT TYPE INTO SALES INVOICE (VAT) DTD 2022-07-07
 																		//txtReceiptType = new JTextField("SIV"); //COMMENTED BY MONIQUE TO CHANGE RECEIPT TYPE INTO AR DTD 2022-09-29; DCRF #2193
-																		//txtReceiptType = new JTextField("AR"); //COMMENTED BY MONIQUE; FOR USER TO SELECT RECEIPT TYPE; 07-11-24
+																		//txtReceiptType = new JTextField("AR"); //COMMENTED BY MONIQUE; SO THAT USER CAN SELECT RECEIPT TYPE; 07-11-24
 																		txtReceiptType = new JTextField("");
 																		panReceiptTypeIDandLabel.add(txtReceiptType); 
 																		txtReceiptType.setHorizontalAlignment(JTextField.CENTER);

@@ -619,22 +619,36 @@ public class RetentionFee extends _JInternalFrame implements _GUI, ActionListene
 																	{
 																		//txtReceiptTypeID = new _JLookup("01"); //COMMENTED BY MONIQUE TO CHANGE RECEIPT TYPE INTO SALES INVOICE (VAT) DTD 2022-07-07
 																		//txtReceiptTypeID = new _JLookup("307"); //COMMENTED BY MONIQUE TO CHANGE RECEIPT TYPE INTO AR DTD 2022-09-29; DCRF #2193
-																		txtReceiptTypeID = new _JLookup("03");
+																		//txtReceiptTypeID = new _JLookup("03"); //COMMENTED BY MONIQUE; FOR USER TO SELECT RECEIPT TYPE
+																		txtReceiptTypeID = new _JLookup();
 																		panReceiptTypeIDandLabel.add(txtReceiptTypeID, BorderLayout.CENTER);
-																		txtReceiptTypeID.setLookupSQL("");
-																		txtReceiptTypeID.setReturnColumn(0);
+																		txtReceiptTypeID.setLookupSQL("Select doc_id, doc_alias, doc_desc as description \n"
+																										+ "FROM mf_documents \n"
+																										+ "WHERE doc_id IN ('01', '03')\n"
+																										+ "AND status_id = 'A'; ");
+																																	
 																		txtReceiptTypeID.setHorizontalAlignment(JTextField.CENTER);
 																		txtReceiptTypeID.addLookupListener(new LookupListener() {
 																			public void lookupPerformed(LookupEvent event) {
+																				Object data [] = ((_JLookup)event.getSource()).getDataSet();
+																				if (data != null) {
+																					
+																					txtReceiptTypeID.setText(data[0].toString());
+																					txtReceiptType.setText(data[1].toString());
+																	
+																				} else {
+																					txtReceiptType.setText("");
+																				}
 																				
 																			}
 																		});
-																		txtReceiptTypeID.setEditable(false);
+																		
 																	}
 																	{
 																		//txtReceiptType = new JTextField("ORV"); //COMMENTED BY MONIQUE TO CHANGE RECEIPT TYPE INTO SALES INVOICE (VAT) DTD 2022-07-07
 																		//txtReceiptType = new JTextField("SIV"); //COMMENTED BY MONIQUE TO CHANGE RECEIPT TYPE INTO AR DTD 2022-09-29; DCRF #2193
-																		txtReceiptType = new JTextField("AR");
+																		//txtReceiptType = new JTextField("AR"); //COMMENTED BY MONIQUE; FOR USER TO SELECT RECEIPT TYPE; 07-11-24
+																		txtReceiptType = new JTextField("");
 																		panReceiptTypeIDandLabel.add(txtReceiptType); 
 																		txtReceiptType.setHorizontalAlignment(JTextField.CENTER);
 																		txtReceiptType.setEditable(false);
@@ -648,33 +662,33 @@ public class RetentionFee extends _JInternalFrame implements _GUI, ActionListene
 														txtReceiptTypeNo = new JTextField("");
 														panRecepit.add(txtReceiptTypeNo); 
 														txtReceiptTypeNo.setHorizontalAlignment(JTextField.CENTER);
-														txtReceiptTypeNo.addKeyListener(new KeyListener() {
-															public void keyTyped(KeyEvent e) {
-																
-															}
-															
-															public void keyReleased(KeyEvent e) {
-																/*	Modified by Mann2x; Date Modified: July 23, 2019; Removed due to receipts with alphabetical characters;
-																try {
-																	int intReceipt = Integer.parseInt(txtReceiptTypeNo.getText().toString());  
-																	
-																	if (txtReceiptTypeNo.getText().toString().length()>6) {
-																		txtReceiptTypeNo.setText(txtReceiptTypeNo.getText().substring(0, 6));
-																	}
-																	
-																	txtReceiptTypeNo.setText(String.format("%06d", intReceipt));
-																} catch (NumberFormatException ex) {
-
-																} finally {
-																	txtReceiptTypeNo.setText(txtReceiptTypeNo.getText().substring(0, 6));
-																}
-																*/
-															}
-															
-															public void keyPressed(KeyEvent e) {
-																
-															}
-														});
+//														txtReceiptTypeNo.addKeyListener(new KeyListener() {
+//															public void keyTyped(KeyEvent e) {
+//																
+//															}
+//															
+//															public void keyReleased(KeyEvent e) {
+//																/*	Modified by Mann2x; Date Modified: July 23, 2019; Removed due to receipts with alphabetical characters;
+//																try {
+//																	int intReceipt = Integer.parseInt(txtReceiptTypeNo.getText().toString());  
+//																	
+//																	if (txtReceiptTypeNo.getText().toString().length()>6) {
+//																		txtReceiptTypeNo.setText(txtReceiptTypeNo.getText().substring(0, 6));
+//																	}
+//																	
+//																	txtReceiptTypeNo.setText(String.format("%06d", intReceipt));
+//																} catch (NumberFormatException ex) {
+//
+//																} finally {
+//																	txtReceiptTypeNo.setText(txtReceiptTypeNo.getText().substring(0, 6));
+//																}
+//																*/
+//															}
+//															
+//															public void keyPressed(KeyEvent e) {
+//																
+//															}
+//														});
 													}
 												}
 											}
@@ -1138,6 +1152,8 @@ public class RetentionFee extends _JInternalFrame implements _GUI, ActionListene
 		String strClientNo = getNewClientSeqNo(); 
 		txtPaySeq.setText(strClientNo);
 		
+		FncSystem.out("Value of Receipt ID: " , txtReceiptTypeID.getValue());
+		
 		String strExec = "select sp_tag_retfee_v2( \n" + 
 				"'"+txtClientID.getValue().toString()+"', \n" + 
 				"'"+txtProjectID.getText()+"', \n" + 
@@ -1181,7 +1197,7 @@ public class RetentionFee extends _JInternalFrame implements _GUI, ActionListene
 			}
 		}
 		
-		txtReceiptType.setText("ORV");
+//		txtReceiptType.setText("ORV"); COMMENTED BY MONIQUE DTD 07-11-2024
 	}
 	
 	private void CreateDetailsTab() {

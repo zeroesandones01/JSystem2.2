@@ -2,9 +2,11 @@ package Buyers.CreditandCollections;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,6 +74,11 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 	private _JLookup lookupCompanyRpt;
 	private _JLookup lookupProjectRpt;
 	private _JLookup lookupPhaseRpt;
+	private JTextField txtCompanyRpt;
+	private JTextField txtProjectRpt;
+	private JTextField txtPhaseRpt;
+	private JButton btnPreviewReport;
+
 
 	public UDOASPrinting() {
 		super(title, true, true, false, true);
@@ -299,153 +306,132 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 						}
 					}
 				}
-//				{
-//					JPanel PrintedUDOASReport = new JPanel(); 
-//					tabCenter.add("Printed UDOAS Report", PrintedUDOASReport); 
-//					{
-//						JPanel pnlNorth = new JPanel(new BorderLayout(5, 5)); 
-//						PrintedUDOASReport.add(pnlNorth, BorderLayout.NORTH); 
-//						pnlNorth.setPreferredSize(new Dimension(0, 180));
-//						pnlNorth.setBorder(JTBorderFactory.createTitleBorder("Generate Report"));
-//						{
-//							JPanel pnlCenter = new JPanel(new BorderLayout(5, 5)); 
-//							pnlNorth.add(pnlCenter, BorderLayout.CENTER); 
-//
-//							{
-//								JPanel pnlWestComp = new JPanel(new GridLayout(3, 2, 3, 3)); 
-//								pnlCenter.add(pnlWestComp, BorderLayout.WEST);
-//								pnlWestComp.setPreferredSize(new Dimension(200, 0));
-//								{
-//									JLabel lblCompany = new JLabel("   Company"); 
-//									pnlWestComp.add(lblCompany); 
-//								}
-//								{
-//									lookupCompanyRpt = new _JLookup(null,"Company", 0); 
-//									pnlWestComp.add(lookupCompanyRpt); 
-//									lookupCompanyRpt.setLookupSQL(_JInternalFrame.SQL_COMPANY());
-//									lookupCompanyRpt.addLookupListener(new LookupListener() {
-//
-//										@Override
-//										public void lookupPerformed(LookupEvent event) {
-//											Object data [] = ((_JLookup)event.getSource()).getDataSet();
-//											if (data != null) {
-//
-//												txtCompanyRpt.setText(data[1].toString());
-//												lookupProjectRpt.setLookupSQL(SQL_PROJECT(data[0].toString()));
-//											} else {
-//												txtCompanyRpt.setText("");
-//											}
-//
-//										}
-//									});
-//								}
-//								{
-//									JLabel lblProject = new JLabel("   Project"); 
-//									pnlWestComp.add(lblProject); 
-//								}
-//								{
-//									lookupProjectRpt = new _JLookup(null, "Project", 0);
-//									pnlWestComp.add(lookupProjectRpt); 
-//									lookupProjectRpt.addLookupListener(new LookupListener() {
-//
-//										@Override
-//										public void lookupPerformed(LookupEvent event) {
-//											Object data [] = ((_JLookup)event.getSource()).getDataSet();
-//											if (data != null) {
-//
-//												txtProjectRpt.setText(data[1].toString());
-//												lookupPhaseRpt.setLookupSQL(SQL_PHASE(data[0].toString()));
-//												btnGenerateRpt.setEnabled(true);
-//											} else {
-//												txtProjectRpt.setText("");
-//											}
-//
-//										}
-//									});
-//								}
-//								{
-//									JLabel lblPhase = new JLabel("   Phase"); 
-//									pnlWestComp.add(lblPhase); 
-//								}
-//								{
-//									lookupPhaseRpt = new _JLookup(null, "Phase", 0);
-//									pnlWestComp.add(lookupPhaseRpt); 
-//									lookupPhaseRpt.addLookupListener(new LookupListener() {
-//
-//										@Override
-//										public void lookupPerformed(LookupEvent event) {
-//											Object data [] = ((_JLookup)event.getSource()).getDataSet();
-//											if (data != null) {
-//
-//												txtPhaseRpt.setText(data[1].toString());
-//											} else {
-//												txtPhaseRpt.setText("");
-//											}
-//
-//										}
-//									});
-//								}
-//							}
-//
-//							{
-//								JPanel pnlEastComp = new JPanel(new GridLayout(3, 1, 3, 3)); 
-//								pnlCenter.add(pnlEastComp, BorderLayout.CENTER); 
-//								{
-//									txtCompany = new JTextField(); 
-//									pnlEastComp.add(txtCompany); 
-//								}
-//								{
-//									txtProject = new JTextField(); 
-//									pnlEastComp.add(txtProject); 
-//								}
-//								{
-//									txtPhase = new JTextField(); 
-//									pnlEastComp.add(txtPhase); 
-//								}
-//							}
-//							{
-//								JPanel pnlDateCovered = new JPanel(new GridLayout(1, 5, 5, 5));
-//								pnlCenter.add(pnlDateCovered, BorderLayout.SOUTH); 
-//								pnlDateCovered.setPreferredSize(new Dimension(0, 40));
-//								{
-//									JLabel lblDateFrom = new JLabel("   Date From:"); 
-//									pnlDateCovered.add(lblDateFrom); 
-//								}
-//								{
-//									dateDateFrom = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
-//									pnlDateCovered.add(dateDateFrom); 
-//									dateDateFrom.setDate(FncGlobal.dateFormat("2000-01-01")); //INITIAL VALUE
-//								}
-//								{
-//									JLabel lblDateTo = new JLabel("              Date To:"); 
-//									pnlDateCovered.add(lblDateTo); 
-//								}
-//								{
-//									dateDateTo = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
-//									pnlDateCovered.add(dateDateTo);
-//									dateDateTo.setDate(FncGlobal.getDateToday()); // INITIAL VALUE
-//
-//								}
-//								{
-//									pnlDateCovered.add(Box.createHorizontalBox());
-//								}
-//							}	
-//						}
-//						{
-//							JPanel pnlGenerate = new JPanel(new BorderLayout(5, 5));
-//							pnlNorth.add(pnlGenerate, BorderLayout.EAST); 
-//							pnlGenerate.setPreferredSize(new Dimension(150, 0));
-//							{
-//								btnGenerate = new JButton("Generate"); 
-//								pnlGenerate.add(btnGenerate); 
-//								btnGenerate.addActionListener(this);
-//								btnGenerate.setActionCommand(btnGenerate.getText());
-//								btnGenerate.setEnabled(false);
-//
-//							}
-//						}
-//					}
-//				}
+				{
+					JPanel PrintedUDOASReport = new JPanel(new BorderLayout(10, 10)); 
+					tabCenter.add("Printed UDOAS Report", PrintedUDOASReport); 
+					{
+						JPanel pnlNorth = new JPanel(new BorderLayout(5, 5)); 
+						PrintedUDOASReport.add(pnlNorth, BorderLayout.NORTH); 
+						pnlNorth.setPreferredSize(new Dimension(0, 150));
+						pnlNorth.setBorder(JTBorderFactory.createTitleBorder("Generate Report"));
+
+						{
+							JPanel pnlWestComp = new JPanel(new GridLayout(3, 2, 3, 3)); 
+							pnlNorth.add(pnlWestComp, BorderLayout.WEST);
+							pnlWestComp.setPreferredSize(new Dimension(200, 0));
+							{
+								JLabel lblCompany = new JLabel("   Company"); 
+								pnlWestComp.add(lblCompany); 
+							}
+							{
+								lookupCompanyRpt = new _JLookup(null,"Company", 0); 
+								pnlWestComp.add(lookupCompanyRpt); 
+								lookupCompanyRpt.setLookupSQL(_JInternalFrame.SQL_COMPANY());
+								lookupCompanyRpt.addLookupListener(new LookupListener() {
+
+									@Override
+									public void lookupPerformed(LookupEvent event) {
+										Object data [] = ((_JLookup)event.getSource()).getDataSet();
+										if (data != null) {
+
+											txtCompanyRpt.setText(data[1].toString());
+											lookupProjectRpt.setLookupSQL(SQL_PROJECT(data[0].toString()));
+											btnPreviewReport.setEnabled(true); 
+										} else {
+											txtCompanyRpt.setText("");
+										}
+
+									}
+								});
+							}
+							{
+								JLabel lblProject = new JLabel("   Project"); 
+								pnlWestComp.add(lblProject); 
+							}
+							{
+								lookupProjectRpt = new _JLookup(null, "Project", 0);
+								pnlWestComp.add(lookupProjectRpt); 
+								lookupProjectRpt.addLookupListener(new LookupListener() {
+
+									@Override
+									public void lookupPerformed(LookupEvent event) {
+										Object data [] = ((_JLookup)event.getSource()).getDataSet();
+										if (data != null) {
+
+											txtProjectRpt.setText(data[1].toString());
+											lookupPhaseRpt.setLookupSQL(SQL_PHASE(data[0].toString()));
+										} else {
+											txtProjectRpt.setText("");
+										}
+
+									}
+								});
+							}
+							{
+								JLabel lblPhase = new JLabel("   Phase"); 
+								pnlWestComp.add(lblPhase); 
+							}
+							{
+								lookupPhaseRpt = new _JLookup(null, "Phase", 0);
+								pnlWestComp.add(lookupPhaseRpt); 
+								lookupPhaseRpt.addLookupListener(new LookupListener() {
+
+									@Override
+									public void lookupPerformed(LookupEvent event) {
+										Object data [] = ((_JLookup)event.getSource()).getDataSet();
+										if (data != null) {
+
+											txtPhaseRpt.setText(data[1].toString());
+										} else {
+											txtPhaseRpt.setText("");
+										}
+
+									}
+								});
+							}
+						}
+						{
+							JPanel pnlCenterComp = new JPanel(new GridLayout(3, 1, 5, 5)); 
+							pnlNorth.add(pnlCenterComp, BorderLayout.CENTER); 
+
+							{
+								txtCompanyRpt = new JTextField(); 
+								pnlCenterComp.add(txtCompanyRpt); 
+							}
+							{
+								txtProjectRpt = new JTextField(); 
+								pnlCenterComp.add(txtProjectRpt); 
+							}
+							{
+								txtPhaseRpt = new JTextField(); 
+								pnlCenterComp.add(txtPhaseRpt); 
+							}
+						}
+					}
+					{
+						JPanel pnlCenter = new JPanel(new BorderLayout(5, 5)); 
+						PrintedUDOASReport.add(pnlCenter, BorderLayout.CENTER); 
+						{
+							JPanel flowPanel = new JPanel(new FlowLayout()); 
+							btnPreviewReport = new JButton("Preview"); 
+							flowPanel.add(btnPreviewReport); 
+							pnlCenter.add(flowPanel, BorderLayout.CENTER);
+							btnPreviewReport.setActionCommand("Preview Report"); 
+							btnPreviewReport.addActionListener(this);
+							btnPreviewReport.setPreferredSize(new Dimension(100, 50));
+							btnPreviewReport.setEnabled(false);
+							
+						}
+					}
+					{
+						JPanel pnlSouth = new JPanel(new BorderLayout(5, 5)); 
+						PrintedUDOASReport.add(pnlSouth, BorderLayout.SOUTH); 
+						pnlSouth.setPreferredSize(new Dimension(0, 150));
+						{
+							// EXTRA SPACE ONLY
+						}
+					}
+				}
 			}
 		}
 	} //XXX END OF INIT GUI
@@ -484,6 +470,11 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 
 		if(actionCommand.equals("Print")) {
 			printUDOAS();
+		}
+
+		if(actionCommand.equals("Preview Report")) {
+			previewPrintedUDOAS();
+			btnPreviewReport.setEnabled(false);
 		}
 	}
 
@@ -608,10 +599,10 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 				listPBLID.add(String.format("'%s'", pbl_id));
 				listSeqNo.add(seq_no);
 
-									System.out.printf("Value of listEntity_ID: %s%n", listEntityID);
-									System.out.printf("Value of listProjID: %s%n", listProjID);
-									System.out.printf("Value of listPBLID: %s%n", listPBLID);
-									System.out.printf("Value of listSeqNo: %s%n", listSeqNo);
+				System.out.printf("Value of listEntity_ID: %s%n", listEntityID);
+				System.out.printf("Value of listProjID: %s%n", listProjID);
+				System.out.printf("Value of listPBLID: %s%n", listPBLID);
+				System.out.printf("Value of listSeqNo: %s%n", listSeqNo);
 			} 
 		}
 
@@ -633,5 +624,16 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 		} else {
 			return false; 
 		}
+	}
+
+	private void previewPrintedUDOAS() {
+		Map<String, Object> mapParameters = new HashMap<String, Object>();
+
+		mapParameters.put("co_id", lookupCompany.getValue());
+		mapParameters.put("proj_id", lookupProject.getValue());
+		mapParameters.put("phase", lookupPhase.getValue());
+		mapParameters.put("user_alias", UserInfo.FullName);
+
+		FncReport.generateReport("/Reports/rptUDOASPrintedReport.jasper", "List of Accounts with Printed Unilateral DOAS", mapParameters);
 	}
 }

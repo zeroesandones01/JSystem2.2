@@ -41,6 +41,10 @@ import Lookup._JLookup;
 
 import components._JInternalFrame;
 
+/**
+ * @author Allei Anne Beltran
+ */
+
 public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, ActionListener, AncestorListener {
 
 	private static final long serialVersionUID = 5159650933602942626L;

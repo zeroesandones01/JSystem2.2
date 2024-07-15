@@ -768,8 +768,9 @@ public class hdmfMon_REM extends JXPanel implements _GUI {
 							dbBor.commit();
 						} else if (index==10) {
 							strDoc = FncGlobal.GetString("select doc_no \n" +  //XXX ADD PROJ_ID TO GET PROPER DOC_NO
-									"from rf_tct_taxdec_monitoring_dl \n" + 
-									"where pbl_id = '"+strUnitID+"' and doc_type = '98' \n" + 
+									"from rf_tct_taxdec_monitoring_hd \n" + 
+									"where pbl_id = '"+strUnitID+"' and doc_type = '98' \n" +
+									"and proj_id = '"+strProID+"' \n"+
 									"limit 1"); 
 							
 							dbBor = new pgUpdate(); 
@@ -778,8 +779,9 @@ public class hdmfMon_REM extends JXPanel implements _GUI {
 							dbBor.commit();
 							
 							strDoc = FncGlobal.GetString("select doc_no \n" + //XXX ADD PROJ_ID TO GET PROPER DOC_NO
-									"from rf_tct_taxdec_monitoring_dl \n" + 
-									"where pbl_id = '"+strUnitID+"' and doc_type = '67' \n" + 
+									"from rf_tct_taxdec_monitoring_hd \n" + 
+									"where pbl_id = '"+strUnitID+"' and doc_type = '67' \n" +
+									"and proj_id = '"+strProID+"' \n"+
 									"limit 1"); 
 							
 							dbBor = new pgUpdate(); 

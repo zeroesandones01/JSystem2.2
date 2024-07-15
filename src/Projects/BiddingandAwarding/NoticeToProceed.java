@@ -181,7 +181,7 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 	private JButton btnRemoveRow;
 
 	private Object[] option_signatory = new Object[] { "Ms. Maria Rhea F. Lim", "Mr. Victor H. Manarang",
-	"Mr.  Ferdinand Soliman" };
+	"Mr.  Ferdinand Soliman", "Atty. Angelica Ernestine L. Baroña" };
 	// private Object[] option_signatory = new Object[]{"Mr. Ferdinand Soliman",
 	// "Mr. Victor H. Manarang"};
 	private Object[] option_cse_type = new Object[] { "Metering", "Post" };

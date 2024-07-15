@@ -185,7 +185,7 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 	// private Object[] option_signatory = new Object[]{"Mr. Ferdinand Soliman",
 	// "Mr. Victor H. Manarang"};
 	private Object[] option_cse_type = new Object[] { "Metering", "Post" };
-	private Object[] tin_signatory = new Object[] { "181-746-452-000", "108-728-634-000", "206-816-824-000" };
+	private Object[] tin_signatory = new Object[] { "181-746-452-000", "108-728-634-000", "206-816-824-000", "273-538-516-000" };
 	private Object[] repair_type = new Object[] {"Housing", "Land Dev."};
 	// private Object[] tin_signatory = new Object[]{"218-426-958-000",
 	// "108-728-634-000"};

@@ -661,8 +661,8 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 		mapParameters.put("date_from", dteFrom.getDate());
 		mapParameters.put("date_to", dteTo.getDate());
 		
-		System.out.println("Date From: "+ dteFrom);
-		System.out.println("Date To: "+ dteTo);
+		System.out.println("Date From: "+ dteFrom.getDate());
+		System.out.println("Date To: "+ dteTo.getDate());
 
 		FncReport.generateReport("/Reports/rptUDOASPrintedReport.jasper", "List of Accounts with Printed Unilateral DOAS", mapParameters);
 	}

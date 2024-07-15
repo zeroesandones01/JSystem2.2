@@ -78,6 +78,8 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 	private JTextField txtProjectRpt;
 	private JTextField txtPhaseRpt;
 	private JButton btnPreviewReport;
+	private _JDateChooser dteFrom;
+	private _JDateChooser dteTo;
 
 
 	public UDOASPrinting() {
@@ -312,7 +314,7 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 					{
 						JPanel pnlNorth = new JPanel(new BorderLayout(5, 5)); 
 						PrintedUDOASReport.add(pnlNorth, BorderLayout.NORTH); 
-						pnlNorth.setPreferredSize(new Dimension(0, 150));
+						pnlNorth.setPreferredSize(new Dimension(0, 200));
 						pnlNorth.setBorder(JTBorderFactory.createTitleBorder("Generate Report"));
 
 						{
@@ -407,15 +409,38 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 								pnlCenterComp.add(txtPhaseRpt); 
 							}
 						}
+						{
+							JPanel pnlDate = new JPanel(); 
+							pnlNorth.add(pnlDate, BorderLayout.SOUTH);
+							pnlDate.setPreferredSize(new Dimension(0, 30));
+							{
+								JLabel lbldateFrom = new JLabel("  Date from: "); 
+								pnlDate.add(lbldateFrom);
+							}
+							{
+								dteFrom =  new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+								pnlDate.add(dteFrom); 
+								dteFrom.setDate(FncGlobal.getDateToday()); 
+							}
+							{
+								JLabel lbldateTo = new JLabel("        Date to: "); 
+								pnlDate.add(lbldateTo);
+							}
+							{
+								dteTo =  new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+								pnlDate.add(dteTo); 
+								dteTo.setDate(FncGlobal.getDateToday()); 
+							}
+						}
 					}
 					{
 						JPanel pnlCenter = new JPanel(new BorderLayout(5, 5)); 
 						PrintedUDOASReport.add(pnlCenter, BorderLayout.CENTER); 
 						{
 							JPanel flowPanel = new JPanel(new FlowLayout()); 
+							pnlCenter.add(flowPanel, BorderLayout.CENTER);
 							btnPreviewReport = new JButton("Preview"); 
 							flowPanel.add(btnPreviewReport); 
-							pnlCenter.add(flowPanel, BorderLayout.CENTER);
 							btnPreviewReport.setActionCommand("Preview Report"); 
 							btnPreviewReport.addActionListener(this);
 							btnPreviewReport.setPreferredSize(new Dimension(100, 50));
@@ -426,7 +451,7 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 					{
 						JPanel pnlSouth = new JPanel(new BorderLayout(5, 5)); 
 						PrintedUDOASReport.add(pnlSouth, BorderLayout.SOUTH); 
-						pnlSouth.setPreferredSize(new Dimension(0, 150));
+						pnlSouth.setPreferredSize(new Dimension(0, 140));
 						{
 							// EXTRA SPACE ONLY
 						}
@@ -633,6 +658,11 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 		mapParameters.put("proj_id", lookupProject.getValue());
 		mapParameters.put("phase", lookupPhase.getValue());
 		mapParameters.put("user_alias", UserInfo.FullName);
+		mapParameters.put("date_from", dteFrom.getDate());
+		mapParameters.put("date_to", dteTo.getDate());
+		
+		System.out.println("Date From: "+ dteFrom.getDate());
+		System.out.println("Date To: "+ dteTo.getDate());
 
 		FncReport.generateReport("/Reports/rptUDOASPrintedReport.jasper", "List of Accounts with Printed Unilateral DOAS", mapParameters);
 	}

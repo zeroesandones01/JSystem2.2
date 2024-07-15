@@ -7,6 +7,8 @@
 	<parameter name="proj_id" class="java.lang.String"/>
 	<parameter name="phase" class="java.lang.String"/>
 	<parameter name="user_alias" class="java.lang.String"/>
+	<parameter name="date_from" class="java.util.Date"/>
+	<parameter name="date_to" class="java.util.Date"/>
 	<queryString>
 		<![CDATA[Select get_client_name(a.entity_id) as client,
 	c.company_alias as company,
@@ -30,7 +32,8 @@
 	where a.doc_id = '309' and a.status_id = 'A'
 	AND CASE WHEN NULLIF($P{co_id}, '') IS NULL THEN TRUE ELSE c.co_id = $P{co_id} end
 	AND CASE WHEN NULLIF($P{proj_id}, '') IS NULL THEN TRUE ELSE a.proj_id = $P{proj_id} end
-	AND CASE WHEN NULLIF($P{phase}, '') IS NULL THEN TRUE ELSE d.phase = $P{phase} end;]]>
+	AND CASE WHEN NULLIF($P{phase}, '') IS NULL THEN TRUE ELSE d.phase = $P{phase} end
+AND a.date_printed::DATE BETWEEN $P{date_from} AND $P{date_to};]]>
 	</queryString>
 	<field name="client" class="java.lang.String"/>
 	<field name="company" class="java.lang.String"/>

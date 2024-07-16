@@ -1875,6 +1875,23 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 							+ "from rf_request_detail a\n"
 							+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"'\n";
 				}
+				
+				if(rplf_type_id.equals("17")) {
+					sql = sql + "\n\n"+
+							"UNION ALL \n"+
+							"select \n"
+							+ "'01-02-22-000',\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "'Allowance for Uncollectible Advances',\n"
+							+ "0 as debit,\n"
+							+ "sum(a.pv_amt) as credit, true\n"
+							+ "from rf_request_detail a\n"
+							+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"'\n";
+				}
 
 				// Accounts Payable - Trade
 				sql = sql + "union all \n"+ 

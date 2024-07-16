@@ -88,7 +88,7 @@ public class _CARD {
 
 	public static String sqlClients2(){
 		return "SELECT *, '' FROM jsearch \n"+
-				"union all (select entity_id, upper(entity_name), '', '' , null, '', '015', 'TERRAVERDE RESIDENCES', '' from rf_entity where entity_id IN ('4270585379', '8785068676', '3252083086', '6731932436', '3746524839')) \n"+ //COMMENTED BY MONIQUE DTD 2023-07-14 --uncomment by lester 2023-07-31 for ahppy well payments
+				"union all (select entity_id, upper(entity_name), '', '' , null, '', '015', 'TERRAVERDE RESIDENCES', '' from rf_entity where entity_id IN ('4270585379', '8785068676', '3252083086', '6731932436', '3746524839', '7704625972')) \n"+ //COMMENTED BY MONIQUE DTD 2023-07-14 --uncomment by lester 2023-07-31 for ahppy well payments
 				"union all\n" + 
 				"SELECT *, 'itsreal' as server FROM jsearch_itsreal ";
 	}

@@ -558,9 +558,11 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 			mapParameters.put("phase", lookupPhase.getValue());
 			mapParameters.put("pbl_id", selected_pbl_id); 
 			mapParameters.put("seq_no", selected_seq_no); 
+			
+			String phase = lookupPhase.getValue(); 
 
 			// ADDED DUE TO LENGTH OF TECHNICAL DESCRIPTION
-			if(lookupProject.getValue().equals("015") || lookupProject.getValue().equals("019") && lookupPhase.getValue().equals("1-B") || (lookupProject.getValue().equals("017") && lookupPhase.getValue().equals("2")) || lookupProject.getValue().equals("018")) { //TV, ER 1-B, EB 2, EVE
+			if(lookupProject.getValue().equals("015") || lookupProject.getValue().equals("019") && phase.equals("1-B") || (lookupProject.getValue().equals("017") && phase.equals("2")) || lookupProject.getValue().equals("018")) { //TV, ER 1-B, EB 2, EVE
 				System.out.println("Preview UDOAS Report (New Project)");
 				FncReport.generateReport("/Reports/rptUDOAS_TV.jasper", "Unilateral DOAS TV", mapParameters);
 			} else {

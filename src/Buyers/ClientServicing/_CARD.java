@@ -509,8 +509,9 @@ public class _CARD {
 				"FROM rf_printed_documents a\n" + 
 				"left join rf_sold_unit \n" +
 				"on a.entity_id = rf_sold_unit.entity_id and a.proj_id = rf_sold_unit.projcode and a.pbl_id = rf_sold_unit.pbl_id and a.seq_no = rf_sold_unit.seq_no \n" +
-				"LEFT JOIN mf_system_doc b ON b.doc_id = a.doc_id and coalesce(b.server_id, '') = coalesce(rf_sold_unit.server_id, '')\n" + 
+				"LEFT JOIN mf_system_doc b ON b.doc_id = a.doc_id \n" + 
 				"WHERE a.entity_id = '"+ entity_id +"' AND a.proj_id = '"+ proj_id +"' AND a.pbl_id = '"+ pbl_id +"' AND a.seq_no = "+ seq_no +" AND a.status_id = 'A'\n" + 
+				"AND CASE WHEN b.doc_id = '309' THEN TRUE ELSE coalesce(b.server_id, '') = coalesce(rf_sold_unit.server_id, '') END \n"+
 				"ORDER BY a.date_printed;";
 
 		if(toPrint){

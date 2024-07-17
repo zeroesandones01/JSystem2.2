@@ -558,15 +558,17 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 			mapParameters.put("phase", lookupPhase.getValue());
 			mapParameters.put("pbl_id", selected_pbl_id); 
 			mapParameters.put("seq_no", selected_seq_no); 
+			
+			String phase = lookupPhase.getValue(); 
 
 			// ADDED DUE TO LENGTH OF TECHNICAL DESCRIPTION
-			if(lookupProject.getValue().equals("015") || lookupPhase.getValue().equals("1-B") || (lookupProject.getValue().equals("017") && lookupPhase.getValue().equals("2")) || lookupProject.getValue().equals("018")) { //TV, ER 1-B, EB 2, EVE
+			if(lookupProject.getValue().equals("015") || lookupProject.getValue().equals("019") && phase.equals("1-B") || (lookupProject.getValue().equals("017") && phase.equals("2")) || lookupProject.getValue().equals("018")) { //TV, ER 1-B, EB 2, EVE
+				System.out.println("Preview UDOAS Report (New Project)");
 				FncReport.generateReport("/Reports/rptUDOAS_TV.jasper", "Unilateral DOAS TV", mapParameters);
 			} else {
+				System.out.println("Preview UDOAS Report (Old Project)");
 				FncReport.generateReport("/Reports/rptUDOAS.jasper", "Unilateral DOAS", mapParameters);
 			}
-
-			System.out.println("Preview UDOAS Report");
 			String sql = "Select * from view_unilateral_doas('"+lookupCompany.getValue()+"', '"+selected_entity_id+"', '"+selected_proj_id+"', '"+lookupPhase.getValue()+"', '"+selected_pbl_id+"', '"+selected_seq_no+"');";
 			FncSystem.out("Unilateral DOAS Report: ", sql);
 			btnPreview.setEnabled(false);

@@ -656,9 +656,9 @@ public class UDOASPrinting extends _JInternalFrame implements _GUI, ActionListen
 	private void previewPrintedUDOAS() {
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
 
-		mapParameters.put("co_id", lookupCompany.getValue());
-		mapParameters.put("proj_id", lookupProject.getValue());
-		mapParameters.put("phase", lookupPhase.getValue());
+		mapParameters.put("co_id", lookupCompanyRpt.getValue());
+		mapParameters.put("proj_id", lookupProjectRpt.getValue());
+		mapParameters.put("phase", lookupPhaseRpt.getValue());
 		mapParameters.put("user_alias", UserInfo.FullName);
 		mapParameters.put("date_from", dteFrom.getDate());
 		mapParameters.put("date_to", dteTo.getDate());

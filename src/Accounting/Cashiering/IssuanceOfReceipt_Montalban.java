@@ -2021,7 +2021,7 @@ public class IssuanceOfReceipt_Montalban extends _JInternalFrame {
 				+ "					FROM mf_pay_particular a\n"
 				+ "					LEFT JOIN mf_doc_details b on b.doc_id = a.receipt_to_issue\n"
 				+ "					WHERE a.pay_part_id in ('223', '224', '197', '083', '200', '180', '033', '263', '041', '042', '262', '040', '193', \n"
-				+ "											'182', '268', '271', '266', '267', '206', '207', '209', '208', '276', '270', '174', '198') \n"
+				+ "											'182', '268', '271', '266', '267', '206', '207', '209', '208', '276', '270', '174', '198', '276') \n"
 				+ "and a.status_id = 'A';";
 	
 		return SQL;

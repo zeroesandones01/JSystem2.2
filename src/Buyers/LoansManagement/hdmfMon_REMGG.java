@@ -147,7 +147,7 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 //								
 								dbExec.select("select row_number() over (order by byrstatus_id) as row_number, FORMAT('%s - %s', (row_number() over()), UPPER(status_desc))\n" + 
 										"from mf_buyer_status\n" + 
-										"where byrstatus_id IN ('146', '147', '148', '149', '150','151', '152', '153', '154', '155', '156', '157')\n" + 
+										"where byrstatus_id IN ('146', '147', '148', '149', '150','151', '152', '153', '154', '155', '156', '157', '158')\n" + 
 										"order by byrstatus_id;");
 								
 								System.out.println(""); 
@@ -449,6 +449,8 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 			SQL = "select * from view_hdmf_rem_11th_retfee_hdmf_g2g('"+txtBat.getText()+"','"+PagibigStatusMonitoring_v2.company_id+"','"+PagibigStatusMonitoring_v2.project_id+"','"+PagibigStatusMonitoring_v2.phase_id+"');";
 		}else if(index == 11) {
 			SQL = "select * from view_hdmf_rem_12th_retfee_hdmf_g2g('"+txtBat.getText()+"','"+PagibigStatusMonitoring_v2.company_id+"','"+PagibigStatusMonitoring_v2.project_id+"','"+PagibigStatusMonitoring_v2.phase_id+"');";
+		}else if(index == 12) {
+			SQL = "select * from view_hdmf_rem_13th_retfee_hdmf_g2g('"+txtBat.getText()+"','"+PagibigStatusMonitoring_v2.company_id+"','"+PagibigStatusMonitoring_v2.project_id+"','"+PagibigStatusMonitoring_v2.phase_id+"');";
 		}
 
 		FncTables.clearTable(modelremConversion);
@@ -525,6 +527,8 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 			strStatus = "156";	
 		}else if(index==11) {
 			strStatus = "157";	
+		}else if(index==12) {
+			strStatus = "158";
 		}
 
 		strBat = GETBATCH(strStatus);
@@ -759,6 +763,20 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 					this.getClass().getClassLoader().getResourceAsStream("Images/" + "cenq-new.png"));
 		}
 
+		
+		String signatory = "JOHNNY L. CORPUZ";
+		String position = "Vice President";
+		
+		if(co_id.equals("02") || co_id.equals("01")) {
+			signatory = "ANGELICA ERNESTINE L. BAROÑA";
+			position = "Manager";
+		}
+		
+		mapParameters.put("signatory", signatory);
+		mapParameters.put("position", position);
+		
+		
+		
 		if (intIndex==0) {
 			FncReport.generateReport("/Reports/rpt_hdmf_forEarlyConversion_gtog.jasper", "For Early Conversion (G-G)", "", mapParameters);
 		} else if (intIndex==1) {
@@ -771,6 +789,14 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 			FncReport.generateReport("/Reports/rpt_hdmf_car_frwd_gtog_v1.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
 		}else if(intIndex == 5) {
 			FncReport.generateReport("/Reports/rptREMGTG_sixth.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
+		}else if(intIndex == 8) {
+			mapParameters.put("p_batch_no", txtBat.getValue());
+			mapParameters.put("p_prepared_by", UserInfo.FullName2);
+			FncReport.generateReport("/Reports/rptHDMFRem_EPEBSale.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
+		}else if(intIndex == 12) {
+			mapParameters.put("p_batch_no", txtBat.getValue());
+			mapParameters.put("p_prepared_by", UserInfo.FullName2);
+			FncReport.generateReport("/Reports/rptHDMFRem_EPEBMortgage.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
 		}
 	}
 

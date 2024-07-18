@@ -763,6 +763,20 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 					this.getClass().getClassLoader().getResourceAsStream("Images/" + "cenq-new.png"));
 		}
 
+		
+		String signatory = "JOHNNY L. CORPUZ";
+		String position = "Vice President";
+		
+		if(co_id.equals("02") || co_id.equals("01")) {
+			signatory = "ANGELICA ERNESTINE L. BAROÑA";
+			position = "Manager";
+		}
+		
+		mapParameters.put("signatory", signatory);
+		mapParameters.put("position", position);
+		
+		
+		
 		if (intIndex==0) {
 			FncReport.generateReport("/Reports/rpt_hdmf_forEarlyConversion_gtog.jasper", "For Early Conversion (G-G)", "", mapParameters);
 		} else if (intIndex==1) {

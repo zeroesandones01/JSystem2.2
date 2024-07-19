@@ -788,6 +788,15 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 		} else if (intIndex==4) {
 			FncReport.generateReport("/Reports/rpt_hdmf_car_frwd_gtog_v1.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
 		}else if(intIndex == 5) {
+			
+			if(co_id.equals("02") || co_id.equals("01")) {
+				signatory = "JOSEPHINE S. ROXAS";
+				position = "Manager";
+			}
+			
+			mapParameters.put("signatory", signatory);
+			mapParameters.put("position", position);
+
 			FncReport.generateReport("/Reports/rptREMGTG_sixth.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
 		}else if(intIndex == 8) {
 			mapParameters.put("p_batch_no", txtBat.getValue());

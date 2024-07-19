@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptPV_prooflist_batch" pageWidth="612" pageHeight="792" columnWidth="577" leftMargin="25" rightMargin="10" topMargin="15" bottomMargin="15">
 	<property name="ireport.zoom" value="1.6105100000000014"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="207"/>
+	<property name="ireport.x" value="378"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="company" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="logo" class="java.io.InputStream" isForPrompting="false">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -21,6 +21,7 @@
 	<parameter name="p_pvlist" class="java.lang.String"/>
 	<parameter name="prepared_by" class="java.lang.String"/>
 	<parameter name="p_desc" class="java.lang.String"/>
+	<parameter name="p_request_type" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select null;]]>
 	</queryString>
@@ -33,7 +34,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="96">
+		<band height="110">
 			<textField isBlankWhenNull="true">
 				<reportElement x="60" y="9" width="298" height="15"/>
 				<textElement>
@@ -67,14 +68,14 @@
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{logo}]]></imageExpression>
 			</image>
 			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-				<reportElement x="36" y="61" width="541" height="10"/>
+				<reportElement x="36" y="82" width="283" height="10"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font fontName="Tahoma" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{p_payee}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="61" width="36" height="10"/>
+				<reportElement x="0" y="82" width="37" height="10"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -88,7 +89,7 @@
 				<text><![CDATA[Payee :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="384" y="15" width="73" height="9"/>
+				<reportElement x="319" y="46" width="73" height="9"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -101,7 +102,7 @@
 				<text><![CDATA[    PV No. :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="457" y="15" width="85" height="9"/>
+				<reportElement x="392" y="46" width="152" height="9"/>
 				<box>
 					<rightPen lineWidth="0.5"/>
 				</box>
@@ -111,7 +112,7 @@
 				<text><![CDATA[n/a]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="384" y="24" width="73" height="9"/>
+				<reportElement x="319" y="55" width="73" height="9"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -124,7 +125,7 @@
 				<text><![CDATA[    Due Date :]]></text>
 			</staticText>
 			<textField pattern="dd-MMM-yy">
-				<reportElement x="457" y="24" width="85" height="9"/>
+				<reportElement x="392" y="55" width="152" height="9"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -137,7 +138,7 @@
 				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="384" y="33" width="73" height="9"/>
+				<reportElement x="319" y="64" width="73" height="9"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -150,7 +151,7 @@
 				<text><![CDATA[    Amount :]]></text>
 			</staticText>
 			<textField pattern="#,##0.00;(-#,##0.00)">
-				<reportElement x="457" y="33" width="85" height="9"/>
+				<reportElement x="392" y="64" width="152" height="9"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -163,7 +164,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{p_amount}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="384" y="42" width="73" height="9"/>
+				<reportElement x="319" y="73" width="73" height="9"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -176,7 +177,7 @@
 				<text><![CDATA[    Payment Type :]]></text>
 			</staticText>
 			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
-				<reportElement x="457" y="42" width="85" height="9"/>
+				<reportElement x="392" y="73" width="152" height="9"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -189,7 +190,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{p_pay_type}]]></textFieldExpression>
 			</textField>
 			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
-				<reportElement x="384" y="5" width="158" height="10" forecolor="#000000" backcolor="#0066CC"/>
+				<reportElement x="319" y="36" width="225" height="10" forecolor="#000000" backcolor="#0066CC"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -202,14 +203,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["FAD-GU-F-01-009"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
-				<reportElement x="36" y="51" width="168" height="10"/>
+				<reportElement x="36" y="72" width="168" height="10"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font fontName="Tahoma" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="51" width="35" height="10"/>
+				<reportElement x="0" y="72" width="36" height="10"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -223,7 +224,7 @@
 				<text><![CDATA[Date :]]></text>
 			</staticText>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
-				<reportElement x="457" y="51" width="85" height="9"/>
+				<reportElement x="392" y="91" width="152" height="9"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -236,7 +237,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{p_status}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="384" y="51" width="73" height="9"/>
+				<reportElement x="319" y="91" width="73" height="9"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -249,7 +250,7 @@
 				<text><![CDATA[    Status :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="71" width="36" height="10"/>
+				<reportElement x="0" y="92" width="37" height="10"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -263,11 +264,37 @@
 				<text><![CDATA[Availer :]]></text>
 			</staticText>
 			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-				<reportElement x="36" y="71" width="541" height="10"/>
+				<reportElement x="36" y="92" width="283" height="10"/>
 				<textElement verticalAlignment="Top" markup="none">
 					<font fontName="Tahoma" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{p_availer}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="319" y="82" width="73" height="9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[    Request Type :]]></text>
+			</staticText>
+			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
+				<reportElement x="392" y="82" width="152" height="9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{p_request_type}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

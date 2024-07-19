@@ -20,7 +20,8 @@ public class modelPVProoflistBatch extends DefaultTableModel{
 		"Availer",			//5
 		"Payment Type",		//6
 		"Status",			//7
-		"Project"			//8
+		"Project",			//8
+		"Req. Type"
 		
 	};
 
@@ -37,7 +38,8 @@ public class modelPVProoflistBatch extends DefaultTableModel{
 			String.class,		//Availer
 			String.class,		//Payment Type
 			String.class,		//Status
-			String.class		//Project
+			String.class,		//Project
+			String.class
 	};
 	
 	Boolean[] COLUMN_EDITABLE = new Boolean[] {
@@ -49,7 +51,8 @@ public class modelPVProoflistBatch extends DefaultTableModel{
 			false,				//Availer
 			false,				//Payment Type
 			false,				//Status
-			false				//Project
+			false,				//Project
+			false
 	};
 
 	@Override

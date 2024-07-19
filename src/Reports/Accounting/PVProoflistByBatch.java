@@ -173,7 +173,7 @@ public class PVProoflistByBatch extends JDialog implements _GUI, ActionListener 
 						"trim(e.entity_name) as availer,\n" + 
 						"(case when a.pay_type_id = 'A' then 'Cash' else 'Check' end) as pmt_tpye,\n" + 
 						"g.status_desc,\n" + 
-						"'/' || i.proj_alias as proj_alias\n" +
+						"'/' || i.proj_alias as proj_alias, c.rplf_type_desc \n" +
 						"from rf_pv_header a\n" + 
 						"left join rf_request_header b on a.pv_no = b.rplf_no and a.co_id = b.co_id\n" + 
 						"left join mf_rplf_type c on b.rplf_type_id = c.rplf_type_id\n" + 
@@ -233,6 +233,7 @@ public class PVProoflistByBatch extends JDialog implements _GUI, ActionListener 
 			String project = "";
 			String desc = "";
 			String phase = ""; /*ADDED BY JED 2021-11-25 : INCLUDE PHASE ON PARTICULAR AS PER MAM ROSHEL*/
+			String request_type = "";
 
 			for(int x=0 ; x < modelPVBatch.getRowCount() ; x++) {
 				Boolean isSelected = (Boolean) modelPVBatch.getValueAt(x, 0);
@@ -245,6 +246,7 @@ public class PVProoflistByBatch extends JDialog implements _GUI, ActionListener 
 					pay_type = (String) modelPVBatch.getValueAt(x, 6);
 					status = (String) modelPVBatch.getValueAt(x, 7);
 					project = (String) modelPVBatch.getValueAt(x, 8);
+					request_type = (String) modelPVBatch.getValueAt(x, 9);
 					
 					System.out.printf("value of co_id: %s%n", co_id);
 					try{
@@ -316,7 +318,8 @@ public class PVProoflistByBatch extends JDialog implements _GUI, ActionListener 
 				mapParameters.put("p_availer", availer);	
 				mapParameters.put("p_particulars", particular);	
 				mapParameters.put("p_proj", project);	
-				mapParameters.put("p_desc", desc);	
+				mapParameters.put("p_desc", desc);
+				mapParameters.put("p_request_type", request_type);
 
 				FncReport.generateReport("/Reports/rptPV_prooflist_batch.jasper", reportTitle, "", mapParameters);
 			}

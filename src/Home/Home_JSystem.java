@@ -501,6 +501,7 @@ import Utilities.SpecialProjectsMonitoring;
 import Utilities.TCOST_Retagging;
 import Utilities.TagDisposalForApproval;
 import Utilities.Tax_Rate_Discrepancy;
+import Utilities.TemporaryCheckVoucher;
 import Utilities.Trip_Purpose;
 import Utilities.Tripping_Rate;
 import Utilities.UploadChartOfAccounts;
@@ -6201,6 +6202,18 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 										}
 									}
 								});			
+							}
+							{ //ADDED BY MONIQUE DTD 07-19-2024; TEMPORARY USE ONLY FOR ACERLAND
+								JMenuItem menuitemTempCV = new JMenuItem("Temporary Check Voucher");
+								menuCahieringUtility.add(menuitemTempCV);
+								menuitemTempCV.addActionListener(new ActionListener() {
+									public void actionPerformed(ActionEvent e) {
+										if(isNotExisting("TemporaryCheckVoucher")){
+											TemporaryCheckVoucher tcv = new TemporaryCheckVoucher();
+											addWindow(tcv, e);
+										}
+									}
+								});
 							}
 						}
 						{

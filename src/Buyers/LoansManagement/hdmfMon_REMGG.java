@@ -768,8 +768,8 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 		String position = "Vice President";
 		
 		if(co_id.equals("02") || co_id.equals("01")) {
-			signatory = "ANGELICA ERNESTINE L. BAROÑA";
-			position = "Manager";
+			signatory = "ATTY. ANGELICA ERNESTINE L. BAROÑA";
+			position = "Assistant Manager";
 		}
 		
 		mapParameters.put("signatory", signatory);

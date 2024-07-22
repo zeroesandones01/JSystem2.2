@@ -245,6 +245,79 @@ public class _JRPrinterAWT implements Printable {
 
 		return isOK;
 	}
+	
+	public boolean printPagesMultipleClients(int firstPageIndex, int lastPageIndex, boolean withPrintDialog, String doc_id, String[] entity_id, String proj_id, String pbl_id, Integer seq_no) throws JRException {
+		boolean isOK = true;
+
+		if (firstPageIndex < 0 || firstPageIndex > lastPageIndex || lastPageIndex >= jasperPrint.getPages().size()) {
+			throw new JRException("Invalid page index range : " + firstPageIndex + " - " + lastPageIndex + " of " + jasperPrint.getPages().size());
+		}
+
+		pageOffset = firstPageIndex;
+
+		PrinterJob printJob = PrinterJob.getPrinterJob();
+
+		// fix for bug ID 6255588 from Sun bug database
+		initPrinterJobFields(printJob);
+
+		PageFormat pageFormat = printJob.defaultPage();
+		Paper paper = pageFormat.getPaper();
+
+		printJob.setJobName("JasperReports - " + jasperPrint.getName());
+
+		switch (jasperPrint.getOrientationValue()) {
+		case LANDSCAPE: {
+			pageFormat.setOrientation(PageFormat.LANDSCAPE);
+			paper.setSize(jasperPrint.getPageHeight(), jasperPrint.getPageWidth());
+			paper.setImageableArea(0, 0, jasperPrint.getPageHeight(), jasperPrint.getPageWidth());
+			break;
+		}
+		case PORTRAIT:
+		default: {
+			pageFormat.setOrientation(PageFormat.PORTRAIT);
+			paper.setSize(jasperPrint.getPageWidth(), jasperPrint.getPageHeight());
+			paper.setImageableArea(0, 0, jasperPrint.getPageWidth(), jasperPrint.getPageHeight());
+		}
+		}
+
+		pageFormat.setPaper(paper);
+		
+		for(int x=0; x<=entity_id.length; x++) {
+			
+			String SQL = "SELECT sp_save_docs_for_printing('"+ doc_id +"', '"+ entity_id +"', '"+ proj_id +"', '"+ pbl_id +"', "+ seq_no +", '"+ UserInfo.EmployeeCode +"');";
+			pgSelect db = new pgSelect();
+			db.select(SQL, "Printing", true);
+		}
+
+
+		Book book = new Book();
+		book.append(this, pageFormat, lastPageIndex - firstPageIndex + 1);
+		printJob.setPageable(book);
+		try {
+			if (withPrintDialog) {//TODO Still Working on printing of documents
+				if (printJob.printDialog()) {
+					
+
+					//System.out.println("****************************** DUMAAN! ******************************");
+					//if(db.isNotNull() && ((Boolean) db.getResult()[0][0])){
+						printJob.print();
+					//}
+				} else {
+					isOK = false;
+				}
+			} else {
+				
+
+				//System.out.println("****************************** DUMAAN! ******************************");
+					printJob.print();
+				
+			}
+		} catch (Exception ex) {
+			throw new JRException("Error printing report.", ex);
+		}
+
+		return isOK;
+	}
 
 
 	/**

@@ -2426,7 +2426,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		"and b.bal_side = 'D'\n" + 
 		"and a.pv_no not in ( select rplf_no from rf_liq_header where status_id in ('A', 'G', 'P' ) and co_id = '"+co_id+"' )\n" + 
 		"and a.co_id = '"+co_id+"' \n" + 
-		"and e.rplf_type_id in ('02', '07') ) a   \n" + 
+		"and e.rplf_type_id in ('02', '07', '14') ) a   \n" + 
 		"where trim(a.cv_no) != '' and a.proc_id in ('5', '13', '14','3')	\n" + // To show/view pv that has proc.id ='03' ADDED by Tim 10-19-2022
 		"order by a.pv_date desc" ;
 		System.out.printf("getRequestList : " + sql);

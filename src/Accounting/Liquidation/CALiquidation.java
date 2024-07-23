@@ -2457,7 +2457,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			"left join mf_record_status b on a.status_id = b.status_id\n" + 
 			"left join rf_request_header c on a.rplf_no = c.rplf_no and c.status_id = 'A' and c.co_id = a.co_id\n" + 
 			"where a.co_id = '"+co_id+"'\n" + 
-			"and c.rplf_type_id in ('02', '07')\n" + 
+			"and c.rplf_type_id in ('02', '07', '14')\n" + 
 			"order by a.liq_no desc" ;	
 
 		FncSystem.out("Liquidation SQL", sql);

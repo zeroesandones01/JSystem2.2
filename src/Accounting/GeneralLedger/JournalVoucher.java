@@ -3722,46 +3722,51 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 		if (tblJV_SL.getSelectedRows().length == 1) {
 			
 			int selected_row = tblJV_SL.getSelectedRow();
-			Double trans =  (Double) modelJV_SL.getValueAt(selected_row, 4);
-			Double vat = Double.parseDouble(modelJV_SL.getValueAt(selected_row, 6).toString());
-			isSelected = (Boolean) modelJV_SL.getValueAt(selected_row, 3);
 			
-			System.out.println("selected_row: " + selected_row);
-			System.out.println("value of column 3: " + modelJV_SL.getValueAt(selected_row, 3));
-			System.out.println("Tran Amount: "+ modelJV_SL.getValueAt(selected_row, 4));
+			//Added by Erick 2024-07-17 DCRF 3039
+			if(isSelected) {//For with wtax/vat
+				
+				Double trans =  (Double) modelJV_SL.getValueAt(selected_row, 4);
+				Double vat = Double.parseDouble(modelJV_SL.getValueAt(selected_row, 6).toString());
+				isSelected = (Boolean) modelJV_SL.getValueAt(selected_row, 3);
+				
+				System.out.println("selected_row: " + selected_row);
+				System.out.println("value of column 3: " + modelJV_SL.getValueAt(selected_row, 3));
+				System.out.println("Tran Amount: "+ modelJV_SL.getValueAt(selected_row, 4));
+				if (isSelected) {
+					vat_rate = 0.12;
+				} else {
+					vat_rate = 0.00;
+				}
 
-			if (isSelected) {
-				vat_rate = 0.12;
-			} else {
-				vat_rate = 0.00;
+				BigDecimal trans_bd = new BigDecimal(trans);
+				BigDecimal vat_bd = new BigDecimal(vat);
+
+				modelJV_SL.setValueAt(modelJV_SL.getValueAt(selected_row, 4), selected_row, 4); 
+				// modelJV_SL.setValueAt(trans_bd, x, 5);
+
+				System.out.println("");
+				System.out.println("True");
+				System.out.println("Trans :" + trans);
+				System.out.println("autocompute_VatAmount_SL :" + autocompute_VatAmount_SL(trans_bd.doubleValue(), vat_rate).doubleValue());
+				System.out.println("vat_rate :" + vat_rate);
+				
+				modelJV_SL.setValueAt(new BigDecimal(trans_bd.doubleValue() - autocompute_VatAmount_SL(trans_bd.doubleValue(), vat_rate).doubleValue()), row,
+						5);
+				// modelJV_SL.setValueAt(vat_bd, x, 6);
+				modelJV_SL.setValueAt(autocompute_VatAmount_SL(trans_bd.doubleValue(), vat_rate), row, 6);
+				double netofvat = Double.parseDouble(modelJV_SL.getValueAt(selected_row, 5).toString());
+				double wtax_rate = 0.00;
+				try {
+					wtax_rate = Double.parseDouble(modelJV_SL.getValueAt(selected_row, 2).toString()) / 100;
+				} catch (NumberFormatException e) {
+				}
+				double wtax_amt = autocompute_WtaxAmount(netofvat, 0.00, wtax_rate).doubleValue();
+				BigDecimal wtax_amt_bd = new BigDecimal(wtax_amt);
+				modelJV_SL.setValueAt(wtax_amt_bd, selected_row, 7);
+			}else {//For without wtax/vat
+				modelJV_SL.setValueAt(modelJV_SL.getValueAt(selected_row, 4), selected_row, 4); 
 			}
-
-			BigDecimal trans_bd = new BigDecimal(trans);
-			BigDecimal vat_bd = new BigDecimal(vat);
-
-			modelJV_SL.setValueAt(modelJV_SL.getValueAt(selected_row, 4), selected_row, 4);
-			// modelJV_SL.setValueAt(trans_bd, x, 5);
-
-			System.out.println("");
-			System.out.println("True");
-			System.out.println("Trans :" + trans_bd);
-			System.out.println("autocompute_VatAmount_SL :" + autocompute_VatAmount_SL(trans_bd.doubleValue(), vat_rate).doubleValue());
-			System.out.println("vat_rate :" + vat_rate);
-
-			modelJV_SL.setValueAt(new BigDecimal(trans.doubleValue() - autocompute_VatAmount_SL(trans_bd.doubleValue(), vat_rate).doubleValue()), row,
-					5);
-			// modelJV_SL.setValueAt(vat_bd, x, 6);
-			modelJV_SL.setValueAt(autocompute_VatAmount_SL(trans_bd.doubleValue(), vat_rate), row, 6);
-			double netofvat = Double.parseDouble(modelJV_SL.getValueAt(selected_row, 5).toString());
-			double wtax_rate = 0.00;
-			try {
-				wtax_rate = Double.parseDouble(modelJV_SL.getValueAt(selected_row, 2).toString()) / 100;
-			} catch (NumberFormatException e) {
-			}
-			double wtax_amt = autocompute_WtaxAmount(netofvat, 0.00, wtax_rate).doubleValue();
-			BigDecimal wtax_amt_bd = new BigDecimal(wtax_amt);
-			modelJV_SL.setValueAt(wtax_amt_bd, selected_row, 7);
-
 		} else {
 			// if(tblJV_SL.getSelectedRows().length == 1) {
 
@@ -5432,14 +5437,13 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 																												// Erick
 																												// 09-17-2020
 			// if(acctID.equals("01-99-03-000")){vatAmt = vatAmt + vatAmt_x;}
-			if (acctID.equals("01-99-03-000")) {//Input VAT
+			if (acctID.equals("01-99-03-000") || acctID.equals("01-99-06-000")|| acctID.equals("01-99-07-000")) {//Input VAT //Edited by Erick 2024-07-18 dcrf 3045 added filter Input Vat - Clearing/Input Vat - Accrual 
 
 				if (vatAmt_x == 0) {
 					// vatamount_credit=
 					// getVatAmount(vatamount,vatAmt_x_credit).doubleValue();//reverse vat added by
 					// Erick 09-17-2020
-					vatamount_credit = Math
-							.abs(Double.parseDouble(getVatAmount(vatamount_credit, vatAmt_x_credit).toString())); // .doubleValue();//reverse
+					vatamount_credit = Math.abs(Double.parseDouble(getVatAmount(vatamount_credit, vatAmt_x_credit).toString())); // .doubleValue();//reverse
 																													// vat
 																													// Edited
 																													// by
@@ -5460,8 +5464,7 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 				// vatamount= Math.abs(vatamount_debit - vatamount_credit);//added by Erick
 				// 10-15-2020
 
-			}
-			;
+			};
 
 			// Double wtaxAmt_x =
 			// Double.parseDouble(modelJV_account.getValueAt(x,9).toString());

@@ -552,6 +552,14 @@ public class CARD extends _JInternalFrame implements _GUI, AncestorListener, Sea
 
 	private _CARD_REQUESTS pnlRequest;
 
+	private JLabel lblRPTOffset;
+	private JPanel pnlCreditRPTOffset;
+	private JLabel lblRPTCredit;
+	private JButton btnCreditedTo;
+	private JTextArea clientList;
+	private JScrollPane scrollCreditTo;
+	private String rptCreditRemarks;
+
 	public static String server; 
 	
 	public CARD() {
@@ -4934,10 +4942,55 @@ public class CARD extends _JInternalFrame implements _GUI, AncestorListener, Sea
 											}
 										} );
 									}
+									//COMMENTED BY MONIQUE DTD 04-23-2024
+									//									{
+									//										pnlPCostCenter.add(Box.createHorizontalBox());
+									//										pnlPCostCenter.add(Box.createHorizontalBox());
+									//										pnlPCostCenter.add(Box.createHorizontalBox());
+									//									}
+								}
+								{ // ADDED BY MONIQUE REFER TO DCRF#2950
+									JPanel pnlPCostRPTOffset = new JPanel(new GridLayout(1, 2, 5, 5)); 
+									pnlPCostNorth.add(pnlPCostRPTOffset, BorderLayout.EAST); 
+									pnlPCostRPTOffset.setPreferredSize(new Dimension(800, 0));
 									{
-										pnlPCostCenter.add(Box.createHorizontalBox());
-//										pnlPCostCenter.add(Box.createHorizontalBox());
-//										pnlPCostCenter.add(Box.createHorizontalBox());
+										lblRPTOffset = new JLabel(""); 
+										pnlPCostRPTOffset.add(lblRPTOffset);
+									}
+									{
+										pnlCreditRPTOffset = new JPanel(new BorderLayout(5, 5));
+										pnlPCostRPTOffset.add(pnlCreditRPTOffset); 
+										
+										{
+											lblRPTCredit = new JLabel(""); 
+											pnlCreditRPTOffset.add(lblRPTCredit, BorderLayout.CENTER);
+											
+										}
+										{
+											btnCreditedTo = new JButton("See Client(s)");
+											pnlCreditRPTOffset.add(btnCreditedTo, BorderLayout.EAST); 	
+											btnCreditedTo.setPreferredSize(new Dimension(150, 0));
+											btnCreditedTo.setVisible(false);
+											
+											clientList = new JTextArea();
+											clientList.setEditable(false);	
+											scrollCreditTo = new JScrollPane(clientList);
+											scrollCreditTo.setViewportView(clientList);
+											scrollCreditTo.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
+											scrollCreditTo.setPreferredSize(new Dimension(500, 200));
+											
+											btnCreditedTo.addActionListener(new ActionListener() {
+												
+												@Override
+												public void actionPerformed(ActionEvent e) {
+													
+													 clientList.setText(rptCreditRemarks);
+													 clientList.setCaretPosition(0);  // Set caret position to the start of the text
+													 JOptionPane.showMessageDialog(pnlCreditRPTOffset, scrollCreditTo, "CD-Excess Credited to", JOptionPane.PLAIN_MESSAGE);
+												}
+											});
+											
+										}
 									}
 								}
 							}
@@ -5914,6 +5967,40 @@ public class CARD extends _JInternalFrame implements _GUI, AncestorListener, Sea
 
 			_CARD.displayPCostDetails(modelPCD, modelPCDTotal, entity_id, proj_id, pbl_id, seq_no);
 			cmblot.setModel(new DefaultComboBoxModel(getLots(entity_id, proj_id, pbl_id, Integer.toString(seq_no))));//**ADDED BY JED VICEDO 2019-04-16 : TO SELECT 2ND LOTS**//
+			{
+				//ADDED BY MONIQUE DTD 05-15-24 REFER TO DCRF#2950
+				if(_CARD.isWithOffsetRPT(entity_id, proj_id, pbl_id, seq_no)) {
+					lblRPTOffset.setText(String.format("<html><b>%s</b></html>", _CARD.RPTOffset(entity_id, proj_id, pbl_id, seq_no))); 
+				} else {
+					lblRPTOffset.setText("");
+				}
+				
+				//ADDED BY MONIQUE DTD 05-15-24 REFER TO DCRF#2966
+				if(_CARD.isWithRPTCredit(entity_id, proj_id, pbl_id, seq_no)) {
+					
+					String[] result = _CARD.RPTCredit(entity_id, proj_id, pbl_id, seq_no);
+
+					// Check if result is not null (to avoid NullPointerException)
+					if (result != null) {
+					    // Total amount credited
+					    String totalAmtRPTCredited = result[0];
+					    // Remarks
+					    rptCreditRemarks = result[1];
+					    
+						lblRPTCredit.setText(String.format("<html><b> CD-EXCESS %s CREDIT TO: </b></html>", totalAmtRPTCredited));
+						btnCreditedTo.setVisible(true);
+
+//					    System.out.println("Total amount credited: " + totalAmtRPTCredited);
+//					    System.out.println("Remarks: " + remarks);
+					} else {
+					    System.out.println("No result found.");
+					}
+					
+				} else {
+					lblRPTCredit.setText("");
+					btnCreditedTo.setVisible(false);
+				}
+			}
 			scrollPCD.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer(Integer.toString(tblPCD.getRowCount())));
 			tblPCD.packAll();
 

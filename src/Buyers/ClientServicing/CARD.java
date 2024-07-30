@@ -5919,7 +5919,7 @@ public class CARD extends _JInternalFrame implements _GUI, AncestorListener, Sea
 
 			_CARD.display_hrdetails(modelHR , entity_id, pbl_id, proj_id, seq_no);
 
-			TCostComputation.displayTCost(entity_id, proj_id, pbl_id, seq_no);
+			TCostComputation.displayTCost(entity_id, proj_id, pbl_id, seq_no, false);
 			TCostComputation.displayClient(txtClientName.getText(), txtPblDescription.getText(), txtModelName.getText(), txtNSP.getText(), (String) clientDetails[37]);
 
 			//PropertyManagement.chkPreviewOtherLot.setSelected(false);

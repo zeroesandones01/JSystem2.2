@@ -602,7 +602,7 @@ public class Request_Payment_Trip extends _JInternalFrame implements _GUI,Action
 	}
 
 	private String getRequestType(){
-		String SQL = "SELECT rplf_type_id as \"Code\", rplf_type_desc as \"Type\" fROM mf_rplf_type where rplf_type_id in ('01','02','07','11') ";
+		String SQL = "SELECT rplf_type_id as \"Code\", rplf_type_desc as \"Type\" fROM mf_rplf_type where rplf_type_id in ('01','02','07','11', '06') ";
 
 		return SQL;
 	}

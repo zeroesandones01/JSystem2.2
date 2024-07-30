@@ -7,6 +7,8 @@ import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,13 +17,16 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 import Database.pgSelect;
 import Functions.FncReport;
@@ -60,8 +65,12 @@ public class TCostComputation extends JPanel implements ActionListener {
 	private static String housemodel = "";
 	private static String selling_amt = "";
 	private static String lot_area = "";
+	private JCheckBox chkECAR;
 
 	private static String strProject;
+	private static String entityid;
+	private static String pblid;
+	private static Integer seqno;
 
 	public TCostComputation() {
 		initThis();
@@ -95,6 +104,25 @@ public class TCostComputation extends JPanel implements ActionListener {
 				pnlCenter.add(pnlNorth, BorderLayout.CENTER);
 				pnlNorth.setLayout(new BorderLayout(3, 3));
 				pnlNorth.setPreferredSize(new Dimension(416, 125));
+				{
+					JPanel pnlForECAR = new JPanel(new BorderLayout(5,5));
+					pnlNorth.add(pnlForECAR, BorderLayout.NORTH);
+					{
+						chkECAR = new JCheckBox("For ECAR");
+						pnlForECAR.add(chkECAR);
+						chkECAR.addItemListener(new ItemListener() {
+							
+							@Override
+							public void itemStateChanged(ItemEvent e) {
+								if (e.getStateChange() == ItemEvent.SELECTED) {
+									displayTCost(entityid, strProject, pblid, seqno, true);
+								}else {
+									displayTCost(entityid, strProject, pblid, seqno, false);									displayStatus(modelTCost, rowHeaderTCost, entityid, strProject, pblid, seqno, false);
+								}
+							}
+						});
+					}
+				}
 				{
 					scrollCenter = new JScrollPane();
 					pnlNorth.add(scrollCenter, BorderLayout.CENTER);
@@ -131,6 +159,17 @@ public class TCostComputation extends JPanel implements ActionListener {
 							}
 						});*/
 						tblTCost.setSortable(false);
+						
+						modelTCost.addTableModelListener(new TableModelListener() {
+							public void tableChanged(TableModelEvent e) {
+
+								((DefaultListModel)rowHeaderTCost.getModel()).addElement(modelTCost.getRowCount());
+
+								if(modelTCost.getRowCount() == 0){
+									rowHeaderTCost.setModel(new DefaultListModel());
+								}
+							}
+						});
 					}
 					{
 						rowHeaderTCost = tblTCost.getRowHeader();
@@ -250,6 +289,7 @@ public class TCostComputation extends JPanel implements ActionListener {
 		String actionCommand = arg0.getActionCommand();
 		String emp_code = (String) UserInfo.EmployeeCode;
 		String emp_name = (String) UserInfo.FullName;
+		Boolean for_ecar = chkECAR.isSelected();
 		
 		if(actionCommand.equals("Preview")){
 			ArrayList<String> iftrue = new ArrayList<String>();
@@ -291,17 +331,21 @@ public class TCostComputation extends JPanel implements ActionListener {
 			mapParameters.put("amount", selling_amt.replace("[", "").replace("]", ""));
 			mapParameters.put("lotarea", lot_area);
 			mapParameters.put("prepared_by", UserInfo.FullName);
+			mapParameters.put("for_ecar", for_ecar);
 			
 			FncReport.generateReport("/Reports/rptTCostComputation.jasper", "Transfer Cost Computation", mapParameters, SQL);
 		}
 	}
 
-	public static void displayTCost(String entity_id, String proj_id ,String pbl, Integer seq_no) {
+	public static void displayTCost(String entity_id, String proj_id ,String pbl, Integer seq_no, Boolean isecar) {
 		refresh(true);
 		
+		entityid = entity_id;
 		strProject = proj_id;
+		pblid = pbl;
+		seqno = seq_no;
 		
-		displayStatus(modelTCost, rowHeaderTCost, entity_id, proj_id ,pbl, seq_no);
+		displayStatus(modelTCost, rowHeaderTCost, entity_id, proj_id ,pbl, seq_no, isecar);
 		scrollCenter.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer(Integer.toString(tblTCost.getRowCount())));
 		tblTCost.packAll();
 		
@@ -340,14 +384,14 @@ public class TCostComputation extends JPanel implements ActionListener {
 		
 	}
 	
-	private static void displayStatus(modelTCostCompu model, JList rowHeader, String entity_id ,String proj_id,String pbl, Integer seq_no) {
+	private static void displayStatus(modelTCostCompu model, JList rowHeader, String entity_id ,String proj_id,String pbl, Integer seq_no, Boolean isecar) {
 		model.clear();
 		DefaultListModel listModel = new DefaultListModel();
 		rowHeader.setModel(listModel);
 
 		//String sql = "select false, tcostdtl_desc, tcostdtl_amt, null, remarks from mf_transfer_cost_dl where status_id = 'A' and for_tcostcomp is true order by tcostdtl_desc;";
 		
-		String SQL = "SELECT * FROM view_card_tcost_computation('"+entity_id+"', '"+proj_id+"', '"+pbl+"', "+seq_no+");\n" + 
+		String SQL = "SELECT * FROM view_card_tcost_computation_v2('"+entity_id+"', '"+proj_id+"', '"+pbl+"', "+seq_no+", "+isecar+");\n" + 
 				"";
 		System.out.printf("SQL: %s%n%n", SQL);
 		pgSelect db = new pgSelect();
@@ -356,7 +400,7 @@ public class TCostComputation extends JPanel implements ActionListener {
 		if(db.isNotNull()){
 			for(int x=0; x < db.getRowCount(); x++){
 				model.addRow(db.getResult()[x]);
-				listModel.addElement(model.getRowCount());
+				//listModel.addElement(model.getRowCount());
 			}
 		}
 	}
@@ -364,5 +408,6 @@ public class TCostComputation extends JPanel implements ActionListener {
 	public void cancelStatus() {
 		refresh(false);
 		btnState(true);
+		chkECAR.setSelected(false);
 	}
 }

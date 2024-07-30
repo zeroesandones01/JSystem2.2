@@ -2061,6 +2061,66 @@ public class _CARD {
 			return null;
 		}
 	}
+	
+	// ADDED BY MONIQUE DTD 05-14-2024; REFER TO DCRF#2950 
+	public static Boolean isWithOffsetRPT(String entity_id, String proj_id, String pbl_id, int seq_no) {
+		pgSelect db = new pgSelect();
+		String SQL = "SELECT EXISTS (Select * from rf_rpt_dues_offset_to_cd_excess where entity_id = '"+entity_id+"' and proj_id = '"+proj_id+"' and pbl_id = '"+pbl_id+"' and seq_no = '"+seq_no+"' and status_id = 'A')";
+		db.select(SQL);
+
+		System.out.printf("Is client with Offset RPT: %s", SQL);
+
+		if (db.isNotNull()) {
+			return (Boolean) db.getResult()[0][0];
+		} else {
+			return false;
+		}
+	}
+
+	// ADDED BY MONIQUE REFER TO DCRF#2950 DTD 05-14-2024
+	public static String RPTOffset(String entity_id, String proj_id, String pbl_id, int seq_no) {
+		String rpt_offset = ""; 
+		pgSelect db = new pgSelect();
+		String SQL = "Select remarks from rf_rpt_dues_offset_to_cd_excess where entity_id = '"+entity_id+"' and proj_id = '"+proj_id+"' and pbl_id = '"+pbl_id+"' and seq_no = '"+seq_no+"' and status_id = 'A'"; 
+		db.select(SQL);
+		FncSystem.out("get_RPT_OFFSET_Details:", SQL);
+		if (db.isNotNull()) {
+			return (String) db.getResult()[0][0];
+		} else {
+			return null;
+		}
+	}
+
+	// ADDED BY MONIQUE DTD 05-14-2024; REFER TO DCRF #2966
+	public static Boolean isWithRPTCredit(String entity_id, String proj_id, String pbl_id, int seq_no) {
+		pgSelect db = new pgSelect();
+		String SQL = "SELECT EXISTS (Select * from rf_rpt_dues_offset_to_cd_excess where entity_id = '"+entity_id+"' and proj_id = '"+proj_id+"' and pbl_id = '"+pbl_id+"' and seq_no = '"+seq_no+"' and status_id = 'A' and remarks_2nd_offset IS NOT NULL)";
+		db.select(SQL);
+
+		System.out.printf("Client with CD-Excess Credit to Other Client: %s", SQL);
+
+		if (db.isNotNull()) {
+			return (Boolean) db.getResult()[0][0];
+		} else {
+			return false;
+		}
+	}
+
+	// ADDED BY MONIQUE REFER TO DCRF#2966 DTD 05-14-2024
+	public static String [] RPTCredit(String entity_id, String proj_id, String pbl_id, int seq_no) {
+		String[] result = new String[2]; // Array to hold both total amount and remarks
+		pgSelect db = new pgSelect();
+		String SQL = "SELECT to_char(rpt_amt_2nd_offset, '999,999.99'), remarks_2nd_offset FROM rf_rpt_dues_offset_to_cd_excess WHERE entity_id = '"+entity_id+"' AND proj_id = '"+proj_id+"' AND pbl_id = '"+pbl_id+"' AND seq_no = '"+seq_no+"' AND status_id = 'A'";
+		db.select(SQL);
+		FncSystem.out("get_RPT_Credit_Details:", SQL);
+		if (db.isNotNull()) {
+			result[0] = (String) db.getResult()[0][0]; // Total amount credited
+			result[1] = (String) db.getResult()[0][1]; // Remarks
+		} else {
+			result = null; // If no result found, return null
+		}
+		return result;
+	}
 }
 
 

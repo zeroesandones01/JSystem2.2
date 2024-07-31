@@ -1,6 +1,7 @@
 package tablemodel;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
@@ -77,7 +78,9 @@ public class modelJV_SubLedger2	 extends DefaultTableModel {
 			"Account Desc", 	// 11
 			"Project Name",		// 12
 			"Entity Name",		// 13
-			"Entity Type Description"		// 14
+			"Entity Type Description",		// 14
+			"Invoice No.", //15
+			"Invoice Date" //16
 			};
 
 	
@@ -106,7 +109,9 @@ public class modelJV_SubLedger2	 extends DefaultTableModel {
 			String.class,		//Account Desc
 			String.class,		//Project Name
 			String.class,		//Entity Name
-			String.class		//Entity Type Description
+			String.class,		//Entity Type Description
+			String.class,		//Invoice No.
+			Timestamp.class		//Invoice Date
 			
 			
 	};

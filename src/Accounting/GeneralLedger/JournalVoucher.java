@@ -4335,6 +4335,8 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 			String dept = modelJV_SL.getValueAt(x, 12).toString().trim();
 			String proj = modelJV_SL.getValueAt(x, 9).toString().trim();
 			String sub_proj = modelJV_SL.getValueAt(x, 10).toString().trim();
+			String invoice_no = (String) modelJV_SL.getValueAt(x, 18);
+			String invoice_date = (String) modelJV_SL.getValueAt(x, 19);
 
 			String tran_type = lookupTranType.getText();
 
@@ -4343,13 +4345,13 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 				String sqlDetail = "INSERT INTO rf_subsidiary_ledger(\n"
 						+ "            jv_no, tran_type, entity_id, entity_type_id, trans_amt, \n"
 						+ "            vat_amt, wtax_amt, sundry_acct, proj_id, sub_proj, div_id, dep_id, \n"
-						+ "            status_id, created_by, date_created, busunit_id, co_id\n" + "            )\n"
+						+ "            status_id, created_by, date_created, busunit_id, co_id, invoice_no, invoice_date\n" + "            )\n"
 						+ "    VALUES ('" + jv + "', '" + tran_type + "', '" + entity_id + "', '" + entity_type + "', "
 						+ trans_amt + ", \n" + "            " + vat + ", " + wtax + ", '" + sundry + "', NULLIF('"
 						+ proj + "','null'), NULLIF('" + sub_proj + "','null'), NULLIF('" + div + "','null'), NULLIF('"
 						+ dept + "','null'), 'A',\n" + "            '" + UserInfo.EmployeeCode + "', '"
 						+ dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL())) + "',  '" + co_id + "','"
-						+ co_id + "'\n" + "            );\n" + "";
+						+ co_id + "', '"+invoice_no+"', '"+invoice_date+"'\n" + "            );\n" + "";
 
 				System.out.printf("SQL #1: %s", sqlDetail);
 				db.executeUpdate(sqlDetail, false);

@@ -2456,7 +2456,7 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 		
 		try {
 			System.out.println("isYearMonthOpen:" + isYearMonthOpen(lookupFiscalYr.getText(), lookupPeriod.getText()));
-			
+			System.out.println("Pasok");
 			if (isYearMonthOpen(lookupFiscalYr.getText(), lookupPeriod.getText()) == true) {
 
 				if (checkCompleteDetails() == false) {
@@ -2521,13 +2521,16 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 													// added by Erick Bituen to check vat/wtax amount is equal to SL see
 													// dcrf 1325
 													// executeSave();
+													
 													if (vatWtax_amounts_equal() == false) {
+														System.out.println("vatWtax_amounts_equal");
 
 														JOptionPane.showMessageDialog(getContentPane(),
 																"VAT and/or WTax SL Amount not matched.", "",
 																JOptionPane.ERROR_MESSAGE);
 
 													} else {
+														System.out.println("Save");
 														executeSave();
 														/*if (checkposted(jv_no, co_id)) {
 															JOptionPane.showMessageDialog(getContentPane(),
@@ -2585,6 +2588,7 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 						"Information", JOptionPane.WARNING_MESSAGE);
 			}
 		} catch (NullPointerException ex) {
+			System.out.println("Zerooo");
 			{
 				JOptionPane.showMessageDialog(getContentPane(), "Put zero instead of blank amount", "Warning",
 						JOptionPane.WARNING_MESSAGE);
@@ -2790,15 +2794,18 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 			// int row = tblJV_SL.getSelectedRow();
 			// String jv_remarks= txtJV_Remark.getText();
 			// jv_remarks= jv_remarks + "";
-
+			
 			if (jv.equals("") || jv.equals(null)) {
 				setJV_no();
 				pgUpdate db = new pgUpdate();
 
 				// save
 				insertJV_header(jv_no, db);
+				System.out.println("save header");
 				insertJV_detail(jv_no, db);
+				System.out.println("save detail");
 				insertSL_detail(jv_no, db);
+				System.out.println("save SL");
 
 				// Auto post jv if closing//added by Erick
 				if (lookupTranType.getValue().equals("00030") && lookupPeriod.getValue().equals("99")) {
@@ -3188,7 +3195,7 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 				+ // Added by Erick 2019-07-03
 				"and co_id = '" + co_id + "' ";
 
-		System.out.printf("SQL #1: %s", SQL);
+		System.out.printf("isYearMonthOpen #1: %s", SQL);
 		pgSelect db = new pgSelect();
 		db.select(SQL);
 
@@ -4097,7 +4104,8 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 			//System.out.println("trans_amt: "+trans_amt);
 			//BigDecimal trans_amt_db = new BigDecimal(trans_amt);
 			
-			
+			System.out.println("invoice_no: "+invoice_no);
+			System.out.println("invoice_date: "+invoice_date);
 			if(new BigDecimal("0.00").equals(modelJV_SL.getValueAt(x, 4))) {
 			//if (modelJV_SL.getValueAt(x, 4) == new BigDecimal("0.00")) {
 
@@ -4106,14 +4114,16 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 						+ tax_id + "' || ')' || ' ' ||entity_name from rf_entity  where entity_id='" + entity_id + "'");// Edited by Erick 2021-11-22 added tax id DCRF 1832
 			}
 			//Added by Erick 2024-07-31 DCRF 2964
-			if(invoice_no.equals("")){
+			if(invoice_no == null){
 			}else {
 			invoice_dtl = invoice_dtl.concat("\n") +"SI "+ invoice_no +"/"+invoice_date;
 			}
 			
+			
 			x++;
 		}
 		add_remarks1.concat("\n"+ invoice_dtl );
+		System.out.println("add_remarks1: "+add_remarks1);
 
 		Integer fiscal_yr_4digit = 0;
 		String period_id = "";

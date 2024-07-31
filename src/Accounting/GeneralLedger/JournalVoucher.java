@@ -4096,7 +4096,7 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 			String tax_id = modelJV_SL.getValueAt(x, 1).toString().trim();
 			Boolean vatable = (Boolean) modelJV_SL.getValueAt(x, 3);
 			String invoice_no = (String) modelJV_SL.getValueAt(x, 18);
-			String invoice_date = (String) modelJV_SL.getValueAt(x, 19);
+			Date invoice_date =  (Date) modelJV_SL.getValueAt(x, 19);
 			// Double vat = Double.parseDouble(modelJV_SL.getValueAt(x,3).toString());
 			// Double wtax = Double.parseDouble(modelJV_SL.getValueAt(x,4).toString());
 			//BigDecimal trans_amt = (BigDecimal) modelJV_SL.getValueAt(x, 4);
@@ -4417,9 +4417,11 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 		int x = 0;
 		int y = 1;
 		int rw = tblJV_SL.getModel().getRowCount();
+		
 
 		// String entity_id = "";
 		String edit_remarks1 = txtJV_Remark.getText().trim().replace("'", "''");
+		String invoice_dtl = "";
 
 		// Added by Erick date 2019-08-19 DCRF 1174
 
@@ -4428,7 +4430,16 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 			String entity_id = modelJV_SL.getValueAt(x, 0).toString().trim();
 			String tax_id = modelJV_SL.getValueAt(x, 1).toString().trim();
 			Double trans_amt = Double.parseDouble(modelJV_SL.getValueAt(x, 4).toString());
+			String invoice_no = (String) modelJV_SL.getValueAt(x, 18);
+			Date invoice_date =  (Date) modelJV_SL.getValueAt(x, 19);
 			
+			System.out.println("invoice_no: "+invoice_no);
+			System.out.println("invoice_date: "+invoice_date);
+			//Added by Erick 2024-07-31 DCRF 2964
+			if(invoice_no == null){
+			}else {
+			invoice_dtl = invoice_dtl.concat("\n") +"SI "+ invoice_no +"/"+invoice_date;
+			}
 			
 			if (trans_amt == 0) {
 			} else {
@@ -4440,6 +4451,7 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 			}
 			x++;
 		}
+		edit_remarks1.concat("\n"+ invoice_dtl);
 
 		String sqlDetail = "update rf_jv_header set " + "jv_date = '" + dteTransaction.getDate() + "', " + "fiscal_yr='"
 				+ fiscal_yr_4digit + "'," + "period_id = '" + lookupPeriod.getText().trim() + "', " + "tran_id = '"

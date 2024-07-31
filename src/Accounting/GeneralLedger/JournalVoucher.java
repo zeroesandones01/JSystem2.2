@@ -4077,6 +4077,7 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 
 		// String entity_id = "";
 		String add_remarks1 = "";
+		String invoice_dtl = "";
 
 		// Added by Erick date 2019-08-19 DCRF 1174
 
@@ -4087,6 +4088,8 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 			String entity_id = modelJV_SL.getValueAt(x, 0).toString().trim();
 			String tax_id = modelJV_SL.getValueAt(x, 1).toString().trim();
 			Boolean vatable = (Boolean) modelJV_SL.getValueAt(x, 3);
+			String invoice_no = (String) modelJV_SL.getValueAt(x, 18);
+			String invoice_date = (String) modelJV_SL.getValueAt(x, 19);
 			// Double vat = Double.parseDouble(modelJV_SL.getValueAt(x,3).toString());
 			// Double wtax = Double.parseDouble(modelJV_SL.getValueAt(x,4).toString());
 			//BigDecimal trans_amt = (BigDecimal) modelJV_SL.getValueAt(x, 4);
@@ -4102,8 +4105,15 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 				add_remarks1 = add_remarks1.concat("\n") + modelJV_SL.getValueAt(x, 4) + " - " + FncGlobal.GetString("select '('||case when  "+vatable+"   then 'V' else 'NV' end || ' '  || '" //DCRF 2627
 						+ tax_id + "' || ')' || ' ' ||entity_name from rf_entity  where entity_id='" + entity_id + "'");// Edited by Erick 2021-11-22 added tax id DCRF 1832
 			}
+			//Added by Erick 2024-07-31 DCRF 2964
+			if(invoice_no.equals("")){
+			}else {
+			invoice_dtl = invoice_dtl.concat("\n") +"SI "+ invoice_no +"/"+invoice_date;
+			}
+			
 			x++;
 		}
+		add_remarks1.concat("\n"+ invoice_dtl );
 
 		Integer fiscal_yr_4digit = 0;
 		String period_id = "";

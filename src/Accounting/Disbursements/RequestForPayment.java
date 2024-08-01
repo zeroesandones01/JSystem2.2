@@ -1167,7 +1167,8 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 								new BigDecimal(0.00), null, null, null, null, null, null, null, null, null, null, null,
 								null, null, new BigDecimal(0.00), null, null, null, new BigDecimal(0.00),
 								new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00),
-								new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00), null });
+								new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00), null, null, null,
+								null, null, null, null, null, null, null, null});
 
 						tblDRF_part_total = new _JTableTotal(modelDRF_part_total, tblDRF_part);
 						tblDRF_part_total.setFont(dialog11Bold);
@@ -1324,7 +1325,7 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 				});
 			}
 		}
-	}
+	}//XXX END OF INIT GUI
 
 	// display tables
 	public static void displayDRF_details(DefaultTableModel modelMain, JList rowHeader, DefaultTableModel modelTotal,
@@ -1346,7 +1347,8 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 				+ "coalesce(a.other_liqui_amt,0), \r\n" + "a.pv_amt,\r\n" + "trim(a.remarks), \r\n"
 				+ "get_div_alias(a.div_id),			\r\n" + "get_department_alias_new(a.dept_id),			\r\n"
 				+ "get_project_alias(a.project_id),			\r\n"
-				+ "get_sub_proj_alias(a.sub_projectid),			\r\n" + "get_client_name(a.entity_id), a.rec_id, a.tcost_pcost_rec_id			\r\n" +
+				+ "get_sub_proj_alias(a.sub_projectid),			\r\n" + "get_client_name(a.entity_id), a.rec_id, a.tcost_pcost_rec_id, \n"
+				+ "a.invoice_no, a.invoice_date			\r\n" +
 
 				"from rf_request_detail a\r\n" + "left join mf_boi_chart_of_accounts b on a.acct_id = b.acct_id\r\n"
 				+ "left join rf_entity c on a.entity_id = c.entity_id\r\n" + "where rplf_no = '" + req_no
@@ -1449,65 +1451,65 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 		rowHeader.setModel(listModel);// Setting of DefaultListModel into rowHeader.
 
 		String sql = "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',       \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,   ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''   union all    \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null   union all    \r\n"
 				+ "select '', '', '', '', '', '', '', '', 0.00, false, '', '', '', '', null, '', '', '', '',     \r\n"
-				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  ''      \r\n"
+				+ "       false, false, false, 0.00, 0.00, '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  '', null, null, null, null, null, null, null, '', null      \r\n"
 				+
 
 				" ";
@@ -1624,7 +1626,7 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 				new BigDecimal(0.00), null, null, null, null, null, null, null, null, null, null, null, null, null,
 				new BigDecimal(0.00), null, null, null, new BigDecimal(0.00), new BigDecimal(0.00),
 				new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00),
-				new BigDecimal(0.00), new BigDecimal(0.00), null });
+				new BigDecimal(0.00), new BigDecimal(0.00), null, null, null, null, null, null, null, null, null, null, null });
 
 	}
 
@@ -3283,7 +3285,7 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 		modelTotal.addRow(new Object[] { "Total", null, null, null, null, null, null, null, amt_bd, null, null, null,
 				null, null, null, null, null, null, null, null, null, null, gr_amt_bd, null, null, null, wtax_amt_bd,
 				vat_amt_bd, exp_amt_bd, ret_amt_bd, dp_recoup_amt_bd, bc_liq_amt_bd, other_liq_amt_bd, pv_amt_bd,
-				null });
+				null, null, null, null, null, null, null, null, null, null });
 	}
 
 	private void clickTableColumn() {
@@ -3914,7 +3916,30 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 		created_by = UserInfo.EmployeeCode;
 		edited_by = "";
 		edited_date = null;
+		
+		String invoice_addtl_remarks = "";
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		
+		for (int x = 0; x < modelDRF_part.getRowCount(); x++) {
+			String invoice_no = "";
+			Date invoice_date = null;
+		
+			invoice_no = (String) modelDRF_part.getValueAt(x, 42);
+			invoice_date = (Date) modelDRF_part.getValueAt(x, 43);
+			
+			if(invoice_no.equals("") == false && invoice_date != null) {
+				
+				invoice_addtl_remarks = invoice_addtl_remarks +"\n" + String.format("SI %s/%s", invoice_no, dateFormat.format(invoice_date));
+			}
+		}
+		System.out.printf("value of invoice details:L %s%n", invoice_addtl_remarks);
+		
+		
+		remarks = remarks + "\n" + invoice_addtl_remarks;
 
+		System.out.printf("value of remarks:L %s%n", remarks);
+		
 		String sqlDetail = "INSERT into rf_request_header values (" + "'" + co_id + "',  \n" + // 1
 				"'" + co_id + "',  \n" + // 2
 				"'" + rplf_no + "',  \n" + // 3
@@ -3983,8 +4008,12 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 				String old_acct_id = "";
 				String wtax_id = "";
 				Integer pcost_tcost_rec_id = null;
+				String invoice_no = "";
+				Date invoice_date = null;
 			
 				pcost_tcost_rec_id = (Integer) modelDRF_part.getValueAt(x, 41);
+				invoice_no = (String) modelDRF_part.getValueAt(x, 42);
+				invoice_date = (Date) modelDRF_part.getValueAt(x, 43);
 				
 				try {
 					ref_doc_id = modelDRF_part.getValueAt(x, 12).toString().trim();
@@ -4140,7 +4169,7 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 				}
 
 				String sqlDetail = "INSERT into rf_request_detail (\n" + 
-						"	co_id, busunit_id, rplf_no, line_no, ref_doc_id, ref_doc_no, ref_doc_date, with_budget, part_desc, acct_id, remarks, amount, entity_id, entity_type_id, project_id, sub_projectid, div_id, dept_id, sect_id, inter_busunit_id, inter_co_id, is_vatproject, is_vatentity, is_taxpaidbyco, is_gross, wtax_id, wtax_rate, wtax_amt, vat_acct_id, vat_rate, vat_amt, exp_amt, pv_amt, sd_no, item_id, asset_no, old_acct_id, status_id, created_by, date_created, edited_by, date_edited, retention_amt, dp_recoup_amt, bc_liqui_amt, other_liqui_amt, tcost_pcost_rec_id) \n"+
+						"	co_id, busunit_id, rplf_no, line_no, ref_doc_id, ref_doc_no, ref_doc_date, with_budget, part_desc, acct_id, remarks, amount, entity_id, entity_type_id, project_id, sub_projectid, div_id, dept_id, sect_id, inter_busunit_id, inter_co_id, is_vatproject, is_vatentity, is_taxpaidbyco, is_gross, wtax_id, wtax_rate, wtax_amt, vat_acct_id, vat_rate, vat_amt, exp_amt, pv_amt, sd_no, item_id, asset_no, old_acct_id, status_id, created_by, date_created, edited_by, date_edited, retention_amt, dp_recoup_amt, bc_liqui_amt, other_liqui_amt, tcost_pcost_rec_id, invoice_no, invoice_date) \n"+
 						"values (" + "'" + co_id + "',  \n" + // 1 co_id
 						"'" + co_id + "',  \n" + // 2 busunit_id
 						"'" + rplf_no + "',  \n" + // 3 rplf_no
@@ -4191,7 +4220,9 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 						"" + dpr_amount + ", \n" + // 44 dp_recoup_amt
 						"" + bc_liq_amount + ", \n" + // 45 bc_liqui_amt
 						"" + other_liqui_amount + ", \n" + // 46 other_liqui_amt
-						" "+pcost_tcost_rec_id+" \n"+ //47
+						" "+pcost_tcost_rec_id+", \n"+ //47
+						" '"+invoice_no+"', \n"+
+						" '"+invoice_date+"' \n"+
 						")   ";
 
 				System.out.printf("SQL #1: %s", sqlDetail);
@@ -4267,6 +4298,29 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 		;
 		status_id = "A";
 		edited_by = UserInfo.EmployeeCode;
+		
+		String invoice_addtl_remarks = "";
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		
+		for (int x = 0; x < modelDRF_part.getRowCount(); x++) {
+			String invoice_no = "";
+			Date invoice_date = null;
+		
+			invoice_no = (String) modelDRF_part.getValueAt(x, 42);
+			invoice_date = (Date) modelDRF_part.getValueAt(x, 43);
+			
+			if(invoice_no.equals("") == false && invoice_date != null) {
+				
+				invoice_addtl_remarks = invoice_addtl_remarks +"\n" + String.format("SI %s/%s", invoice_no, dateFormat.format(invoice_date));
+			}
+		}
+		System.out.printf("value of invoice details:L %s%n", invoice_addtl_remarks);
+		
+		
+		remarks = remarks + "\n" + invoice_addtl_remarks;
+
+		System.out.printf("value of remarks:L %s%n", remarks);
 
 		String sqlDetail = "update rf_request_header set " + "co_id = '" + co_id + "',  \n" + // 1
 				"busunit_id = '" + co_id + "',  \n" + // 2

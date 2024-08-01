@@ -487,6 +487,52 @@ public class FncReport {
 		};
 		FncGlobal.loadThread(titleThread, runPreview);
 	}
+	
+//	public static void generateReportMultipleClients(final Object[] doc_ids, final Object[] reports, final Object[] titles, final Object[] printables, final Object[] mapParameterss, String titleThread, final Boolean restrict, final String[] entity_id, final String[] proj_id, final String[] pbl_id, final Integer[] seq_no, final Boolean individual) {//XXX Custom
+//		Runnable runPreview = new Runnable() {
+//			public void run() {
+//
+//				for(int x=0; x < reports.length; x++){
+//					String doc_id = (String) doc_ids[x];
+//					String report = (String) reports[x];
+//					String title = (String) titles[x];
+//					Boolean printable = (Boolean) printables[x];
+//					Map mapParameters = (Map) mapParameterss[x];
+//
+//					FncGlobal.startProgress("Generating " + title + " Report");
+//
+//					try {
+//						JasperPrint previewSalesReport = JasperFillManager.fillReport(FncReport.class.getResourceAsStream(report), mapParameters, FncGlobal.connection);
+//						if(previewSalesReport.getPages().size() > 0){
+//							if(FncGlobal.homeMDI.isNotExisting("iJasperViewer")){
+//
+//								_JasperViewer printAssetSticker = new _JasperViewer(previewSalesReport, FncGlobal.getReportTitle(title), doc_id, entity_id, proj_id, pbl_id, seq_no, printable);
+//								printAssetSticker.setVisible(true);
+//
+//								/*JasperViewer printAssetSticker = new JasperViewer(previewSalesReport, false);
+//								printAssetSticker.setTitle(FncGlobal.getReportTitle(title));
+//								printAssetSticker.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//								printAssetSticker.setLocationRelativeTo(null);
+//								printAssetSticker.setVisible(true);*/
+//								
+//								FncGlobal.AuditLogs(UserInfo.EmployeeCode, report, "Preview Report");
+//							}
+//						}else{
+//							JOptionPane.showMessageDialog(FncGlobal.homeMDI, "No Reports Generated!", title, JOptionPane.INFORMATION_MESSAGE);
+//						}
+//					} catch (HeadlessException e) {
+//						e.printStackTrace();
+//					} catch (JRException e) {
+//						e.printStackTrace();
+//					}/* catch (PropertyVetoException e) {
+//						e.printStackTrace();
+//					}*/
+//					FncGlobal.stopProgress();
+//				}
+//			}
+//		};
+//		FncGlobal.loadThread(titleThread, runPreview);
+//	}
 
 	/**
 	 * Added by Christian Paquibot (2015-04-20)

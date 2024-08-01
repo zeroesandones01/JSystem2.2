@@ -2,10 +2,12 @@ package tablemodel;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
+import DateChooser._JDateChooser;
 import Lookup._JLookup;
 
 public class modelDRF_particulars extends DefaultTableModel {
@@ -85,7 +87,9 @@ public class modelDRF_particulars extends DefaultTableModel {
 			"sub",	// 38
 			"availer",	// 39
 			"Rec ID",//40
-			"Pcost Tcost Rec. ID" //41
+			"Pcost Tcost Rec. ID", //41
+			"Invoice No.", //42
+			"Invoice Date"//43
 			};
 
 	
@@ -132,13 +136,16 @@ public class modelDRF_particulars extends DefaultTableModel {
 			BigDecimal.class,	//Other Liqui. Amount
 			BigDecimal.class,	//Payable Amount
 			String.class,		//Remarks
-			String.class, 		// Ref No.
-			String.class, 		// Ref No.
-			String.class, 		// Ref No.
-			String.class, 		// Ref No.
-			String.class,
-			String.class,
-			String.class
+			String.class, 		// Rdiv
+			String.class, 		// dept
+			String.class, 		// proj
+			String.class, 		// sub
+			String.class,		//availer
+			String.class,		//recid
+			String.class, 		//pcost tcost rec id
+			String.class, 		//invoice no
+			_JDateChooser.class //Invoice Date
+			
 	};
 
 	private void initThis() {
@@ -178,15 +185,16 @@ public class modelDRF_particulars extends DefaultTableModel {
 				false,	//BC Liqui Amount
 				false,	//Other Liqui Amount
 				false,	//Payable Amount
-				false,	//Retention Amount				
-				false,	//DP Recoup Amount
-				false,	//BC Liqui Amount
-				false,	//Other Liqui Amount
-				false,	//Payable Amount
 				false,	//Remarks
-				false, //REC ID
-				false, 
-				false
+				false, 		// Rdiv
+				false, 		// dept
+				false, 		// proj
+				false, 		// sub
+				false,		//availer
+				false,		//recid
+				false, 		//pcost tcost rec id
+				true, 		//invoice no
+				true			//invoice date
 		};
 	}
 
@@ -241,11 +249,15 @@ public class modelDRF_particulars extends DefaultTableModel {
 					false,	//Other Liqui Amount
 					false,	//Payable Amount
 					true,	//Remarks
-					false,	//Retention Amount				
-					false,	//DP Recoup Amount
-					false,	//BC Liqui Amount
-					false,	//Other Liqui Amount
-					false	//Payable Amount
+					false, 		// Rdiv
+					false, 		// dept
+					false, 		// proj
+					false, 		// sub
+					false,		//availer
+					false,		//recid
+					false, 		//pcost tcost rec id
+					true, 		//invoice no
+					true			//invoice date
 			};
 		}else{
 			COLUMN_EDITABLE = new boolean[] {
@@ -283,12 +295,16 @@ public class modelDRF_particulars extends DefaultTableModel {
 					false,	//BC Liqui Amount
 					false,	//Other Liqui Amount
 					false,	//Payable Amount
-					false,	//Retention Amount				
-					false,	//DP Recoup Amount
-					false,	//BC Liqui Amount
-					false,	//Other Liqui Amount
-					false,	//Payable Amount
-					false	//Remarks
+					false,	//Remarks			
+					false, 		// Rdiv
+					false, 		// dept
+					false, 		// proj
+					false, 		// sub
+					false,		//availer
+					false,		//recid
+					false, 		//pcost tcost rec id
+					true, 		//invoice no
+					true			//invoice date
 			};
 		}
 	}

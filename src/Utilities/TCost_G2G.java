@@ -15,6 +15,7 @@ import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -45,6 +46,7 @@ import Lookup._JLookup;
 import components.JTBorderFactory;
 import components._JInternalFrame;
 import components._JTableMain;
+import components._JXTextField;
 import interfaces._GUI;
 import tablemodel.model_garbage_fee_for_issuance;
 
@@ -63,9 +65,9 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 	JPanel pnllblDateTo;
 	JPanel pnlDateTo;
 	JPanel pnlUploading;
-	JPanel pnlFileUploading;
+	JPanel pnlGenerateDetails;
 
-	JButton btnProcess;
+	JButton btnGenerate;
 	JButton btnPreview;
 	JButton btnImport;
 
@@ -83,7 +85,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 	_JTableMain tblGarbageFee;
 	JTabbedPane tabCenter;
 
-	JScrollPane scrollGarbageFee;
+	JScrollPane scrollG2GTcostTagging;
 
 	JList rowheaderGarbageFee;
 
@@ -94,8 +96,21 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 	private model_garbage_fee_for_issuance model_garbage_fee_for_issuance;
 	JList row_header_garbage_fee_for_issuance;
 
-	_JLookup lookupProj;
-	JTextField txtProj;
+	_JLookup lookupCompany;
+	JTextField txtCompany;
+
+	private _JLookup lookupProject; 
+	private _JXTextField txtProject;
+	
+	private _JLookup lookupPhase;
+	private _JXTextField txtPhase;
+	
+	private JComboBox cmbEPEBType;
+	
+	private _JLookup lookupBatchNo;
+	private _JXTextField txtStatus;
+	
+	private _JXTextField txtJVNo;
 	
 	_JLookup lookupBatch;
 	JTextField txtBatch;
@@ -104,7 +119,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 
 	protected Boolean pressedShift = false;
 
-	static String title = "Garbage Fee";
+	static String title = "G to G Tcost Tagging";
 	Dimension frameSize = new Dimension(800, 600);// 510, 250
 	Border lineBorder = BorderFactory.createLineBorder(Color.GRAY);
 
@@ -144,6 +159,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 		this.setTitle(title);
 		this.setSize(frameSize);
 		this.setPreferredSize(frameSize);
+		this.setVisible(true);
 		{
 			pnlMain = new JPanel();
 			this.getContentPane().add(pnlMain, BorderLayout.CENTER);
@@ -155,188 +171,153 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 				pnlMain.add(pnlNorth, BorderLayout.NORTH);
 				pnlNorth.setLayout(new BorderLayout(5, 5));
 				pnlNorth.setBorder(null);
-				pnlNorth.setPreferredSize(new java.awt.Dimension(1000, 80));
+				pnlNorth.setPreferredSize(new java.awt.Dimension(1000, 150));
 				{
-					pnlDate = new JPanel(new BorderLayout(5, 5));
-					pnlNorth.add(pnlDate, BorderLayout.WEST);
-					pnlDate.setBorder(JTBorderFactory.createTitleBorder("Transaction Date"));
-					pnlDate.setPreferredSize(new java.awt.Dimension(197, 80));
+					pnlGenerateDetails = new JPanel(new BorderLayout(5, 5));
+					pnlNorth.add(pnlGenerateDetails, BorderLayout.CENTER);
+					pnlGenerateDetails.setBorder(JTBorderFactory.createTitleBorder("Details"));
+					
+					// File Upload Labels
+					JPanel pnlLabels = new JPanel(new BorderLayout(3, 3));
 					{
-						pnllblDateTo = new JPanel(new GridLayout(3, 1, 3, 3));
-						pnlDate.add(pnllblDateTo, BorderLayout.WEST);
-						{
-							lblDateFr = new JLabel("From:");
-							pnllblDateTo.add(lblDateFr);
-						}
-						{
-							lblDateTo = new JLabel("To:");
-							pnllblDateTo.add(lblDateTo);
-						}
-						
-						{
-							lblForIssuanceCount = new JLabel("0");
-							pnllblDateTo.add(lblForIssuanceCount);
-						}
-						
+						pnlLabels = new JPanel(new GridLayout(5, 1, 10, 3));
+						pnlGenerateDetails.add(pnlLabels, BorderLayout.WEST);
+						pnlLabels.add(new JLabel("Company"));
+						pnlLabels.add(new JLabel("Project"));
+						pnlLabels.add(new JLabel("Phase"));
+						pnlLabels.add(new JLabel("EPEB Type"));
+						pnlLabels.add(new JLabel("Batch No"));
 					}
+					
+					// File Upload Center
 					{
-						pnlDateTo = new JPanel(new GridLayout(3, 1, 3, 3));
-						pnlDate.add(pnlDateTo, BorderLayout.CENTER);
-						{
-							dateFr = new _JDateChooser("MM/dd/yyyy", "##/##/#####", '_');
-							pnlDateTo.add(dateFr);
-							dateFr.setDate(FncGlobal.getDateToday());
-							dateFr.setDateFormatString("yyyy-MM-dd");
-							((JTextFieldDateEditor) dateFr.getDateEditor()).setEditable(false);
-							
-
-						}
-						{
-							dateTo = new _JDateChooser("MM/dd/yyyy", "##/##/#####", '_');
-							pnlDateTo.add(dateTo);
-							dateTo.setDate(FncGlobal.getDateToday());
-							dateTo.setDateFormatString("yyyy-MM-dd");
-							((JTextFieldDateEditor) dateTo.getDateEditor()).setEditable(false);
-							dateTo.addDateListener(new DateListener() {
-								
-								@Override
-								public void datePerformed(DateEvent event) {
-								}
-							});
-						}
-						{
-							JPanel pnlRemaining = new JPanel(new BorderLayout(5, 5));
-							lblForIssuanceDetails = new JLabel(" Remaining");
-							pnlRemaining.add(lblForIssuanceDetails, BorderLayout.WEST);
-							btnViewRemaining = new JButton("View");
-							pnlRemaining.add(btnViewRemaining, BorderLayout.CENTER);
-							
-							btnViewRemaining.addActionListener(new ActionListener() {
-								
-								@Override
-								public void actionPerformed(ActionEvent e) {
-									// TODO Auto-generated method stub
-									String date_fr = dateFr.getDateString();
-									String date_to = dateTo.getDateString();
-									int confirmation = JOptionPane.showConfirmDialog(null,
-											"View Pending " + count +" Garbage ?");
-									if (confirmation == 0) {
-										System.out.println("Preview");
-										Map<String, Object> mapParameters = new HashMap<String, Object>();
-//										System.out.println("p_date: "+date);
-										FncReport.generateReport("/Reports/rpt_for_issuance_garbage_fee.jasper", "Pending Garbage Fee", "", mapParameters);
-									} else {
-										System.out.println("Cancel");
-									}
-								}
-							});
-							
-							pnlDateTo.add(pnlRemaining);
-						}
+						pnlUploading = new JPanel(new GridLayout(5, 1, 10, 3));
+						pnlGenerateDetails.add(pnlUploading, BorderLayout.CENTER);
 						
-					}
-					{
-						pnlFileUploading = new JPanel(new BorderLayout(5, 5));
-						pnlNorth.add(pnlFileUploading, BorderLayout.CENTER);
-						pnlNorth.setPreferredSize(new Dimension(0, 100));
-						pnlFileUploading.setBorder(JTBorderFactory.createTitleBorder("Upload File"));
-						pnlFileUploading.setPreferredSize(new java.awt.Dimension(504, 80));
-						
-						// File Upload Labels
-						JPanel pnlLabels = new JPanel();
+						// Project
 						{
-							pnlLabels = new JPanel(new GridLayout(3, 1, 10, 3));
-							pnlFileUploading.add(pnlLabels, BorderLayout.WEST);
-							pnlLabels.add(new JLabel("Project ID"));
-							pnlLabels.add(new JLabel("Select File"));
-							pnlLabels.add(new JLabel("Select Batch"));
-						}
-						
-						// File Upload Center
-						{
-							pnlUploading = new JPanel(new GridLayout(3, 1, 10, 3));
-							pnlFileUploading.add(pnlUploading, BorderLayout.CENTER);
-							
-							// Project
+							JPanel pnlCompany = new JPanel(new BorderLayout(5, 5));
+							pnlUploading.add(pnlCompany);
 							{
-								JPanel pnlProj = new JPanel(new BorderLayout(5, 5));
-								pnlUploading.add(pnlProj);
-								
-								{
-									lookupProj = new _JLookup();
-									pnlProj.add(lookupProj, BorderLayout.WEST);
-									lookupProj.setPreferredSize(new Dimension(50, 100));
-									lookupProj.setReturnColumn(0);
-									lookupProj.addLookupListener(new LookupListener() {
+								lookupCompany = new _JLookup();
+								pnlCompany.add(lookupCompany, BorderLayout.WEST);
+								lookupCompany.setPreferredSize(new Dimension(50, 100));
+								lookupCompany.setReturnColumn(0);
+								lookupCompany.addLookupListener(new LookupListener() {
 
-										public void lookupPerformed(LookupEvent event) {
-											Object[] data = ((_JLookup) event.getSource()).getDataSet();
-											if (data != null) {
-												String proj_id = (String) data[0];
-												String proj_name = (String) data[1];
-												lookupProj.setText(proj_id);
-												txtProj.setText(proj_name);
-											}
-
+									public void lookupPerformed(LookupEvent event) {
+										Object[] data = ((_JLookup) event.getSource()).getDataSet();
+										if (data != null) {
+											String company_name = (String) data[1];
+											txtCompany.setText(company_name);
 										}
-									});
-								}
-								{
-									txtProj = new JTextField();
-									pnlProj.add(txtProj, BorderLayout.CENTER);
-								}
-								{
-									tagSelectFile = new JXTextField();
-									pnlUploading.add(tagSelectFile);
-									tagSelectFile.setEditable(false);
-									tagSelectFile.setPreferredSize(new java.awt.Dimension(415, 0));
-								}
+									}
+								});
 							}
 							
-							// Batch
 							{
-								JPanel pnlBatch = new JPanel(new BorderLayout(5, 5));
-								pnlUploading.add(pnlBatch);
+								txtCompany = new JTextField();
+								pnlCompany.add(txtCompany, BorderLayout.CENTER);
+							}
+						}
+						{
+							JPanel pnlProj = new JPanel(new BorderLayout(3, 3));
+							pnlUploading.add(pnlProj);
+							{
+								lookupProject = new _JLookup();
+								pnlProj.add(lookupProject, BorderLayout.WEST);
+								lookupProject.setPreferredSize(new Dimension(50, 100));
+								lookupProject.setReturnColumn(0);
+								lookupProject.addLookupListener(new LookupListener() {
+
+									public void lookupPerformed(LookupEvent event) {
+										Object[] data = ((_JLookup) event.getSource()).getDataSet();
+										if (data != null) {
+											String proj_name = (String) data[1];
+											txtProject.setText(proj_name);
+										}
+									}
+								});
+							}
 							
+							{
+								txtProject = new _JXTextField();
+								pnlProj.add(txtProject, BorderLayout.CENTER);
+							}
+						}
+						{
+							JPanel pnlPhase = new JPanel(new BorderLayout(3, 3));
+							pnlUploading.add(pnlPhase);
+							{
+								lookupPhase = new _JLookup();
+								pnlPhase.add(lookupPhase, BorderLayout.WEST);
+								lookupPhase.setPreferredSize(new Dimension(50, 100));
+								lookupPhase.setReturnColumn(0);
+								lookupPhase.addLookupListener(new LookupListener() {
+
+									public void lookupPerformed(LookupEvent event) {
+										Object[] data = ((_JLookup) event.getSource()).getDataSet();
+										if (data != null) {
+											String phase = (String) data[1];
+											txtPhase.setText(phase);
+										}
+									}
+								});
+							}
+							
+							{
+								txtPhase = new _JXTextField();
+								pnlPhase.add(txtPhase, BorderLayout.CENTER);
+							}
+						}
+						{
+							JPanel pnlEPEBType = new JPanel(new BorderLayout(3, 3));
+							pnlUploading.add(pnlEPEBType);
+							{
+								cmbEPEBType = new JComboBox(new String[] {"Mortgage", "Sale"});
+								pnlEPEBType.add(cmbEPEBType, BorderLayout.WEST);
+								cmbEPEBType.setPreferredSize(new Dimension(150, 0));
+								
+							}
+						}
+						{
+							JPanel pnlBatch = new JPanel(new BorderLayout(3, 3));
+							pnlUploading.add(pnlBatch);
+							{
+								txtBatch = new _JXTextField();
+								pnlBatch.add(txtBatch, BorderLayout.WEST);
+								txtBatch.setPreferredSize(new Dimension(150, 0));
+								
+							}
+							{
+								JPanel pnlJVNo = new JPanel(new BorderLayout(3, 3));
+								pnlBatch.add(pnlJVNo, BorderLayout.EAST);
+								pnlJVNo.setPreferredSize(new Dimension(200, 0));
 								{
-									txtBatch = new JTextField();
-									pnlBatch.add(txtBatch, BorderLayout.CENTER);
+									JLabel lblJVNo = new JLabel("JV No");
+									pnlJVNo.add(lblJVNo, BorderLayout.WEST);
+									lblJVNo.setPreferredSize(new Dimension(100, 0));
+								}
+								{
+									txtJVNo = new _JXTextField();
+									pnlJVNo.add(txtJVNo, BorderLayout.CENTER);
 								}
 							}
 						}
 						
-						// File Upload Buttons
-						{
-							pnlSelect = new JPanel(new GridLayout(3, 1, 10, 3));
-							pnlFileUploading.add(pnlSelect, BorderLayout.EAST);
-							{
-								pnlSelect.add(Box.createVerticalBox());
-
-							}
-							{
-								JButton btnSelectFile = new JButton("Search");
-								pnlSelect.add(btnSelectFile);
-								btnSelectFile.setActionCommand("Search");
-								btnSelectFile.addActionListener(this);
-								btnSelectFile.setPreferredSize(new java.awt.Dimension(65, 0));
-							}
-							{
-								JButton btnSelectFile = new JButton("View");
-								pnlSelect.add(btnSelectFile);
-								btnSelectFile.setActionCommand("previewBatch");
-								btnSelectFile.addActionListener(this);
-								btnSelectFile.setPreferredSize(new java.awt.Dimension(65, 0));
-							}
-						}
+						
+						
+						
 					}
-					{
-						btnProcess = new JButton("Process");
-						pnlNorth.add(btnProcess, BorderLayout.EAST);
-						btnProcess.setActionCommand("Process");
-						btnProcess.setMnemonic(KeyEvent.VK_R);
-						btnProcess.addActionListener(this);
-						btnProcess.setPreferredSize(new java.awt.Dimension(80, 40));
-					}
+					// File Upload Buttons
+				}
+				{
+					btnGenerate = new JButton("Generate");
+					pnlNorth.add(btnGenerate, BorderLayout.EAST);
+					btnGenerate.setActionCommand("Generate");
+					btnGenerate.setMnemonic(KeyEvent.VK_R);
+					btnGenerate.addActionListener(this);
+					btnGenerate.setPreferredSize(new java.awt.Dimension(200, 40));
 				}
 				{
 					pnlCenter = new JPanel();
@@ -352,54 +333,27 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 							JPanel pnlForIssuance = new JPanel(new BorderLayout(3, 3));
 							tabCenter.addTab("For Issuance", pnlForIssuance);
 							{
-								scrollGarbageFee = new JScrollPane();
-								pnlForIssuance.add(scrollGarbageFee, BorderLayout.CENTER);
-								scrollGarbageFee.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-								scrollGarbageFee.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-								scrollGarbageFee.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+								scrollG2GTcostTagging = new JScrollPane();
+								pnlForIssuance.add(scrollG2GTcostTagging, BorderLayout.CENTER);
+								scrollG2GTcostTagging.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+								scrollG2GTcostTagging.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+								scrollG2GTcostTagging.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 								{
 									model_garbage_fee_for_issuance = new model_garbage_fee_for_issuance();
 									tbl_garbage_fee_for_isuance = new _JTableMain(model_garbage_fee_for_issuance);
 									row_header_garbage_fee_for_issuance = tbl_garbage_fee_for_isuance.getRowHeader();
-									scrollGarbageFee.setViewportView(tbl_garbage_fee_for_isuance);
+									scrollG2GTcostTagging.setViewportView(tbl_garbage_fee_for_isuance);
 									
 									
 								}
 								{
 									row_header_garbage_fee_for_issuance = tbl_garbage_fee_for_isuance.getRowHeader();
 									row_header_garbage_fee_for_issuance.setModel(new DefaultListModel());
-									scrollGarbageFee.setRowHeaderView(row_header_garbage_fee_for_issuance);
-									scrollGarbageFee.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, FncTables.getRowHeader_Header());
+									scrollG2GTcostTagging.setRowHeaderView(row_header_garbage_fee_for_issuance);
+									scrollG2GTcostTagging.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, FncTables.getRowHeader_Header());
 								}
 							}
 						}
-						
-						
-						
-						tabCenter.addTab("Garbage Fee", null, new JScrollPane(tblGarbageFee), null);
-						System.out.println("Current tab index: "+tabCenter.getSelectedIndex());
-						
-						tabCenter.addChangeListener(new ChangeListener() {
-							
-							@Override
-							public void stateChanged(ChangeEvent e) {
-								System.out.println(tabCenter.getSelectedIndex());
-								{
-									if(tabCenter.getSelectedIndex() == 0) {
-										btnImport.setText("Issue");
-										pnlSouth.add(btnImport);
-										btnImport.setActionCommand("Issue");
-										btnImport.setMnemonic(KeyEvent.VK_I);
-									}if(tabCenter.getSelectedIndex() == 1) {
-										btnImport.setText("Import");
-										pnlSouth.add(btnImport);
-										btnImport.setActionCommand("Import");
-										btnImport.setMnemonic(KeyEvent.VK_I);
-									}
-								}
-								pnlSouth.repaint();
-							}
-						});
 					}
 				}
 				{

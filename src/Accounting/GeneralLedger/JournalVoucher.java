@@ -4346,7 +4346,7 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 			String proj = modelJV_SL.getValueAt(x, 9).toString().trim();
 			String sub_proj = modelJV_SL.getValueAt(x, 10).toString().trim();
 			String invoice_no = (String) modelJV_SL.getValueAt(x, 18);
-			String invoice_date = (String) modelJV_SL.getValueAt(x, 19);
+			Date invoice_date =  (Date) modelJV_SL.getValueAt(x, 19);
 
 			String tran_type = lookupTranType.getText();
 

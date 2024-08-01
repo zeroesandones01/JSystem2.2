@@ -2,9 +2,12 @@ package tablemodel;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
+
+import DateChooser._JDateChooser;
 
 public class modelDRF_particulars_total extends DefaultTableModel {
 
@@ -76,7 +79,16 @@ public class modelDRF_particulars_total extends DefaultTableModel {
 			"<html><center>Payable<html><br><html><center>Amount<html>",  	// 31
 			"<html><center>BC Liquidation<html><br><html><center>Amount<html>", // 32		
 			"<html><center>Other Liqui.<html><br><html><center>Amount<html>",  	// 33
-			"Remarks"			// 34		
+			"Remarks",			// 34
+			"div",	// 35
+			"dep",	// 36
+			"proj",	// 37
+			"sub",	// 38
+			"availer",	// 39
+			"Rec ID",//40
+			"Pcost Tcost Rec. ID", //41
+			"Invoice No.", //42
+			"Invoice Date"//43
 			};
 
 	
@@ -122,8 +134,16 @@ public class modelDRF_particulars_total extends DefaultTableModel {
 			BigDecimal.class,	//BC Liqui. Amount
 			BigDecimal.class,	//Other Liqui. Amount
 			BigDecimal.class,	//Payable Amount
-			String.class		//Remarks
-			
+			String.class,		//Remarks
+			String.class, 		// Rdiv
+			String.class, 		// dept
+			String.class, 		// proj
+			String.class, 		// sub
+			String.class,		//availer
+			String.class,		//recid
+			String.class, 		//pcost tcost rec id
+			String.class, 		//invoice no
+			_JDateChooser.class
 			
 			
 	};
@@ -165,7 +185,16 @@ public class modelDRF_particulars_total extends DefaultTableModel {
 				false,	//BC Liqui Amount
 				false,	//Other Liqui Amount
 				false,	//Payable Amount
-				false	//Remarks
+				false,	//Remarks
+				false, 		// Rdiv
+				false, 		// dept
+				false, 		// proj
+				false, 		// sub
+				false,		//availer
+				false,		//recid
+				false, 		//pcost tcost rec id
+				false, 		//invoice no
+				false			//invoice date
 		};
 	}
 
@@ -219,7 +248,16 @@ public class modelDRF_particulars_total extends DefaultTableModel {
 					false,	//BC Liqui Amount
 					false,	//Other Liqui Amount
 					false,	//Payable Amount
-					false	//Remarks
+					false,	//Remarks
+					false, 		// Rdiv
+					false, 		// dept
+					false, 		// proj
+					false, 		// sub
+					false,		//availer
+					false,		//recid
+					false, 		//pcost tcost rec id
+					false, 		//invoice no
+					false			//invoice date
 			};
 		}else{
 			COLUMN_EDITABLE = new boolean[] {
@@ -257,7 +295,16 @@ public class modelDRF_particulars_total extends DefaultTableModel {
 					false,	//BC Liqui Amount
 					false,	//Other Liqui Amount
 					false,	//Payable Amount
-					false	//Remarks
+					false,	//Remarks
+					false, 		// Rdiv
+					false, 		// dept
+					false, 		// proj
+					false, 		// sub
+					false,		//availer
+					false,		//recid
+					false, 		//pcost tcost rec id
+					false, 		//invoice no
+					false			//invoice date
 			};
 		}
 	}

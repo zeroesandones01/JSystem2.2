@@ -654,6 +654,8 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 								lookupGL_year.setText((String) month_year[4]);
 								lookupPeriod.setText((String) month_year[0]);
 								tagPeriod.setTag(((String) month_year[3]).toUpperCase());
+								
+								lookupRequest.getLookupSQL();
 
 								displayRequest_particulars(modelLiq_part, rowHeaderLiq_part, modelLiq_part_total, liq_no );	
 							}
@@ -2021,12 +2023,13 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			
 			System.out.printf("debit:%s\n", getDebitSide(co_id, jv_no));
 			System.out.printf("credit:%s\n", getCreditSide(co_id, jv_no));
+			System.out.printf("value of Liquidation Remarks: %s%n", liq_remarks);
 				
 			if(getDebitSide(co_id, jv_no).equals(getCreditSide(co_id, jv_no))) {
 				
 				System.out.printf("debit:%s\n", getDebitSide(co_id, jv_no));
 				System.out.printf("credit:%s\n", getCreditSide(co_id, jv_no));
-				
+				System.out.printf("value of Liquidation Remarks: %s%n", liq_remarks);
 				insertLiquiHeader(next_liq_no, liq_remarks);
 				insertLiquiDetails(next_liq_no);
 				insertJV_header(liq_remarks);
@@ -2140,6 +2143,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			System.out.printf("debit:%s\n", getDebitSide(co_id, jv_no));
 			System.out.printf("credit:%s\n", getCreditSide(co_id, jv_no));
 			
+			
 			if(getDebitSide(co_id, jv_no).equals(getCreditSide(co_id, jv_no))) {
 				
 				while(x<rw){
@@ -2191,6 +2195,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 					liq_remarks = old_remarks;
 				}
 				
+				System.out.printf("value of Liquidation Remarks: %s%n", liq_remarks);
 				//updateLiq_header(liq_no);
 				updateLiq_header(liq_no, liq_remarks);
 				updateLiq_detail(liq_no);

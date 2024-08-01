@@ -4347,7 +4347,6 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 			String sub_proj = modelJV_SL.getValueAt(x, 10).toString().trim();
 			String invoice_no = (String) modelJV_SL.getValueAt(x, 18);
 			Date invoice_date =  (Date) modelJV_SL.getValueAt(x, 19);
-
 			String tran_type = lookupTranType.getText();
 
 			if (trans_amt == 0.00) {
@@ -4361,7 +4360,7 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 						+ proj + "','null'), NULLIF('" + sub_proj + "','null'), NULLIF('" + div + "','null'), NULLIF('"
 						+ dept + "','null'), 'A',\n" + "            '" + UserInfo.EmployeeCode + "', '"
 						+ dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL())) + "',  '" + co_id + "','"
-						+ co_id + "', '"+invoice_no+"', '"+invoice_date+"'\n" + "            );\n" + "";
+						+ co_id + "', NULLIF('"+invoice_no+"', 'null'), NULLIF('"+invoice_date+"','null')::timestamp\n" + "            );\n" + "";
 
 				System.out.printf("SQL #1: %s", sqlDetail);
 				db.executeUpdate(sqlDetail, false);

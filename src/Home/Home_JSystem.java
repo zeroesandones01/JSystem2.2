@@ -317,6 +317,7 @@ import Reports.Accounting.FinancialReport;
 import Reports.Accounting.House_Construction_Status;
 import Reports.Accounting.IHFAmortizationCollection;
 import Reports.Accounting.JVprooflist;
+import Reports.Accounting.MA_Schedule_Reports;
 import Reports.Accounting.ManagementReportSchedule;
 import Reports.Accounting.PDCWarehousing_Reports;
 import Reports.Accounting.PDCduefortheday;
@@ -4650,6 +4651,19 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 										if(isNotExisting("IH Monthly Amortization Report")){
 											IHFAmortizationCollection ihmamor = new IHFAmortizationCollection();
 											addWindow(ihmamor, e);
+										}
+									}
+								});
+							}
+							{
+								JMenuItem menuitemReturnCheckMBTCPcost = new JMenuItem("MA Schedule Reports");
+								menuManagementRpt.add(menuitemReturnCheckMBTCPcost);
+								menuitemReturnCheckMBTCPcost.addActionListener(new ActionListener() {
+
+									public void actionPerformed(ActionEvent e) {
+										if(isNotExisting("MA_Schedule_Reports")){
+											MA_Schedule_Reports ma_sched = new MA_Schedule_Reports();
+											addWindow(ma_sched, e);											
 										}
 									}
 								});

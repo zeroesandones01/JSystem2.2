@@ -1348,7 +1348,7 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 				+ "get_div_alias(a.div_id),			\r\n" + "get_department_alias_new(a.dept_id),			\r\n"
 				+ "get_project_alias(a.project_id),			\r\n"
 				+ "get_sub_proj_alias(a.sub_projectid),			\r\n" + "get_client_name(a.entity_id), a.rec_id, a.tcost_pcost_rec_id, \n"
-				+ "a.invoice_no, a.invoice_date			\r\n" +
+				+ "coalesce(a.invoice_no, ''), a.invoice_date			\r\n" +
 
 				"from rf_request_detail a\r\n" + "left join mf_boi_chart_of_accounts b on a.acct_id = b.acct_id\r\n"
 				+ "left join rf_entity c on a.entity_id = c.entity_id\r\n" + "where rplf_no = '" + req_no

@@ -499,6 +499,7 @@ import Utilities.RequiredDocuments;
 import Utilities.SalesAgent;
 import Utilities.SpecialProjectsMonitoring;
 import Utilities.TCOST_Retagging;
+import Utilities.TCost_G2G;
 import Utilities.TagDisposalForApproval;
 import Utilities.Tax_Rate_Discrepancy;
 import Utilities.TemporaryCheckVoucher;
@@ -3412,6 +3413,21 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 											cancelledTCTAnnotation ctcta = new cancelledTCTAnnotation();
 											addWindow(ctcta, e);
 										}
+									}
+								});
+							}
+							{
+								JMenuItem menuitemG2GTcost = new JMenuItem("G to G Tcost Tagging");
+								menuLoansManagement.add(menuitemG2GTcost);
+								menuitemG2GTcost.addActionListener(new ActionListener() {
+									
+									@Override
+									public void actionPerformed(ActionEvent e) {
+										if(isNotExisting("TCost_G2G")) {
+											TCost_G2G tcostg2g = new TCost_G2G();
+											addWindow(tcostg2g, e);
+										}
+										
 									}
 								});
 							}
@@ -6550,6 +6566,7 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									}
 								});
 							}
+							
 						}
 						{
 							JMenu menuUtilitieCreditAndCollections = new JMenu("Credit And Collections");

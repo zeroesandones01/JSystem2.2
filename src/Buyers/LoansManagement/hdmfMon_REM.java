@@ -590,6 +590,8 @@ public class hdmfMon_REM extends JXPanel implements _GUI {
 			strStatus = "139";
 		}
 		
+		
+		
 //		if(strStatus.equals("89")) {
 //			String ddate = FncGlobal.GetString("Select now()::varchar");
 //			strDate = (String) sdfTo.format(ddate);

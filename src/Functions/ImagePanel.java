@@ -68,14 +68,14 @@ public class ImagePanel extends JPanel{
 
 			if(database.equals("terraverde_beta_testing") && ip.equals("192.168.10.15/32")) {	
 				if(UserInfo.EmployeeCode.equals("900796")) {
-					IMAGE_BG = Toolkit.getDefaultToolkit().createImage(this.getClass().getClassLoader().getResource("Images/5.jpg"));
+					IMAGE_BG = Toolkit.getDefaultToolkit().createImage(this.getClass().getClassLoader().getResource("Images/5.png"));
 				} else {
 					IMAGE_BG = Toolkit.getDefaultToolkit().createImage(this.getClass().getClassLoader().getResource("Images/test_bg.jpg"));
 				}
 			}else {
 
 				if (bt == null) {
-					IMAGE_BG = Toolkit.getDefaultToolkit().createImage(this.getClass().getClassLoader().getResource("Images/5.jpg"));
+					IMAGE_BG = Toolkit.getDefaultToolkit().createImage(this.getClass().getClassLoader().getResource("Images/5.png"));
 					//IMAGE_BG = Toolkit.getDefaultToolkit().createImage(this.getClass().getClassLoader().getResource("Images/christmas.jpg"));
 				}else{
 					IMAGE_BG = Toolkit.getDefaultToolkit().createImage(bt);	

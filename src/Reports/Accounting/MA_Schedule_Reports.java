@@ -1,4 +1,4 @@
-package Reports.LegalAndLiaisoning;
+package Reports.Accounting;
 
 import interfaces._GUI;
 
@@ -8,53 +8,42 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.KeyboardFocusManager;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTextField;
 
+import DateChooser._JDateChooser;
 import Functions.FncFocusTraversalPolicy;
 import Functions.FncGlobal;
-import Functions.FncReport;
-import Functions.UserInfo;
 import Lookup.LookupEvent;
 import Lookup.LookupListener;
 import Lookup._JLookup;
 
-
 import components._JInternalFrame;
 
-/**
- * @author Allei Anne Beltran
- */
-
-public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, ActionListener, AncestorListener {
+public class MA_Schedule_Reports extends _JInternalFrame implements _GUI, ActionListener {
 
 	private static final long serialVersionUID = 5159650933602942626L;
 
-	static String title = "Transfer Tax Dec Monitoring";
-	Dimension frameSize = new Dimension(510, 180);
-	Border lineBorder = BorderFactory.createLineBorder(Color.GRAY);
+	static String title = "MA Schedule Reports";
+	Dimension frameSize = new Dimension(500, 600);
+	Border lineBorder = BorderFactory.createLineBorder(Color.BLACK);
 	Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
 	private JXPanel pnlMain;
+
 
 	private JXLabel lblCompany;
 	private _JLookup lookupCompany;
@@ -64,58 +53,67 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 	private _JLookup lookupProject;
 	private JTextField txtProject;
 
-	private JXLabel lblYear;
-	private _JLookup lookupYear;
-	
+	private JXLabel lblPhase;
+	private _JLookup lookupPhase;
+	private JXTextField txtPhase;
+
+	private JCheckBox chkIncludeMgmtHoldAcc;
+
 	private JXPanel pnlSouth;
 	private JButton btnPreview;
 
 	private KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 
+	private _JDateChooser dteDateFrom;
+	private _JDateChooser dteDateTo;
+
 	private JXPanel pnlNorth;
-	private JXPanel pnlNorthComponents;
-	private JXPanel pnlNorthLookUp;
+
 	private JXPanel pnlNorthLabel;
+
+	private JXPanel pnlNorthComponents;
+
+
+	private JXPanel pnlNorthLookUp;
+
 	private JXPanel pnlNorthTxtField;
 
 
-
-	public TransferTaxDecMonitoring() {
-		super(title, false, true, false, true);
+	public MA_Schedule_Reports() {
+		super(title, false, true, true, true);
 		initGUI();
 	}
 
-	public TransferTaxDecMonitoring(String title) {
+	public MA_Schedule_Reports(String title) {
 		super(title);
 		initGUI();
 	}
 
-	public TransferTaxDecMonitoring(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
+	public MA_Schedule_Reports(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
 		super(title, resizable, closable, maximizable, iconifiable);
 		initGUI();
 	}
-	
+
 	@Override
 	public void initGUI() {
 		this.setTitle(title);
 		this.setSize(frameSize);
 		this.setPreferredSize(frameSize);
-		this.addAncestorListener(this);
+		
 		{
 			pnlMain = new JXPanel(new BorderLayout(5, 5));
 			getContentPane().add(pnlMain);
-			pnlMain.setBorder(new EmptyBorder(5, 5, 5, 5));		
+			pnlMain.setBorder(new EmptyBorder(5, 5, 5, 5));
 			{
 				pnlNorth = new JXPanel(new BorderLayout(5, 5));
-				pnlMain.add(pnlNorth, BorderLayout.CENTER);
+				pnlMain.add(pnlNorth, BorderLayout.NORTH);
 				pnlNorth.setBorder(FncGlobal.lineBorder);
-				pnlNorth.setPreferredSize(new Dimension(0, 120));
+				pnlNorth.setPreferredSize(new Dimension(0, 170));
 				{
-					pnlNorthLabel = new JXPanel (new GridLayout(3, 1, 3, 3));
+					pnlNorthLabel = new JXPanel (new GridLayout(5, 1, 3, 3));
 					pnlNorth.add(pnlNorthLabel, BorderLayout.WEST);
 					pnlNorthLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
-					pnlNorthLabel.setPreferredSize(new Dimension(70, 0));
-
+					pnlNorthLabel.setPreferredSize(new Dimension(100, 0));
 					{
 						lblCompany = new JXLabel("Company");
 						pnlNorthLabel.add(lblCompany);
@@ -125,19 +123,27 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 						pnlNorthLabel.add(lblProject);
 					}
 					{
-						lblYear = new JXLabel("Year");
-						pnlNorthLabel.add(lblYear);
+						lblPhase = new JXLabel("Phase");
+						pnlNorthLabel.add(lblPhase);
+					}
+					{
+						JXLabel lblDateFrom = new JXLabel("Date From");
+						pnlNorthLabel.add(lblDateFrom);
+					}
+					{
+						JXLabel lblDateTo = new JXLabel("Date To");
+						pnlNorthLabel.add(lblDateTo);
 					}
 				}
-
 				{
 					pnlNorthComponents = new JXPanel(new BorderLayout(5, 5));
 					pnlNorth.add(pnlNorthComponents, BorderLayout.CENTER);
 					{
-						pnlNorthLookUp = new JXPanel(new GridLayout(3, 1, 3, 3));
+						pnlNorthLookUp = new JXPanel(new GridLayout(5, 1, 3, 3));
 						pnlNorthComponents.add(pnlNorthLookUp, BorderLayout.WEST);
 						pnlNorthLookUp.setBorder(new EmptyBorder(5, 5, 5, 5));
-						pnlNorthLookUp.setPreferredSize(new Dimension(50, 0));		
+						pnlNorthLookUp.setPreferredSize(new Dimension(130, 0));
+						
 						{
 							lookupCompany = new _JLookup(null, "Company");
 							pnlNorthLookUp.add(lookupCompany);
@@ -149,6 +155,7 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 
 									if(data != null){
 										txtCompany.setText(data[1].toString());
+										txtCompany.setToolTipText(data[2].toString());
 
 										lookupProject.setLookupSQL(SQL_PROJECT_ALL(data[0].toString()));
 
@@ -159,6 +166,7 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 								}
 							});
 						}
+						
 						{
 							lookupProject = new _JLookup(null, "Project","Please select company.");
 							pnlNorthLookUp.add(lookupProject);
@@ -170,7 +178,7 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 									if(data != null){
 
 										txtProject.setText(data[1].toString());
-										lookupYear.setLookupSQL(getYear());
+										lookupPhase.setLookupSQL(sqlPhase(data[0].toString()));
 										manager.focusNextComponent();
 									}else{
 										txtProject.setText("");
@@ -178,50 +186,77 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 								}
 							});
 						}
+						
 						{
-							lookupYear = new _JLookup(null, "Year", "Please select project.");
-							pnlNorthLookUp.add(lookupYear);
-							lookupYear.setReturnColumn(1);
-							lookupYear.addLookupListener(new LookupListener() {
-								public void lookupPerformed(LookupEvent event) {
+							lookupPhase = new _JLookup(null, "Phase", "Please select project.");
+							pnlNorthLookUp.add(lookupPhase);
+							lookupPhase.setReturnColumn(0);
+							lookupPhase.addLookupListener(new LookupListener() {
+								public void lookupPerformed(LookupEvent event) {//XXX Phase
 									Object[] data = ((_JLookup)event.getSource()).getDataSet();
 									if(data != null){
+										txtPhase.setText(data[1].toString());
 										manager.focusNextComponent();
 									}else{
-										JOptionPane.showMessageDialog(FncGlobal.homeMDI, "Please select project first.", "Year", JOptionPane.WARNING_MESSAGE);
+										JOptionPane.showMessageDialog(FncGlobal.homeMDI, "Please select project first.", "Phase", JOptionPane.WARNING_MESSAGE);
 									}
 								}
 							});
 						}
-
-						pnlNorthTxtField = new JXPanel(new GridLayout(3, 1, 3, 3));
-						pnlNorthComponents.add(pnlNorthTxtField, BorderLayout.CENTER);
-						pnlNorthTxtField.setBorder(new EmptyBorder(5, 5, 5, 5));
+						
 						{
-							txtCompany = new JTextField();
-							pnlNorthTxtField.add(txtCompany);
-							txtCompany.setEditable(false);
+							dteDateFrom = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+							pnlNorthLookUp.add(dteDateFrom);	
+							dteDateFrom.setDate(null);
+							dteDateFrom.setEnabled(true);
+							dteDateFrom.setDate(null);
 						}
 						{
-							txtProject = new JTextField();
-							pnlNorthTxtField.add(txtProject);
-							txtProject.setEditable(false);
+							dteDateTo = new _JDateChooser("MM/dd/yyyy", "##/##/##", '_');
+							pnlNorthLookUp.add(dteDateTo);	
+							dteDateTo.setDate(null);
+							dteDateTo.setEnabled(true);
+							dteDateTo.setDate(null);
 						}
 						
 					}
-				}
-			}		
+					
+					pnlNorthTxtField = new JXPanel(new GridLayout(5, 1, 3, 3));
+					pnlNorthComponents.add(pnlNorthTxtField, BorderLayout.CENTER);
+					pnlNorthTxtField.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+				
+					{
+						txtCompany = new JTextField();
+						pnlNorthTxtField.add(txtCompany);
+						txtCompany.setEditable(false);
+					}
+					{
+						txtProject = new JTextField();
+						pnlNorthTxtField.add(txtProject);
+						txtProject.setEditable(false);
+					}
+
+					
+					{
+						txtPhase = new JXTextField("");
+						pnlNorthTxtField.add(txtPhase);
+						txtPhase.setEditable(false);
+					}
+					
+				}	
+			}
 			{
 				pnlSouth = new JXPanel(new GridLayout(1,7,3,3));
 				pnlSouth = new JXPanel(new BorderLayout(5, 5));
 				pnlMain.add(pnlSouth, BorderLayout.SOUTH);
 				pnlSouth.setBorder(new EmptyBorder(5, 5, 5, 5));
-				pnlSouth.setPreferredSize(new Dimension (60,35));
+				pnlSouth.setPreferredSize(new Dimension (0,40));
 				
 				{
 					JPanel pnlSouthWest = new JPanel(new BorderLayout(5, 5)); 
 					pnlSouth.add(pnlSouthWest, BorderLayout.WEST); 
-					pnlSouthWest.setPreferredSize(new Dimension(200, 0)); 
+					pnlSouthWest.setPreferredSize(new Dimension(250, 100)); 
 				}
 				{
 					JPanel pnlSouthCenter = new JPanel(new BorderLayout(5, 5)); 
@@ -233,7 +268,7 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 						btnPreview.setActionCommand("preview");
 						btnPreview.setAlignmentX(0.5f);
 						btnPreview.setAlignmentY(0.5f);
-						btnPreview.setMaximumSize(new Dimension(100, 30));
+						btnPreview.setMaximumSize(new Dimension(150, 100));
 						btnPreview.setMnemonic(KeyEvent.VK_P);
 						btnPreview.addActionListener(this);
 					}
@@ -242,61 +277,18 @@ public class TransferTaxDecMonitoring extends _JInternalFrame implements _GUI, A
 				{
 					JPanel pnlSoutEast = new JPanel(new BorderLayout(5, 5)); 
 					pnlSouth.add(pnlSoutEast, BorderLayout.EAST); 
-					pnlSoutEast.setPreferredSize(new Dimension(200, 0)); 
+					pnlSoutEast.setPreferredSize(new Dimension(250, 100)); 
 				}
 			}
 		}
 
-		this.setFocusTraversalPolicy(new FncFocusTraversalPolicy(lookupCompany, lookupProject, lookupYear, btnPreview));
-	}
-	
-	private String getYear(){
-
-		String sql = 
-			"select " +
-			"year_no as \"Year No.\", \n" +
-			"year_txt as \"Year\" \n" +
-			"from mf_ttdmonitoring_year \r\n" +
-			"order by year_txt::int " ;
-		return sql;
-
+		this.setFocusTraversalPolicy(new FncFocusTraversalPolicy(lookupCompany, lookupProject, lookupPhase, dteDateFrom, dteDateTo, btnPreview));
+		this.setBounds(0, 0, 650, 250);
 	}
 
-	@Override
-	public void ancestorAdded(AncestorEvent event) {
-		lookupCompany.requestFocus();
+
+	private String sqlPhase(String proj_id) {
+		String phase = "SELECT * FROM view_lookup_phase('"+ proj_id +"');";
+		return phase;
 	}
-
-	@Override
-	public void ancestorMoved(AncestorEvent event) { }
-
-	@Override
-	public void ancestorRemoved(AncestorEvent event) { }
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		String action = e.getActionCommand();
-
-		if(action.equals("preview")){
-			
-			String criteria = "Transfer Tax Dec Monitoring";		
-			String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
-			Map<String, Object> mapTransferTaxDecMonitoring = new HashMap<String, Object>();
-			
-			mapTransferTaxDecMonitoring.put("Company", txtCompany.getText());
-			//mapTransferTaxDecMonitoring.put("Proj_id", lookupProject.getValue());
-			mapTransferTaxDecMonitoring.put("Project", lookupProject.getValue());
-			mapTransferTaxDecMonitoring.put("Year", lookupYear.getValue());
-
-			
-			System.out.println("company"+ txtCompany.getText());
-			//System.out.println("proj_id"+ lookupProject.getValue());
-			System.out.println("project"+ txtProject.getText());
-			System.out.println("year"+ lookupYear.getValue());
-			
-			FncReport.generateReport("/Reports/rptTransferTaxDecMonitoring.jasper", reportTitle, lookupCompany.getValue(), mapTransferTaxDecMonitoring);		
-		
-		}
-	}
-
 }

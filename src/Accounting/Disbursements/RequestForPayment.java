@@ -4222,7 +4222,7 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 						"" + other_liqui_amount + ", \n" + // 46 other_liqui_amt
 						" "+pcost_tcost_rec_id+", \n"+ //47
 						" '"+invoice_no+"', \n"+
-						" '"+invoice_date+"' \n"+
+						" NULLIF('"+invoice_date+"', 'null')::DATE \n"+
 						")   ";
 
 				System.out.printf("SQL #1: %s", sqlDetail);

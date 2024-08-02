@@ -8,8 +8,11 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.KeyboardFocusManager;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -27,6 +30,7 @@ import org.jdesktop.swingx.JXTextField;
 import DateChooser._JDateChooser;
 import Functions.FncFocusTraversalPolicy;
 import Functions.FncGlobal;
+import Functions.FncReport;
 import Lookup.LookupEvent;
 import Lookup.LookupListener;
 import Lookup._JLookup;
@@ -290,5 +294,38 @@ public class MA_Schedule_Reports extends _JInternalFrame implements _GUI, Action
 	private String sqlPhase(String proj_id) {
 		String phase = "SELECT * FROM view_lookup_phase('"+ proj_id +"');";
 		return phase;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String action = e.getActionCommand();
+
+		if(action.equals("preview")){
+			
+			String criteria = "MA Schedule Reports";		
+			String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
+			Map<String, Object> mapMAScheduleReports = new HashMap<String, Object>();
+			
+			mapMAScheduleReports.put("company", txtCompany.getText());
+			mapMAScheduleReports.put("project", txtProject.getText());
+			mapMAScheduleReports.put("phase", txtPhase.getText());
+			mapMAScheduleReports.put("co_id", lookupCompany.getValue());
+			mapMAScheduleReports.put("phase_id", lookupPhase.getValue());
+			mapMAScheduleReports.put("proj_id", lookupProject.getValue());
+			mapMAScheduleReports.put("date_from", dteDateFrom.getDate());
+			mapMAScheduleReports.put("date_to", dteDateTo.getDate());
+			
+//			System.out.println("company"+ txtCompany.getText());
+//			System.out.println("project"+ txtProject.getText());
+//			System.out.println("phase"+ txtPhase.getText());
+//			System.out.println("co_id"+ lookupCompany.getValue());
+//			System.out.println("phase_id"+ lookupPhase.getValue());
+//			System.out.println("proj_id"+ lookupProject.getValue());
+//			System.out.println("date_from"+ dteDateFrom.getDate());
+//			System.out.println("date_to"+ dteDateTo.getDate());
+			
+			FncReport.generateReport("/Reports/rptMAScheduleReports.jasper", reportTitle, lookupCompany.getValue(), mapMAScheduleReports);		
+		
+		}
 	}
 }

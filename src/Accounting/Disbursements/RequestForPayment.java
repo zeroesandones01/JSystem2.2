@@ -3850,7 +3850,8 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 				"", "", "", null, "", "", "", "", isprojVatable, entityVatable, false, new BigDecimal(0.00),
 				new BigDecimal(vat_rate), sql_getAvailer_wtaxID(), new BigDecimal(sql_getAvailer_wtaxRate()),
 				new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00),
-				new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00), null });
+				new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00), null,
+				null, null, null, null, null, null, null, "", null});
 		computeDRF_amount_fromPayee();
 		((DefaultListModel) rowHeaderDRF.getModel()).addElement(modelDRF_part.getRowCount());
 		adjustRowHeight();

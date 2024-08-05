@@ -276,7 +276,6 @@ public class MA_Schedule_Reports extends _JInternalFrame implements _GUI, Action
 						btnPreview.setMnemonic(KeyEvent.VK_P);
 						btnPreview.addActionListener(this);
 					}
-					
 				}
 				{
 					JPanel pnlSoutEast = new JPanel(new BorderLayout(5, 5)); 

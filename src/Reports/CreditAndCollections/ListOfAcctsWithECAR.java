@@ -73,6 +73,7 @@ public class ListOfAcctsWithECAR extends _JInternalFrame implements _GUI, Action
 	private KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 
 	public ListOfAcctsWithECAR() {
+		super(title, false, true, false, true);
 		initGUI();
 	}
 

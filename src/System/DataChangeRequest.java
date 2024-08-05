@@ -2889,7 +2889,16 @@ public class DataChangeRequest extends _JInternalFrame implements _GUI, ActionLi
 				"where dcrf_no = '"+dcrf_no+"'" ;
 
 		System.out.printf("SQL #1: %s", sqlDetail);
-		db.executeUpdate(sqlDetail, false);		
+		db.executeUpdate(sqlDetail, false);
+		
+		if(UserInfo.Division.equals("31")) {
+			String sqlDetail2 = "update rf_dcrf_header \n"
+					+ "set app_div_head = '900267', \n"
+					+ "app_div_head_date = now() \n"
+					+ "where dcrf_no = '"+dcrf_no+"'" ;
+			
+			db.executeUpdate(sqlDetail2, false);
+		}
 	}
 
 	private void fixDCRF_header(pgUpdate db){

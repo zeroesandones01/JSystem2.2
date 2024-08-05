@@ -379,6 +379,7 @@ import Reports.ConstructionManagement.constructionManagementReports;
 import Reports.CreditAndCollections.AR_CreditPaymentReport;
 import Reports.CreditAndCollections.CancellationActiveReport;
 import Reports.CreditAndCollections.FSAcctsMonitoring;
+import Reports.CreditAndCollections.ListOfAcctsWithECAR;
 import Reports.CreditAndCollections.LoanRealeasedAccountsWithPN;
 import Reports.CreditAndCollections.RTSNoticesReport;
 import Reports.CreditAndCollections.StatusCancellationAccnts;
@@ -1142,12 +1143,12 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 											final Dimension screenSize = toolkit.getScreenSize();
 
 
-//											if(UserInfo.EmployeeCode.equals("900876")) {
-//												dialog.setSize(screenSize.width-1500, screenSize.height-50);
-//												dialog.setResizable(true);
-//											}else {
-												dialog.setSize(screenSize.width-100, screenSize.height-100);
-												dialog.setResizable(false);
+											//											if(UserInfo.EmployeeCode.equals("900876")) {
+											//												dialog.setSize(screenSize.width-1500, screenSize.height-50);
+											//												dialog.setResizable(true);
+											//											}else {
+											dialog.setSize(screenSize.width-100, screenSize.height-100);
+											dialog.setResizable(false);
 											//}
 
 
@@ -1545,32 +1546,32 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									}
 								});
 							}
-//							{
-//
-//								JMenuItem menuitemDirectDepositAssignment = new JMenuItem("Direct Deposit Assignment");
-//								menuCashiering.add(menuitemDirectDepositAssignment);
-//								menuitemDirectDepositAssignment.addActionListener(new ActionListener() {
-//									public void actionPerformed(ActionEvent e) {
-//										if(isNotExisting("IssueOR_toLateLTS")){
-//											DirectDepositAssignment dep = new DirectDepositAssignment();
-//											addWindow(dep, e);
-//										}
-//									}
-//								});
-//							}
-//							{
-//
-//								JMenuItem menuitemUDIssuance = new JMenuItem("Direct Deposit Issuance");
-//								menuCashiering.add(menuitemUDIssuance);
-//								menuitemUDIssuance.addActionListener(new ActionListener() {
-//									public void actionPerformed(ActionEvent e) {
-//										if(isNotExisting("IssueOR_toLateLTS")){
-//											ud_tag udtag = new ud_tag();
-//											addWindow(udtag, e);
-//										}
-//									}
-//								});
-//							}	
+							//							{
+							//
+							//								JMenuItem menuitemDirectDepositAssignment = new JMenuItem("Direct Deposit Assignment");
+							//								menuCashiering.add(menuitemDirectDepositAssignment);
+							//								menuitemDirectDepositAssignment.addActionListener(new ActionListener() {
+							//									public void actionPerformed(ActionEvent e) {
+							//										if(isNotExisting("IssueOR_toLateLTS")){
+							//											DirectDepositAssignment dep = new DirectDepositAssignment();
+							//											addWindow(dep, e);
+							//										}
+							//									}
+							//								});
+							//							}
+							//							{
+							//
+							//								JMenuItem menuitemUDIssuance = new JMenuItem("Direct Deposit Issuance");
+							//								menuCashiering.add(menuitemUDIssuance);
+							//								menuitemUDIssuance.addActionListener(new ActionListener() {
+							//									public void actionPerformed(ActionEvent e) {
+							//										if(isNotExisting("IssueOR_toLateLTS")){
+							//											ud_tag udtag = new ud_tag();
+							//											addWindow(udtag, e);
+							//										}
+							//									}
+							//								});
+							//							}	
 							{
 
 								JMenuItem menuitemLateOrAutoJv = new JMenuItem("Late OR Auto JV");
@@ -1630,7 +1631,7 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 								JMenuItem menuitemAUBUploadPayments = new JMenuItem("Upload AUB Payments");
 								menuCashiering.add(menuitemAUBUploadPayments);
 								menuitemAUBUploadPayments.addActionListener(new ActionListener() {
-									
+
 									@Override
 									public void actionPerformed(ActionEvent e) {
 										if(isNotExisting("UploadAUBPayments")) {
@@ -1866,31 +1867,31 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									}
 								});
 							}
-//							{
-//								JMenuItem menuitemPromoManualEntry = new JMenuItem("Promo / Incentive Manual Entry");
-//								menuCommission.add(menuitemPromoManualEntry);
-//								menuitemPromoManualEntry.addActionListener(new ActionListener() {
-//									public void actionPerformed(ActionEvent e) {
-//										if(isNotExisting("Promo_Incentive_ManualProcessing")){
-//											Promo_Incentive_ManualProcessing promo_manual = new Promo_Incentive_ManualProcessing();
-//											addWindow(promo_manual, e);
-//										}
-//									}
-//								});
-//							}
-//							if(UserInfo.ADMIN){
-								{
-									JMenuItem menuitemPromoManualEntry2 = new JMenuItem("Promo / Incentive Manual Entry");
-									menuCommission.add(menuitemPromoManualEntry2);
-									menuitemPromoManualEntry2.addActionListener(new ActionListener() {
-										public void actionPerformed(ActionEvent e) {
-											if(isNotExisting("Promo_Incentive_ManualProcessing")){
-												Promo_Incentive_ManualProcessing_v2 promo_manual2 = new Promo_Incentive_ManualProcessing_v2();
-												addWindow(promo_manual2, e);
-											}
+							//							{
+							//								JMenuItem menuitemPromoManualEntry = new JMenuItem("Promo / Incentive Manual Entry");
+							//								menuCommission.add(menuitemPromoManualEntry);
+							//								menuitemPromoManualEntry.addActionListener(new ActionListener() {
+							//									public void actionPerformed(ActionEvent e) {
+							//										if(isNotExisting("Promo_Incentive_ManualProcessing")){
+							//											Promo_Incentive_ManualProcessing promo_manual = new Promo_Incentive_ManualProcessing();
+							//											addWindow(promo_manual, e);
+							//										}
+							//									}
+							//								});
+							//							}
+							//							if(UserInfo.ADMIN){
+							{
+								JMenuItem menuitemPromoManualEntry2 = new JMenuItem("Promo / Incentive Manual Entry");
+								menuCommission.add(menuitemPromoManualEntry2);
+								menuitemPromoManualEntry2.addActionListener(new ActionListener() {
+									public void actionPerformed(ActionEvent e) {
+										if(isNotExisting("Promo_Incentive_ManualProcessing")){
+											Promo_Incentive_ManualProcessing_v2 promo_manual2 = new Promo_Incentive_ManualProcessing_v2();
+											addWindow(promo_manual2, e);
 										}
-									});
-								}
+									}
+								});
+							}
 							//}
 							{
 								JMenuItem menuitemReleaseCommThruATM = new JMenuItem("Release Commission Thru ATM");
@@ -2386,22 +2387,22 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									}
 								});
 							}
-//							{
-//								JMenu menuBayadCenter = new JMenu("Bayad Center");
-//								menuAccounting.add(menuBayadCenter);
-//								{
-//									JMenuItem menuitemManagementRepor_toUpdate = new JMenuItem("Generate ToUpdate");
-//									menuBayadCenter.add(menuitemManagementRepor_toUpdate);
-//									menuitemManagementRepor_toUpdate.addActionListener(new ActionListener() {
-//										public void actionPerformed(ActionEvent e) {
-//											if(isNotExisting("BayadCenter_ToUpdate")){
-//												BayadCenter_ToUpdate BC_toupdate = new BayadCenter_ToUpdate();
-//												addWindow(BC_toupdate, e);
-//											}
-//										}
-//									});
-//								}
-//							}
+							//							{
+							//								JMenu menuBayadCenter = new JMenu("Bayad Center");
+							//								menuAccounting.add(menuBayadCenter);
+							//								{
+							//									JMenuItem menuitemManagementRepor_toUpdate = new JMenuItem("Generate ToUpdate");
+							//									menuBayadCenter.add(menuitemManagementRepor_toUpdate);
+							//									menuitemManagementRepor_toUpdate.addActionListener(new ActionListener() {
+							//										public void actionPerformed(ActionEvent e) {
+							//											if(isNotExisting("BayadCenter_ToUpdate")){
+							//												BayadCenter_ToUpdate BC_toupdate = new BayadCenter_ToUpdate();
+							//												addWindow(BC_toupdate, e);
+							//											}
+							//										}
+							//									});
+							//								}
+							//							}
 						}
 					}	
 					{
@@ -2474,18 +2475,18 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 										}
 									});
 								}
-//								{
-//									JMenuItem menuitemCreditofPaymentItsReal = new JMenuItem("Credit of Payment (ItsReal)");
-//									menuClientRequest.add(menuitemCreditofPaymentItsReal);
-//									menuitemCreditofPaymentItsReal.addActionListener(new ActionListener() {
-//										public void actionPerformed(ActionEvent e) {
-//											if(isNotExisting("CreditOfPaymentItsReal")){
-//												CreditPaymentItsReal copir = new CreditPaymentItsReal();
-//												addWindow(copir, e);
-//											}
-//										}
-//									});
-//								}
+								//								{
+								//									JMenuItem menuitemCreditofPaymentItsReal = new JMenuItem("Credit of Payment (ItsReal)");
+								//									menuClientRequest.add(menuitemCreditofPaymentItsReal);
+								//									menuitemCreditofPaymentItsReal.addActionListener(new ActionListener() {
+								//										public void actionPerformed(ActionEvent e) {
+								//											if(isNotExisting("CreditOfPaymentItsReal")){
+								//												CreditPaymentItsReal copir = new CreditPaymentItsReal();
+								//												addWindow(copir, e);
+								//											}
+								//										}
+								//									});
+								//								}
 								{ //ADDED BY JOHN LESTER FATALLO 12-04-14
 									JMenuItem menuitemBuyersRequestforTechDoc = new JMenuItem("Technical Documents");
 									menuClientRequest.add(menuitemBuyersRequestforTechDoc);
@@ -3026,7 +3027,7 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 								JMenuItem menuitemIHFFSPromo = new JMenuItem("IHF FS Promo");
 								menuCreditCollection.add(menuitemIHFFSPromo);
 								menuitemIHFFSPromo.addActionListener(new ActionListener() {
-									
+
 									@Override
 									public void actionPerformed(ActionEvent e) {
 										if(isNotExisting("IHF_FS_Discount_Tagging")) {
@@ -3040,7 +3041,7 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 								JMenuItem menuitemUDOASPrinting = new JMenuItem("UDOAS Printing");
 								menuCreditCollection.add(menuitemUDOASPrinting);
 								menuitemUDOASPrinting.addActionListener(new ActionListener() {
-									
+
 									@Override
 									public void actionPerformed(ActionEvent e) {
 										if(isNotExisting("UDOASPrinting")) {
@@ -3421,14 +3422,14 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 								JMenuItem menuitemG2GTcost = new JMenuItem("G to G Tcost Tagging");
 								menuLoansManagement.add(menuitemG2GTcost);
 								menuitemG2GTcost.addActionListener(new ActionListener() {
-									
+
 									@Override
 									public void actionPerformed(ActionEvent e) {
 										if(isNotExisting("TCost_G2G")) {
 											TCost_G2G tcostg2g = new TCost_G2G();
 											addWindow(tcostg2g, e);
 										}
-										
+
 									}
 								});
 							}
@@ -3728,18 +3729,18 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									}
 								});
 							}
-//							{
-//								JMenuItem menuitemFacilitiesTagging = new JMenuItem("Facilities Tagging");
-//								menuPropertyManagement.add(menuitemFacilitiesTagging);
-//								menuitemFacilitiesTagging.addActionListener(new ActionListener() {
-//									public void actionPerformed(ActionEvent e) {
-//										if(isNotExisting("FacilitiesTagging")){
-//											FacilitiesTagging ft = new FacilitiesTagging();
-//											addWindow(ft, e);
-//										}
-//									}
-//								});
-//							}
+							//							{
+							//								JMenuItem menuitemFacilitiesTagging = new JMenuItem("Facilities Tagging");
+							//								menuPropertyManagement.add(menuitemFacilitiesTagging);
+							//								menuitemFacilitiesTagging.addActionListener(new ActionListener() {
+							//									public void actionPerformed(ActionEvent e) {
+							//										if(isNotExisting("FacilitiesTagging")){
+							//											FacilitiesTagging ft = new FacilitiesTagging();
+							//											addWindow(ft, e);
+							//										}
+							//									}
+							//								});
+							//							}
 							{
 
 								JMenuItem menuitemFacilityTagWaterReading= new JMenuItem("Water Reading Facility");
@@ -3770,7 +3771,7 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 								JMenuItem menuitemWaterPromoTagging = new JMenuItem("Water Promo Tagging");
 								menuPropertyManagement.add(menuitemWaterPromoTagging);
 								menuitemWaterPromoTagging.addActionListener(new ActionListener() {
-									
+
 									@Override
 									public void actionPerformed(ActionEvent e) {
 										if(isNotExisting("WaterPromoTagging")) {
@@ -5082,7 +5083,7 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 
 
 							}
-							
+
 							{
 								JMenuItem menuCancelledFullsettledByPagibig = new JMenuItem("Cancelled and Full settled by Pagibig");
 								menuReportCreditCollections.add(menuCancelledFullsettledByPagibig);
@@ -5100,17 +5101,31 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 								JMenuItem menuFSAcctsMonitoring = new JMenuItem("Full Settled Accts Monitoring");
 								menuReportCreditCollections.add(menuFSAcctsMonitoring);
 								menuFSAcctsMonitoring.addActionListener(new ActionListener() {
-									
+
 									@Override
 									public void actionPerformed(ActionEvent e) {
 										if(isNotExisting("FSAcctsMonitoring")){
 											FSAcctsMonitoring fsam = new FSAcctsMonitoring();
 											addWindow(fsam, e);
 										}
-										
+
 									}
 								}
-								);				
+										);				
+							}
+							{
+								JMenuItem menuECAR_Available = new JMenuItem("List of Accounts with E-CAR");
+								menuReportCreditCollections.add(menuECAR_Available);
+								menuECAR_Available.addActionListener(new ActionListener() {
+									
+									@Override
+									public void actionPerformed(ActionEvent e) {
+										if(isNotExisting("ListOfAcctsWithECAR")) {
+											ListOfAcctsWithECAR ecar = new ListOfAcctsWithECAR();
+											addWindow(ecar, e);
+										}
+									}
+								});							
 							}
 						}
 						{
@@ -5380,24 +5395,24 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									}
 								});
 							}
-//							{
-//								JMenuItem menuitemTransferTaxDecMonitoring = new JMenuItem("Transfer Tax Dec Monitoring");
-//								menuReportLegalAndLiaisoning.add(menuitemTransferTaxDecMonitoring);
-//								menuitemTransferTaxDecMonitoring.addActionListener(new ActionListener() {
-//
-//									@Override
-//									public void actionPerformed(ActionEvent e) {
-//										if(isNotExisting("TransferTaxDecMonitoring")){
-//											TransferTaxDecMonitoring ttdc = new TransferTaxDecMonitoring();
-//											addWindow(ttdc, e);
-//										}
-//									}
-//
-//								});
-//							}						
+							//							{
+							//								JMenuItem menuitemTransferTaxDecMonitoring = new JMenuItem("Transfer Tax Dec Monitoring");
+							//								menuReportLegalAndLiaisoning.add(menuitemTransferTaxDecMonitoring);
+							//								menuitemTransferTaxDecMonitoring.addActionListener(new ActionListener() {
+							//
+							//									@Override
+							//									public void actionPerformed(ActionEvent e) {
+							//										if(isNotExisting("TransferTaxDecMonitoring")){
+							//											TransferTaxDecMonitoring ttdc = new TransferTaxDecMonitoring();
+							//											addWindow(ttdc, e);
+							//										}
+							//									}
+							//
+							//								});
+							//							}						
 						}
-						
-						
+
+
 						{
 							JMenu menuReportLoansManagement = new JMenu("Loans Management");
 							menuReportBuyers.add(menuReportLoansManagement);
@@ -5906,7 +5921,7 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 								JMenuItem menuitemGeneralAssemblyHOA = new JMenuItem("General Assembly for Creation of HOA");
 								menuReportPropertyManagement.add(menuitemGeneralAssemblyHOA);
 								menuitemGeneralAssemblyHOA.addActionListener(new ActionListener() {
-									
+
 									@Override
 									public void actionPerformed(ActionEvent e) {
 										if(isNotExisting("GeneralAssemblyHOA")) {
@@ -6476,18 +6491,18 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 						{
 							JMenu menuUtilitiesClientServicing = new JMenu("Client Servicing");
 							menuUtilitiesBuyers.add(menuUtilitiesClientServicing);
-//							{
-//								JMenuItem menutiemTagClientMailsForExport = new JMenuItem("Tag Client Mails for Export");
-//								menuUtilitiesClientServicing.add(menutiemTagClientMailsForExport);
-//								menutiemTagClientMailsForExport.addActionListener(new ActionListener() {
-//									public void actionPerformed(ActionEvent e) {
-//										if(isNotExisting("TagClientMailsForExport")){
-//											TagClientMailsForExport tcmfe = new TagClientMailsForExport();
-//											addWindow(tcmfe, e);
-//										}
-//									}
-//								});
-//							}
+							//							{
+							//								JMenuItem menutiemTagClientMailsForExport = new JMenuItem("Tag Client Mails for Export");
+							//								menuUtilitiesClientServicing.add(menutiemTagClientMailsForExport);
+							//								menutiemTagClientMailsForExport.addActionListener(new ActionListener() {
+							//									public void actionPerformed(ActionEvent e) {
+							//										if(isNotExisting("TagClientMailsForExport")){
+							//											TagClientMailsForExport tcmfe = new TagClientMailsForExport();
+							//											addWindow(tcmfe, e);
+							//										}
+							//									}
+							//								});
+							//							}
 							{
 								JMenuItem menutieRequiredDocumentsMaitenance = new JMenuItem("Required Documents Maintenance");
 								menuUtilitiesClientServicing.add(menutieRequiredDocumentsMaitenance);
@@ -6580,7 +6595,7 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									}
 								});
 							}
-							
+
 						}
 						{
 							JMenu menuUtilitieCreditAndCollections = new JMenu("Credit And Collections");
@@ -6804,14 +6819,14 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									JMenuItem menuitemUploadHappyWellCollection = new JMenuItem("Upload Happy Well Collection");
 									menuUtilitiesPropertyManagement.add(menuitemUploadHappyWellCollection);
 									menuitemUploadHappyWellCollection.addActionListener(new ActionListener() {
-										
+
 										@Override
 										public void actionPerformed(ActionEvent e) {
 											if(isNotExisting("UploadHappyWellCollection")) {
 												UploadHappyWellCollection uhw = new UploadHappyWellCollection();
 												addWindow(uhw, e);
 											}
-											
+
 										}
 									});
 								}
@@ -7046,68 +7061,68 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									});
 								}
 							}
-//							{
-//								JMenuItem menuDateChecker = new JMenuItem("Date Checker");
-//								menuUtilities.add(menuDateChecker);
-//								menuDateChecker.addActionListener(new ActionListener() {
-//									public void actionPerformed(ActionEvent e) {
-//										if(isNotExisting("DateCheckerTest")){
-//											DateCheckerTest dc = new DateCheckerTest();
-//											addWindow(dc, e);
-//										}
-//									}
-//								});
-//							}
-//							{
-//								JMenu menuLegacy = new JMenu("iTsReal Utilities");
-//								menuUtilities.add(menuLegacy);
-//								{
-//									{
-//										JMenuItem menuItsReal_PaymentTemplate = new JMenuItem("Payment Template");
-//										menuLegacy.add(menuItsReal_PaymentTemplate);
-//										menuItsReal_PaymentTemplate.addActionListener(new ActionListener() {
-//											public void actionPerformed(ActionEvent e) {
-//												if(isNotExisting("iutil_payment_template")){
-//													iutil_payment_template iutil_pt = new iutil_payment_template();
-//													addWindow(iutil_pt, e);
-//												}
-//											}
-//										});
-//									}
-//								}
-//							}
-//							{
-//								JMenuItem menuDateChecker = new JMenuItem("Upload Payment");
-//								menuUtilities.add(menuDateChecker);
-//								menuDateChecker.addActionListener(new ActionListener() {
-//									public void actionPerformed(ActionEvent e) {
-//										if(isNotExisting("UploadPayment")){
-//											UploadPayment up = new UploadPayment();
-//											addWindow(up, e);
-//										}
-//									}
-//								});
-//							}
+							//							{
+							//								JMenuItem menuDateChecker = new JMenuItem("Date Checker");
+							//								menuUtilities.add(menuDateChecker);
+							//								menuDateChecker.addActionListener(new ActionListener() {
+							//									public void actionPerformed(ActionEvent e) {
+							//										if(isNotExisting("DateCheckerTest")){
+							//											DateCheckerTest dc = new DateCheckerTest();
+							//											addWindow(dc, e);
+							//										}
+							//									}
+							//								});
+							//							}
+							//							{
+							//								JMenu menuLegacy = new JMenu("iTsReal Utilities");
+							//								menuUtilities.add(menuLegacy);
+							//								{
+							//									{
+							//										JMenuItem menuItsReal_PaymentTemplate = new JMenuItem("Payment Template");
+							//										menuLegacy.add(menuItsReal_PaymentTemplate);
+							//										menuItsReal_PaymentTemplate.addActionListener(new ActionListener() {
+							//											public void actionPerformed(ActionEvent e) {
+							//												if(isNotExisting("iutil_payment_template")){
+							//													iutil_payment_template iutil_pt = new iutil_payment_template();
+							//													addWindow(iutil_pt, e);
+							//												}
+							//											}
+							//										});
+							//									}
+							//								}
+							//							}
+							//							{
+							//								JMenuItem menuDateChecker = new JMenuItem("Upload Payment");
+							//								menuUtilities.add(menuDateChecker);
+							//								menuDateChecker.addActionListener(new ActionListener() {
+							//									public void actionPerformed(ActionEvent e) {
+							//										if(isNotExisting("UploadPayment")){
+							//											UploadPayment up = new UploadPayment();
+							//											addWindow(up, e);
+							//										}
+							//									}
+							//								});
+							//							}
 						}
 					}
-//					{
-//						JMenu menuLegacy = new JMenu("iTsReal Utilities");
-//						menuUtilities.add(menuLegacy);
-//						{
-//							{
-//								JMenuItem menuItsReal_PaymentTemplate = new JMenuItem("Payment Template");
-//								menuLegacy.add(menuItsReal_PaymentTemplate);
-//								menuItsReal_PaymentTemplate.addActionListener(new ActionListener() {
-//									public void actionPerformed(ActionEvent e) {
-//										if(isNotExisting("iutil_payment_template")){
-//											iutil_payment_template iutil_pt = new iutil_payment_template();
-//											addWindow(iutil_pt, e);
-//										}
-//									}
-//								});
-//							}
-//						}
-//					}
+					//					{
+					//						JMenu menuLegacy = new JMenu("iTsReal Utilities");
+					//						menuUtilities.add(menuLegacy);
+					//						{
+					//							{
+					//								JMenuItem menuItsReal_PaymentTemplate = new JMenuItem("Payment Template");
+					//								menuLegacy.add(menuItsReal_PaymentTemplate);
+					//								menuItsReal_PaymentTemplate.addActionListener(new ActionListener() {
+					//									public void actionPerformed(ActionEvent e) {
+					//										if(isNotExisting("iutil_payment_template")){
+					//											iutil_payment_template iutil_pt = new iutil_payment_template();
+					//											addWindow(iutil_pt, e);
+					//										}
+					//									}
+					//								});
+					//							}
+					//						}
+					//					}
 				}
 				{
 					WindowMenu menuWindow = new WindowMenu(DesktopPane, pnlNorth);

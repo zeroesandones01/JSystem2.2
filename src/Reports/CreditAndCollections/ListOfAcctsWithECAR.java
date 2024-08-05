@@ -249,7 +249,7 @@ public class ListOfAcctsWithECAR extends _JInternalFrame implements _GUI, Action
 		mapParameters.put("proj_id", lookupProject.getValue());
 		mapParameters.put("phase", lookupPhase.getValue());
 
-		FncReport.generateReport("/Reports/rptFSWithoutTcost.jasper", title, txtProject.getText(), txtPhase.getText(), mapParameters);
+		FncReport.generateReport("/Reports/rptECAR_Available.jasper", title, txtProject.getText(), txtPhase.getText(), mapParameters);
 	}
 
 }

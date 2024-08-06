@@ -61,7 +61,6 @@ public class MA_Schedule_Reports extends _JInternalFrame implements _GUI, Action
 	private _JLookup lookupPhase;
 	private JXTextField txtPhase;
 
-	private JCheckBox chkIncludeMgmtHoldAcc;
 
 	private JXPanel pnlSouth;
 	private JButton btnPreview;

@@ -7,6 +7,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,18 +30,22 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 import org.jdesktop.swingx.JXTextField;
 
 import com.toedter.calendar.JTextFieldDateEditor;
 
+import Database.pgSelect;
 import DateChooser.DateEvent;
 import DateChooser.DateListener;
 import DateChooser._JDateChooser;
 import Functions.FncGlobal;
 import Functions.FncReport;
 import Functions.FncTables;
+import Functions.UserInfo;
 import Lookup.LookupEvent;
 import Lookup.LookupListener;
 import Lookup._JLookup;
@@ -48,12 +54,13 @@ import components._JInternalFrame;
 import components._JTableMain;
 import components._JXTextField;
 import interfaces._GUI;
+import tablemodel.modelG2GTcostTagging;
 import tablemodel.model_garbage_fee_for_issuance;
 
 public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 
 	private static final long serialVersionUID = 959523740860207910L;
-	
+
 	JPanel pnlMain;
 	JPanel pnlNorth;
 	JPanel pnlWest;
@@ -67,9 +74,12 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 	JPanel pnlUploading;
 	JPanel pnlGenerateDetails;
 
-	JButton btnGenerate;
-	JButton btnPreview;
-	JButton btnImport;
+	private JButton btnGenerate;
+	private JButton btnPreview;
+	private JButton btnApprove;
+	private JButton btnCancel;
+	private JButton btnSearch;
+	private JButton btnSave;
 
 	JCheckBox chkPBL;
 
@@ -92,53 +102,32 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 	JFileChooser fileChooser;
 
 	DefaultTableModel modelGarbageFee;
-	
-	private model_garbage_fee_for_issuance model_garbage_fee_for_issuance;
-	JList row_header_garbage_fee_for_issuance;
+
+	private modelG2GTcostTagging modelG2GTcost;
+	JList rowHeaderG2GTcost;
 
 	_JLookup lookupCompany;
 	JTextField txtCompany;
 
 	private _JLookup lookupProject; 
 	private _JXTextField txtProject;
-	
+
 	private _JLookup lookupPhase;
 	private _JXTextField txtPhase;
-	
-	private JComboBox cmbEPEBType;
-	
-	private _JLookup lookupBatchNo;
-	private _JXTextField txtStatus;
-	
-	private _JXTextField txtJVNo;
-	
-	_JLookup lookupBatch;
-	JTextField txtBatch;
 
-	String pbl_id = null;
+	private JComboBox cmbEPEBType;
+	private _JXTextField txtJVNo;
+
+	JTextField txtBatch;
 
 	protected Boolean pressedShift = false;
 
 	static String title = "G to G Tcost Tagging";
-	Dimension frameSize = new Dimension(800, 600);// 510, 250
+	Dimension frameSize = new Dimension(700, 600);// 510, 250
 	Border lineBorder = BorderFactory.createLineBorder(Color.GRAY);
 
-	private _JTableMain tbl_garbage_fee_for_isuance;
+	private _JTableMain tblG2GTCostTagging;
 
-	private JLabel lblForIssuance;
-
-	private JTextField txtForIssuance;
-
-	private JLabel lblForIssuanceCount;
-
-	private JLabel lblForIssuanceDetails;
-
-	private String batch_no;
-
-	private JButton btnViewRemaining;
-
-	private Object count;
-	
 	public TCost_G2G() {
 		super(title, false, true, false, true);
 		initGUI();
@@ -176,7 +165,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 					pnlGenerateDetails = new JPanel(new BorderLayout(5, 5));
 					pnlNorth.add(pnlGenerateDetails, BorderLayout.CENTER);
 					pnlGenerateDetails.setBorder(JTBorderFactory.createTitleBorder("Details"));
-					
+
 					// File Upload Labels
 					JPanel pnlLabels = new JPanel(new BorderLayout(3, 3));
 					{
@@ -188,12 +177,12 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 						pnlLabels.add(new JLabel("EPEB Type"));
 						pnlLabels.add(new JLabel("Batch No"));
 					}
-					
+
 					// File Upload Center
 					{
 						pnlUploading = new JPanel(new GridLayout(5, 1, 10, 3));
 						pnlGenerateDetails.add(pnlUploading, BorderLayout.CENTER);
-						
+
 						// Project
 						{
 							JPanel pnlCompany = new JPanel(new BorderLayout(5, 5));
@@ -203,6 +192,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 								pnlCompany.add(lookupCompany, BorderLayout.WEST);
 								lookupCompany.setPreferredSize(new Dimension(50, 100));
 								lookupCompany.setReturnColumn(0);
+								lookupCompany.setLookupSQL(_JInternalFrame.SQL_COMPANY());
 								lookupCompany.addLookupListener(new LookupListener() {
 
 									public void lookupPerformed(LookupEvent event) {
@@ -210,11 +200,12 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 										if (data != null) {
 											String company_name = (String) data[1];
 											txtCompany.setText(company_name);
+											lookupProject.setLookupSQL(SQL_PROJECT_ALL(data[0].toString()));
 										}
 									}
 								});
 							}
-							
+
 							{
 								txtCompany = new JTextField();
 								pnlCompany.add(txtCompany, BorderLayout.CENTER);
@@ -235,11 +226,12 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 										if (data != null) {
 											String proj_name = (String) data[1];
 											txtProject.setText(proj_name);
+											lookupPhase.setLookupSQL(SQL_PHASE_ALL(data[0].toString()));
 										}
 									}
 								});
 							}
-							
+
 							{
 								txtProject = new _JXTextField();
 								pnlProj.add(txtProject, BorderLayout.CENTER);
@@ -264,7 +256,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 									}
 								});
 							}
-							
+
 							{
 								txtPhase = new _JXTextField();
 								pnlPhase.add(txtPhase, BorderLayout.CENTER);
@@ -277,7 +269,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 								cmbEPEBType = new JComboBox(new String[] {"Mortgage", "Sale"});
 								pnlEPEBType.add(cmbEPEBType, BorderLayout.WEST);
 								cmbEPEBType.setPreferredSize(new Dimension(150, 0));
-								
+
 							}
 						}
 						{
@@ -287,7 +279,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 								txtBatch = new _JXTextField();
 								pnlBatch.add(txtBatch, BorderLayout.WEST);
 								txtBatch.setPreferredSize(new Dimension(150, 0));
-								
+
 							}
 							{
 								JPanel pnlJVNo = new JPanel(new BorderLayout(3, 3));
@@ -304,10 +296,6 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 								}
 							}
 						}
-						
-						
-						
-						
 					}
 					// File Upload Buttons
 				}
@@ -325,33 +313,36 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 					pnlCenter.setLayout(new BorderLayout(5, 5));
 					pnlCenter.setBorder(lineBorder);
 					{
-						tabCenter = new JTabbedPane();
-						pnlCenter.add(tabCenter, BorderLayout.CENTER);
-						//displayGarbageFeeForIssuance();
-						
+						JPanel pnlForIssuance = new JPanel(new BorderLayout(3, 3));
+						pnlCenter.add(pnlForIssuance);
 						{
-							JPanel pnlForIssuance = new JPanel(new BorderLayout(3, 3));
-							tabCenter.addTab("For Issuance", pnlForIssuance);
+							scrollG2GTcostTagging = new JScrollPane();
+							pnlForIssuance.add(scrollG2GTcostTagging, BorderLayout.CENTER);
+							scrollG2GTcostTagging.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+							scrollG2GTcostTagging.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 							{
-								scrollG2GTcostTagging = new JScrollPane();
-								pnlForIssuance.add(scrollG2GTcostTagging, BorderLayout.CENTER);
-								scrollG2GTcostTagging.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-								scrollG2GTcostTagging.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-								scrollG2GTcostTagging.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-								{
-									model_garbage_fee_for_issuance = new model_garbage_fee_for_issuance();
-									tbl_garbage_fee_for_isuance = new _JTableMain(model_garbage_fee_for_issuance);
-									row_header_garbage_fee_for_issuance = tbl_garbage_fee_for_isuance.getRowHeader();
-									scrollG2GTcostTagging.setViewportView(tbl_garbage_fee_for_isuance);
-									
-									
-								}
-								{
-									row_header_garbage_fee_for_issuance = tbl_garbage_fee_for_isuance.getRowHeader();
-									row_header_garbage_fee_for_issuance.setModel(new DefaultListModel());
-									scrollG2GTcostTagging.setRowHeaderView(row_header_garbage_fee_for_issuance);
-									scrollG2GTcostTagging.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, FncTables.getRowHeader_Header());
-								}
+								modelG2GTcost = new modelG2GTcostTagging();
+								tblG2GTCostTagging = new _JTableMain(modelG2GTcost);
+								rowHeaderG2GTcost = tblG2GTCostTagging.getRowHeader();
+								scrollG2GTcostTagging.setViewportView(tblG2GTCostTagging);
+								tblG2GTCostTagging.hideColumns("JV No", "Entity ID", "Proj ID", "PBL ID", "Seq No");
+								modelG2GTcost.addTableModelListener(new TableModelListener() {
+									public void tableChanged(TableModelEvent e) {
+
+										((DefaultListModel)rowHeaderG2GTcost.getModel()).addElement(modelG2GTcost.getRowCount());
+
+										if(modelG2GTcost.getRowCount() == 0){
+											rowHeaderG2GTcost.setModel(new DefaultListModel());
+										}
+									}
+								});
+							
+							}
+							{
+								rowHeaderG2GTcost = tblG2GTCostTagging.getRowHeader();
+								rowHeaderG2GTcost.setModel(new DefaultListModel());
+								scrollG2GTcostTagging.setRowHeaderView(rowHeaderG2GTcost);
+								scrollG2GTcostTagging.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, FncTables.getRowHeader_Header());
 							}
 						}
 					}
@@ -370,6 +361,21 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 						pnlSouth.add(Box.createHorizontalBox());
 					}
 					{
+						btnSave = new JButton("Save");
+						pnlSouth.add(btnSave);
+						btnSave.setActionCommand("Save");
+						btnSave.setMnemonic(KeyEvent.VK_V);
+						btnSave.addActionListener(this);
+					}
+					{
+						btnSearch = new JButton("Search");
+						pnlSouth.add(btnSearch);
+						btnSearch.setActionCommand("Search");
+						btnSearch.setMnemonic(KeyEvent.VK_V);
+						btnSearch.addActionListener(this);
+					}
+					
+					{
 						btnPreview = new JButton("Preview");
 						pnlSouth.add(btnPreview);
 						btnPreview.setActionCommand("Preview");
@@ -377,16 +383,112 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 						btnPreview.addActionListener(this);
 					}
 					{
-						btnImport = new JButton("Issue");
-						pnlSouth.add(btnImport);
-						btnImport.setActionCommand("Issue");
-						btnImport.setMnemonic(KeyEvent.VK_I);
-						btnImport.addActionListener(this);
+						btnApprove = new JButton("Approve");
+						pnlSouth.add(btnApprove);
+						btnApprove.setActionCommand("Approve");
+						btnApprove.setMnemonic(KeyEvent.VK_I);
+						btnApprove.addActionListener(this);
+					}
+					{
+						btnCancel = new JButton("Cancel");
+						pnlSouth.add(btnCancel);
+						btnCancel.setActionCommand("Cancel");
+						btnCancel.addActionListener(this);
 					}
 				}
 			}
 		}
-
+		initializeComponents();
+	}//XXX END OF INIT GUI
+	
+	private void btnState(Boolean save, Boolean search, Boolean preview, Boolean approve, Boolean cancel) {
+		btnSave.setEnabled(save);
+		btnSearch.setEnabled(search);
+		btnPreview.setEnabled(preview);
+		btnApprove.setEnabled(approve);
+		btnCancel.setEnabled(cancel);
 	}
+	
+	private void initializeComponents() {
+		lookupCompany.setValue(null);
+		txtCompany.setText("");
+		lookupProject.setValue(null);
+		txtProject.setText("");
+		lookupPhase.setValue(null);
+		txtPhase.setText("");
+		cmbEPEBType.setSelectedIndex(0);
+		txtBatch.setText("");
+		txtJVNo.setText("");
+		modelG2GTcost.clear();
+		scrollG2GTcostTagging.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer("0"));
+		btnState(false, true, false, false, false);
+	}
+	
+	private void generateQualifiedAccounts(String co_id, String proj_id, String phase, String batch_no) {
+		modelG2GTcost.clear();
+		
+		pgSelect db = new pgSelect();
+		String SQL = "select * from view_qualified_tcost_g2g('"+co_id+"', '"+proj_id+"', '"+phase+"', '"+batch_no+"');";
+		db.select(SQL);
+		
+		if (db.isNotNull()){
+			for(int x=0; x < db.getRowCount(); x++){
+				modelG2GTcost.addRow(db.getResult()[x]);
+			}
+			scrollG2GTcostTagging.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer(Integer.toString(tblG2GTCostTagging.getRowCount())));
+			tblG2GTCostTagging.packAll();
+		}
+	}
+	
+	private void saveTaggedTcostAccts() {
+		
+		ArrayList<String> listEntityID = new ArrayList<String>();
+		ArrayList<String> listProjID = new ArrayList<String>();
+		ArrayList<String> listPBL = new ArrayList<String>();
+		ArrayList<Integer> listSeq = new ArrayList<Integer>();
+		ArrayList<BigDecimal> listTcostAmt = new ArrayList<BigDecimal>();
+		
+		for(int x=0; x<modelG2GTcost.getRowCount(); x++){
+			Boolean isSelected = (Boolean) modelG2GTcost.getValueAt(x, 0);
 
+			if(isSelected){
+				BigDecimal tcost_amt = (BigDecimal) modelG2GTcost.getValueAt(x, 3);
+				String entity_id = (String) modelG2GTcost.getValueAt(x, 5);
+				String proj_id = (String) modelG2GTcost.getValueAt(x, 6);
+				String pbl_id = (String) modelG2GTcost.getValueAt(x, 7);
+				Integer seq_no = (Integer) modelG2GTcost.getValueAt(x, 8);
+
+				listProjID.add(String.format("'%S'", proj_id));
+				listPBL.add(String.format("'%s'", pbl_id));
+				listSeq.add(seq_no);
+				listEntityID.add(String.format("'%s'", entity_id));
+				listTcostAmt.add(tcost_amt);
+			}
+		}
+
+		String entity_id = listEntityID.toString().replaceAll("\\[|\\]", "");
+		String proj_id = listProjID.toString().replaceAll("\\[|\\]", "");
+		String pbl_id = listPBL.toString().replaceAll("\\[|\\]", "");
+		String seq_no = listSeq.toString().replaceAll("\\[|\\]", "");
+		String tcost_amt = listTcostAmt.toString().replaceAll("\\[|\\]", "");
+
+		pgSelect db = new pgSelect();
+		String SQL = "SELECT sp_tag_notice_assumed_turnover(ARRAY["+entity_id+"]::VARCHAR[], ARRAY["+proj_id+"]::VARCHAR[], ARRAY["+pbl_id+"]::VARCHAR[], ARRAY["+seq_no+"]::INT[], '"+UserInfo.EmployeeCode+"')";
+		db.select(SQL);
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		String actionCommand = e.getActionCommand();
+		
+		if(actionCommand.equals("Generate")) {
+			generateQualifiedAccounts(lookupCompany.getValue(), lookupProject.getValue(), lookupPhase.getValue(), txtBatch.getText());
+			btnState(true, false, false, false, true);
+		}
+		
+		if(actionCommand.equals("Cancel")) {
+			initializeComponents();
+		}
+		
+	}
+	
 }

@@ -4408,7 +4408,7 @@ public class ProcessingCostTransactionEntry extends _JInternalFrame implements _
 
 	private static String SQL_REQUESTTYPE() {
 		return "SELECT rplf_type_id as \"Type ID\", trim(rplf_type_desc) as \"Description\"  \n" +
-				"FROM mf_rplf_type where status_id = 'A' and rplf_type_id in ('02','06','11','15')  " +
+				"FROM mf_rplf_type where status_id = 'A' and rplf_type_id in ('02','06','11','15','16')  " + //Edited by erick 2024-07-18 DCRF 3050-Added specific rplf_type
 				"ORDER BY rplf_type_id ";		
 	}
 	private static String ControlNoLookUpValue(){

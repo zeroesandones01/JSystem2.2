@@ -44,6 +44,7 @@ import DateChooser.DateListener;
 import DateChooser._JDateChooser;
 import Functions.FncGlobal;
 import Functions.FncReport;
+import Functions.FncSystem;
 import Functions.FncTables;
 import Functions.UserInfo;
 import Lookup.LookupEvent;
@@ -336,7 +337,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 										}
 									}
 								});
-							
+
 							}
 							{
 								rowHeaderG2GTcost = tblG2GTCostTagging.getRowHeader();
@@ -374,7 +375,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 						btnSearch.setMnemonic(KeyEvent.VK_V);
 						btnSearch.addActionListener(this);
 					}
-					
+
 					{
 						btnPreview = new JButton("Preview");
 						pnlSouth.add(btnPreview);
@@ -400,7 +401,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 		}
 		initializeComponents();
 	}//XXX END OF INIT GUI
-	
+
 	private void btnState(Boolean save, Boolean search, Boolean preview, Boolean approve, Boolean cancel) {
 		btnSave.setEnabled(save);
 		btnSearch.setEnabled(search);
@@ -408,7 +409,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 		btnApprove.setEnabled(approve);
 		btnCancel.setEnabled(cancel);
 	}
-	
+
 	private void initializeComponents() {
 		lookupCompany.setValue(null);
 		txtCompany.setText("");
@@ -423,14 +424,16 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 		scrollG2GTcostTagging.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer("0"));
 		btnState(false, true, false, false, false);
 	}
-	
+
 	private void generateQualifiedAccounts(String co_id, String proj_id, String phase, String batch_no) {
 		modelG2GTcost.clear();
-		
+
 		pgSelect db = new pgSelect();
 		String SQL = "select * from view_qualified_tcost_g2g('"+co_id+"', '"+proj_id+"', '"+phase+"', '"+batch_no+"');";
 		db.select(SQL);
-		
+
+		FncSystem.out("Display SQL for generate", SQL);
+
 		if (db.isNotNull()){
 			for(int x=0; x < db.getRowCount(); x++){
 				modelG2GTcost.addRow(db.getResult()[x]);
@@ -439,20 +442,39 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 			tblG2GTCostTagging.packAll();
 		}
 	}
-	
-	private void saveTaggedTcostAccts() {
-		
+
+	private String saveTaggedTcostAccts() {
+
+		String batch_no = "";
+
+		String epeb_type = (String) cmbEPEBType.getSelectedItem();
+
 		ArrayList<String> listEntityID = new ArrayList<String>();
 		ArrayList<String> listProjID = new ArrayList<String>();
 		ArrayList<String> listPBL = new ArrayList<String>();
 		ArrayList<Integer> listSeq = new ArrayList<Integer>();
 		ArrayList<BigDecimal> listTcostAmt = new ArrayList<BigDecimal>();
-		
+
 		for(int x=0; x<modelG2GTcost.getRowCount(); x++){
 			Boolean isSelected = (Boolean) modelG2GTcost.getValueAt(x, 0);
 
 			if(isSelected){
-				BigDecimal tcost_amt = (BigDecimal) modelG2GTcost.getValueAt(x, 3);
+				BigDecimal tcost_amt = new BigDecimal("0.00");
+
+				try {
+					tcost_amt = (BigDecimal) modelG2GTcost.getValueAt(x, 3);
+				} catch (ClassCastException e) {
+					
+
+					if (modelG2GTcost.getValueAt(x, 3) instanceof Double) {
+						tcost_amt = BigDecimal.valueOf((Double) modelG2GTcost.getValueAt(x, 3));
+					}
+
+					if (modelG2GTcost.getValueAt(x, 3) instanceof Long) {
+						tcost_amt = BigDecimal.valueOf((Long) modelG2GTcost.getValueAt(x, 3));
+					}
+				}
+
 				String entity_id = (String) modelG2GTcost.getValueAt(x, 5);
 				String proj_id = (String) modelG2GTcost.getValueAt(x, 6);
 				String pbl_id = (String) modelG2GTcost.getValueAt(x, 7);
@@ -473,22 +495,65 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 		String tcost_amt = listTcostAmt.toString().replaceAll("\\[|\\]", "");
 
 		pgSelect db = new pgSelect();
-		String SQL = "SELECT sp_tag_notice_assumed_turnover(ARRAY["+entity_id+"]::VARCHAR[], ARRAY["+proj_id+"]::VARCHAR[], ARRAY["+pbl_id+"]::VARCHAR[], ARRAY["+seq_no+"]::INT[], '"+UserInfo.EmployeeCode+"')";
+		String SQL = "SELECT sp_save_tcost_g2g('"+epeb_type+"',ARRAY["+entity_id+"]::VARCHAR[], ARRAY["+proj_id+"]::VARCHAR[], ARRAY["+pbl_id+"]::VARCHAR[], ARRAY["+seq_no+"]::INT[], ARRAY["+tcost_amt+"]::NUMERIC[] ,'"+UserInfo.EmployeeCode+"')";
 		db.select(SQL);
+
+		if(db.isNotNull()){
+			batch_no = (String) db.getResult()[0][0];
+		}
+
+		return batch_no;
 	}
-	
+
+	public int getSelectedClients() {
+		int count = 0;
+		try {
+			for (int x  = 0;x<tblG2GTCostTagging.getRowCount();x++){
+				if (tblG2GTCostTagging.getValueAt(x, 0).toString().equals("true")){
+					count++;
+				}
+			}		
+		} catch (ArrayIndexOutOfBoundsException e) { }
+		return count;
+	}
+
+	private Boolean toSave() {
+		if(getSelectedClients() <= 0) {
+			JOptionPane.showMessageDialog(null, "Please select clients to tag","Save",JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+
+		return true;
+	}
+
+	private void previewTaggedBatch(String batch_no) {
+
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
-		
+
 		if(actionCommand.equals("Generate")) {
 			generateQualifiedAccounts(lookupCompany.getValue(), lookupProject.getValue(), lookupPhase.getValue(), txtBatch.getText());
 			btnState(true, false, false, false, true);
 		}
-		
+
+		if(actionCommand.equals("Save")) {
+			if(toSave()) {
+				if(JOptionPane.showConfirmDialog(this.getTopLevelAncestor(), "Are you sure you want to save?", actionCommand, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+
+					String batch_no = saveTaggedTcostAccts();
+					previewTaggedBatch(batch_no);
+					initializeComponents();
+					JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Accounts succesfully saved", "Save", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		}
+
 		if(actionCommand.equals("Cancel")) {
 			initializeComponents();
 		}
-		
+
 	}
-	
+
 }

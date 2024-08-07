@@ -530,8 +530,10 @@ public class Cashflow extends _JInternalFrame implements ActionListener, Ancesto
 		
 		co_id 		= "02";	
 		company		= "CENQHOMES DEVELOPMENT CORPORATION";
+		project		= "";
 		company_logo = sql_getCompanyLogo(co_id);		
 		txtCompany.setText(company);
+		project = "All";
 
 		refreshFields();		
 					

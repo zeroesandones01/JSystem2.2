@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +39,7 @@ import org.jdesktop.swingx.JXTextField;
 
 import com.toedter.calendar.JTextFieldDateEditor;
 
+import Buyers.ClientServicing._OtherRequest;
 import Database.pgSelect;
 import DateChooser.DateEvent;
 import DateChooser.DateListener;
@@ -50,6 +52,7 @@ import Functions.UserInfo;
 import Lookup.LookupEvent;
 import Lookup.LookupListener;
 import Lookup._JLookup;
+import Lookup._JLookupTable;
 import components.JTBorderFactory;
 import components._JInternalFrame;
 import components._JTableMain;
@@ -351,11 +354,10 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 				{
 					pnlSouth = new JPanel();
 					pnlMain.add(pnlSouth, BorderLayout.SOUTH);
-					pnlSouth.setLayout(new GridLayout(1, 10, 3, 3));
+					pnlSouth.setLayout(new GridLayout(1, 9, 3, 3));
 					// pnlSouth.setBorder(lineBorder);
 					pnlSouth.setPreferredSize(new Dimension(500, 30));// XXX
 					{
-						pnlSouth.add(Box.createHorizontalBox());
 						pnlSouth.add(Box.createHorizontalBox());
 						pnlSouth.add(Box.createHorizontalBox());
 						pnlSouth.add(Box.createHorizontalBox());
@@ -525,9 +527,24 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 
 		return true;
 	}
+	
+	private String sqlSearch() {
+		String SQL = "SELECT distinct on (batch_no) batch_no as \"Batch No\", coalesce(jv_no, '') as \"JV No\", \n"
+				+ "date_created::DATE as \"Date Created\"\n"
+				+ "from rf_g2g_tcost\n"
+				+ "where status_id = 'A'\n"
+				+ "ORDER BY batch_no desc";
+		
+		return SQL;
+	}
 
 	private void previewTaggedBatch(String batch_no) {
+		Map<String, Object> mapParameters = new HashMap<String, Object>();
 
+		mapParameters.put("batch_no", batch_no);
+
+		FncReport.generateReport("/Reports/rptTcostG2GBatch.jasper", title, mapParameters);
+		
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -548,6 +565,44 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 					JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Accounts succesfully saved", "Save", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
+		}
+		
+		if(actionCommand.equals("Search")) {
+			_JLookupTable dlg = new _JLookupTable(FncGlobal.homeMDI, null, "Tagged Accounts", sqlSearch(), false);
+			dlg.setLocationRelativeTo(FncGlobal.homeMDI);
+			dlg.setVisible(true);
+
+			FncSystem.out("Display sql for Search", _OtherRequest.sqlSearch());
+
+			Object[] data = dlg.getReturnDataSet();
+			
+			try {
+				String batch_no = (String) data[0];
+				String jv_no = (String) data[1];
+
+				generateQualifiedAccounts("null", "null", "null", batch_no);
+				
+				txtBatch.setText(batch_no);
+				txtJVNo.setText(jv_no);
+				
+				if(jv_no.equals("")) {
+					btnState(false, true, true, true, true);
+				}else {
+					btnState(false, false, true, false, true);
+				}
+			} catch (NullPointerException e2) {
+				// TODO: handle exception
+			}
+			
+			
+		}
+		
+		if(actionCommand.equals("Preview")) {
+			previewTaggedBatch(txtBatch.getText());
+		}
+		
+		if(actionCommand.equals("Approve")) {
+			
 		}
 
 		if(actionCommand.equals("Cancel")) {

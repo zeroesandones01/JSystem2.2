@@ -314,6 +314,7 @@ import Reports.Accounting.DailySalesReport;
 import Reports.Accounting.DepositListing;
 import Reports.Accounting.DepositSlip;
 import Reports.Accounting.FinancialReport;
+import Reports.Accounting.FullSettledTCostReport;
 import Reports.Accounting.House_Construction_Status;
 import Reports.Accounting.IHFAmortizationCollection;
 import Reports.Accounting.JVprooflist;
@@ -4681,6 +4682,19 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 										if(isNotExisting("MA_Schedule_Reports")){
 											MA_Schedule_Reports ma_sched = new MA_Schedule_Reports();
 											addWindow(ma_sched, e);											
+										}
+									}
+								});
+							}
+							{
+								JMenuItem menuitemReturnCheckMBTCPcost = new JMenuItem("Full Settled TCost Report");
+								menuManagementRpt.add(menuitemReturnCheckMBTCPcost);
+								menuitemReturnCheckMBTCPcost.addActionListener(new ActionListener() {
+
+									public void actionPerformed(ActionEvent e) {
+										if(isNotExisting("FullSettledTCostReport")){
+											FullSettledTCostReport fstr = new FullSettledTCostReport();
+											addWindow(fstr, e);											
 										}
 									}
 								});

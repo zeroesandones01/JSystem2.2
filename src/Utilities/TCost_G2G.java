@@ -427,11 +427,11 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 		btnState(false, true, false, false, false);
 	}
 
-	private void generateQualifiedAccounts(String co_id, String proj_id, String phase, String batch_no) {
+	private void generateQualifiedAccounts(String co_id, String proj_id, String phase, String epeb_type, String batch_no) {
 		modelG2GTcost.clear();
 
 		pgSelect db = new pgSelect();
-		String SQL = "select * from view_qualified_tcost_g2g('"+co_id+"', '"+proj_id+"', '"+phase+"', '"+batch_no+"');";
+		String SQL = "select * from view_qualified_tcost_g2g('"+co_id+"', '"+proj_id+"', '"+phase+"', '"+epeb_type+"' ,'"+batch_no+"');";
 		db.select(SQL);
 
 		FncSystem.out("Display SQL for generate", SQL);
@@ -551,7 +551,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 		String actionCommand = e.getActionCommand();
 
 		if(actionCommand.equals("Generate")) {
-			generateQualifiedAccounts(lookupCompany.getValue(), lookupProject.getValue(), lookupPhase.getValue(), txtBatch.getText());
+			generateQualifiedAccounts(lookupCompany.getValue(), lookupProject.getValue(), lookupPhase.getValue(), cmbEPEBType.getSelectedItem().toString() ,txtBatch.getText());
 			btnState(true, false, false, false, true);
 		}
 
@@ -580,7 +580,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 				String batch_no = (String) data[0];
 				String jv_no = (String) data[1];
 
-				generateQualifiedAccounts("null", "null", "null", batch_no);
+				generateQualifiedAccounts("null", "null", "null","", batch_no);
 				
 				txtBatch.setText(batch_no);
 				txtJVNo.setText(jv_no);

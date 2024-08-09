@@ -1532,7 +1532,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				|| rplf_type_id.equals("13") || rplf_type_id.equals("05")) {
 		} else {
 			
-			if(rplf_type_id.equals("04") || rplf_type_id.equals("14") || rplf_type_id.equals("16")  || rplf_type_id.equals("17")) {
+			if(rplf_type_id.equals("04") || rplf_type_id.equals("14") || rplf_type_id.equals("16")) {
 				sql = sql + "union all\r\n" + "\r\n" + "select \r\n" + "'01-99-06-000',\r\n" + "a.div_id,\r\n"
 						+ "a.dept_id,\r\n" + "a.sect_id,\r\n" + "a.project_id,\r\n" + "a.sub_projectid,\r\n"
 						+ "'Input Vat - Clearing',\r\n" + "a.vat_amt, \r\n" + "0, false\r\n" + "from (\r\n"
@@ -1541,7 +1541,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 						+ "from rf_request_detail   \r\n" + "where rplf_no = '" + rplf_no
 						+ "' and status_id = 'A' and vat_amt > 0 and co_id = '" + lookupCompany.getValue() + "' \r\n"
 						+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n";
-				if(rplf_type_id.equals("14") || rplf_type_id.equals("17")) {
+				if(rplf_type_id.equals("14")) {
 //					sql = sql + "union all\r\n" + 
 //								"select \n"
 //								+ "'01-02-04-000',\n"
@@ -1584,6 +1584,22 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 						+ "from rf_request_detail   \r\n" + "where rplf_no = '" + rplf_no
 						+ "' and status_id = 'A' and vat_amt > 0 and co_id = '" + lookupCompany.getValue() + "' \r\n"
 						+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n";
+				
+				if(rplf_type_id.equals("17")) {
+					sql = sql + "UNION ALL \r\n"+
+							"select \n"
+							+ "'01-02-04-000',\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "'Advances to Officers and Employees',\n"
+							+ "sum(a.pv_amt) as debit,\n"
+							+ "0 as credit, true\n"
+							+ "from rf_request_detail a\n"
+							+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"' ";
+				}
 			}
 		}
 

@@ -44,10 +44,8 @@ public class FullSettledTCostReport extends _JInternalFrame implements _GUI, Act
 
 	private JXPanel pnlMain;
 
-
 	private JXPanel pnlSouth;
 	private JButton btnPreview;
-
 	private KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 
 	private _JDateChooser dteDateFrom;
@@ -57,8 +55,6 @@ public class FullSettledTCostReport extends _JInternalFrame implements _GUI, Act
 	private JXPanel pnlNorthLabel;
 	private JXPanel pnlNorthComponents;
 	private JXPanel pnlNorthLookUp;
-
-
 
 	public FullSettledTCostReport() {
 		super(title, false, true, true, true);
@@ -79,7 +75,6 @@ public class FullSettledTCostReport extends _JInternalFrame implements _GUI, Act
 	public void initGUI() {
 		this.setTitle(title);
 		this.setSize(frameSize);
-		//this.setPreferredSize(frameSize);
 		
 		{
 			pnlMain = new JXPanel(new BorderLayout(5, 5));
@@ -128,7 +123,6 @@ public class FullSettledTCostReport extends _JInternalFrame implements _GUI, Act
 							dteDateTo.setEnabled(true);
 							dteDateTo.setDate(null);
 						}
-						
 					}
 					
 				}	
@@ -167,49 +161,40 @@ public class FullSettledTCostReport extends _JInternalFrame implements _GUI, Act
 				}
 			}
 		}
-
+		
 		this.setFocusTraversalPolicy(new FncFocusTraversalPolicy(dteDateFrom, dteDateTo, btnPreview));
 	}
-
-	
+   
 	private void previewMonthly() {
 		
-		String criteria = "Full Settled TCost Report";		
-		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
 		Map<String, Object> mapFullSettledTCostMonthly = new HashMap<String, Object>();
-		
 		
 		mapFullSettledTCostMonthly.put("date_from", dteDateFrom.getDate());
 		mapFullSettledTCostMonthly.put("date_to", dteDateTo.getDate());
 		
-		
-		FncReport.generateReport("/Reports/rptFullSettledTCostMonthly.jasper", reportTitle, null, mapFullSettledTCostMonthly);
+		FncReport.generateReport("/Reports/rptFullSettledTCostMonthly.jasper", "Full Settled TCost Monthly", null, mapFullSettledTCostMonthly);
 		
 	}
 	
-//	private void previewWithTCostPayment() {
-//		
-//		String criteria = "Full Settled TCost Report";		
-//		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
-//		Map<String, Object> mapFullSettledWithTCostPayment = new HashMap<String, Object>();
-//		
-//
-//		mapFullSettledWithTCostPayment.put("date_from", dteDateFrom.getDate());
-//		mapFullSettledWithTCostPayment.put("date_to", dteDateTo.getDate());
-//
-//		
-//		FncReport.generateReport("/Reports/rptFullSettledWithTCostPayment.jasper", reportTitle, null, mapFullSettledWithTCostPayment);
-//		
-//	}
+	private void previewWithTCostPayment() {
+		
+		Map<String, Object> mapFullSettledWithTCostPayment = new HashMap<String, Object>();
+		
+		mapFullSettledWithTCostPayment.put("date_from", dteDateFrom.getDate());
+		mapFullSettledWithTCostPayment.put("date_to", dteDateTo.getDate());
+
+		FncReport.generateReport("/Reports/rptFullSettledWithTCostPayment.jasper", "Full Settled With TCost Payment", null, mapFullSettledWithTCostPayment);
+		
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand();
 
 		if(action.equals("preview")){
-			
+		
 			previewMonthly();
-//			previewWithTCostPayment();
+			previewWithTCostPayment();
 			
 		}
 	}

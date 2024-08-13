@@ -102,6 +102,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 	private JPanel pnlSouth;
 	private JPanel pnlPVDtl_1;
 	private JPanel pnlPVDtl_2;
+	private JPanel pnlPVRequestType;
 	private JPanel pnlPVDtl_1a;
 	private JPanel pnlPVDtl_1b;
 	private JPanel pnlTable;
@@ -938,6 +939,15 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 					tagPayeeType.setEnabled(false);
 					tagPayeeType.setPreferredSize(new java.awt.Dimension(27, 33));
 					tagPayeeType.addMouseListener(new PopupTriggerListener_panel2());
+				}
+				
+				pnlPVRequestType = new JPanel(new GridLayout(4, 1, 0, 5));
+				pnlPVDtl_2.add(pnlPVRequestType, BorderLayout.EAST);
+				pnlPVRequestType.setPreferredSize(new java.awt.Dimension(140, 118));
+				pnlPVRequestType.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+				
+				{
+					
 				}
 			}
 		}

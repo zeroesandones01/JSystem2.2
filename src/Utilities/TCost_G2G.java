@@ -506,6 +506,12 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 
 		return batch_no;
 	}
+	
+	private void approveTaggedBatch(String batch_no) {
+		pgSelect db = new pgSelect();
+		String SQL = "SELECT sp_create_jv_epeb_g2g('"+batch_no+"', '"+UserInfo.EmployeeCode+"')";
+		db.select(SQL);	
+	}
 
 	public int getSelectedClients() {
 		int count = 0;
@@ -602,7 +608,11 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 		}
 		
 		if(actionCommand.equals("Approve")) {
-			
+			if(JOptionPane.showConfirmDialog(this.getTopLevelAncestor(), "Are you sure you want to approve?", actionCommand, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+				approveTaggedBatch(txtBatch.getText());
+				
+				JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Accounts succesfully approved", "Save", JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 
 		if(actionCommand.equals("Cancel")) {

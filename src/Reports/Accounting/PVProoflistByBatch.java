@@ -453,6 +453,14 @@ public class PVProoflistByBatch extends JDialog implements _GUI, ActionListener 
 						"	left join rf_entity b on a.entity_id = b.entity_id\n" + 
 						"	where a.rplf_no = '"+pv_no+"'\n" +
 						"	AND a.co_id = '"+co_id+"' \n"+
+						"	and a.status_id = 'A' \n"+
+						"   and exists (SELECT *"
+						+ "				from rf_request_detail "
+						+ "			 	where rplf_no = '"+pv_no+"'"
+								+ " 	and co_id = '"+co_id+"' \n"+
+						"				and tcost_pcost_rec_id = a.rec_id \n"+
+						"				and status_id = 'A' \n"+		
+						") \n"+
 //						"	and a.server_id is null \n"+
 						"	--and a.status_id = 'A'\n" + 
 						"\n" + 
@@ -464,9 +472,16 @@ public class PVProoflistByBatch extends JDialog implements _GUI, ActionListener 
 						"	left join rf_entity b on a.entity_id = b.entity_id\n" + 
 						"	where a.rplf_no = '"+pv_no+"'\n" +
 						"	and a.co_id = '"+co_id+"' \n"+
+						"	and a.status_id = 'A' \n"+
+						"   and exists (SELECT *"
+						+ "				from rf_request_detail "
+						+ "			 	where rplf_no = '"+pv_no+"'"
+								+ " 	and co_id = '"+co_id+"' \n"+
+						"				and tcost_pcost_rec_id = a.rec_id \n"+
+						"				and status_id = 'A' \n"+
 //						"	and a.server_id is null \n"+
 						"	--and a.status_id = 'A'\n" + 
-						")a\n" + 
+						"))a\n" + 
 						"limit 1";
 
 		FncSystem.out("getClientName!!", sql);

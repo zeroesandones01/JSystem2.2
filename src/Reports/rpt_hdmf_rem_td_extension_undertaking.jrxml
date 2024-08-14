@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_hdmf_rem_td_extension_undertaking" pageWidth="612" pageHeight="936" columnWidth="576" leftMargin="18" rightMargin="18" topMargin="36" bottomMargin="36">
 	<property name="ireport.zoom" value="1.241842646118315"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="183"/>
+	<property name="ireport.y" value="39"/>
 	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.1" value="columnHeader"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.2" value="pageHeader"/>
@@ -50,7 +50,7 @@ split_part(c_unit, ' ', 4) as block,
 split_part(c_unit, ' ', 6) as lot,
 row_number() over(order by a.c_name) as "row",
 (select x.proj_alias from mf_project x where x.proj_id = a.c_proj_id and coalesce(b.server_id,'')=coalesce(x.server_id,'')) as project_alias, a.c_name,
-(select x.actual_date::date from rf_buyer_status x where x.entity_id = c_entity_id and x.proj_id = c_proj_id and x.pbl_id = c_pbl_id and x.seq_no::int = c_seq_no::int and x.status_id = 'A' and x.byrstatus_id = '95') as endorsement_date,
+(select x.actual_date::date from rf_buyer_status x where x.entity_id = c_entity_id and x.proj_id = c_proj_id and x.pbl_id = c_pbl_id and x.seq_no::int = c_seq_no::int and x.status_id = 'A' and x.byrstatus_id = '95' order by tran_date::DATE DESC LIMIT 1) as endorsement_date,
 (case when $P{batch_no} = '' then $P{user_name} else (select z.entity_name from rf_buyer_status x inner join em_employee y on x.created_by = y.emp_code inner join rf_entity z on y.entity_id = z.entity_id and coalesce(x.server_id,'')=coalesce(z.server_id,'') and coalesce(x.proj_server,'')= coalesce(z.proj_server,'')  where x.entity_id = c_entity_id and x.proj_id = c_proj_id and x.pbl_id = c_pbl_id and x.seq_no::int = c_seq_no::int and x.status_id = 'A' and x.byrstatus_id = '95') end) as created_by,
 (select x.doc_no from rf_tct_taxdec_monitoring_hd x where x.pbl_id = b.pbl_id and x.proj_id = b.proj_id and x.doc_type = '65' and x.status_id = 'A' and coalesce(x.server_id,'')=coalesce(b.server_id,'') and coalesce(x.proj_server,'')= coalesce(b.proj_server,'')ORDER BY x.date_created desc limit 1) as original_tct,
 /*(select x.doc_no from rf_tct_taxdec_monitoring_hd x where x.pbl_id = b.pbl_id and x.doc_type = '67' and x.status_id = 'A') as td_lot_no,

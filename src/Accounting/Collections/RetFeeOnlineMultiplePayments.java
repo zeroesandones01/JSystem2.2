@@ -101,16 +101,13 @@ public class RetFeeOnlineMultiplePayments extends _JInternalFrame implements _GU
 	private _JXTextField txtCompany;
 	private String co_id;
 	private _JXFormattedTextField txtTotRet;
-	private modelRetFeeMultiPayments modelRetFeeTotal;
 
-	private _JTableTotal tblRetListtotal;
-	private _JScrollPaneTotal scrollRetListRotal;
-	private JList rowHeaderPaymentList;
 	private String entity_id;
 	private String proj_id;
 	private String pbl_id;
 	private String seq_no;
 	private double total_amt;
+	private JList rowReadHeader;
 
 	public RetFeeOnlineMultiplePayments() {
 		super(title, true, true, true, true);
@@ -614,22 +611,14 @@ public class RetFeeOnlineMultiplePayments extends _JInternalFrame implements _GU
 						tablePaymentList = new _JTableMain(modelRetFeeList); 
 						//tablePaymentList.hideColumns("Entity ID", "Proj. ID", "PBL ID", "Seq No.");
 						
-						tablePaymentList.getColumnModel().getColumn(0).setPreferredWidth(200);
-						tablePaymentList.getColumnModel().getColumn(1).setPreferredWidth(120);
+						tablePaymentList.getColumnModel().getColumn(0).setPreferredWidth(30);
+						tablePaymentList.getColumnModel().getColumn(1).setPreferredWidth(200);
+						tablePaymentList.getColumnModel().getColumn(2).setPreferredWidth(120);
 						
 						scrollPaymentList.setViewportView(tablePaymentList);
-						tablePaymentList.setSortable(false);	
-						modelRetFeeList.addTableModelListener(new TableModelListener() {
-
-							@Override
-							public void tableChanged(TableModelEvent  e) {
-								
-							}
-						});
-
-
-			
+						tablePaymentList.setSortable(false);			
 					}
+
 				}
 				{
 					JPanel pnlButtons = new JPanel(new GridLayout(1, 4, 3, 3));
@@ -691,8 +680,9 @@ public class RetFeeOnlineMultiplePayments extends _JInternalFrame implements _GU
 													String.format("Retention saved with AR NO: %s", ar_no), "Save",
 													JOptionPane.INFORMATION_MESSAGE);
 											
+											cancelRetFeeMP();
 									}
-										cancelRetFeeMP();
+									
 								}																
 							}
 						});
@@ -868,7 +858,9 @@ private void cancelRetFeeMP() {
 		pbl_id = txtUnitId.getText(); 
 		seq_no = txtSeqNo.getText(); 
 		
-		modelRetFeeList.addRow(new Object [] { client_name, unit,  part_id, particular, amount, payable_retfee1, bal_retfee1, payable_retfee21, bat_retfee21, payable_retfee22, bal_retfee22,
+		int rowNumber = modelRetFeeList.getRowCount() + 1; 
+		
+		modelRetFeeList.addRow(new Object [] { rowNumber, client_name, unit,  part_id, particular, amount, payable_retfee1, bal_retfee1, payable_retfee21, bat_retfee21, payable_retfee22, bal_retfee22,
 				total_retention, entity_id, proj_id, pbl_id, seq_no});
 
 	}
@@ -904,31 +896,31 @@ private void cancelRetFeeMP() {
 		
 
 		for (int x = 0; x < modelRetFeeList.getRowCount(); x++) {
-			String name = (String) modelRetFeeList.getValueAt(x, 0);
+			String name = (String) modelRetFeeList.getValueAt(x, 1);
 			System.out.println("x = " + x);
 
 			if (name != null) {
 				amount = new BigDecimal("0.00");
-				System.out.printf("valuer of amount: %s", modelRetFeeList.getValueAt(x, 4));
+				System.out.printf("valuer of amount: %s", modelRetFeeList.getValueAt(x, 5));
 
 				try {
-					amount = (BigDecimal) modelRetFeeList.getValueAt(x, 4);
+					amount = (BigDecimal) modelRetFeeList.getValueAt(x, 5);
 				} catch (ClassCastException e) {
 
 					if (modelRetFeeList.getValueAt(x, 2) instanceof Double) {
-						amount = BigDecimal.valueOf((Double) modelRetFeeList.getValueAt(x, 4));
+						amount = BigDecimal.valueOf((Double) modelRetFeeList.getValueAt(x, 5));
 					}
 
 					if (modelRetFeeList.getValueAt(x, 2) instanceof Long) {
-						amount = BigDecimal.valueOf((Long) modelRetFeeList.getValueAt(x, 4));
+						amount = BigDecimal.valueOf((Long) modelRetFeeList.getValueAt(x, 5));
 					}
 				}
 
-				entity_id = (String) modelRetFeeList.getValueAt(x, 12);
-				proj_id = (String) modelRetFeeList.getValueAt(x, 13);
-				pbl_id = (String) modelRetFeeList.getValueAt(x, 14);
-				seq_no = (String) modelRetFeeList.getValueAt(x, 15);
-				part_type = (String) modelRetFeeList.getValueAt(x, 2);
+				entity_id = (String) modelRetFeeList.getValueAt(x, 13);
+				proj_id = (String) modelRetFeeList.getValueAt(x, 14);
+				pbl_id = (String) modelRetFeeList.getValueAt(x, 15);
+				seq_no = (String) modelRetFeeList.getValueAt(x, 16);
+				part_type = (String) modelRetFeeList.getValueAt(x, 3);
 		
 			}
 		
@@ -991,7 +983,7 @@ private void cancelRetFeeMP() {
 	private void computeTotal() {
 		total_amt = 0.00;
 		for (int i = 0; i < modelRetFeeList.getRowCount(); i++ ) {
-			Object amt = modelRetFeeList.getValueAt(i, 4);
+			Object amt = modelRetFeeList.getValueAt(i, 5);
 			total_amt += Double.parseDouble(amt.toString());
 			
 		}

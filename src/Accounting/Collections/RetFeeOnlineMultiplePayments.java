@@ -184,10 +184,11 @@ public class RetFeeOnlineMultiplePayments extends _JInternalFrame implements _GU
 										lookupClient.setEnabled(true);
 
 										String getClient = 	"SELECT a.entity_id, get_client_name(a.entity_id) as name, a.projcode, get_project_name(a.projcode) as proj, get_unit_description(a.projcode, a.pbl_id) as unit, a.pbl_id, a.seq_no \n"
-												+ "	from rf_sold_unit a\n"
-												+ "	left join rf_buyer_status b on a.entity_id = b.entity_id and a.projcode = b.proj_id and a.pbl_id = b.pbl_id and a.seq_no = b.seq_no\n"
-												+ "	left join mf_project c on a.projcode = c.proj_id \n"
-												+ "	where /*a.currentstatus != '02' and */ TRIM(b.byrstatus_id) = '32' and TRIM(b.status_id) = 'A' and c.co_id = '"+co_id+"';"; 
+												+ "from rf_sold_unit a\n"
+												+ "left join mf_project c on TRIM(a.projcode) = c.proj_id \n"
+												+ "where exists( Select * from rf_buyer_status b where a.entity_id = b.entity_id and a.projcode = b.proj_id and a.pbl_id = b.pbl_id and a.seq_no = b.seq_no and trim(b.byrstatus_id) = '32' and trim(b.status_id) = 'A') \n"
+												+ "and	a.currentstatus != '02'\n"
+												+ "and TRIM(a.status_id) = 'A' and c.co_id = '"+co_id+"';"; 
 
 										lookupClient.setLookupSQL(getClient);
 										btnState(true, false, true, false, true, false, false);
@@ -227,9 +228,6 @@ public class RetFeeOnlineMultiplePayments extends _JInternalFrame implements _GU
 										lookupPart.setEnabled(true);
 										lookupPart.setLookupSQL(sqlParticular()); 
 										DataState(true, true, true, true, true, true);
-
-
-
 
 									} else {
 										txtClient.setText("");
@@ -694,9 +692,8 @@ public class RetFeeOnlineMultiplePayments extends _JInternalFrame implements _GU
 													JOptionPane.INFORMATION_MESSAGE);
 											
 									}
-								}
-								
-								cancelRetFeeMP();
+										cancelRetFeeMP();
+								}																
 							}
 						});
 					}

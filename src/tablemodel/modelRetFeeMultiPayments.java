@@ -42,6 +42,7 @@ public class modelRetFeeMultiPayments extends DefaultTableModel {
 	}
 	
 	String [] COLUMNS = new String [] {
+			"#",
 			"Name", 	
 			"Unit", 	
 			"Part ID",
@@ -61,6 +62,7 @@ public class modelRetFeeMultiPayments extends DefaultTableModel {
 		};
 			
 	Class [] CLASS_TYPES = new Class []{
+			Integer.class,
 			String.class,
 			String.class,
 			String.class,
@@ -80,6 +82,7 @@ public class modelRetFeeMultiPayments extends DefaultTableModel {
 	};
 	
 	Boolean [] COLUMNS_EDITABLE = new Boolean [] {
+			false,
 			false, 
 			false, 
 			false, 

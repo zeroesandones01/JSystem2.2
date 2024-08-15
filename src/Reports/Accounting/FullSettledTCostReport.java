@@ -148,7 +148,7 @@ public class FullSettledTCostReport extends _JInternalFrame implements _GUI, Act
 						pnlSouth.add(btnPreview);
 						btnPreview.setActionCommand("preview");
 						btnPreview.setAlignmentX(0.5f);
-						btnPreview.setAlignmentY(0.5f);
+	  					btnPreview.setAlignmentY(0.5f);
 						btnPreview.setMaximumSize(new Dimension(180, 0));
 						btnPreview.setMnemonic(KeyEvent.VK_P);
 						btnPreview.addActionListener(this);

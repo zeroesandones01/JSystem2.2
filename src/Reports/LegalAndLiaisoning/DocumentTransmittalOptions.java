@@ -715,6 +715,11 @@ public class DocumentTransmittalOptions extends _JInternalFrame implements Actio
 				mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
 				FncReport.generateReport("/Reports/rptTCT_Stat_222.jasper", "Transmittal Form", mapParameters);	
 				}
+				//ADDED BY MONIQUE DTD 08-16-2024; REFER TO DCRF#3083
+					else if (lookupDescription.getValue().equals("227")) { 
+				mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
+				FncReport.generateReport("/Reports/rptTCT_Stat_227.jasper", "Transmittal Form", mapParameters);	
+				}
 				else {
 					mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
 					FncReport.generateReport("/Reports/rptTCT.jasper", "Transmittal Form", mapParameters);

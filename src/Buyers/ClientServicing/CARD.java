@@ -692,6 +692,7 @@ public class CARD extends _JInternalFrame implements _GUI, AncestorListener, Sea
 										hdmfInfo_maintab.displayHDMFPayments(entity_id, proj_id, pbl_id, seq_no.toString());
 										hdmfInfo_maintab.displayHDMFSchedule(entity_id, proj_id, pbl_id, seq_no.toString());
 										hdmfInfo_maintab.displayHDMFLoanReleasedDetail(entity_id, proj_id, pbl_id, seq_no.toString());
+										hdmfInfo_maintab.displayEPEBG2G(entity_id, proj_id, pbl_id, seq_no.toString());
 										tab_remConversion.DisplayHDMFREM(entity_id, proj_id, pbl_id, seq_no.toString());
 										
 										// ADDED BY MONIQUE DTD 10-23-2023; REFER TO DCRF#2766

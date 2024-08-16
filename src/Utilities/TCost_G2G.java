@@ -610,7 +610,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 		if(actionCommand.equals("Approve")) {
 			if(JOptionPane.showConfirmDialog(this.getTopLevelAncestor(), "Are you sure you want to approve?", actionCommand, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 				approveTaggedBatch(txtBatch.getText());
-				
+				previewTaggedBatch(txtBatch.getText());
 				JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Accounts succesfully approved", "Save", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}

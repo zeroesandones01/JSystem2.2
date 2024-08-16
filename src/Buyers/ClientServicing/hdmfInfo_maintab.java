@@ -35,6 +35,7 @@ import components.JTBorderFactory;
 import components._JTabbedPane;
 import components._JTableMain;
 import interfaces._GUI;
+import tablemodel.modelEPEBG2G;
 import tablemodel.model_hdmf_payments;
 import tablemodel.model_hdmf_postInspection_card;
 import tablemodel.model_hdmf_schedule;
@@ -55,6 +56,11 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 	private JXPanel panHDMFUnitInspection;
 	private JXPanel panHDMFDetails;
 	private JXPanel panHDMFREM;
+	private JXPanel pnlEPEBG2G;
+	private JScrollPane scrollEPEBG2G;
+	private static JList rowHeaderEPEBG2G;
+	private static _JTableMain tblEPEBG2G;
+	private static modelEPEBG2G modelEPEB;
 	
 	private JXPanel panHDMFDetails_schedule;
 	private JXPanel panHDMFDetails_payments;
@@ -226,6 +232,7 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 						CreateHDMFUnitInspectionTab();
 						CreateReleasedLoanDetailTab();
 						CreateLoanFilingStatusTab();
+						createEPEBG2G();
 						
 						panHDMFREM = new tab_remConversion(this); 
 						
@@ -234,9 +241,37 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 						tabHDMF.add("HDMF Unit Inpection", panHDMFUnitInspection);
 						tabHDMF.add("HDMF Details", panHDMFDetails);
 						tabHDMF.add("REM Conversion Status", panHDMFREM);
+						tabHDMF.add("G2G Receipts", pnlEPEBG2G);
 						
 					}
 				}
+			}
+		}
+	}
+	
+	private void createEPEBG2G(){
+		pnlEPEBG2G = new JXPanel(new BorderLayout(5, 5));
+		{
+			scrollEPEBG2G = new JScrollPane();
+			pnlEPEBG2G.add(scrollEPEBG2G, BorderLayout.CENTER);
+			scrollEPEBG2G.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			scrollEPEBG2G.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			scrollEPEBG2G.setBorder(line);
+			{
+				{
+					modelEPEB = new modelEPEBG2G();
+					tblEPEBG2G = new _JTableMain(modelEPEB);
+					
+					rowHeaderEPEBG2G = tblEPEBG2G.getRowHeader();
+					scrollEPEBG2G.setViewportView(tblEPEBG2G);
+					
+				}
+				{
+					rowHeaderEPEBG2G = tblEPEBG2G.getRowHeader();
+					rowHeaderEPEBG2G.setModel(new DefaultListModel());
+					scrollEPEBG2G.setRowHeaderView(rowHeaderEPEBG2G);
+					scrollEPEBG2G.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER,FncTables.getRowHeader_Header());
+				}	
 			}
 		}
 	}
@@ -1416,6 +1451,29 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 		
 		return blnRev;
 	};
+	
+	public static Boolean displayEPEBG2G(String entity_id, String proj_id, String pbl_id, String seq_no) {
+		Boolean blnRev = false;
+		FncTables.clearTable(modelEPEB);
+		DefaultListModel listModel = new DefaultListModel();
+		rowHeaderEPEBG2G.setModel(listModel); 
+	
+		pgSelect db = new pgSelect();
+		db.select("select * from view_card_epeb_g2g_tcost('"+entity_id+"', '"+proj_id+"', '"+pbl_id+"', '"+seq_no+"')");
+		if (db.isNotNull()){
+			for (int x = 0; x < db.getRowCount(); x++) {
+				modelEPEB.addRow(db.getResult()[x]);
+				listModel.addElement(modelEPEB.getRowCount());
+			}
+			blnRev = true;
+		} else{
+			blnRev = false;
+		};
+		
+		tblEPEBG2G.packAll();
+				
+		return blnRev;
+	}
 	
 	public static Boolean displayHDMFUnitInspection(String entity_id, String proj_id, String pbl_id, String seq_no) {
 		Boolean blnRev = false;

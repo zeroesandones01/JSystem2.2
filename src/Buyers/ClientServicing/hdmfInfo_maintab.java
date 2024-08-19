@@ -21,21 +21,29 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
 
 import org.jdesktop.swingx.JXPanel;
 
 import Database.pgSelect;
 import FormattedTextField._JXFormattedTextField;
+import Functions.FncBigDecimal;
 import Functions.FncGlobal;
 import Functions.FncLookAndFeel;
 import Functions.FncTables;
 import Functions.UserInfo;
 import Renderer.DateRenderer;
 import components.JTBorderFactory;
+import components._JScrollPaneMain;
+import components._JScrollPaneTotal;
 import components._JTabbedPane;
 import components._JTableMain;
+import components._JTableTotal;
 import interfaces._GUI;
 import tablemodel.modelEPEBG2G;
+import tablemodel.modelNTPWorkItems;
 import tablemodel.model_hdmf_payments;
 import tablemodel.model_hdmf_postInspection_card;
 import tablemodel.model_hdmf_schedule;
@@ -57,10 +65,14 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 	private JXPanel panHDMFDetails;
 	private JXPanel panHDMFREM;
 	private JXPanel pnlEPEBG2G;
-	private JScrollPane scrollEPEBG2G;
+	private _JScrollPaneMain scrollEPEBG2G;
 	private static JList rowHeaderEPEBG2G;
 	private static _JTableMain tblEPEBG2G;
 	private static modelEPEBG2G modelEPEB;
+	
+	private _JScrollPaneTotal scrollG2GReceiptTotal;
+	private _JTableTotal tblG2GReceiptTotal;
+	private static modelEPEBG2G modelG2GReceiptTotal;
 	
 	private JXPanel panHDMFDetails_schedule;
 	private JXPanel panHDMFDetails_payments;
@@ -252,10 +264,9 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 	private void createEPEBG2G(){
 		pnlEPEBG2G = new JXPanel(new BorderLayout(5, 5));
 		{
-			scrollEPEBG2G = new JScrollPane();
+			scrollEPEBG2G = new _JScrollPaneMain();
 			pnlEPEBG2G.add(scrollEPEBG2G, BorderLayout.CENTER);
 			scrollEPEBG2G.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-			scrollEPEBG2G.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			scrollEPEBG2G.setBorder(line);
 			{
 				{
@@ -264,6 +275,24 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 					
 					rowHeaderEPEBG2G = tblEPEBG2G.getRowHeader();
 					scrollEPEBG2G.setViewportView(tblEPEBG2G);
+					
+					modelEPEB.addTableModelListener(new TableModelListener() {
+						public void tableChanged(TableModelEvent e) {
+							if (e.getType() == TableModelEvent.INSERT) {
+								((DefaultListModel) rowHeaderEPEBG2G.getModel())
+								.addElement(modelEPEB.getRowCount());
+								scrollG2GReceiptTotal.setRowHeaderView(FncTables
+										.getRowHeader_Footer(Integer.toString(modelEPEB.getRowCount())));
+							}
+							if (e.getType() == TableModelEvent.DELETE) {
+								if (modelEPEB.getRowCount() == 0) {
+									rowHeaderEPEBG2G.setModel(new DefaultListModel());
+									scrollG2GReceiptTotal.setRowHeaderView(FncTables.getRowHeader_Footer(
+											Integer.toString(modelEPEB.getRowCount())));
+								}
+							}
+						}
+					});
 					
 				}
 				{
@@ -274,6 +303,30 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 				}	
 			}
 		}
+		{
+			scrollG2GReceiptTotal = new _JScrollPaneTotal(scrollEPEBG2G);
+			pnlEPEBG2G.add(scrollG2GReceiptTotal, BorderLayout.SOUTH);
+			{
+				modelG2GReceiptTotal = new modelEPEBG2G();
+				modelG2GReceiptTotal.addRow(new Object[] { null, "Total", null, null, null, null});
+
+				tblG2GReceiptTotal = new _JTableTotal(modelG2GReceiptTotal, tblEPEBG2G);
+				scrollG2GReceiptTotal.setViewportView(tblG2GReceiptTotal);
+
+				tblG2GReceiptTotal.setTotalLabel(1);
+			}
+		}
+		
+	}
+	
+	private static void totalG2GReceipt(DefaultTableModel modelMain, DefaultTableModel modelTotal) {
+		BigDecimal amount = new BigDecimal("0.00");
+
+		for (int x = 0; x < modelMain.getRowCount(); x++) {
+			amount = amount.add((BigDecimal) ((BigDecimal) modelMain.getValueAt(x, 2) == null ? new BigDecimal("0.00")
+					: modelMain.getValueAt(x, 2)));
+		}
+		modelTotal.setValueAt(amount, 0, 2);
 	}
 
 	private void CreateLoanFilingStatusTab() {
@@ -1455,19 +1508,19 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 	public static Boolean displayEPEBG2G(String entity_id, String proj_id, String pbl_id, String seq_no) {
 		Boolean blnRev = false;
 		FncTables.clearTable(modelEPEB);
-		DefaultListModel listModel = new DefaultListModel();
-		rowHeaderEPEBG2G.setModel(listModel); 
 	
 		pgSelect db = new pgSelect();
 		db.select("select * from view_card_epeb_g2g_tcost('"+entity_id+"', '"+proj_id+"', '"+pbl_id+"', '"+seq_no+"')");
 		if (db.isNotNull()){
 			for (int x = 0; x < db.getRowCount(); x++) {
 				modelEPEB.addRow(db.getResult()[x]);
-				listModel.addElement(modelEPEB.getRowCount());
 			}
 			blnRev = true;
+			
+			totalG2GReceipt(modelEPEB, modelG2GReceiptTotal);
 		} else{
 			blnRev = false;
+			modelG2GReceiptTotal.setValueAt(FncBigDecimal.zeroValue(), 0, 2);
 		};
 		
 		tblEPEBG2G.packAll();

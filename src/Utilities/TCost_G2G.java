@@ -499,6 +499,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 		pgSelect db = new pgSelect();
 		String SQL = "SELECT sp_save_tcost_g2g('"+epeb_type+"',ARRAY["+entity_id+"]::VARCHAR[], ARRAY["+proj_id+"]::VARCHAR[], ARRAY["+pbl_id+"]::VARCHAR[], ARRAY["+seq_no+"]::INT[], ARRAY["+tcost_amt+"]::NUMERIC[] ,'"+UserInfo.EmployeeCode+"')";
 		db.select(SQL);
+		FncSystem.out("Display SQL for saving", SQL);
 
 		if(db.isNotNull()){
 			batch_no = (String) db.getResult()[0][0];
@@ -611,6 +612,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 			if(JOptionPane.showConfirmDialog(this.getTopLevelAncestor(), "Are you sure you want to approve?", actionCommand, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 				approveTaggedBatch(txtBatch.getText());
 				previewTaggedBatch(txtBatch.getText());
+				initializeComponents();
 				JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Accounts succesfully approved", "Save", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}

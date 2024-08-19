@@ -830,7 +830,7 @@ public class DocProcStatus extends JPanel implements ActionListener {
 						if(status_code.equals("177") || status_code.equals("184") || status_code.equals("188") || status_code.equals("189") || status_code.equals("190") || status_code.equals("191")
 								|| status_code.equals("195") || status_code.equals("196") || status_code.equals("197") || status_code.equals("198") || status_code.equals("201") || status_code.equals("202") || status_code.equals("203") 
 									|| status_code.equals("204") || status_code.equals("205") || status_code.equals("206") || status_code.equals("207") || status_code.equals("208") || status_code.equals("209") || status_code.equals("100")
-										|| status_code.equals("210")|| status_code.equals("215") || status_code.equals("216") || status_code.equals("217") || status_code.equals("194") || status_code.equals("218")){
+										|| status_code.equals("210")|| status_code.equals("215") || status_code.equals("216") || status_code.equals("217") || status_code.equals("194") || status_code.equals("218") || status_code.equals("227")){
 
 							if(tblProcStatus.getSelectedRows().length == 0) {
 

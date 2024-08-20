@@ -17,7 +17,7 @@ import Functions.FncReport;
 import Functions.FncSystem;
 import Functions.FncTables;
 import Functions.UserInfo;
-import tablemodel.modelPagibigNotices;
+import tablemodel.modelSpecialNotices;
 
 public class _PagibigNotices {
 
@@ -118,7 +118,7 @@ public class _PagibigNotices {
 		return blnProceed;
 	}
 
-	public static void displayNTC_Qualified_First_Notice(modelPagibigNotices model, JList rowHeader,String co_id ,String proj_id, String phase ,String batch_no, Boolean or_below){
+	public static void displayNTC_Qualified_First_Notice(modelSpecialNotices model, JList rowHeader,String co_id ,String proj_id, String phase ,String batch_no, Boolean or_below){
 		if(model != null && rowHeader != null){
 			FncTables.clearTable(model);
 
@@ -143,7 +143,7 @@ public class _PagibigNotices {
 		}
 	}
 	
-	public static void displayQualifiedNTC_RequiredCompletion(modelPagibigNotices model, JList rowHeader,String co_id ,String proj_id, String phase ,String batch_no) {
+	public static void displayQualifiedNTC_RequiredCompletion(modelSpecialNotices model, JList rowHeader,String co_id ,String proj_id, String phase ,String batch_no) {
 		if(model != null && rowHeader != null){
 			FncTables.clearTable(model);
 
@@ -168,7 +168,7 @@ public class _PagibigNotices {
 		}
 	}
 	
-	public static void displayQualifiedPmt_Moratorium_Notice(modelPagibigNotices model, JList rowHeader, String co_id, String proj_id, String phase, String batch_no) {
+	public static void displayQualifiedPmt_Moratorium_Notice(modelSpecialNotices model, JList rowHeader, String co_id, String proj_id, String phase, String batch_no) {
 		if(model != null && rowHeader != null) {
 			FncTables.clearTable(model);
 			
@@ -192,7 +192,7 @@ public class _PagibigNotices {
 		}
 	}
 
-	public static void displayNTC_Qualified_Final_Notice(modelPagibigNotices model, JList rowHeader, String co_id ,String proj_id, String phase ,String batch_no, Boolean or_date_below){
+	public static void displayNTC_Qualified_Final_Notice(modelSpecialNotices model, JList rowHeader, String co_id ,String proj_id, String phase ,String batch_no, Boolean or_date_below){
 		if(model != null && rowHeader != null){
 			FncTables.clearTable(model);
 
@@ -217,7 +217,7 @@ public class _PagibigNotices {
 		}
 	}
 	
-	public static void displayOffREMAccts(modelPagibigNotices model, JList rowHeader, String co_id, String proj_id, String phase, String batch_no) {
+	public static void displayOffREMAccts(modelSpecialNotices model, JList rowHeader, String co_id, String proj_id, String phase, String batch_no) {
 		if(model != null && rowHeader != null){
 			FncTables.clearTable(model);
 
@@ -242,7 +242,7 @@ public class _PagibigNotices {
 		}
 	}
 
-	public static void displayNOA_Qualified_FirstNotice(modelPagibigNotices model, JList rowHeader, String co_id ,String proj_id, String batch_no){
+	public static void displayNOA_Qualified_FirstNotice(modelSpecialNotices model, JList rowHeader, String co_id ,String proj_id, String batch_no){
 		if(model != null && rowHeader != null){
 			model.clear();
 
@@ -263,7 +263,7 @@ public class _PagibigNotices {
 			}
 		}
 	}
-	public static void displayNOA_Loan_Approval(modelPagibigNotices model, JList rowHeader, String co_id ,String proj_id, String batch_no){
+	public static void displayNOA_Loan_Approval(modelSpecialNotices model, JList rowHeader, String co_id ,String proj_id, String batch_no){
 		if(model != null && rowHeader != null){
 			model.clear();
 
@@ -284,7 +284,7 @@ public class _PagibigNotices {
 			}
 		}
 	}
-	public static void displayNotice_Filling_Hdmf(modelPagibigNotices model, JList rowHeader, String co_id ,String proj_id, String batch_no){
+	public static void displayNotice_Filling_Hdmf(modelSpecialNotices model, JList rowHeader, String co_id ,String proj_id, String batch_no){
 		if(model != null && rowHeader != null){
 			model.clear();
 
@@ -304,7 +304,7 @@ public class _PagibigNotices {
 			}
 		}
 	}
-	public static void displayNotice_Post_Filing_Hdmf(modelPagibigNotices model, JList rowHeader, String co_id ,String proj_id, String batch_no){
+	public static void displayNotice_Post_Filing_Hdmf(modelSpecialNotices model, JList rowHeader, String co_id ,String proj_id, String batch_no){
 		if(model != null && rowHeader != null){
 			model.clear();
 
@@ -328,7 +328,7 @@ public class _PagibigNotices {
 			JOptionPane.showMessageDialog(FncGlobal.homeMDI, "No Qualified Accounts", "Post Filing", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-	public static void displayNOA_Qualified_FinalNotice(modelPagibigNotices model, JList rowHeader, String co_id ,String proj_id, String batch_no){
+	public static void displayNOA_Qualified_FinalNotice(modelSpecialNotices model, JList rowHeader, String co_id ,String proj_id, String batch_no){
 		if(model != null && rowHeader != null){
 			model.clear();
 
@@ -350,7 +350,7 @@ public class _PagibigNotices {
 		}
 	}
 
-	public static void displayNoticeTurnover_HDMF_Qualified(modelPagibigNotices model, JList rowHeader, String co_id, String proj_id, String batch_no){
+	public static void displayNoticeTurnover_HDMF_Qualified(modelSpecialNotices model, JList rowHeader, String co_id, String proj_id, String batch_no){
 		if(model != null && rowHeader != null){
 			model.clear();
 
@@ -370,7 +370,7 @@ public class _PagibigNotices {
 		}
 	}
 
-	public static void displayNoticeTurnover_Cash_Qualified(modelPagibigNotices model, JList rowHeader, String co_id, String proj_id, String phase ,String batch_no){
+	public static void displayNoticeTurnover_Cash_Qualified(modelSpecialNotices model, JList rowHeader, String co_id, String proj_id, String phase ,String batch_no){
 		if(model != null && rowHeader != null){
 			model.clear();
 
@@ -390,7 +390,7 @@ public class _PagibigNotices {
 		}
 	}
 	
-	public static void displayNoticeTurnover_LotOnly_Qualified(modelPagibigNotices model, JList rowHeader, String co_id, String proj_id, String phase ,String batch_no){
+	public static void displayNoticeTurnover_LotOnly_Qualified(modelSpecialNotices model, JList rowHeader, String co_id, String proj_id, String phase ,String batch_no){
 		if(model != null && rowHeader != null){
 			model.clear();
 
@@ -410,7 +410,7 @@ public class _PagibigNotices {
 		}
 	}
 	
-	public static void displayNoticeAssumedTurnover(modelPagibigNotices model, JList rowHeader, String co_id, String proj_id, String phase ,String batch_no){
+	public static void displayNoticeAssumedTurnover(modelSpecialNotices model, JList rowHeader, String co_id, String proj_id, String phase ,String batch_no){
 		if(model != null && rowHeader != null){
 			model.clear();
 
@@ -430,7 +430,7 @@ public class _PagibigNotices {
 		}
 	}
 	
-	public static void displayNoticePostFiling_FirstNotice_Qualified(modelPagibigNotices model, JList rowHeader, String co_id, String proj_id, String phase ,String batch_no){
+	public static void displayNoticePostFiling_FirstNotice_Qualified(modelSpecialNotices model, JList rowHeader, String co_id, String proj_id, String phase ,String batch_no){
 		if(model != null && rowHeader != null){
 			model.clear();
 			
@@ -451,7 +451,7 @@ public class _PagibigNotices {
 		}
 	}
 	
-	public static void displayNoticePostFiling_FinalNotice_Qualified(modelPagibigNotices model, JList rowHeader, String co_id, String proj_id, String phase, String batch_no){
+	public static void displayNoticePostFiling_FinalNotice_Qualified(modelSpecialNotices model, JList rowHeader, String co_id, String proj_id, String phase, String batch_no){
 		if(model != null && rowHeader != null){
 			model.clear();
 			
@@ -473,7 +473,7 @@ public class _PagibigNotices {
 		}
 	}
 
-	public static void displayNoticeTurnover_BankFinance_Qualified(modelPagibigNotices model, JList rowHeader, String co_id, String proj_id, String batch_no){
+	public static void displayNoticeTurnover_BankFinance_Qualified(modelSpecialNotices model, JList rowHeader, String co_id, String proj_id, String batch_no){
 		if(model != null && rowHeader != null){
 			model.clear();
 
@@ -814,7 +814,7 @@ public class _PagibigNotices {
 		return batch_no;
 	}*/
 
-	public static String saveNTC_IncompleteDocs_FinalNotice(modelPagibigNotices model){
+	public static String saveNTC_IncompleteDocs_FinalNotice(modelSpecialNotices model){
 
 		String batch_no = "";
 
@@ -860,7 +860,7 @@ public class _PagibigNotices {
 	}
 	
 	
-	public static String saveNTC_Required_Completion(modelPagibigNotices model){
+	public static String saveNTC_Required_Completion(modelSpecialNotices model){
 
 		String batch_no = "";
 
@@ -905,7 +905,7 @@ public class _PagibigNotices {
 		return batch_no;
 	}
 	
-	public static String saveOff_Rem_Accts(modelPagibigNotices model){
+	public static String saveOff_Rem_Accts(modelSpecialNotices model){
 
 		String batch_no = "";
 
@@ -950,7 +950,7 @@ public class _PagibigNotices {
 		return batch_no;
 	}
 	
-	public static String savePmt_Moratorium_Notice(modelPagibigNotices model){
+	public static String savePmt_Moratorium_Notice(modelSpecialNotices model){
 
 		String batch_no = "";
 
@@ -1242,7 +1242,7 @@ public class _PagibigNotices {
 		}
 	}
 
-	public static void displayQualifiedForFirstFiling_Notice(modelPagibigNotices model, JList rowHeader, String strNotice, String strBatch, String co_id, String proj_id, String phase){
+	public static void displayQualifiedForFirstFiling_Notice(modelSpecialNotices model, JList rowHeader, String strNotice, String strBatch, String co_id, String proj_id, String phase){
 		if(model != null && rowHeader != null){
 			FncTables.clearTable(model);
 			DefaultListModel listModel = new DefaultListModel();
@@ -1270,7 +1270,7 @@ public class _PagibigNotices {
 	
 	
 
-	public static String save_QualifiedForFirstFiling_FinalNotice(modelPagibigNotices model) {
+	public static String save_QualifiedForFirstFiling_FinalNotice(modelSpecialNotices model) {
 		Boolean blnWith = false;
 		String strBat = FncGlobal.GetString("select trim(to_char((max(batch_no::int) + 1), '0000000000')) from rf_client_notices");
 
@@ -1325,7 +1325,7 @@ public class _PagibigNotices {
 		return strBat;
 	}
 
-	public static String save_QualifiedForFirstFiling_FirstNotice(modelPagibigNotices model) {
+	public static String save_QualifiedForFirstFiling_FirstNotice(modelSpecialNotices model) {
 		Boolean blnWith = false;
 		String strBat = FncGlobal.GetString("select trim(to_char((max(batch_no::int) + 1), '0000000000')) from rf_client_notices");
 
@@ -1393,7 +1393,7 @@ public class _PagibigNotices {
 		return batch_no;
 	}
 	
-	public static void displayNoticeLoanReturned_FirstNotice(modelPagibigNotices model, JList rowHeader, String batch_no){
+	public static void displayNoticeLoanReturned_FirstNotice(modelSpecialNotices model, JList rowHeader, String batch_no){
 		if(model != null && rowHeader != null){
 			FncTables.clearTable(model);
 			DefaultListModel listModel = new DefaultListModel();
@@ -1419,7 +1419,7 @@ public class _PagibigNotices {
 		}
 	}
 	
-	public static String save_LoanReturned_FinalNotice(modelPagibigNotices model) {
+	public static String save_LoanReturned_FinalNotice(modelSpecialNotices model) {
 		Boolean blnWith = false;
 		String strBat = FncGlobal.GetString("select trim(to_char((max(batch_no::int) + 1), '0000000000')) from rf_client_notices");
 
@@ -1474,7 +1474,7 @@ public class _PagibigNotices {
 		return strBat;
 	}
 	
-	public static void displayNoticeLoanReturned_FinalNotice(modelPagibigNotices model, JList rowHeader, String batch_no){
+	public static void displayNoticeLoanReturned_FinalNotice(modelSpecialNotices model, JList rowHeader, String batch_no){
 		if(model != null && rowHeader != null){
 			FncTables.clearTable(model);
 			DefaultListModel listModel = new DefaultListModel();

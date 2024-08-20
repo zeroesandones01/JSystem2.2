@@ -53,7 +53,7 @@ import components.JTBorderFactory;
 import components._JInternalFrame;
 import components._JTableMain;
 import interfaces._GUI;
-import tablemodel.modelPagibigNotices;
+import tablemodel.modelSpecialNotices;
 
 public class PagibigNotices extends _JInternalFrame implements ActionListener, _GUI {
 
@@ -90,7 +90,7 @@ public class PagibigNotices extends _JInternalFrame implements ActionListener, _
 	private JRadioButton rbtnORDateBelow;
 
 	private _JTableMain tblPagibigNotices;
-	private modelPagibigNotices modelPagibigNotices;
+	private modelSpecialNotices modelPagibigNotices;
 	private JScrollPane scrollPagibigNotices;
 	private JList rowHeaderPagibigNotices;
 
@@ -603,7 +603,7 @@ public class PagibigNotices extends _JInternalFrame implements ActionListener, _
 								pnlTbl.add(scrollPagibigNotices,bagTwo);
 								{
 
-									modelPagibigNotices = new modelPagibigNotices();
+									modelPagibigNotices = new modelSpecialNotices();
 
 									tblPagibigNotices = new _JTableMain(modelPagibigNotices);
 									scrollPagibigNotices.setViewportView(tblPagibigNotices);

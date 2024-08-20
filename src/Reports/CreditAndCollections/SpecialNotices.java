@@ -647,7 +647,7 @@ public class SpecialNotices extends _JInternalFrame implements ActionListener, _
 
 		System.out.printf("Display value of Batch No: %s%n", txtBatchID.getValue());
 		
-		FncReport.generateReport("/Reports/rptNoticeOfTurnOver_Cash.jasper", "Notice of Turn-over (Cash)", mapParameters);
+		FncReport.generateReport("/Reports/rptNoticeForTCT_Under_Buyers_Name.jasper", "Notice for TCT - Under Buyers Name", mapParameters);
 	}
 
 	

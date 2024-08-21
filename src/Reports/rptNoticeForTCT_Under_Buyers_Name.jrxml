@@ -14,8 +14,9 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT * FROM view_ntc_for_tct_under_buyers_name(string_to_array($P{entity_id}, ',')::VARCHAR[],string_to_array($P{proj_id},',')::VARCHAR[],string_to_array($P{pbl_id}, ',')::VARCHAR[],string_to_array($P{seq_no}, ',')::VARCHAR[],$P{batch_no} , $P{from_card});]]>
+		<![CDATA[SELECT FORMAT('PH %s BK %s LT %s', TRIM(c_phase), TRIM(c_block), TRIM(c_lot)) as unit, * FROM view_ntc_for_tct_ecar_processing(string_to_array($P{entity_id}, ',')::VARCHAR[],string_to_array($P{proj_id},',')::VARCHAR[],string_to_array($P{pbl_id}, ',')::VARCHAR[],string_to_array($P{seq_no}, ',')::VARCHAR[],$P{batch_no} , $P{from_card});]]>
 	</queryString>
+	<field name="unit" class="java.lang.String"/>
 	<field name="c_company_name" class="java.lang.String"/>
 	<field name="c_company_address" class="java.lang.String"/>
 	<field name="c_notice_date" class="java.sql.Timestamp"/>
@@ -46,21 +47,21 @@
 	<detail>
 		<band height="685" splitType="Stretch">
 			<textField>
-				<reportElement x="22" y="55" width="377" height="14"/>
+				<reportElement x="22" y="65" width="377" height="14"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Tahoma" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_address_no}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="22" y="69" width="377" height="14"/>
+				<reportElement x="22" y="79" width="377" height="14"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Tahoma" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_brgy}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="22" y="41" width="377" height="14"/>
+				<reportElement x="22" y="51" width="377" height="14"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Tahoma" isBold="true"/>
 				</textElement>
@@ -74,14 +75,14 @@
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{c_notice_date}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="22" y="83" width="377" height="14"/>
+				<reportElement x="22" y="93" width="377" height="14"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Tahoma" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{c_city}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="22" y="150" width="537" height="75"/>
+				<reportElement x="22" y="152" width="537" height="75"/>
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
 					<font fontName="Tahoma" isBold="false"/>
 				</textElement>
@@ -100,14 +101,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["Very truly yours,"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="22" y="126" width="377" height="14"/>
+				<reportElement x="22" y="128" width="377" height="14"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="Tahoma" isBold="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Dear "+$F{c_entity_name_header}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="22" y="232" width="537" height="89"/>
+				<reportElement x="22" y="234" width="537" height="89"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" markup="styled">
 					<font fontName="Tahoma" isBold="false"/>
 				</textElement>
@@ -134,7 +135,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["Ms. Nelia D. Flores"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="22" y="328" width="537" height="209"/>
+				<reportElement x="22" y="330" width="537" height="209"/>
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
 					<font fontName="Tahoma" isBold="false"/>
 				</textElement>
@@ -167,6 +168,20 @@
 				</textElement>
 				<text><![CDATA[Note: This is a computer-generated document and if issued without alteration, this does not require a signature.]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="350" y="16" width="199" height="14"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Project : "+$F{c_proj_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="350" y="30" width="199" height="14"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Ph/Blk/Lot : "+$F{unit}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 </jasperReport>

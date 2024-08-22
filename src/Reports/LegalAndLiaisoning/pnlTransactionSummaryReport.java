@@ -590,7 +590,7 @@ public class pnlTransactionSummaryReport extends JDialog implements _GUI, Action
 				"left join rf_entity c on b.entity_id = c.entity_id\n" + 
 				"where a.co_id = '"+co_id+"'\n" + 
 				"and a.status_id = 'A'\n" + 
-				"and a.tcostid_dl in ('034','230')\n" + 
+				"and a.tcostid_dl in ('034','230', '261', '166', '256')\n" + 
 				"and tran_date = '"+tran_date+"'::date\n" + 
 				"group by a.batch_no, a.tcostid_dl, c.entity_name, a.rplf_no, a.tran_date, a.status_id, a.date_created\n" + 
 				"order by a.batch_no DESC, a.tcostid_dl DESC";

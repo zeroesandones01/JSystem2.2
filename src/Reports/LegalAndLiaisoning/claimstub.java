@@ -299,7 +299,7 @@ public class claimstub extends _JInternalFrame implements _GUI, ActionListener {
 	private void preview() {
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
 		
-		mapParameters.put("client", company.concat(" - ".concat("Carl Francis Rapadas")));
+		mapParameters.put("client", company.concat(" - ".concat("Evebrett Vargas Domanais"))); 
 		//mapParameters.put("amount", txtamount.getValued());
 		mapParameters.put("or_no", txtor_no.getText());
 		mapParameters.put("or_date", ordate.getDate());

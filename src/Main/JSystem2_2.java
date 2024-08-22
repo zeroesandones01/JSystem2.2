@@ -26,13 +26,13 @@ public class JSystem2_2 {
 			}
 		}*/
 		
-		JOptionPane.showMessageDialog(null, "Cannot login system is under maintenance", "Login", JOptionPane.WARNING_MESSAGE);
+		//JOptionPane.showMessageDialog(null, "Cannot login system is under maintenance", "Login", JOptionPane.WARNING_MESSAGE);
 
-//		FncGlobal.parentFrame = _JXLoginPane.showLoginFrame(FncGlobal.login);
-//		//FncGlobal.parentFrame = JXLoginPane.showLoginFrame(FncGlobal.login);
-//		FncGlobal.parentFrame.setTitle(FncGlobal.ORIGINAL_TITLE);
-//		FncGlobal.parentFrame.setIconImage(FncLookAndFeel.iconSystem);
-//		FncGlobal.parentFrame.pack();
-//		FncGlobal.parentFrame.setVisible(true);
+		FncGlobal.parentFrame = _JXLoginPane.showLoginFrame(FncGlobal.login);
+		//FncGlobal.parentFrame = JXLoginPane.showLoginFrame(FncGlobal.login);
+		FncGlobal.parentFrame.setTitle(FncGlobal.ORIGINAL_TITLE);
+		FncGlobal.parentFrame.setIconImage(FncLookAndFeel.iconSystem);
+		FncGlobal.parentFrame.pack();
+		FncGlobal.parentFrame.setVisible(true);
 	}
 }

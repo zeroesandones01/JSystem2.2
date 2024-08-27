@@ -328,9 +328,10 @@ public class _NoticeToProceed extends _DB {
 				"where a.ntp_no = '"+ ntp_no +"'\n" +
 				"and a.status_id != 'I'\n" +
 
-				"order by ntp_no desc, a.rec_id;";
+				//"order by ntp_no desc, a.rec_id;";
+				"order by billing_date asc";//Added by Erick 2024-08-27
 
-		//System.out.printf("Progress Billing%n%s", strSQL);
+		System.out.printf("Progress Billing%n%s", strSQL);
 		pgSelect db = new pgSelect();
 		db.select(strSQL);
 

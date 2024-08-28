@@ -66,7 +66,7 @@ public class FncGlobal {
 	//Changes in Fnc Global hindi ksma sa push
 	public static String ORIGINAL_TITLE = "JSystem 2.2"; 
 	//public static String ORIGINAL_TITLE = "JSystem 2.2 Anita"; 
-//	public static String ORIGINAL_TITLE = "JSystem 2.2 - Beta Testing";
+	//public static String ORIGINAL_TITLE = "JSystem 2.2 - Beta Testing";
 //	public static String ORIGINAL_TITLE = "JSystem 2.2 - Offline Montalban";
 	//public static String ORIGINAL_TITLE = "JSystem 2.2 - Beta(Testing)";
 	//public static String ORIGINAL_TITLE = "JSystem 2.2 Offline";  p
@@ -87,9 +87,9 @@ public class FncGlobal {
 	/**	Server Settings	**/ /**	Server Settings	**/ /**	Server Settings	**/
 	/*********************/ /*********************/ /*********************/
 	
-	public static String connectionURL = "jdbc:postgresql://jsystemdb.cenqhomes.com/terraverde_summit?ApplicationName=JSystem2.2";
+	public static String connectionURL = "jdbc:postgresql://jsystemdb.cenqhomes.com:5432/terraverde_summit?ApplicationName=JSystem2.2";
 //	public static String connectionURL = "jdbc:postgresql://localhost:5432/terraverde_montalban_offline?ApplicationName=JSystem2.2";
-	//public static String connectionURL = "jdbc:postgresql://192.168.10.95:5432/terraverde_summit_monique_offline_test?ApplicationName=JSystem2.2 Beta";
+	//public static String connectionURL = "jdbc:postgresql://192.168.10.169:5432/terraverde_summit_test?ApplicationName=JSystem2.2 Beta";
 	//public static String connectionURL = "jdbc:postgresql://localhost:5432/Daily_debug?ApplicationName=JSystem2.2";
 	//public static String connectionURL = "jdbc:postgresql://192.168.10.109:5432/terraverde_summit_lester_latest?ApplicationName=JSystem2.2";
 	//public static String connectionURL = "jdbc:postgresql://localhost:5432/terraverde_summit_local?ApplicationName=JSystem2.2";
@@ -198,11 +198,11 @@ public class FncGlobal {
 		/**	Server Settings	**/ /**	Server Settings	**/ /**	Server Settings	**/
 		/*********************/ /*********************/ /*********************/
 		//Servers to be deployed in 7th Floor (Live)
-		mapURL.put("Summit - Terraverde Live", "jdbc:postgresql://jsystemdb.cenqhomes.com/terraverde_summit?ApplicationName=JSystem2.2");
+		mapURL.put("Summit - Terraverde Live", "jdbc:postgresql://jsystemdb.cenqhomes.com:5432/terraverde_summit?ApplicationName=JSystem2.2");
 //		mapURL.put("Summit - Beta Testing", "jdbc:postgresql://localhost:5432/terraverde_montalban_offline?ApplicationName=JSystem2.2");
 		//mapURL.put("Summit - Beta Testing", "jdbc:postgresql://localhost:5432/Daily_debug?ApplicationName=JSystem2.2");
 		//mapURL.put("Summit - Terraverde Live", "jdbc:postgresql://192.168.10.109:5432/terraverde_summit_lester_latest?ApplicationName=JSystem2.2");
-		//mapURL.put("Summit - Terraverde Testing", "jdbc:postgresql://192.168.10.95:5432/terraverde_summit_monique_offline_test?ApplicationName=JSystem2.2 Beta");
+		//mapURL.put("Summit - Terraverde Testing", "jdbc:postgresql://192.168.10.169:5432/terraverde_summit_test?ApplicationName=JSystem2.2 Beta");
 		//mapURL.put("Summit - Terraverde Beta", "jdbc:postgresql://jsystemdb.cenqhomes.com:5432/terraverde_summit_latest?ApplicationName=JSystem2.2");
 		//mapURL.put("Summit - Terraverde Live", "jdbc:postgresql://192.168.10.73/local_terraverde_summit?ApplicationName=JSystem2.2");
 		//mapURL.put("Summit - Terraverde Live", "jdbc:postgresql://177.177.177.179:5432/terraverde_summit?ApplicationName=JSystem2.2");
@@ -258,12 +258,11 @@ public class FncGlobal {
 		
 		System.out.println("connectionURL: "+connectionURL);
 		
-		if(ip_address.equals("177.177.178.199") || ip_address.equals("177.177.178.19") || ip_address.equals("177.177.178.164") || ip_address.equals("177.177.178.119") || ip_address.equals("177.177.178.144") || ip_address.equals("177.177.178.79") || ip_address.equals("177.177.178.165") || ip_address.equals("177.177.176.90") || ip_address.equals("177.177.177.13") 
-				|| ip_address.equals("192.168.10.170")) {
-			mapURL.put("Summit - Terraverde Live", "jdbc:postgresql://192.168.10.15:5432/terraverde_summit?ApplicationName=JSystem2.2");
-			System.out.println("Not Reachable");
-			connectionURL = "jdbc:postgresql://192.168.10.15:5432/terraverde_summit?ApplicationName=JSystem2.2";
-		}
+//		if(ip_address.equals("177.177.178.199") || ip_address.equals("177.177.178.19") || ip_address.equals("177.177.178.164") || ip_address.equals("177.177.178.119") || ip_address.equals("177.177.178.144") || ip_address.equals("177.177.178.79") || ip_address.equals("177.177.178.165") || ip_address.equals("177.177.176.90") || ip_address.equals("177.177.177.13") ) {
+//			mapURL.put("Summit - Terraverde Live", "jdbc:postgresql://192.168.10.15:5432/terraverde_summit?ApplicationName=JSystem2.2");
+//			System.out.println("Not Reachable");
+//			connectionURL = "jdbc:postgresql://192.168.10.15:5432/terraverde_summit?ApplicationName=JSystem2.2";
+//		}
         
 		int currentYear = Calendar.getInstance().get(Calendar.YEAR) + 4;
 

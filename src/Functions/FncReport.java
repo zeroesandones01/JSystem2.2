@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,6 +90,82 @@ public class FncReport {
 
 		FncGlobal.loadThread(title, runPreview);
 	}
+	
+	public static void generateReportV2(final String report_name, final String title ,final Map mapParameters) {
+//        try {
+//            // Step 1: Compile the JRXML report design
+//        	InputStream reportStream = FncReport.class.getResourceAsStream(report_name);
+//        	
+//            JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+//            Class.forName("org.postgresql.Driver");
+//            Connection connection = DriverManager.getConnection("jdbc:postgresql://jsystemdb.cenqhomes.com:5432/terraverde_summit", FncGlobal.connectionUsername, FncGlobal.connectionPassword);
+//
+//
+//            // Step 2: Fill the report with data
+//            //JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(dataBeanList);
+//            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, mapParameters, connection);
+//
+//            // Step 3: View the report
+//            //JasperViewer.viewReport(jasperPrint, false);
+//            
+//            JasperViewer printAssetSticker = new JasperViewer(jasperPrint, false);
+//			printAssetSticker.setTitle(FncGlobal.getReportTitle(title));
+//			printAssetSticker.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//			printAssetSticker.setLocationRelativeTo(null);
+//			printAssetSticker.setVisible(true);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        
+        Runnable runPreview = new Runnable() {
+			public void run() {
+				FncGlobal.startProgress("Generating " + title + " Report");
+
+				try {
+					InputStream reportStream = FncReport.class.getResourceAsStream(report_name);
+		        	
+		            JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+		            
+		            Connection connection = DriverManager.getConnection("jdbc:postgresql://192.168.10.17:5432/terraverde_summit", FncGlobal.connectionUsername, FncGlobal.connectionPassword);
+
+					
+					JasperPrint previewReport = JasperFillManager.fillReport(jasperReport, mapParameters, FncGlobal.connection);
+					if(previewReport.getPages().size() > 0){
+						if(FncGlobal.homeMDI.isNotExisting("iJasperViewer")){
+							/*_JasperViewer printAssetSticker = new _JasperViewer(previewSalesReport, FncGlobal.getReportTitle(title, proj_id, phase));
+							FncGlobal.homeMDI.addWindow(printAssetSticker);
+							printAssetSticker.setMaximum(true);*/
+
+							/*_JasperViewer printAssetSticker = new _JasperViewer(previewSalesReport, FncGlobal.getReportTitle(title));
+							printAssetSticker.setVisible(true);*/
+
+							JasperViewer printAssetSticker = new JasperViewer(previewReport, false);
+							printAssetSticker.setTitle(FncGlobal.getReportTitle(title));
+							printAssetSticker.setExtendedState(JFrame.MAXIMIZED_BOTH);
+							printAssetSticker.setLocationRelativeTo(null);
+							printAssetSticker.setVisible(true);
+							//printAssetSticker.requestFocusInWindow();
+							FncGlobal.AuditLogs(UserInfo.EmployeeCode, report_name, "Preview Report");
+						}
+					}else{
+						JOptionPane.showMessageDialog(FncGlobal.homeMDI, "No Reports Generated!", title, JOptionPane.INFORMATION_MESSAGE);
+					}
+				} catch (HeadlessException e) {
+					e.printStackTrace();
+				} catch (JRException e) {
+					e.printStackTrace();
+				}/* catch (PropertyVetoException e) {
+					e.printStackTrace();
+				}*/ catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				FncGlobal.stopProgress();
+			}
+		};
+
+		FncGlobal.loadThread(title, runPreview);
+    }
 
 	/**
 	 * Added Christian for notices not show on top the report

@@ -552,6 +552,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 		mapParameters.put("prepared_by", UserInfo.FullName2);
 
 		//FncReport.generateReport("/Reports/rptTcostG2GBatch.jasper", title, mapParameters);
+		
 		FncReport.generateReportV2("/Reports/rptTcostG2GBatch.jrxml",title ,mapParameters);
 		
 	}

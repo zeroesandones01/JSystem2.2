@@ -549,6 +549,7 @@ public class TCost_G2G extends _JInternalFrame implements _GUI, ActionListener {
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
 
 		mapParameters.put("batch_no", batch_no);
+		mapParameters.put("prepared_by", UserInfo.FullName2);
 
 		FncReport.generateReport("/Reports/rptTcostG2GBatch.jasper", title, mapParameters);
 		

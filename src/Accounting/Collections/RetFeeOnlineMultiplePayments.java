@@ -678,10 +678,12 @@ public class RetFeeOnlineMultiplePayments extends _JInternalFrame implements _GU
 										String ar_no = saveRetFeeOnline();
 										if (ar_no != null) {
 											JOptionPane.showMessageDialog(RetFeeOnlineMultiplePayments.this,
-													String.format("Retention saved with AR NO: %s and Batch No: %s", ar_no, batch_no), "Save",
+													String.format("Retention saved with Receipt No: %s and Batch No: %s", ar_no, batch_no), "Save",
 													JOptionPane.INFORMATION_MESSAGE);
 											
 											cancelRetFeeMP();
+									} else {
+										JOptionPane.showMessageDialog(getContentPane(), "No receipt to issue.", "Warning Message", JOptionPane.WARNING_MESSAGE);
 									}
 									
 								}																
@@ -895,6 +897,7 @@ private void cancelRetFeeMP() {
 		String client_seqno = "";
 		String ar_no = getARNo();
 		batch_no = getBatchNo(); 
+		System.out.println("Receipt No: "+ ar_no);
 		System.out.println("Batch No: "+ batch_no);
 		
 
@@ -947,7 +950,7 @@ private void cancelRetFeeMP() {
 
 		System.out.println("");
 		System.out.println("client_seqno = " + client_seqno);
-		System.out.println("ar_no = " + ar_no);
+		System.out.println("ar_no/or_no = " + ar_no);
 		System.out.println("batch_no = " + batch_no);
 		
 		// COMMENTED BY MONIQUE DTD 08-29-2024; NO NEED TO PREVIEW RECEIPT

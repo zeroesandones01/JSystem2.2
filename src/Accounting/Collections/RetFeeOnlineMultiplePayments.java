@@ -108,6 +108,7 @@ public class RetFeeOnlineMultiplePayments extends _JInternalFrame implements _GU
 	private String seq_no;
 	private double total_amt;
 	private JList rowReadHeader;
+	private String batch_no;
 
 	public RetFeeOnlineMultiplePayments() {
 		super(title, true, true, true, true);
@@ -677,7 +678,7 @@ public class RetFeeOnlineMultiplePayments extends _JInternalFrame implements _GU
 										String ar_no = saveRetFeeOnline();
 										if (ar_no != null) {
 											JOptionPane.showMessageDialog(RetFeeOnlineMultiplePayments.this,
-													String.format("Retention saved with AR NO: %s", ar_no), "Save",
+													String.format("Retention saved with AR NO: %s and Batch No: %s", ar_no, batch_no), "Save",
 													JOptionPane.INFORMATION_MESSAGE);
 											
 											cancelRetFeeMP();
@@ -893,6 +894,8 @@ private void cancelRetFeeMP() {
 		BigDecimal amount = new BigDecimal("0.00");
 		String client_seqno = "";
 		String ar_no = getARNo();
+		batch_no = getBatchNo(); 
+		System.out.println("Batch No: "+ batch_no);
 		
 
 		for (int x = 0; x < modelRetFeeList.getRowCount(); x++) {
@@ -923,13 +926,13 @@ private void cancelRetFeeMP() {
 				part_type = (String) modelRetFeeList.getValueAt(x, 3);
 		
 			}
-		
+			
 			pgSelect db = new pgSelect();
 			
-			String SQL = "SELECT * from sp_post_ret_fee_online_multi_payments('" + lookupCompany.getValue() + "','" + entity_id
+			String SQL = "SELECT * from sp_post_ret_fee_online_multi_payments_v2('" + lookupCompany.getValue() + "','" + entity_id
 					+ "','" + proj_id + "','" + pbl_id + "', " + seq_no + ", " + amount + ", '" + dteActualDate.getDate()
 					+ "'::TIMESTAMP WITHOUT TIME ZONE,'" + UserInfo.Branch + "','" + UserInfo.EmployeeCode + "', '"
-					+ ar_no + "', '" + part_type + "')";
+					+ ar_no + "', '" + part_type + "', '"+batch_no+"')";
 
 			db.select(SQL, "Save", true);
 
@@ -938,43 +941,46 @@ private void cancelRetFeeMP() {
 			if (db.isNotNull()) {
 				ar_no = (String) db.getResult()[0][0];
 				client_seqno = (String) db.getResult()[0][1];
+				batch_no = (String) db.getResult()[0][2];
 			}
 		}
 
 		System.out.println("");
 		System.out.println("client_seqno = " + client_seqno);
 		System.out.println("ar_no = " + ar_no);
+		System.out.println("batch_no = " + batch_no);
 		
-		if (ar_no != null && client_seqno != null) {
-			
-			Map<String, Object> mapParameters = new HashMap<String, Object>();
-			mapParameters.put("client_seqno", client_seqno);
-			mapParameters.put("ar_no", ar_no);
-			mapParameters.put("credit_ar_no", null);
-			mapParameters.put("recpt_type", "AR No.");
-			mapParameters.put("credited_amount", null);
-			mapParameters.put("prepared_by", UserInfo.Alias.toUpperCase());
-			
-			String co_id = FncGlobal.GetString("select co_id from rf_pay_header a \n" + 
-					"where client_seqno = '"+client_seqno+"'");
-			
-			System.out.println("mapParameters: " + mapParameters);
-			
-			/*if(co_id.equals("01")) {
-				FncReport.generateReport("/Reports/rptARReceipt_VDC.jasper", "Acknowledgement Receipt", String.format("AR No.: %s", ar_no), mapParameters);
-			}else if(co_id.equals("02")) {
-				FncReport.generateReport("/Reports/rptARReceipt_CDC.jasper", "Acknowledgement Receipt", String.format("AR No.: %s", ar_no), mapParameters);
-			}else if(co_id.equals("04")) {
-				FncReport.generateReport("/Reports/rptARReceipt_ADC.jasper", "Acknowledgement Receipt", String.format("AR No.: %s", ar_no), mapParameters);
-			}else if(co_id.equals("05")) {
-				FncReport.generateReport("/Reports/rptARReceipt_EDC.jasper", "Acknowledgement Receipt", String.format("AR No.: %s", ar_no), mapParameters);
-			}*/
-						
-			FncReport.generateReport("/Reports/rptARRetFeeOL_CDC.jasper", "Acknowledgment Receipt",
-					String.format("AR No.: %s", ar_no), mapParameters);
-			
-			
-		}
+		// COMMENTED BY MONIQUE DTD 08-29-2024; NO NEED TO PREVIEW RECEIPT
+//		if (ar_no != null && client_seqno != null) {
+//			
+//			Map<String, Object> mapParameters = new HashMap<String, Object>();
+//			mapParameters.put("client_seqno", client_seqno);
+//			mapParameters.put("ar_no", ar_no);
+//			mapParameters.put("credit_ar_no", null);
+//			mapParameters.put("recpt_type", "AR No.");
+//			mapParameters.put("credited_amount", null);
+//			mapParameters.put("prepared_by", UserInfo.Alias.toUpperCase());
+//			
+//			String co_id = FncGlobal.GetString("select co_id from rf_pay_header a \n" + 
+//					"where client_seqno = '"+client_seqno+"'");
+//			
+//			System.out.println("mapParameters: " + mapParameters);
+//			
+//			/*if(co_id.equals("01")) {
+//				FncReport.generateReport("/Reports/rptARReceipt_VDC.jasper", "Acknowledgement Receipt", String.format("AR No.: %s", ar_no), mapParameters);
+//			}else if(co_id.equals("02")) {
+//				FncReport.generateReport("/Reports/rptARReceipt_CDC.jasper", "Acknowledgement Receipt", String.format("AR No.: %s", ar_no), mapParameters);
+//			}else if(co_id.equals("04")) {
+//				FncReport.generateReport("/Reports/rptARReceipt_ADC.jasper", "Acknowledgement Receipt", String.format("AR No.: %s", ar_no), mapParameters);
+//			}else if(co_id.equals("05")) {
+//				FncReport.generateReport("/Reports/rptARReceipt_EDC.jasper", "Acknowledgement Receipt", String.format("AR No.: %s", ar_no), mapParameters);
+//			}*/
+//						
+//			FncReport.generateReport("/Reports/rptARRetFeeOL_CDC.jasper", "Acknowledgment Receipt",
+//					String.format("AR No.: %s", ar_no), mapParameters);
+//			
+//			
+//		}
 
 		return ar_no;
 	}
@@ -998,6 +1004,20 @@ private void cancelRetFeeMP() {
 			modelRetFeeList.removeRow(rows[x]);
 		}
 	}
-
+	
+	//ADDED BY MONIQUE DTD 08-20-24
+		private String getBatchNo() {
+			
+			pgSelect db = new pgSelect(); 
+			db.select("Select get_batch_no();");
+			
+			if (db.isNotNull()) {
+				batch_no = (String) db.getResult()[0][0]; 
+			} else {
+				batch_no = null;
+			}
+			
+			return batch_no; 
+		}
 
 }

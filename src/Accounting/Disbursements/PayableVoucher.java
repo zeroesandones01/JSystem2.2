@@ -2881,7 +2881,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 
 		//String SQL = "select count (*)::INT from rf_request_detail where rplf_no = '" + req_no + "' and co_id = '"
 		String SQL = "select count (*)::INT from rf_request_detail where rplf_no = '" + req_no + "' and co_id = '"
-				+ co_id + "'";
+				+ co_id + "' and status_id = 'A'";
 		pgSelect db = new pgSelect();
 		db.select(SQL);
 
@@ -3043,8 +3043,8 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				"from rf_request_detail a\n" + "left join rf_entity b on a.entity_id = b.entity_id\n"
 				+ "where rplf_no = '" + req_no + "'  \n" + "and a.status_id != 'I'  \r\n" + "and a.line_no = " + line_no
 				+ " " + "and a.co_id = '" + co_id + "' "
-				+ "and rplf_no not in (select rplf_no from rf_processing_cost where status_id = 'A' and co_id = '"
-				+ co_id + "' and rplf_no is not null)\n"
+//				+ "and rplf_no not in (select rplf_no from rf_processing_cost where status_id = 'A' and co_id = '"
+//				+ co_id + "' and rplf_no is not null)\n"
 				+ "and rplf_no not in (select rplf_no from rf_transfer_cost where status_id = 'A' and co_id = '" + co_id
 				+ "' and rplf_no is not null and date_created::DATE >= '2022-07-05'::Date)";
 		

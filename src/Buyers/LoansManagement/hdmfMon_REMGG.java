@@ -775,7 +775,16 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 		mapParameters.put("signatory", signatory);
 		mapParameters.put("position", position);
 		
-		
+	//	String selectedStatus = (String) cboStatus.getSelectedItem();
+//		
+//		if(cboStatus.getSelectedItem().equals("7 - WITH CAR RELEASE (G TO G)")) {
+//			
+//			mapParameters.put("prepared_by", UserInfo.FullName2);
+//			mapParameters.put("status", selectedStatus);
+//			
+//			FncReport.generateReport("/Reports/rptWithCarReleaseG2G.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
+//		}
+	
 		
 		if (intIndex==0) {
 			FncReport.generateReport("/Reports/rpt_hdmf_forEarlyConversion_gtog.jasper", "For Early Conversion (G-G)", "", mapParameters);
@@ -798,6 +807,15 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 			mapParameters.put("position", position);
 
 			FncReport.generateReport("/Reports/rptREMGTG_sixth.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
+					
+		}else if(intIndex == 6) {
+			String selectedStatus = (String) cboStatus.getSelectedItem();
+			
+			
+			mapParameters.put("prepared_by", UserInfo.FullName2);
+			mapParameters.put("status", "selectedStatus");
+			FncReport.generateReport("/Reports/rptWithCarReleaseG2G.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
+			
 		}else if(intIndex == 8) {
 			mapParameters.put("p_batch_no", txtBat.getValue());
 			mapParameters.put("p_prepared_by", UserInfo.FullName2);

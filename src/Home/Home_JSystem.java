@@ -93,6 +93,7 @@ import Accounting.Cashiering.LoanReleasedIssuance;
 //import Accounting.Cashiering.LoanReleasedIssuance;
 import Accounting.Cashiering.RealTimeDebitPosting;
 import Accounting.Cashiering.RealTimeDebitPosting_LoanReleased;
+import Accounting.Cashiering.RetentionFeeIssuance;
 import Accounting.Cashiering.Unidentified_Identified_Deposits;
 import Accounting.Cashiering.Unidentified_Identified_Deposits_v2;
 import Accounting.Cashiering.UploadAUBPayments;
@@ -1666,6 +1667,20 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 										if (isNotExisting("UploadAUBPayments")) {
 											UploadAUBPayments uap = new UploadAUBPayments();
 											addWindow(uap);
+										}
+									}
+								});
+							}
+							{
+								JMenuItem menuitemRetentionFeeIssuance = new JMenuItem("Retention Fee Issuance");
+								menuCashiering.add(menuitemRetentionFeeIssuance);
+								menuitemRetentionFeeIssuance.addActionListener(new ActionListener() {
+
+									@Override
+									public void actionPerformed(ActionEvent e) {
+										if (isNotExisting("RetentionFeeIssuance")) {
+											RetentionFeeIssuance rfi = new RetentionFeeIssuance();
+											addWindow(rfi);
 										}
 									}
 								});

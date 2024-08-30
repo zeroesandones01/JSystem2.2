@@ -811,6 +811,8 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 		}else if(intIndex == 6) {
 			String selectedStatus = (String) cboStatus.getSelectedItem();
 			
+			 String myStr = "7 - WITH CAR RELEASE (G TO G)";
+			    System.out.println(myStr.replace("7 - ","WITH CAR RELEASE (G TO G)"));
 			
 			mapParameters.put("prepared_by", UserInfo.FullName2);
 			mapParameters.put("status", "selectedStatus");

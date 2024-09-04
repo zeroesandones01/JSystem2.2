@@ -810,12 +810,13 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 					
 		}else if(intIndex == 6) {
 			String selectedStatus = (String) cboStatus.getSelectedItem();
-			
-			 String myStr = "7 - WITH CAR RELEASE (G TO G)";
-			    System.out.println(myStr.replace("7 - ","WITH CAR RELEASE (G TO G)"));
+			selectedStatus = selectedStatus.replace("7 - ","");
+			 
+			    //System.out.println(myStr.replace("7 - ","WITH CAR RELEASE (G TO G)"));
+			 System.out.println(selectedStatus);
 			
 			mapParameters.put("prepared_by", UserInfo.FullName2);
-			mapParameters.put("status", "selectedStatus");
+			mapParameters.put("status", selectedStatus);
 			FncReport.generateReport("/Reports/rptWithCarReleaseG2G.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
 			
 		}else if(intIndex == 8) {

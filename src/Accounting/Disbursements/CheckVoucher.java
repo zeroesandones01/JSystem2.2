@@ -1206,7 +1206,8 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		DefaultListModel listModel = new DefaultListModel();// Creating DefaultListModel for rowHeader.
 		rowHeader.setModel(listModel);// Setting of DefaultListModel into rowHeader.
 
-		String sql = "-----display DV account entries\r\n" + "select distinct on(a.acct_id)\n" + "\n" + "a.acct_id,\n"
+		String sql = "-----display DV account entries\r\n" + "select --distinct on(a.acct_id)\n" + "\n" //REMOVED DISTINC BY LESTER 2024-09-04 
+				+"a.acct_id,\n"
 				+ "coalesce(b.acct_name, c.acct_desc),\n"
 				+ "( case when a.bal_side = 'D' then a.tran_amt else '0' end ) as debit,\n"
 				+ "( case when a.bal_side = 'C' then a.tran_amt else '0' end ) as credit, coalesce(a.corollary_entry, false) \n" + "\n" + "\n"
@@ -1219,7 +1220,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 																										// inactive bank
 																										// account
 				"\n" + "where a.cv_no = '" + req_no + "'  and a.co_id = '" + co_id
-				+ "' and a.status_id != 'I'   order by a.acct_id desc";
+				+ "' and a.status_id != 'I'   --order by a.acct_id desc"; //REMOVED ORDERING BY LESTER 2024-09-04
 
 		System.out.printf("sql :" + sql);
 		pgSelect db = new pgSelect();

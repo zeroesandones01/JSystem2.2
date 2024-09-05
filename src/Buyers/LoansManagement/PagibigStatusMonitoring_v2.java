@@ -66,7 +66,6 @@ public class PagibigStatusMonitoring_v2 extends _JInternalFrame implements Actio
 	public static JButton btnPost;
 	public static JButton btnPreview;
 	public static JButton btnExport;
-
 	private _JTabbedPane tabHDMF;
 
 	public Integer intQA = 1;

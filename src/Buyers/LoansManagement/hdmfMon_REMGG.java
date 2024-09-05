@@ -35,6 +35,7 @@ import Buyers.CreditandCollections._RealTimeDebit;
 import Database.pgSelect;
 import Database.pgUpdate;
 import DateChooser._JDateChooser;
+import Dialogs.dlg_G2GTcost_Amt;
 import Functions.FncGlobal;
 import Functions.FncLookAndFeel;
 import Functions.FncReport;
@@ -82,7 +83,7 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 	private JComboBox cboStatus;  
 	public static Integer intIndex;
 	private static JSplitPane splitReleasedLoanDetail; 
-
+	
 	public hdmfMon_REMGG(PagibigStatusMonitoring_v2 psm) {
 		this.hdmfMainMod = psm;
 		initGUI();

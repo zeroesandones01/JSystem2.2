@@ -37,6 +37,7 @@ public class modelEPEBG2G extends DefaultTableModel {
 		super(data, columnNames);
 	}
 	public String[] COLUMNS = new String[] {
+			"Rec. ID", //0
 			"Description", 	// 1
 			"Trans Date", 	// 2
 			"Amount", 		// 3
@@ -53,6 +54,7 @@ public class modelEPEBG2G extends DefaultTableModel {
 	 * 
 	 */
 	private Class[] CLASS_TYPES = new Class[] {
+			Integer.class, //Rec ID
 			Object.class, 	 //Unit
 			Timestamp.class, //Model
 			BigDecimal.class,//Buyer's Name
@@ -63,6 +65,7 @@ public class modelEPEBG2G extends DefaultTableModel {
 	private void initThis() {
 		setColumnIdentifiers(COLUMNS);
 		COLUMN_EDITABLE = new boolean[] {
+				false,
 				false, 		//RPLF/JV
 				false,		//Date
 				false,		//BC Amt
@@ -88,6 +91,7 @@ public class modelEPEBG2G extends DefaultTableModel {
 		this.editable = editable;
 		if(editable){
 			COLUMN_EDITABLE = new boolean[] {
+					false,
 					false, 		//RPLF/JV
 					false,		//Date
 					false,		//BC Amt
@@ -97,6 +101,7 @@ public class modelEPEBG2G extends DefaultTableModel {
 			};
 		}else{
 			COLUMN_EDITABLE = new boolean[] {
+					false,
 					false, 		//RPLF/JV
 					false,		//Date
 					false,		//BC Amt

@@ -6,14 +6,24 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
@@ -28,10 +38,13 @@ import javax.swing.table.DefaultTableModel;
 import org.jdesktop.swingx.JXPanel;
 
 import Database.pgSelect;
+import Dialogs.dlg_G2GTcost_Amt;
+import Dialogs.dlg_MotherMaidenName;
 import FormattedTextField._JXFormattedTextField;
 import Functions.FncBigDecimal;
 import Functions.FncGlobal;
 import Functions.FncLookAndFeel;
+import Functions.FncReport;
 import Functions.FncTables;
 import Functions.UserInfo;
 import Renderer.DateRenderer;
@@ -197,6 +210,12 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 	private Font fontBoldSanSerEleven = new Font("SansSerif", Font.BOLD, 11);
 	private Font fontBoldSanSerTens = new Font("SansSerif", Font.BOLD, 10);
 	private Font fontPlainSanSerEleven = new Font("SansSerif", Font.PLAIN, 11);
+	private dlg_G2GTcost_Amt updateTcostAmt;
+	
+	private static String entity_id;
+	private static String proj_id;
+	private static String pbl_id;
+	private static String seq_no;
 	
 	public hdmfInfo_maintab(CARD card) {
 		this.main_card = card;
@@ -294,6 +313,57 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 						}
 					});
 					
+					tblEPEBG2G.hideColumns("Rec. ID");
+					
+					tblEPEBG2G.addMouseListener(new MouseAdapter() {
+						public void mouseReleased(MouseEvent e){
+							if(e.isPopupTrigger()){
+								try {
+									initializeMenu(e).show((_JTableMain)e.getSource(), e.getX(), e.getY());
+								} catch (NullPointerException e1) { }
+							}
+						}
+
+						public void mousePressed(MouseEvent e){
+							if(e.isPopupTrigger()){
+								try {
+									initializeMenu(e).show((_JTableMain)e.getSource(), e.getX(), e.getY());
+								} catch (NullPointerException e1) { }
+							}
+						}
+
+						public JPopupMenu initializeMenu(MouseEvent e){
+							_JTableMain table = (_JTableMain) e.getSource();
+							//int[] rows = table.getSelectedRows();
+							int row = table.getModelRow(table.getSelectedRow());
+							int column = table.convertColumnIndexToModel(0);
+							//final String status = (String) modelAccountStatusHistory.getValueAt(row, table.convertColumnIndexToModel(1));
+							final Integer rec_id = (Integer) modelEPEB.getValueAt(row, 0);
+							final String jv_no = (String) modelEPEB.getValueAt(row, 5);
+							final String batch_no = (String) modelEPEB.getValueAt(row, 6);
+
+							JPopupMenu menu = new JPopupMenu();
+
+							JMenuItem menuViewRequests = new JMenuItem("Update Tcost Amt");
+							menu.add(menuViewRequests);
+							menuViewRequests.setFont(menuViewRequests.getFont().deriveFont(10f));
+							menuViewRequests.addActionListener(new ActionListener() {
+								public void actionPerformed(ActionEvent arg0) {
+									updateTcostAmt = new dlg_G2GTcost_Amt(FncGlobal.homeMDI, "Tcost Amt", rec_id, entity_id, proj_id, pbl_id, seq_no, batch_no);				
+									updateTcostAmt.setLocationRelativeTo(FncGlobal.homeMDI);
+									updateTcostAmt.setVisible(true);
+								
+								}
+							});
+
+							if(jv_no != null){
+								return null;
+							}else{
+								return menu;
+							}
+						}
+					});
+					
 				}
 				{
 					rowHeaderEPEBG2G = tblEPEBG2G.getRowHeader();
@@ -308,11 +378,11 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 			pnlEPEBG2G.add(scrollG2GReceiptTotal, BorderLayout.SOUTH);
 			{
 				modelG2GReceiptTotal = new modelEPEBG2G();
-				modelG2GReceiptTotal.addRow(new Object[] { null, "Total", null, null, null, null});
+				modelG2GReceiptTotal.addRow(new Object[] {null, "Total", null, null, null, null});
 
 				tblG2GReceiptTotal = new _JTableTotal(modelG2GReceiptTotal, tblEPEBG2G);
 				scrollG2GReceiptTotal.setViewportView(tblG2GReceiptTotal);
-
+				tblG2GReceiptTotal.hideColumns("Rec. ID");
 				tblG2GReceiptTotal.setTotalLabel(1);
 			}
 		}
@@ -323,10 +393,10 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 		BigDecimal amount = new BigDecimal("0.00");
 
 		for (int x = 0; x < modelMain.getRowCount(); x++) {
-			amount = amount.add((BigDecimal) ((BigDecimal) modelMain.getValueAt(x, 2) == null ? new BigDecimal("0.00")
-					: modelMain.getValueAt(x, 2)));
+			amount = amount.add((BigDecimal) ((BigDecimal) modelMain.getValueAt(x, 3) == null ? new BigDecimal("0.00")
+					: modelMain.getValueAt(x, 3)));
 		}
-		modelTotal.setValueAt(amount, 0, 2);
+		modelTotal.setValueAt(amount, 0, 3);
 	}
 
 	private void CreateLoanFilingStatusTab() {
@@ -1508,9 +1578,13 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 	public static Boolean displayEPEBG2G(String entity_id, String proj_id, String pbl_id, String seq_no) {
 		Boolean blnRev = false;
 		FncTables.clearTable(modelEPEB);
+		hdmfInfo_maintab.entity_id = entity_id;
+		hdmfInfo_maintab.proj_id = proj_id;
+		hdmfInfo_maintab.pbl_id = pbl_id;
+		hdmfInfo_maintab.seq_no = seq_no;
 	
 		pgSelect db = new pgSelect();
-		db.select("select * from view_card_epeb_g2g_tcost('"+entity_id+"', '"+proj_id+"', '"+pbl_id+"', '"+seq_no+"')");
+		db.select("select * from view_card_epeb_g2g_tcost_v2('"+entity_id+"', '"+proj_id+"', '"+pbl_id+"', '"+seq_no+"')");
 		if (db.isNotNull()){
 			for (int x = 0; x < db.getRowCount(); x++) {
 				modelEPEB.addRow(db.getResult()[x]);

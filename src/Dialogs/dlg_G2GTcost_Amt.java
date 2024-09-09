@@ -99,6 +99,7 @@ public class dlg_G2GTcost_Amt extends _JDialog implements _GUI, ActionListener {
 		this.rec_id = rec_id;
 		this.entity_id = entity_id;
 		this.proj_id = proj_id;
+		this.pbl_id = pbl_id;
 		this.seq_no = seq_no;
 		this.batch_no = batch_no;
 	}

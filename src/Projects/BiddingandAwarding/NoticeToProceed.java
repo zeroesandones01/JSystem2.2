@@ -2242,8 +2242,20 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 				mapParameters.put("prepared_by", UserInfo.Alias);
 				
 				if (lookupNTPType.getValue().equals("10") || lookupNTPType.getValue().equals("03")) {
-					if(lookupNTPNo.getValue().equals("002364") || lookupNTPNo.getValue().equals("002367") || lookupNTPNo.getValue().equals("002368") || lookupNTPNo.getValue().equals("002369") || lookupNTPNo.getValue().equals("002370") 
-							|| lookupNTPNo.getValue().equals("002373") || lookupNTPNo.getValue().equals("002374") || lookupNTPNo.getValue().equals("002375") || lookupNTPNo.getValue().equals("002376") || lookupNTPNo.getValue().equals("002377") ) {
+//					if(lookupNTPNo.getValue().equals("002364") || lookupNTPNo.getValue().equals("002367") || lookupNTPNo.getValue().equals("002368") || lookupNTPNo.getValue().equals("002369") || lookupNTPNo.getValue().equals("002370") 
+//							|| lookupNTPNo.getValue().equals("002373") || lookupNTPNo.getValue().equals("002374") || lookupNTPNo.getValue().equals("002375") || lookupNTPNo.getValue().equals("002376") || lookupNTPNo.getValue().equals("002377") ) {
+//						System.out.print("rptSPContract_v2");
+//						FncReport.generateReport("/Reports/rptSPContract_v2.jasper", print_type, txtCompany.getText(),
+//								mapParameters);
+//					}else {
+//						System.out.print("rptSPContractADM");
+//						FncReport.generateReport("/Reports/rptSPContractADM.jasper", print_type, txtCompany.getText(),
+//								mapParameters);
+//					}
+					
+					Integer ntp_no = Integer.valueOf(lookupNTPNo.getValue());
+					
+					if(ntp_no >= 2378) {
 						System.out.print("rptSPContract_v2");
 						FncReport.generateReport("/Reports/rptSPContract_v2.jasper", print_type, txtCompany.getText(),
 								mapParameters);

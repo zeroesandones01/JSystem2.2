@@ -733,7 +733,7 @@ Map<String, Object> mapParameters = new HashMap<String, Object>();
 		*/
 		mapParameters.put("logo", this.getClass().getClassLoader().getResourceAsStream("Images/"+ getCompanyLogo())); //added by jari cruz july 25, 2022
 		
-		if(model_desc.equals("LOT ONLY")) {
+		if(model_desc.toUpperCase().trim().equals("LOT ONLY")) {
 		FncReport.generateReport("/Reports/rptProperty_TO_AcceptanceLOT.jasper", "Certification of Satisfactory Acceptance and Turnover", mapParameters);
 		}else {
 		FncReport.generateReport("/Reports/rptProperty_TO_Acceptance.jasper", "Property Turnover and Acceptance", mapParameters);

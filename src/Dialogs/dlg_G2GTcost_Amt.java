@@ -24,6 +24,9 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
+import org.jdesktop.swingx.JXTextField;
+
+import Buyers.ClientServicing.hdmfInfo_maintab;
 import Database.pgSelect;
 import Database.pgUpdate;
 import FormattedTextField._JXFormattedTextField;
@@ -161,8 +164,9 @@ public class dlg_G2GTcost_Amt extends _JDialog implements _GUI, ActionListener {
 				pnlMainComponent = new JPanel(new GridLayout(1, 1, 3, 3));
 				pnlMain.add(pnlMainComponent, BorderLayout.CENTER);
 				{
-					txtTcostAmt = new _JXFormattedTextField("0.00");
+					txtTcostAmt = new _JXFormattedTextField("0.00", JXTextField.RIGHT);
 					pnlMainComponent.add(txtTcostAmt);
+					txtTcostAmt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
 				}
 			}
 		}
@@ -194,7 +198,7 @@ public class dlg_G2GTcost_Amt extends _JDialog implements _GUI, ActionListener {
 		BigDecimal tcost_amt = (BigDecimal) txtTcostAmt.getValued();
 		
 		pgSelect db = new pgSelect();
-		String SQL = "select sp_update_tcost_amt_g2g('"+entity_id+"', '"+proj_id+"', '"+pbl_id+"', "+seq_no+", "+tcost_amt+", '"+batch_no+"', "+rec_id+", '"+UserInfo.EmployeeCode+"');";
+		String SQL = "select sp_update_tcost_amt_g2g('"+entity_id+"', '"+proj_id+"', '"+pbl_id+"', '"+seq_no+"', "+tcost_amt+", '"+batch_no+"', "+rec_id+", '"+UserInfo.EmployeeCode+"');";
 		db.select(SQL);
 	}
 	
@@ -206,6 +210,7 @@ public class dlg_G2GTcost_Amt extends _JDialog implements _GUI, ActionListener {
 			if(toSave()){
 				if(JOptionPane.showConfirmDialog(this, "Save amt?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 					updateTCostAmt();
+					hdmfInfo_maintab.displayEPEBG2G(entity_id, proj_id, pbl_id, seq_no.toString());
 					JOptionPane.showMessageDialog(this, "Tcost Amt updated saved", "Save", JOptionPane.INFORMATION_MESSAGE);
 					this.dispose();
 				}

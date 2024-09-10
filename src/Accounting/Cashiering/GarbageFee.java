@@ -661,7 +661,7 @@ public class GarbageFee extends _JInternalFrame implements _GUI {
 			}
 		}
 
-		if (actionCommand.equals("Preview")) {
+		if (actionCommand.equals("Preview")) { //ADDED SUMMARY BY PHASE dtd 09-10-2024; subrptSummaryGarbageFeeBatch
 			String date_fr = dateFr.getDateString();
 			String date_to = dateTo.getDateString();
 			int confirmation = JOptionPane.showConfirmDialog(null,

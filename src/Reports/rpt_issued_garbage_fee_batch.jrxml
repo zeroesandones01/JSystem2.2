@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_issued_garbage_fee_batch" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.3310000000000004"/>
-	<property name="ireport.x" value="68"/>
-	<property name="ireport.y" value="33"/>
+	<property name="ireport.zoom" value="1.6105100000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="122"/>
 	<parameter name="p_batch_no" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select (select sum(a.amount) from rf_payments a where exists(select client_seqno from issued_garbage_fee where status_id = 'A' and client_seqno = a.client_seqno)) as c_grand_total,
@@ -290,7 +290,7 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="42" splitType="Stretch">
+		<band height="373" splitType="Stretch">
 			<textField pattern="#,##0.00">
 				<reportElement x="495" y="0" width="64" height="20"/>
 				<box>
@@ -319,6 +319,14 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["SUBDIVISION DUE - GARBAGE FEE:  "]]></textFieldExpression>
 			</textField>
+			<subreport>
+				<reportElement x="12" y="47" width="260" height="200"/>
+				<subreportParameter name="p_batch_no">
+					<subreportParameterExpression><![CDATA[$P{p_batch_no}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="java.io.InputStream"><![CDATA[this.getClass().getResourceAsStream("/Reports/subrptSummaryGarbageFeeBatch.jasper")]]></subreportExpression>
+			</subreport>
 		</band>
 	</summary>
 </jasperReport>

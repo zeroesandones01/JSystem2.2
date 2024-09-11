@@ -115,7 +115,7 @@ public class Add_Edit_Holidays extends _JInternalFrame {
 
 						lblHoName = new JLabel("Name of Holiday:");
 						lblMainNorth.add(lblHoName);
-
+ 
 						lblhoType = new JLabel("Type of holiday:");
 						lblMainNorth.add(lblhoType);
 

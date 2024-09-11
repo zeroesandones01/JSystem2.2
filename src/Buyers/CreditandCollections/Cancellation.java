@@ -1135,6 +1135,8 @@ public class Cancellation extends _JInternalFrame implements _GUI,LookupListener
 						pbl_desc = data[0].toString().split("-")[1];
 					}
 					
+					pbl_desc = (String) data[0];
+					
 					System.out.printf("Display value of data 1: %s%n(%s)", data[0], data[1]);
 
 					pgSelect db = new pgSelect();

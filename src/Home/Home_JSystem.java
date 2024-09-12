@@ -405,6 +405,7 @@ import Reports.LegalAndLiaisoning.RPTComputationReport;
 import Reports.LegalAndLiaisoning.RevolvingFundsReports;
 import Reports.LegalAndLiaisoning.TCTTaxDecForLiquidation;
 import Reports.LegalAndLiaisoning.TransferTaxReceipt;
+import Reports.LegalAndLiaisoning.batchWithoutRplf;
 import Reports.LegalAndLiaisoning.TransferTaxDecMonitoring;
 import Reports.LegalAndLiaisoning.claimstub;
 import Reports.LoansAndReceivable.FI_Reports;
@@ -5487,6 +5488,21 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									}
 								});
 							}
+							{
+								JMenuItem menuitembatchwithoutrplf = new JMenuItem("Batch Without RPLF");
+								menuReportLegalAndLiaisoning.add(menuitembatchwithoutrplf);
+								menuitembatchwithoutrplf.addActionListener(new ActionListener() {
+
+									@Override
+									public void actionPerformed(ActionEvent e) {
+										if (isNotExisting("Batch Without RPLF")) {
+											batchWithoutRplf bwr = new batchWithoutRplf();
+											addWindow(bwr, e);
+										}
+									}
+								});
+							}
+							
 							// {
 							// JMenuItem menuitemTransferTaxDecMonitoring = new JMenuItem("Transfer Tax Dec
 							// Monitoring");

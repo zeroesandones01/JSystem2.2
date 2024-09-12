@@ -838,7 +838,7 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 								if (entityhasUnliquidatedCA((String) data[3]) == false) {
 									String entity_name = (String) data[4];
 									tagPayee2.setTag(entity_name);
-									setPayee();
+									//setPayee();//COMMENTED BECAUSE OF DCRF 3108
 								} else {
 									if (JOptionPane.showConfirmDialog(getContentPane(),
 											"The selected availer has unliquidated CA, proceed anyway?", "Confirmation",
@@ -846,7 +846,7 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 											JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 										String entity_name = (String) data[4];
 										tagPayee2.setTag(entity_name);
-										setPayee();
+										//setPayee();//COMMENTED BECAUSE OF DCRF 3108
 									} else {
 										lookupPayee2.setValue("");
 										tagPayee2.setTag("");
@@ -3325,7 +3325,7 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 
 		}
 
-		if (column == x[column] && modelDRF_part.isEditable() && sql[column] != "") {
+		if (column == x[column] && modelDRF_part.isEditable() && sql[column] != "" && column != 24) {
 			_JLookupTable dlg = new _JLookupTable(FncGlobal.homeMDI, null, lookup_name[column], sql[column], false);
 			dlg.setLocationRelativeTo(FncGlobal.homeMDI);
 			// dlg.setFilterClientName(true);
@@ -3391,12 +3391,17 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 //				modelDRF_part.setCellEditable(row, column, is_payee_vatable);
 //				modelDRF_part.fireTableDataChanged();
 				
+			}else if(column == 11) {
+				modelDRF_part.setValueAt(data[0], row, column);
+				modelDRF_part.setValueAt(data[2], row, 24); //DCRF 3108
 			} else if (data != null && column == 24 || modelDRF_part.getValueAt(row, 24) != null) {
 				modelDRF_part.setValueAt(data[0], row, column);
 				modelDRF_part.setValueAt(data[2], row, column + 1);
 				// computeDRF_amount_fromPayee();
 				computeDRF_amount_fromPayee2();
+				System.out.println("Default");
 			} else if (data != null) {
+				
 				modelDRF_part.setValueAt(data[0], row, column);
 			}
 		}
@@ -4416,10 +4421,12 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 	private void setPayee() {
 
 		String request_type = lookupRequestType.getText().trim();
-		String chk_payee = lookupPayee2.getText().trim();
+		//String chk_payee = lookupPayee2.getText().trim();//COMMENTED BECAUSE OF DCRF 3108
+		String chk_payee = lookupPayee1.getValue();
 		// String availer = lookupPayee2.getText().trim();
 		String payee_type = lookupPayeeType.getText().trim();
-		String payee_name = tagPayee2.getText().trim().replace("[", "").replace("]", "");
+		//String payee_name = tagPayee2.getText().trim().replace("[", "").replace("]", "");//COMMENTED BECAUSE OF DCRF 3108
+		String payee_name = tagPayee1.getText().trim().replace("[", "").replace("]", "");
 
 		if (request_type.equals("")) {
 		} else {

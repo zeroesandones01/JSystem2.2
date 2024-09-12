@@ -56,12 +56,12 @@ public class modelDRF_particulars extends DefaultTableModel {
 			"<html><center>Account<html><br><html><center>Description<html>", // 7
 			"  Amount  ",		// 8
 			"Within",			// 9			
-			"Availer ID",		// 10			
-			"Availer Type",		// 11
+			"Payee ID",		// 10			
+			"Payee Type",		// 11
 			"Ref ID",			// 12
 			"Ref No.",			// 13
 			"Ref Date",			// 14			
-			"Availer Name",		// 15			
+			"Payee Name",		// 15			
 			"Item ID",			// 16
 			"<html><center>Item<html><br><html><center>Description<html>",// 17
 			"Asset No.",		// 18

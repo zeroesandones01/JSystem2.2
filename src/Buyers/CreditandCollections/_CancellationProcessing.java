@@ -1222,7 +1222,7 @@ public class _CancellationProcessing extends _JInternalFrame implements _GUI, Lo
 				
 				cmbBuyerType.setEnabled(true);
 				lblBuyerType.setEnabled(true);
-				lookupBatchNo.setLookupSQL(functions.listBatch());
+				lookupBatchNo.setLookupSQL(functions.listBatch(co_id));
 
 				if (tabpane_per_account.getSelectedIndex() == 0 ) {
 					btnState(true, true, false, false, false);	

@@ -874,16 +874,20 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 								tax_rate = Double.parseDouble(data[3].toString());
 
 								setPayee();
-
-								if (lookupRequestType.getText().equals("02")
-										|| lookupRequestType.getText().equals("07")) {
-									tax_rate = 0.00; //comment me to auto compute wtax amt
-									setColumnNonTaxable();
-								} else {
-									tax_rate = Double.parseDouble(data[3].toString());
-									setColumnTaxable();
-									// setColumnTaxable();
-								}
+								
+								//COMMENTED BY LESTER DCRF 3108 REPLACED BY setTaxRate
+//								if (lookupRequestType.getText().equals("02")
+//										|| lookupRequestType.getText().equals("07")) {
+//									tax_rate = 0.00; //comment me to auto compute wtax amt
+//									setColumnNonTaxable();
+//								} else {
+//									tax_rate = Double.parseDouble(data[3].toString());
+//									setColumnTaxable();
+//									// setColumnTaxable();
+//								}
+								
+								setTaxRate();
+								
 								computeDRF_amount_fromPayee();
 								FncSystem.out("Display SQL of Payee Type", lookupPayeeType.getLookupSQL());
 								// computeDRF_amount_fromPayee2();
@@ -3325,7 +3329,9 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 
 		}
 
-		if (column == x[column] && modelDRF_part.isEditable() && sql[column] != "" && column != 24) {
+		if (column == x[column] && modelDRF_part.isEditable() && sql[column] != "" 
+				&& column != 24
+				) {
 			_JLookupTable dlg = new _JLookupTable(FncGlobal.homeMDI, null, lookup_name[column], sql[column], false);
 			dlg.setLocationRelativeTo(FncGlobal.homeMDI);
 			// dlg.setFilterClientName(true);
@@ -3394,6 +3400,7 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 			}else if(column == 11) {
 				modelDRF_part.setValueAt(data[0], row, column);
 				modelDRF_part.setValueAt(data[2], row, 24); //DCRF 3108
+				modelDRF_part.setValueAt(data[3], row, 25);//DCRF 3108
 			} else if (data != null && column == 24 || modelDRF_part.getValueAt(row, 24) != null) {
 				modelDRF_part.setValueAt(data[0], row, column);
 				modelDRF_part.setValueAt(data[2], row, column + 1);
@@ -4415,6 +4422,24 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 
 			x++;
 
+		}
+	}
+	
+	private void setTaxRate() {
+		int rw = tblDRF_part.getRowCount();
+		int x = 0;
+		
+		while (x < rw) {
+
+			if(tax_rate == 0) {
+				modelDRF_part.setValueAt(false, x, 21);
+			}else {
+				modelDRF_part.setValueAt(true, x, 21);
+			}
+			modelDRF_part.setValueAt(new BigDecimal(tax_rate), x, 25);
+			
+			
+			x++;
 		}
 	}
 

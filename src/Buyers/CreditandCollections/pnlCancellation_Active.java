@@ -60,9 +60,11 @@ public class pnlCancellation_Active extends JPanel implements _GUI, ActionListen
 	private String lblListof;
 	public static pnlPerAccount pnlPerAccount;
 	private String batch_no = "" ;
+	private String co_id;
 	
-	public pnlCancellation_Active(_CancellationProcessing_New cP ) {
+	public pnlCancellation_Active(_CancellationProcessing_New cP, String co_id) {
 		this.cP = cP;
+		this.co_id = co_id;
 		initGUI();
 	}
 
@@ -125,7 +127,7 @@ public class pnlCancellation_Active extends JPanel implements _GUI, ActionListen
 					pnlBatch.add(lookupBatchNo,BorderLayout.CENTER);
 					lookupBatchNo.addLookupListener(this);
 					lookupBatchNo.setReturnColumn(0);
-					lookupBatchNo.setLookupSQL(functions.listBatch());
+					lookupBatchNo.setLookupSQL(functions.listBatch(co_id));
 					lookupBatchNo.setPreferredSize(new Dimension(60, 20));
 				}
 			}

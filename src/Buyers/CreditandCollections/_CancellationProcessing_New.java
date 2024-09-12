@@ -117,7 +117,7 @@ public class _CancellationProcessing_New extends _JInternalFrame  implements _GU
 			pnlMain.add(tabCenter, BorderLayout.CENTER);
 			{
 				{
-					pnlCA = new pnlCancellation_Active(this); 
+					pnlCA = new pnlCancellation_Active(this, lookupCompany.getValue()); 
 					tabCenter.addTab("Cancellation of Active Accounts", pnlCA);
 				} 
 			}

@@ -274,10 +274,9 @@ public class Cancellation extends _JInternalFrame implements _GUI,LookupListener
 												String co_name = (String) data[1];
 												String company_logo = (String) data[2];
 												
-												txtCompany.setText(co_name);
-								
-												
+												txtCompany.setText(co_name);	
 												lookupProjID.setLookupSQL(functions.lookupProjects(co_id));
+												lookupBatchNo.setLookupSQL(functions.listBatch(co_id));
 												
 											}
 										}
@@ -557,7 +556,7 @@ public class Cancellation extends _JInternalFrame implements _GUI,LookupListener
 												lookupBatchNo.addLookupListener(this);
 												lookupBatchNo.setReturnColumn(0);
 												lookupBatchNo.setPreferredSize(new Dimension(60, 20));
-												lookupBatchNo.setLookupSQL(functions.listBatch());
+//												lookupBatchNo.setLookupSQL(functions.listBatch(co_id));
 											}
 
 											JPanel pnlApproved = new JPanel(new BorderLayout(3,3));
@@ -1449,6 +1448,7 @@ public class Cancellation extends _JInternalFrame implements _GUI,LookupListener
 		lookupCompany.setValue(co_id);
 
 		lookupProjID.setLookupSQL(functions.lookupProjects(co_id));
+		lookupBatchNo.setLookupSQL(functions.listBatch(co_id));
 
 		pnlTagStatus.lookupProjID.setLookupSQL(functions.lookupProjects(co_id));
 	}

@@ -519,15 +519,22 @@ public class _FCancellationProcessing {
 		return db.Result[0][0].toString();
 	} // rplfNo
 
-	public String listBatch(){
+	public String listBatch(String co_id){ //MODIFIED BY MONIQUE; ADDED CO_ID FOR FILTERING OF BATCH; DTD 09-12-24
 
-		return "SELECT distinct on (batch_no) batch_no AS \"Batch No.\",\n" + 
-				"get_client_name_emp_id(requested_by) AS \"Requested by\",\n" + 
-				"date_requested AS \"Date Requested\" \n" + 
-				"FROM rf_cancellation \n" + 
-				"WHERE date_cancelled IS NULL  \n" +
-				"AND batch_no IS NOT NULL \n" +
-				"AND status_id = 'A'";
+		String SQL = "";
+		SQL = "SELECT distinct on (a.batch_no) a.batch_no AS \"Batch No.\",\n"
+				+ "get_client_name_emp_id(a.requested_by) AS \"Requested by\",\n"
+				+ "a.date_requested AS \"Date Requested\" \n"
+				+ "FROM rf_cancellation a\n"
+				+ "LEFT JOIN mf_project b ON a.proj_id = b.proj_id and b.status_id = 'A'\n"
+				+ "WHERE a.date_cancelled IS NULL  \n"
+				+ "AND a.batch_no IS NOT NULL \n"
+				+ "AND a.status_id = 'A'\n"
+				+ "AND b.co_id = '"+co_id+"'";
+		
+		FncSystem.out("ListBatch: ", SQL);
+		
+		return SQL; 
 
 	}
 

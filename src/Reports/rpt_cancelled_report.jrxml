@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCDR_detailed" pageWidth="878" pageHeight="612" orientation="Landscape" columnWidth="878" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.7715610000000228"/>
-	<property name="ireport.x" value="696"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="company" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="proj_id" class="java.lang.String" isForPrompting="false">
@@ -50,7 +50,7 @@
 		<![CDATA[select row_number() over(partition by c_cancelled_date order by c_entity_name) as row, *,
 (select y.entity_name from em_employee x inner join rf_entity y on x.entity_id = y.entity_id where x.emp_code = (select emp_code from rf_system_user where login_id = $P{prepared_by})) as prepared_by
 from tmp_cancelled_jv
-where c_entity_name != 'SIGUENZA, RICARDO DY'
+where c_entity_name NOT IN ('SIGUENZA, RICARDO DY', 'CRUZ, MARLIE BAUTISTA', 'MENDOZA, ROSITA DELUVERIS')
 and c_user = (select emp_code from rf_system_user where login_id = $P{prepared_by})
 order by c_cancelled_date, c_entity_name]]>
 	</queryString>

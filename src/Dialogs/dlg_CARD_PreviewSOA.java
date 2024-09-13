@@ -470,7 +470,7 @@ public class dlg_CARD_PreviewSOA extends JDialog implements ActionListener, _GUI
 			this.setFocusableWindowState(false);
 			
 			if (SOA_BOI_Accnts) {
-				FncReport.generateReport("/Reports/rptStatementOfAccount_boi.jasper", "Statement of Account", mapSOA);
+				FncReport.generateReport("/Reports/rptStatementOfAccount_boi.jasper", "Statement of Account BOI", mapSOA);
 			} else {
 				FncReport.generateReport("/Reports/rptStatementOfAccount.jasper", "Statement of Account", mapSOA);
 			}

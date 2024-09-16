@@ -37,6 +37,7 @@ import DateChooser._JDateChooser;
 import Functions.FncFocusTraversalPolicy;
 import Functions.FncGlobal;
 import Functions.FncReport;
+import Functions.FncSystem;
 import Functions.UserInfo;
 import Lookup.LookupEvent;
 import Lookup.LookupListener;
@@ -689,6 +690,8 @@ public class DocumentTransmittalOptions extends _JInternalFrame implements Actio
 			 * ADDED BY JED 2021-11-18 DCRF NO. 1856 : CHANGE COLUMN NAMES IN THE REPORT PER
 			 * DOC STATUS(EPEB MORTGAGE ADDED)
 			 */
+			
+			FncSystem.out("Doc Status", lookupDescription.getValue()); 
 
 			if (UserInfo.Department.equals("04") || UserInfo.Department.equals("98") || UserInfo.Department.equals("95")) {
 				mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
@@ -719,10 +722,15 @@ public class DocumentTransmittalOptions extends _JInternalFrame implements Actio
 					else if (lookupDescription.getValue().equals("227")) { 
 				mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
 				FncReport.generateReport("/Reports/rptTCT_Stat_227.jasper", "Transmittal Form", mapParameters);	
+				
+				} //ADDED BY ALLEI ANNE DTD 09-13-2024; REFER TO DCRF#3119
+					else if (lookupDescription.getValue().equals("228") || lookupDescription.getValue().equals("226")) { 
+				mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
+				FncReport.generateReport("/Reports/rptTCT_Stat_228_226.jasper", "Transmittal Form", mapParameters);	
 				}
-				else {
-					mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
-					FncReport.generateReport("/Reports/rptTCT.jasper", "Transmittal Form", mapParameters);
+					else {
+				mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
+				FncReport.generateReport("/Reports/rptTCT.jasper", "Transmittal Form", mapParameters);
 				}
 			}
 

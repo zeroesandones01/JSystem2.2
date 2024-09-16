@@ -2166,9 +2166,11 @@ public class DocumentsMonitoring extends _JInternalFrame implements _GUI, Action
 					}
 					
 					if(entity_id.equals("1185209653") && doc_id.equals("35")) {
-						url = "rptDeedOfAbsoluteSale_hernandez_karen";
+						if(pbl_id.equals("5249") || pbl_id.equals("5250")) { //ADDED BY MONIQUE; APPLIED TO THIS UNITS ONLY; DTD 9-13-2024
+							url = "rptDeedOfAbsoluteSale_hernandez_karen";	
+						}
 					}
-
+ 
 					FncSystem.out("url", url);
 					listDocID.add(doc_id);
 					listReport.add(String.format("/Reports/%s.jasper", url));

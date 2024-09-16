@@ -1362,7 +1362,7 @@ public class DataChangeRequest extends _JInternalFrame implements _GUI, ActionLi
 
 
 		if (status.equals("ACTIVE")) {
-			if (UserInfo.EmployeeCode.equals(sql_getCreatedBy())  || UserInfo.Department.equals("98") 
+			if (UserInfo.EmployeeCode.equals(sql_getCreatedBy())  || UserInfo.Department.equals("98" ) 
 					||UserInfo.EmployeeCode.equals("900449") //Del Gonzales
 					||UserInfo.EmployeeCode.equals("900395") //Net Cuaresma
 					||UserInfo.EmployeeCode.equals("900028") //Rhea Lim
@@ -1373,16 +1373,15 @@ public class DataChangeRequest extends _JInternalFrame implements _GUI, ActionLi
 					||UserInfo.EmployeeCode.equals("900606")//Jesica cumal
 					||UserInfo.EmployeeCode.equals("900298")
 					||UserInfo.EmployeeCode.equals("987120")
+					||UserInfo.EmployeeCode.equals(Head)
 					/*||UserInfo.EmployeeCode.equals(sql_getDeptHead(UserInfo.EmployeeCode))*/) {
-				if(UserInfo.EmployeeCode.equals(Head) || UserInfo.EmployeeCode.equals("900606")) {
-					enableButtons(false, true, true, false, false, false, true, true, true);
-				}else {
 					if(UserInfo.ADMIN) {
 						enableButtons(false, true, false, false, false, false, true, true, true);
 					}else {
-						enableButtons(false, true, false, false, false, false, false, true, true);
+						enableButtons(false, true, true, false, false, false, true, true, true);
 					}
-				}
+			}else {
+				enableButtons(false, true, false, false, false, false, false, true, true);
 			}
 			//				enableButtons(false, true, false, false, false, false, true, true, true);
 			//Added by: Jervin Vilog ---Date: 2019-12-09 --- Reason: Pwede Iapproved ng ibang head ang dcrf na hindi sa department nila pag tinangal ito  

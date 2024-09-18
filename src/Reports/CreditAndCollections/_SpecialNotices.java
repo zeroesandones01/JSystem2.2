@@ -232,7 +232,7 @@ public class _SpecialNotices {
 		pgSelect db = new pgSelect();
 		String SQL = "SELECT sp_tag_ntc_for_tct_under_buyers_name(ARRAY["+entity_id+"]::VARCHAR[], ARRAY["+proj_id+"]::VARCHAR[], ARRAY["+pbl_id+"]::VARCHAR[], ARRAY["+seq_no+"]::INT[], '"+UserInfo.EmployeeCode+"')";
 		db.select(SQL);
-
+		
 		FncSystem.out("Display Taggging of NOA Final Notice", SQL);
 
 		if(db.isNotNull()){

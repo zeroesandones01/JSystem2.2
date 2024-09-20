@@ -764,7 +764,7 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 					this.getClass().getClassLoader().getResourceAsStream("Images/" + "cenq-new.png"));
 		}
 
-		
+		//Added by Allei Anne 
 		String signatory = "JOHNNY L. CORPUZ";
 		String position = "Vice President";
 		
@@ -799,6 +799,7 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 			FncReport.generateReport("/Reports/rpt_hdmf_car_frwd_gtog_v1.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
 		}else if(intIndex == 5) {
 			
+			//Added by Allei Anne 
 			if(co_id.equals("02") || co_id.equals("01")) {
 				signatory = "JOSEPHINE S. ROXAS";
 				position = "Manager";
@@ -807,12 +808,14 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 			mapParameters.put("signatory", signatory);
 			mapParameters.put("position", position);
 
-			FncReport.generateReport("/Reports/rptREMGTG_sixth.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
+			FncReport.generateReport("/Reports/ .jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
 					
 		}else if(intIndex == 6) {
 			String selectedStatus = (String) cboStatus.getSelectedItem();
 			selectedStatus = selectedStatus.replace("7 - ","");
 			 System.out.println(selectedStatus);
+			
+			 //Added by Allei Anne
 			 
 			Map<String, Object> mapParametersWithCar = new HashMap<String, Object>();
 			

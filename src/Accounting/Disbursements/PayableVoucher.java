@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -139,6 +140,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 	private static JLabel lblRPLF_no;
 	private static JLabel lblCV_no;
 	static JLabel lblPaymentType;
+	private JLabel lblRequestType;
 
 	public static _JLookup lookupCompany;
 	public static _JLookup lookupPV_no;
@@ -148,6 +150,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 	private static _JLookup lookupPayeeType;
 	static _JLookup lookupPaymentType;
 	private static _JLookup lookupCV_no;
+	private static _JLookup lookupReqType;
 
 	public static modelPV_SubLedger modelPV_SL_total;
 	public static modelPVaccount_entries modelPV_account;
@@ -158,6 +161,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 
 	public static _JTagLabel tagCompany;
 	static _JTagLabel tagReqType;
+	private static _JTagLabel tagRequestType;
 	private static _JTagLabel tagPayee1;
 	private static _JTagLabel tagPayee2;
 	private static _JTagLabel tagPayeeType;
@@ -248,7 +252,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 	// static String isCurrentYear = "2018";
 
 	static String isCurrentYear = getCurrentYear();// **added by JED 2019-01-03 : to get current year for PV no
-													// lookup**//
+	// lookup**//
 
 	public PayableVoucher() {
 		super(title, true, true, true, true);
@@ -280,7 +284,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		this.setLayout(new BorderLayout(5, 5));
 		this.setSize(SIZE);
 		this.setPreferredSize(new java.awt.Dimension(935, 538));
-		this.setBounds(0, 0, 935, 538);
+		this.setBounds(0, 0, 935, 600);
 
 		pnlMain = new JPanel();
 		getContentPane().add(pnlMain, BorderLayout.CENTER);
@@ -442,72 +446,75 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 			pnlMain.add(pnlNorth, BorderLayout.NORTH);
 			pnlNorth.setLayout(new BorderLayout(5, 5));
 			pnlNorth.setBorder(lineBorder);
-			pnlNorth.setPreferredSize(new java.awt.Dimension(923, 207));
+			pnlNorth.setPreferredSize(new java.awt.Dimension(923, 225));
 
 			pnlComp = new JPanel(new BorderLayout(5, 0));
 			pnlNorth.add(pnlComp, BorderLayout.NORTH);
 			pnlNorth.addMouseListener(new PopupTriggerListener_panel2());
-
-			// company
-			pnlComp_a = new JPanel(new BorderLayout(5, 5));
-			pnlComp.add(pnlComp_a, BorderLayout.NORTH);
-			pnlComp_a.setPreferredSize(new java.awt.Dimension(610, 30));
-			pnlComp_a.addMouseListener(new PopupTriggerListener_panel2());
-
-			pnlComp_a1 = new JPanel(new GridLayout(1, 2, 5, 5));
-			pnlComp_a.add(pnlComp_a1, BorderLayout.WEST);
-			pnlComp_a1.setPreferredSize(new java.awt.Dimension(209, 30));
-			pnlComp_a1.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
-
 			{
-				lblCompany = new JLabel("        COMPANY", JLabel.TRAILING);
-				pnlComp_a1.add(lblCompany);
-				lblCompany.setBounds(8, 11, 62, 12);
-				lblCompany.setPreferredSize(new java.awt.Dimension(105, 25));
-				lblCompany.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12));
-			}
-			{
-				lookupCompany = new _JLookup(null, "Company", 0, 2);
-				pnlComp_a1.add(lookupCompany);
-				lookupCompany.setLookupSQL(SQL_COMPANY());
-				lookupCompany.setReturnColumn(0);
-				lookupCompany.addLookupListener(new LookupListener() {
-					public void lookupPerformed(LookupEvent event) {
-						Object[] data = ((_JLookup) event.getSource()).getDataSet();
-						if (data != null) {
+				// company
+				pnlComp_a = new JPanel(new BorderLayout(5, 5));
+				pnlComp.add(pnlComp_a, BorderLayout.NORTH);
+				pnlComp_a.setPreferredSize(new java.awt.Dimension(610, 30));
+				pnlComp_a.addMouseListener(new PopupTriggerListener_panel2());
+				{
+					pnlComp_a1 = new JPanel(new GridLayout(1, 2, 5, 5));
+					pnlComp_a.add(pnlComp_a1, BorderLayout.WEST);
+					pnlComp_a1.setPreferredSize(new java.awt.Dimension(209, 30));
+					pnlComp_a1.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
-							cancel();
-
-							co_id = (String) data[0];
-							company = (String) data[1];
-							tagCompany.setTag((String) data[1]);
-							company_logo = (String) data[3];
-
-							lblPV_no.setEnabled(true);
-							lookupPV_no.setEnabled(true);
-							// lookupPV_no.setEditable(true);
-							System.out.printf(getPV_no());
-							lookupPV_no.setLookupSQL(getPV_no());
-							lookupDRF_no.setLookupSQL(getDRF_no());
-
-							enable_buttons(true, false, false, false, false, true);
-						}
+					{
+						lblCompany = new JLabel("        COMPANY", JLabel.TRAILING);
+						pnlComp_a1.add(lblCompany);
+						lblCompany.setBounds(8, 11, 62, 12);
+						lblCompany.setPreferredSize(new java.awt.Dimension(105, 25));
+						lblCompany.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12));
 					}
-				});
-			}
+					{
+						lookupCompany = new _JLookup(null, "Company", 0, 2);
+						pnlComp_a1.add(lookupCompany);
+						lookupCompany.setLookupSQL(SQL_COMPANY());
+						lookupCompany.setReturnColumn(0);
+						lookupCompany.addLookupListener(new LookupListener() {
+							public void lookupPerformed(LookupEvent event) {
+								Object[] data = ((_JLookup) event.getSource()).getDataSet();
+								if (data != null) {
 
-			pnlComp_a2 = new JPanel(new GridLayout(1, 1, 5, 5));
-			pnlComp_a.add(pnlComp_a2, BorderLayout.CENTER);
-			pnlComp_a2.setPreferredSize(new java.awt.Dimension(423, 20));
-			pnlComp_a2.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			pnlComp_a2.addMouseListener(new PopupTriggerListener_panel2());
+									cancel();
 
-			{
-				tagCompany = new _JTagLabel("[ ]");
-				pnlComp_a2.add(tagCompany);
-				tagCompany.setBounds(209, 27, 700, 22);
-				tagCompany.setEnabled(true);
-				tagCompany.setPreferredSize(new java.awt.Dimension(27, 33));
+									co_id = (String) data[0];
+									company = (String) data[1];
+									tagCompany.setTag((String) data[1]);
+									company_logo = (String) data[3];
+
+									lblPV_no.setEnabled(true);
+									lookupPV_no.setEnabled(true);
+									// lookupPV_no.setEditable(true);
+									System.out.printf(getPV_no());
+									lookupPV_no.setLookupSQL(getPV_no());
+									lookupDRF_no.setLookupSQL(getDRF_no());
+
+									enable_buttons(true, false, false, false, false, true);
+								}
+							}
+						});
+					}
+				}
+				{
+					pnlComp_a2 = new JPanel(new GridLayout(1, 1, 5, 5));
+					pnlComp_a.add(pnlComp_a2, BorderLayout.CENTER);
+					pnlComp_a2.setPreferredSize(new java.awt.Dimension(423, 20));
+					pnlComp_a2.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+					pnlComp_a2.addMouseListener(new PopupTriggerListener_panel2());
+
+					{
+						tagCompany = new _JTagLabel("[ ]");
+						pnlComp_a2.add(tagCompany);
+						tagCompany.setBounds(209, 27, 700, 22);
+						tagCompany.setEnabled(true);
+						tagCompany.setPreferredSize(new java.awt.Dimension(27, 33));
+					}
+				}
 			}
 
 			pnlPV = new JPanel(new BorderLayout(5, 5));
@@ -585,30 +592,30 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 							 * w++; } txtDRFRemark.setText(particulars);
 							 */
 
-//							if (getPV_status(pv_no).equals("P")&&lookupPV_no.isEnabled()) 
-//							{								
-//								btnSave.setText("Post");  
-//								btnSave.setActionCommand("Post");		
-//								enable_buttons(false, false, false, true, true, true);
-//								mniInactivate.setEnabled(false);
-//								mnireversePV.setEnabled(true);
-//							} 
+							//							if (getPV_status(pv_no).equals("P")&&lookupPV_no.isEnabled()) 
+							//							{								
+							//								btnSave.setText("Post");  
+							//								btnSave.setActionCommand("Post");		
+							//								enable_buttons(false, false, false, true, true, true);
+							//								mniInactivate.setEnabled(false);
+							//								mnireversePV.setEnabled(true);
+							//							} 
 							if (getPV_status(pv_no).equals("P") && (checkDV_status_id(cv_no, co_id).equals("D")
 									|| cv_no.equals(null) || cv_no.equals("")) && lookupPV_no.isEnabled()) {// ----modified
-																											// by JED
-																											// 2018-09-27:
-																											// DCRF no.
-																											// 786 for
-																											// disabling
-																											// auto
-																											// reversal
-																											// of Posted
-																											// PV with
-																											// active,
-																											// tagged,
-																											// posted
-																											// paid out
-																											// DV
+								// by JED
+								// 2018-09-27:
+								// DCRF no.
+								// 786 for
+								// disabling
+								// auto
+								// reversal
+								// of Posted
+								// PV with
+								// active,
+								// tagged,
+								// posted
+								// paid out
+								// DV
 								btnSave.setText("Post");
 								btnSave.setActionCommand("Post");
 								enable_buttons(false, false, false, true, true, true);
@@ -697,102 +704,110 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				pnlPVDtl.add(pnlPVDtl_1, BorderLayout.WEST);
 				pnlPVDtl_1.setPreferredSize(new java.awt.Dimension(221, 116));
 				pnlPVDtl_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-				pnlPVDtl_1a = new JPanel(new GridLayout(4, 1, 0, 5));
-				pnlPVDtl_1.add(pnlPVDtl_1a, BorderLayout.WEST);
-				pnlPVDtl_1a.setPreferredSize(new java.awt.Dimension(99, 116));
-				pnlPVDtl_1a.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 				{
-					lblDateTrans = new JLabel("Trans. Date", JLabel.TRAILING);
-					pnlPVDtl_1a.add(lblDateTrans);
-					lblDateTrans.setEnabled(false);
+					pnlPVDtl_1a = new JPanel(new GridLayout(5, 1, 0, 5));
+					pnlPVDtl_1.add(pnlPVDtl_1a, BorderLayout.WEST);
+					pnlPVDtl_1a.setPreferredSize(new java.awt.Dimension(99, 116));
+					pnlPVDtl_1a.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+					{
+						lblDateTrans = new JLabel("Trans. Date", JLabel.TRAILING);
+						pnlPVDtl_1a.add(lblDateTrans);
+						lblDateTrans.setEnabled(false);
+					}
+					{
+						lblDateNeeded = new JLabel("Due Date", JLabel.TRAILING);
+						pnlPVDtl_1a.add(lblDateNeeded);
+						lblDateNeeded.setEnabled(false);
+					}
+					{
+						lblRPLF_no = new JLabel("RPLF No.", JLabel.TRAILING);
+						pnlPVDtl_1a.add(lblRPLF_no);
+						lblRPLF_no.setEnabled(false);
+					}
+					{
+						lblCV_no = new JLabel("CV No.", JLabel.TRAILING);
+						pnlPVDtl_1a.add(lblCV_no);
+						lblCV_no.setEnabled(false);
+					}
+					{
+						pnlPVDtl_1.add(Box.createHorizontalBox());
+					}
 				}
 				{
-					lblDateNeeded = new JLabel("Due Date", JLabel.TRAILING);
-					pnlPVDtl_1a.add(lblDateNeeded);
-					lblDateNeeded.setEnabled(false);
-				}
-				{
-					lblRPLF_no = new JLabel("RPLF No.", JLabel.TRAILING);
-					pnlPVDtl_1a.add(lblRPLF_no);
-					lblRPLF_no.setEnabled(false);
-				}
-				{
-					lblCV_no = new JLabel("CV No.", JLabel.TRAILING);
-					pnlPVDtl_1a.add(lblCV_no);
-					lblCV_no.setEnabled(false);
-				}
+					pnlPVDtl_1b = new JPanel(new GridLayout(5, 1, 5, 5));
+					pnlPVDtl_1.add(pnlPVDtl_1b, BorderLayout.CENTER);
+					pnlPVDtl_1b.setPreferredSize(new java.awt.Dimension(135, 119));
+					pnlPVDtl_1b.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 
-				pnlPVDtl_1b = new JPanel(new GridLayout(4, 1, 5, 5));
-				pnlPVDtl_1.add(pnlPVDtl_1b, BorderLayout.CENTER);
-				pnlPVDtl_1b.setPreferredSize(new java.awt.Dimension(135, 119));
-				pnlPVDtl_1b.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+					{
+						dteRequest = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
+						pnlPVDtl_1b.add(dteRequest);
+						dteRequest.setBounds(485, 7, 125, 21);
+						dteRequest.setDate(null);
+						dteRequest.setEnabled(false);
+						dteRequest.setDateFormatString("yyyy-MM-dd");
+						((JTextFieldDateEditor) dteRequest.getDateEditor()).setEditable(false);
+						dteRequest.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
+					}
+					{
+						dteNeeded = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
+						pnlPVDtl_1b.add(dteNeeded);
+						dteNeeded.setBounds(485, 7, 125, 21);
+						dteNeeded.setDate(null);
+						dteNeeded.setEnabled(false);
+						dteNeeded.setDateFormatString("yyyy-MM-dd");
+						((JTextFieldDateEditor) dteNeeded.getDateEditor()).setEditable(false);
+						dteNeeded.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
+					}
+					{
+						lookupDRF_no = new _JLookup(null, "DRF No.", 2, 2);
+						pnlPVDtl_1b.add(lookupDRF_no);
+						lookupDRF_no.setBounds(20, 27, 20, 25);
+						lookupDRF_no.setReturnColumn(0);
+						lookupDRF_no.setEnabled(false);
+						// lookupDRF_no.setEditable(false);
+						lookupDRF_no.setPreferredSize(new java.awt.Dimension(157, 22));
+						lookupDRF_no.addLookupListener(new LookupListener() {
+							public void lookupPerformed(LookupEvent event) {
+								Object[] data = ((_JLookup) event.getSource()).getDataSet();
+								if (data != null) {
+									rplf_no = (String) data[0];
 
-				{
-					dteRequest = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
-					pnlPVDtl_1b.add(dteRequest);
-					dteRequest.setBounds(485, 7, 125, 21);
-					dteRequest.setDate(null);
-					dteRequest.setEnabled(false);
-					dteRequest.setDateFormatString("yyyy-MM-dd");
-					((JTextFieldDateEditor) dteRequest.getDateEditor()).setEditable(false);
-					dteRequest.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
-				}
-				{
-					dteNeeded = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
-					pnlPVDtl_1b.add(dteNeeded);
-					dteNeeded.setBounds(485, 7, 125, 21);
-					dteNeeded.setDate(null);
-					dteNeeded.setEnabled(false);
-					dteNeeded.setDateFormatString("yyyy-MM-dd");
-					((JTextFieldDateEditor) dteNeeded.getDateEditor()).setEditable(false);
-					dteNeeded.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
-				}
-				{
-					lookupDRF_no = new _JLookup(null, "DRF No.", 2, 2);
-					pnlPVDtl_1b.add(lookupDRF_no);
-					lookupDRF_no.setBounds(20, 27, 20, 25);
-					lookupDRF_no.setReturnColumn(0);
-					lookupDRF_no.setEnabled(false);
-					// lookupDRF_no.setEditable(false);
-					lookupDRF_no.setPreferredSize(new java.awt.Dimension(157, 22));
-					lookupDRF_no.addLookupListener(new LookupListener() {
-						public void lookupPerformed(LookupEvent event) {
-							Object[] data = ((_JLookup) event.getSource()).getDataSet();
-							if (data != null) {
-								rplf_no = (String) data[0];
+									lblDateTrans.setEnabled(true);
+									lblDateNeeded.setEnabled(true);
+									dteRequest.setEnabled(false);
+									dteNeeded.setEnabled(true);
+									dteNeeded.setEditable(true);
+									lblPaymentType.setEnabled(true);
+									lookupPaymentType.setEnabled(true);
+									// lookupPaymentType.setEditable(true);
+									tagReqType.setEnabled(true);
+									lookupPaymentType.setLookupSQL(getPayment_type());
+									rplf_type_id = getRPLF_typeID(rplf_no);
 
-								lblDateTrans.setEnabled(true);
-								lblDateNeeded.setEnabled(true);
-								dteRequest.setEnabled(false);
-								dteNeeded.setEnabled(true);
-								dteNeeded.setEditable(true);
-								lblPaymentType.setEnabled(true);
-								lookupPaymentType.setEnabled(true);
-								// lookupPaymentType.setEditable(true);
-								tagReqType.setEnabled(true);
-								lookupPaymentType.setLookupSQL(getPayment_type());
-								rplf_type_id = getRPLF_typeID(rplf_no);
+									setDRF_header();
+									displayDRF_toPVdetails(modelPV_account, rowHeaderPV_account, modelPV_accounttotal);
+									displayPV_subsidiaryledgers(modelPV_SL, rowHeaderPV_SL, modelPV_SL_total, rplf_no);
 
-								setDRF_header();
-								displayDRF_toPVdetails(modelPV_account, rowHeaderPV_account, modelPV_accounttotal);
-								displayPV_subsidiaryledgers(modelPV_SL, rowHeaderPV_SL, modelPV_SL_total, rplf_no);
+									btnSave.setEnabled(true);
+									modelPV_account.setEditable(false);
 
-								btnSave.setEnabled(true);
-								modelPV_account.setEditable(false);
-
+								}
 							}
-						}
-					});
-				}
-				{
-					lookupCV_no = new _JLookup(null, "CV No.", 2, 2);
-					pnlPVDtl_1b.add(lookupCV_no);
-					lookupCV_no.setBounds(20, 27, 20, 25);
-					lookupCV_no.setReturnColumn(0);
-					lookupCV_no.setEnabled(false);
-					// lookupCV_no.setEditable(false);
-					lookupCV_no.setPreferredSize(new java.awt.Dimension(157, 22));
+						});
+					}
+					{
+						lookupCV_no = new _JLookup(null, "CV No.", 2, 2);
+						pnlPVDtl_1b.add(lookupCV_no);
+						lookupCV_no.setBounds(20, 27, 20, 25);
+						lookupCV_no.setReturnColumn(0);
+						lookupCV_no.setEnabled(false);
+						// lookupCV_no.setEditable(false);
+						lookupCV_no.setPreferredSize(new java.awt.Dimension(157, 22));
+					}
+					{
+						pnlPVDtl_1b.add(Box.createHorizontalBox());
+					}
 				}
 
 				// Start of Left Panel
@@ -801,11 +816,16 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				pnlPVInfo.setPreferredSize(new java.awt.Dimension(694, 113));
 				pnlPVInfo.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
 
-				pnlPVInfo_1 = new JPanel(new GridLayout(4, 1, 5, 5));
+				pnlPVInfo_1 = new JPanel(new GridLayout(5, 1, 5, 5));
 				pnlPVInfo.add(pnlPVInfo_1, BorderLayout.WEST);
 				pnlPVInfo_1.setPreferredSize(new java.awt.Dimension(112, 113));
 				pnlPVInfo_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
+				
+				{
+					lblRequestType = new JLabel("Request Type", JLabel.TRAILING);
+					pnlPVInfo_1.add(lblRequestType);
+					lblRequestType.setEnabled(false);
+				}
 				{
 					lblPaymentType = new JLabel("Payment Type", JLabel.TRAILING);
 					pnlPVInfo_1.add(lblPaymentType);
@@ -832,11 +852,18 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				pnlPVDtl_2.setPreferredSize(new java.awt.Dimension(203, 118));
 				pnlPVDtl_2.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
-				pnlPVDtl_2a = new JPanel(new GridLayout(4, 1, 0, 5));
+				pnlPVDtl_2a = new JPanel(new GridLayout(5, 1, 0, 5));
 				pnlPVDtl_2.add(pnlPVDtl_2a, BorderLayout.WEST);
 				pnlPVDtl_2a.setPreferredSize(new java.awt.Dimension(119, 119));
 				pnlPVDtl_2a.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+				
+				{
+					lookupReqType = new _JLookup(null, "Request Type", 0);
+					pnlPVDtl_2a.add(lookupReqType);
+					lookupReqType.setEnabled(false);
 
+				}
+				
 				{
 					lookupPaymentType = new _JLookup(null, "Payment Type", 2, 2);
 					pnlPVDtl_2a.add(lookupPaymentType);
@@ -903,11 +930,19 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 					});
 				}
 
-				pnlPVDtl_2b = new JPanel(new GridLayout(4, 1, 0, 5));
+				pnlPVDtl_2b = new JPanel(new GridLayout(5, 1, 0, 5));
 				pnlPVDtl_2.add(pnlPVDtl_2b, BorderLayout.CENTER);
 				pnlPVDtl_2b.setPreferredSize(new java.awt.Dimension(140, 118));
 				pnlPVDtl_2b.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
+				
+				{
+					tagRequestType = new _JTagLabel("[ ]");
+					pnlPVDtl_2b.add(tagRequestType);
+					tagRequestType.setPreferredSize(new java.awt.Dimension(27, 33));
+					tagRequestType.addMouseListener(new PopupTriggerListener_panel2());
+					tagRequestType.setEnabled(false);
+				}
+				
 				{
 					tagReqType = new _JTagLabel("[ ]");
 					pnlPVDtl_2b.add(tagReqType);
@@ -940,14 +975,14 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 					tagPayeeType.setPreferredSize(new java.awt.Dimension(27, 33));
 					tagPayeeType.addMouseListener(new PopupTriggerListener_panel2());
 				}
-				
+
 				pnlPVRequestType = new JPanel(new GridLayout(4, 1, 0, 5));
 				pnlPVDtl_2.add(pnlPVRequestType, BorderLayout.EAST);
 				pnlPVRequestType.setPreferredSize(new java.awt.Dimension(140, 118));
 				pnlPVRequestType.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-				
+
 				{
-					
+
 				}
 			}
 		}
@@ -1202,14 +1237,14 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 						});
 
 						tblPV_SL.getSelectionModel().addListSelectionListener(new ListSelectionListener() {// **ADDED BY
-																											// JED
-																											// 2020-08-03
-																											// : DISPLAY
-																											// TAG
-																											// DETAILS
-																											// IN
-																											// SUBSIDIARY
-																											// LEDGER**//
+							// JED
+							// 2020-08-03
+							// : DISPLAY
+							// TAG
+							// DETAILS
+							// IN
+							// SUBSIDIARY
+							// LEDGER**//
 							public void valueChanged(ListSelectionEvent arg0) {
 								try {
 									if (!arg0.getValueIsAdjusting()) {
@@ -1241,8 +1276,8 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 					{
 						modelPV_SL_total = new modelPV_SubLedger();
 						modelPV_SL_total
-								.addRow(new Object[] { "Total", null, new BigDecimal(0.00), new BigDecimal(0.00),
-										new BigDecimal(0.00), null, null, null, null, null, null, null, null });
+						.addRow(new Object[] { "Total", null, new BigDecimal(0.00), new BigDecimal(0.00),
+								new BigDecimal(0.00), null, null, null, null, null, null, null, null });
 
 						tblPV_SLtotal = new _JTableTotal(modelPV_SL_total, tblPV_SL);
 						tblPV_SLtotal.setFont(dialog11Bold);
@@ -1353,12 +1388,12 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				+ "a.dept_id,\r\n" + "a.sect_id,\r\n" + "a.project_id,\r\n" + "a.sub_projectid,\r\n"
 				+ "b.acct_name,\r\n" + "(case when a.bal_side = 'D' then a.tran_amt else 0 end) as debit,\r\n"
 				+ "(case when a.bal_side = 'C' then a.tran_amt else 0 end) as credit, a.corollary_entry \r\n"
-//				+ "get_div_alias(a.div_id),			\r\n" + "get_department_alias_new(a.dept_id),			\r\n"
-//				+ "get_project_alias(a.project_id),			\r\n"
-//		//		+ "get_sub_proj_alias(a.sub_projectid),			\r\n"
-//				+ "f.sub_proj_id,	\n"
-//				+ "(select get_client_name(entity_id2) from rf_pv_header where pv_no = a.pv_no and co_id =  '"
-//				+ lookupCompany.getValue() + "')			\r\n" + "\r\n" 
+				//				+ "get_div_alias(a.div_id),			\r\n" + "get_department_alias_new(a.dept_id),			\r\n"
+				//				+ "get_project_alias(a.project_id),			\r\n"
+				//		//		+ "get_sub_proj_alias(a.sub_projectid),			\r\n"
+				//				+ "f.sub_proj_id,	\n"
+				//				+ "(select get_client_name(entity_id2) from rf_pv_header where pv_no = a.pv_no and co_id =  '"
+				//				+ lookupCompany.getValue() + "')			\r\n" + "\r\n" 
 				+ "from rf_pv_detail a\r\n"
 				+ "left join mf_boi_chart_of_accounts b on a.acct_id = b.acct_id\r\n" + "\r\n" 
 				+ "left join mf_sub_project f on a.sub_projectid = f.sub_proj_id and a.project_id = f.proj_id and f.status_id ='A'"
@@ -1442,35 +1477,35 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		} catch (NullPointerException e) {
 			part_desc = "";
 		}
-		
+
 		if (part_desc.equals("")) {
 
 		} else {
 			particulars = "" + particulars + "  " + part_desc + "  \n";
 		}
-		
+
 		//Added by Erick 2023-08-17
 		if(checktag(rplf_no, co_id)) {
 			//Added by Erick 2023-08-04 (or_no_ref,mc_no)
-			 or_no_ref  = FncGlobal.GetString ("select 'OR NO.: ' || coalesce(string_agg(remarks, ','), '') \n"
-				 		+ "from (\n"
-				 		+ "	select (case when c.pcostid_dl in ('215','216') \n"
-				 		+ "					then c.rpt_or_no\n"
-				 		+ "				else case when b.or_no_reference is not null then b.or_no_reference else  c.or_no_reference end\n"
-				 		+ "			end) as remarks,\n"
-				 		+ "	a.rplf_no \n"
-				 		+ "	from rf_request_header a\n"
-				 		+ "	left join rf_transfer_cost b on a.rplf_no = b.rplf_no and a.co_id = b.co_id\n"
-				 		+ "	left join rf_processing_cost c on a.rplf_no = c.rplf_no and a.co_id = c.co_id\n"
-				 		+ "	where a.rplf_no = '"+rplf_no+"' \n"
-				 		+ "	and a.co_id = '"+co_id+"' \n"
-				 		+ "	group by a.rplf_no,\n"
-				 		+ "	b.or_no_reference , \n"
-				 		+ "	c.or_no_reference, \n"
-				 		+ "	rpt_or_no,\n"
-				 		+ "	c.pcostid_dl \n"
-				 		+ ") x group by x.rplf_no");
-			 mc_no = FncGlobal.GetString("select 'Mc No.: ' || coalesce(string_agg(c.mc_no, ','),'No MC') as mc_no\n"
+			or_no_ref  = FncGlobal.GetString ("select 'OR NO.: ' || coalesce(string_agg(remarks, ','), '') \n"
+					+ "from (\n"
+					+ "	select (case when c.pcostid_dl in ('215','216') \n"
+					+ "					then c.rpt_or_no\n"
+					+ "				else case when b.or_no_reference is not null then b.or_no_reference else  c.or_no_reference end\n"
+					+ "			end) as remarks,\n"
+					+ "	a.rplf_no \n"
+					+ "	from rf_request_header a\n"
+					+ "	left join rf_transfer_cost b on a.rplf_no = b.rplf_no and a.co_id = b.co_id\n"
+					+ "	left join rf_processing_cost c on a.rplf_no = c.rplf_no and a.co_id = c.co_id\n"
+					+ "	where a.rplf_no = '"+rplf_no+"' \n"
+					+ "	and a.co_id = '"+co_id+"' \n"
+					+ "	group by a.rplf_no,\n"
+					+ "	b.or_no_reference , \n"
+					+ "	c.or_no_reference, \n"
+					+ "	rpt_or_no,\n"
+					+ "	c.pcostid_dl \n"
+					+ ") x group by x.rplf_no");
+			mc_no = FncGlobal.GetString("select 'Mc No.: ' || coalesce(string_agg(c.mc_no, ','),'No MC') as mc_no\n"
 					+ "from ( select distinct on (pv_no) pv_no, co_id  from rf_pv_detail\n"
 					+ "where co_id = '"+co_id+"' and pv_no in ( select pv_no from  rf_pv_header where pv_no = '"+rplf_no+"'  and co_id = '04'  and status_id != 'I' and NULLIF(pv_no, '') is not null) \n"
 					+ "and status_id = 'A' and bal_side = 'D' group by pv_no, co_id) a\n"
@@ -1478,8 +1513,8 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 					+ "left join rf_mc_detail c on a.pv_no = c.pv_no and a.co_id = c.co_id\n"
 					+ "and a.co_id = b.co_id");
 		}else {
-			 or_no_ref  = "";
-			 mc_no = "";
+			or_no_ref  = "";
+			mc_no = "";
 		}
 		System.out.println("or_no_ref: "+or_no_ref);
 		System.out.println("mc_no: "+mc_no);
@@ -1541,7 +1576,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		if (rplf_type_id.equals("02") || rplf_type_id.equals("07") || rplf_type_id.equals("12")
 				|| rplf_type_id.equals("13") || rplf_type_id.equals("05")) {
 		} else {
-			
+
 			if(rplf_type_id.equals("04") || rplf_type_id.equals("14") || rplf_type_id.equals("16")) {
 				sql = sql + "union all\r\n" + "\r\n" + "select \r\n" + "'01-99-06-000',\r\n" + "a.div_id,\r\n"
 						+ "a.dept_id,\r\n" + "a.sect_id,\r\n" + "a.project_id,\r\n" + "a.sub_projectid,\r\n"
@@ -1552,38 +1587,38 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 						+ "' and status_id = 'A' and vat_amt > 0 and co_id = '" + lookupCompany.getValue() + "' \r\n"
 						+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n";
 				if(rplf_type_id.equals("14")) {
-//					sql = sql + "union all\r\n" + 
-//								"select \n"
-//								+ "'01-02-04-000',\n"
-//								+ "a.div_id,\n"
-//								+ "a.dept_id,\n"
-//								+ "a.sect_id,\n"
-//								+ "a.project_id,\n"
-//								+ "a.sub_projectid,\n"
-//								+ "'Advances to Officers and Employees',\n"
-//								+ "a.pv_amt as debit,\n"
-//								+ "0 as credit\n"
-//								+ "from (\n"
-//								+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \n"
-//								+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(pv_amt) as pv_amt\n"
-//								+ "from rf_request_detail \n"
-//								+ "where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"' \n"
-//								+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a ";
-					
-					
+					//					sql = sql + "union all\r\n" + 
+					//								"select \n"
+					//								+ "'01-02-04-000',\n"
+					//								+ "a.div_id,\n"
+					//								+ "a.dept_id,\n"
+					//								+ "a.sect_id,\n"
+					//								+ "a.project_id,\n"
+					//								+ "a.sub_projectid,\n"
+					//								+ "'Advances to Officers and Employees',\n"
+					//								+ "a.pv_amt as debit,\n"
+					//								+ "0 as credit\n"
+					//								+ "from (\n"
+					//								+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \n"
+					//								+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(pv_amt) as pv_amt\n"
+					//								+ "from rf_request_detail \n"
+					//								+ "where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"' \n"
+					//								+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a ";
+
+
 					sql = sql + "UNION ALL \r\n"+
-								"select \n"
-								+ "'01-02-04-000',\n"
-								+ "NULL,\n"
-								+ "NULL,\n"
-								+ "NULL,\n"
-								+ "NULL,\n"
-								+ "NULL,\n"
-								+ "'Advances to Officers and Employees',\n"
-								+ "sum(a.pv_amt) as debit,\n"
-								+ "0 as credit, true\n"
-								+ "from rf_request_detail a\n"
-								+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"' ";
+							"select \n"
+							+ "'01-02-04-000',\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "NULL,\n"
+							+ "'Advances to Officers and Employees',\n"
+							+ "sum(a.pv_amt) as debit,\n"
+							+ "0 as credit, true\n"
+							+ "from rf_request_detail a\n"
+							+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"' ";
 				}
 			}else{
 				sql = sql + "union all\r\n" + "\r\n" + "select \r\n" + "'01-99-03-000',\r\n" + "a.div_id,\r\n"
@@ -1594,7 +1629,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 						+ "from rf_request_detail   \r\n" + "where rplf_no = '" + rplf_no
 						+ "' and status_id = 'A' and vat_amt > 0 and co_id = '" + lookupCompany.getValue() + "' \r\n"
 						+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n";
-				
+
 				if(rplf_type_id.equals("17")) {
 					sql = sql + "UNION ALL \r\n"+
 							"select \n"
@@ -1615,9 +1650,9 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 
 		sql = sql +
 
-		// Withholding Tax Payable
-		// -----modified by jed 9-10-18: line 17, co_id is added in the where clause and
-		// subquery to display wtax------//
+				// Withholding Tax Payable
+				// -----modified by jed 9-10-18: line 17, co_id is added in the where clause and
+				// subquery to display wtax------//
 				"\n"+ 
 				"\n"+ 
 				"union all \n"+ 
@@ -1657,7 +1692,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				+ "' and status_id = 'A' and dp_recoup_amt > 0 and co_id = '" + lookupCompany.getValue() + "' \r\n"
 				+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n"+
 				"\n"+
-				
+
 				"union all\n" +
 				/*
 				 * //Comment by Erick 2021-06-11 "\r\n" + "select \r\n" +
@@ -1676,101 +1711,101 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				 * "group by div_id, dept_id, sect_id, project_id, sub_projectid, remarks ) a "
 				 * +
 				 */
-				// added By Erick 2021/06/11 to display entries when liquidating bacharge of JV
-				// and PV
-				/*
-				 * "select * from(	\n" + "		select\n" +
-				 * "		(case when split_part(a.remarks,':',1) = 'Backcharge Utilities' \n"
-				 * + "		 	then '01-02-07-003' \n" + "		 		else '01-02-07-002' \n"
-				 * + "		end),\n" + "		a.div_id, \n" + "		a.dept_id,  \n" +
-				 * "		a.sect_id,  \n" + "		a.project_id,  \n" +
-				 * "		a.sub_projectid, \n" +
-				 * "		(case when split_part(a.remarks,':',1) = 'Backcharge Utilities' \n"
-				 * + "		 	then 'Advances to Contractors - Utilities' \n" +
-				 * "		 		else 'Advances to Contractors - Back Charges' \n" +
-				 * "		end),\n" + "		0,\r\n" + //"		a.amount\n" +
-				 * "		a.bc_liqui_amt" + "		from (\n" + "			\n" +
-				 * "		select \n"+
-				 * //"		distinct on (a.div_id, a.dept_id, a.sect_id, a.project_id, a.sub_projectid)  \n"
-				 * + //original code comment by erick 2021-12-06
-				 * "		a.div_id, a.dept_id, a.sect_id, a.project_id, a.sub_projectid,\n" +
-				 * //"		 sum(a.bc_liqui_amt) as bc_liqui_amt,a.rplf_no,\n" + //Comment by
-				 * Erick 2021-11-11 //"		sum(c.amount) as bc_liqui_amt, \n" + //Added by
-				 * Erick 2021-11-11 "		c.amount as bc_liqui_amt,\n" +
-				 * "		a.remarks, a.ref_doc_no, \n"+ //"		sum(c.amount) as amount,\n"
-				 * +//original code comment by erick 2021-12-06 "		c.amount as amount,\n" +
-				 * 
-				 * "		b.bc_rplf_no \n" + "		from rf_request_detail a    \n" +
-				 * "		left join co_backcharge_liquidation b on a.ref_doc_no = b.bill_no \n"
-				 * + "		left join \n" + "			(\n" +
-				 * "				select x.bc_rplf_no, x.bill_no,y.amount, y.remarks, y.acct_id, y.ref_doc_no\n"
-				 * + "				from co_backcharge_liquidation x\n" +
-				 * "				left join rf_request_detail y on  x.bc_rplf_no = y.rplf_no\n"
-				 * + "				where   y.status_id = 'A'\n" +
-				 * "				and y.acct_id = '01-02-07-002' \n"+
-				 * "				and y.rplf_no is not null\n" + "				\n" +
-				 * "			)c on b.bc_rplf_no  = c.bc_rplf_no --and a.ref_doc_no = c.bill_no\n"
-				 * + //Added by Erick 2021-11-11 //" )c on a.rplf_no = c.bc_rplf_no
-				 * "		where a.rplf_no = '"+rplf_no+"' \n" +
-				 * "		and a.status_id = 'A' \n" + "		and a.bc_liqui_amt > 0 \n" +
-				 * "		and a.co_id = '"+lookupCompany.getValue()+"'  \n" +
-				 * "		AND NOT EXISTS (SELECT * FROM rf_jv_header where jv_no = b.bc_rplf_no) \n"
-				 * +
-				 * //"		group by div_id, dept_id, sect_id, project_id, sub_projectid,bc_liqui_amt,a.rplf_no, a.remarks,a.ref_doc_no,b.bc_rplf_no,c.amount\n"
-				 * + //original code comment by erick 2021-12-06 "			\n" +
-				 * "		)a where (case when split_part(remarks,':',1) = 'Backcharge Utilities'  then false else true end) \n"
-				 * +
-				 */
-				 
-				 
+				 // added By Erick 2021/06/11 to display entries when liquidating bacharge of JV
+				 // and PV
+				 /*
+				  * "select * from(	\n" + "		select\n" +
+				  * "		(case when split_part(a.remarks,':',1) = 'Backcharge Utilities' \n"
+				  * + "		 	then '01-02-07-003' \n" + "		 		else '01-02-07-002' \n"
+				  * + "		end),\n" + "		a.div_id, \n" + "		a.dept_id,  \n" +
+				  * "		a.sect_id,  \n" + "		a.project_id,  \n" +
+				  * "		a.sub_projectid, \n" +
+				  * "		(case when split_part(a.remarks,':',1) = 'Backcharge Utilities' \n"
+				  * + "		 	then 'Advances to Contractors - Utilities' \n" +
+				  * "		 		else 'Advances to Contractors - Back Charges' \n" +
+				  * "		end),\n" + "		0,\r\n" + //"		a.amount\n" +
+				  * "		a.bc_liqui_amt" + "		from (\n" + "			\n" +
+				  * "		select \n"+
+				  * //"		distinct on (a.div_id, a.dept_id, a.sect_id, a.project_id, a.sub_projectid)  \n"
+				  * + //original code comment by erick 2021-12-06
+				  * "		a.div_id, a.dept_id, a.sect_id, a.project_id, a.sub_projectid,\n" +
+				  * //"		 sum(a.bc_liqui_amt) as bc_liqui_amt,a.rplf_no,\n" + //Comment by
+				  * Erick 2021-11-11 //"		sum(c.amount) as bc_liqui_amt, \n" + //Added by
+				  * Erick 2021-11-11 "		c.amount as bc_liqui_amt,\n" +
+				  * "		a.remarks, a.ref_doc_no, \n"+ //"		sum(c.amount) as amount,\n"
+				  * +//original code comment by erick 2021-12-06 "		c.amount as amount,\n" +
+				  * 
+				  * "		b.bc_rplf_no \n" + "		from rf_request_detail a    \n" +
+				  * "		left join co_backcharge_liquidation b on a.ref_doc_no = b.bill_no \n"
+				  * + "		left join \n" + "			(\n" +
+				  * "				select x.bc_rplf_no, x.bill_no,y.amount, y.remarks, y.acct_id, y.ref_doc_no\n"
+				  * + "				from co_backcharge_liquidation x\n" +
+				  * "				left join rf_request_detail y on  x.bc_rplf_no = y.rplf_no\n"
+				  * + "				where   y.status_id = 'A'\n" +
+				  * "				and y.acct_id = '01-02-07-002' \n"+
+				  * "				and y.rplf_no is not null\n" + "				\n" +
+				  * "			)c on b.bc_rplf_no  = c.bc_rplf_no --and a.ref_doc_no = c.bill_no\n"
+				  * + //Added by Erick 2021-11-11 //" )c on a.rplf_no = c.bc_rplf_no
+				  * "		where a.rplf_no = '"+rplf_no+"' \n" +
+				  * "		and a.status_id = 'A' \n" + "		and a.bc_liqui_amt > 0 \n" +
+				  * "		and a.co_id = '"+lookupCompany.getValue()+"'  \n" +
+				  * "		AND NOT EXISTS (SELECT * FROM rf_jv_header where jv_no = b.bc_rplf_no) \n"
+				  * +
+				  * //"		group by div_id, dept_id, sect_id, project_id, sub_projectid,bc_liqui_amt,a.rplf_no, a.remarks,a.ref_doc_no,b.bc_rplf_no,c.amount\n"
+				  * + //original code comment by erick 2021-12-06 "			\n" +
+				  * "		)a where (case when split_part(remarks,':',1) = 'Backcharge Utilities'  then false else true end) \n"
+				  * +
+				  */
+
+
 				// Added by Erick 2021-12-16 for liquidation of backcharge PV
 				// BC Liquidation
 				"\n" +
 				"select * from(	\n"+ 
-				 "	select\n"+
-				 "	(case when split_part(trim(a.remarks_details),':',1) = 'Backcharge Utilities' \n"+
-				 "		then '01-02-07-003' \n"+ 
-				 "			else '01-02-07-002' \n"+ 
-				 "	end),\n"+ 
-				 "	a.div_id, \n"+
-				 "	a.dept_id,\n"+ 
-				 "	a.sect_id, \n"+ 
-				 "	a.project_id,\n" + /*"a.sub_projectid, \n"+*/ //comment by erick 2023-12-11  wrong sub_project is, must be the subproject of the backcharge rplf.
-				 //"(select sub_projectid from rf_request_detail where rplf_no = a.bc_rplf_no and status_id = 'A' and co_id = '" + lookupCompany.getValue() + "')as sub_projectid,\n"+  //Added by erick to get the subproj_id of the backcharge rplf
-				 "	a.sub_projectid as sub_projectid, \n"+			
-				 "	(case when split_part(trim(a.remarks_details),':',1) = 'Backcharge Utilities' \n"+
-				 "		then 'Advances to Contractors - Utilities' \n"+
-				 "			else 'Advances to Contractors - Back Charges' \n"+ 
-				 "	end),\n" + 
-				 "	0,\n"+
-				 "	a.bc_liqui_amt, false\n"+ 
-				 "	from (\n"+ 
-				 "	\n" +
-				 "		select \n"+ 
-				 "		b.div_id, \n"+
-				 "		b.dept_id, \n"+ 
-				 "		b.sect_id,\n"+ 
-				 "		c.project_id, \n"+
-				 "		c.sub_projectid,\n"+
-				 "		a.liq_amt as bc_liqui_amt,\n"+ 
-				 "		trim(b.remarks) as remarks_details,\n"+ 
-				 "		b.ref_doc_no, \n"+
-				 "		a.liq_amt as amount,\n"+
-				 "		a.bc_rplf_no \n" + 
-				 "		from co_backcharge_liquidation a \n"+
-				 "		left join rf_request_detail b on a.bill_no = b.ref_doc_no \n"+ 
-				 "		left join rf_request_detail c on a.bc_rplf_no = c.rplf_no and a.bc_co_id = c.co_id and c.status_id = a.status_id and a.liq_amt = c.amount \n"+  //Added by erick 2024-02-29 to get the correct sub_proj_id of backcharge
-				 "		where a.status_id = 'A'\n"+ 
-				 "		and b.status_id = 'A'\n"+ 
-				 "		and b.co_id = '" + lookupCompany.getValue() + "' \n"+
-				 "		and b.bc_liqui_amt > 0\n"+
-				 "		and b.rplf_no = '" + rplf_no + "'\n"+
-				 "		and EXISTS (select * from rf_request_detail where rplf_no = a.bc_rplf_no and status_id = 'A' and acct_id = '01-02-07-002')\n"+
-				 "		AND NOT EXISTS (SELECT * FROM rf_jv_header where jv_no = a.bc_rplf_no)\n"+
-				 "		) a \n"+
-				 "		where (case when split_part(trim(a.remarks_details),':',1) = 'Backcharge Utilities'  then false else true end) \n"+ 
-				 "	\n" +
-				
+				"	select\n"+
+				"	(case when split_part(trim(a.remarks_details),':',1) = 'Backcharge Utilities' \n"+
+				"		then '01-02-07-003' \n"+ 
+				"			else '01-02-07-002' \n"+ 
+				"	end),\n"+ 
+				"	a.div_id, \n"+
+				"	a.dept_id,\n"+ 
+				"	a.sect_id, \n"+ 
+				"	a.project_id,\n" + /*"a.sub_projectid, \n"+*/ //comment by erick 2023-12-11  wrong sub_project is, must be the subproject of the backcharge rplf.
+				//"(select sub_projectid from rf_request_detail where rplf_no = a.bc_rplf_no and status_id = 'A' and co_id = '" + lookupCompany.getValue() + "')as sub_projectid,\n"+  //Added by erick to get the subproj_id of the backcharge rplf
+				"	a.sub_projectid as sub_projectid, \n"+			
+				"	(case when split_part(trim(a.remarks_details),':',1) = 'Backcharge Utilities' \n"+
+				"		then 'Advances to Contractors - Utilities' \n"+
+				"			else 'Advances to Contractors - Back Charges' \n"+ 
+				"	end),\n" + 
+				"	0,\n"+
+				"	a.bc_liqui_amt, false\n"+ 
+				"	from (\n"+ 
+				"	\n" +
+				"		select \n"+ 
+				"		b.div_id, \n"+
+				"		b.dept_id, \n"+ 
+				"		b.sect_id,\n"+ 
+				"		c.project_id, \n"+
+				"		c.sub_projectid,\n"+
+				"		a.liq_amt as bc_liqui_amt,\n"+ 
+				"		trim(b.remarks) as remarks_details,\n"+ 
+				"		b.ref_doc_no, \n"+
+				"		a.liq_amt as amount,\n"+
+				"		a.bc_rplf_no \n" + 
+				"		from co_backcharge_liquidation a \n"+
+				"		left join rf_request_detail b on a.bill_no = b.ref_doc_no \n"+ 
+				"		left join rf_request_detail c on a.bc_rplf_no = c.rplf_no and a.bc_co_id = c.co_id and c.status_id = a.status_id and a.liq_amt = c.amount \n"+  //Added by erick 2024-02-29 to get the correct sub_proj_id of backcharge
+				"		where a.status_id = 'A'\n"+ 
+				"		and b.status_id = 'A'\n"+ 
+				"		and b.co_id = '" + lookupCompany.getValue() + "' \n"+
+				"		and b.bc_liqui_amt > 0\n"+
+				"		and b.rplf_no = '" + rplf_no + "'\n"+
+				"		and EXISTS (select * from rf_request_detail where rplf_no = a.bc_rplf_no and status_id = 'A' and acct_id = '01-02-07-002')\n"+
+				"		AND NOT EXISTS (SELECT * FROM rf_jv_header where jv_no = a.bc_rplf_no)\n"+
+				"		) a \n"+
+				"		where (case when split_part(trim(a.remarks_details),':',1) = 'Backcharge Utilities'  then false else true end) \n"+ 
+				"	\n" +
+
 				"		union all\n" + 
 				//JV Backcharge Utilities
 				"		\n" +
@@ -1784,8 +1819,8 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				"		z.acct_name,\n" + 
 				"		0,\r\n" + 
 				"		x.liq_amt, false\n" + // added for partial deduction of backcharge
-			   //" 		y.tran_amt\n" + //Replaced due to it always display full amount of JV...
-			   //        What if only partial is deducted?
+				//" 		y.tran_amt\n" + //Replaced due to it always display full amount of JV...
+				//        What if only partial is deducted?
 				"		from\n" + "		(\n"+
 				"			select b.bc_rplf_no, a.rplf_no,a.status_id, b.bill_no, c.jv_no, b.liq_amt, c.acct_id  from (select distinct on (ref_doc_no) * from rf_request_detail where rplf_no = '" + rplf_no + "' and status_id = 'A') a\n"+
 				"			left join co_backcharge_liquidation b on a.ref_doc_no = b.bill_no \n"+
@@ -1803,7 +1838,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				"			and a.rec_id NOT IN (534463, 543478, 554507, 554507)\n"+
 				"			and b.bill_no NOT IN ('0000009252', '0000009260', '0000009258', '0000009271', '0000009275')\n"+
 				"       	and not exists(select * from rf_jv_header where jv_no = c.jv_no and co_id = c.co_id and status_id = 'D')\n"+ //--Added by Erick 2022-10-27 DCRF 2334 
-//				"			and case when c.jv_no = '24010099' then b.liq_amt = c.tran_amt else true end\n"+//Comment by Erick 2024-01-17 For special case only, with backcharge and utilities in 1 JV
+				//				"			and case when c.jv_no = '24010099' then b.liq_amt = c.tran_amt else true end\n"+//Comment by Erick 2024-01-17 For special case only, with backcharge and utilities in 1 JV
 				"		) x\n" + 
 				"	left join rf_jv_detail y on x.bc_rplf_no =y.jv_no and y.bal_side = 'D' and x.acct_id = y.acct_id \n"+
 				"	left join mf_boi_chart_of_accounts z on y.acct_id = z.acct_id\n"+
@@ -1812,7 +1847,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				// " and y.acct_id = '01-02-07-003'\n" +
 				"	and y.co_id = '" + lookupCompany.getValue() + "'	\n" + ") xx \n" +
 				"\n" +
-				
+
 				//Comment by erick 2023-10-04 due to conflict when creating entry with other liquidation billing.
 				/*//Uncomment by erick 2023-08-10 Display entry from House Repair
 				  // //CIP - Housing (Construction Cost) 
@@ -1840,7 +1875,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				  +lookupCompany.getValue()+"' \r\n" + 
 				  "	group by a.div_id, a.dept_id, a.sect_id, a.project_id, a.sub_projectid, c.acct_name, a.acct_id ) a "
 				  +*/
-				 
+
 				// Other Liquidation
 				"union all\n"+ 
 				"\n"+ 
@@ -1866,61 +1901,61 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				+ "	group by a.div_id, a.dept_id, a.sect_id, a.project_id, a.sub_projectid,b.other_liqui_acct_id,c.acct_name, d.acct_id, d.ded_amt, a.other_liqui_amt ) a \r\n"
 				+ "group by  a.acct_id,a.div_id,a.dept_id,a.sect_id,a.project_id,a.sub_projectid,a.acct_name,a.other_liqui_amt \n"+
 				"\n";
-				if(rplf_type_id.equals("14")) {
-//					sql = sql + "\n\n"+
-//							"UNION ALL \n"
-//							+ "select \n"
-//							+ "'01-02-22-000',\n"
-//							+ "a.div_id,\n"
-//							+ "a.dept_id,\n"
-//							+ "a.sect_id,\n"
-//							+ "a.project_id,\n"
-//							+ "a.sub_projectid,\n"
-//							+ "'Allowance for Uncollectible Advances',\n"
-//							+ "0 as debit,\n"
-//							+ "a.pv_amt as credit\n"
-//							+ "from (\n"
-//							+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \n"
-//							+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(pv_amt) as pv_amt\n"
-//							+ "from rf_request_detail \n"
-//							+ "where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"' \n"
-//							+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n";
-					
-					sql = sql + "\n\n"+
-							"UNION ALL \n"+
-							"select \n"
-							+ "'01-02-22-000',\n"
-							+ "NULL,\n"
-							+ "NULL,\n"
-							+ "NULL,\n"
-							+ "NULL,\n"
-							+ "NULL,\n"
-							+ "'Allowance for Uncollectible Advances',\n"
-							+ "0 as debit,\n"
-							+ "sum(a.pv_amt) as credit, true\n"
-							+ "from rf_request_detail a\n"
-							+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"'\n";
-				}
-				
-				if(rplf_type_id.equals("17")) {
-					sql = sql + "\n\n"+
-							"UNION ALL \n"+
-							"select \n"
-							+ "'01-02-22-000',\n"
-							+ "NULL,\n"
-							+ "NULL,\n"
-							+ "NULL,\n"
-							+ "NULL,\n"
-							+ "NULL,\n"
-							+ "'Allowance for Uncollectible Advances',\n"
-							+ "0 as debit,\n"
-							+ "sum(a.pv_amt) as credit, true\n"
-							+ "from rf_request_detail a\n"
-							+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"'\n";
-				}
+		if(rplf_type_id.equals("14")) {
+			//					sql = sql + "\n\n"+
+			//							"UNION ALL \n"
+			//							+ "select \n"
+			//							+ "'01-02-22-000',\n"
+			//							+ "a.div_id,\n"
+			//							+ "a.dept_id,\n"
+			//							+ "a.sect_id,\n"
+			//							+ "a.project_id,\n"
+			//							+ "a.sub_projectid,\n"
+			//							+ "'Allowance for Uncollectible Advances',\n"
+			//							+ "0 as debit,\n"
+			//							+ "a.pv_amt as credit\n"
+			//							+ "from (\n"
+			//							+ "select distinct on (div_id, dept_id, sect_id, project_id, sub_projectid) \n"
+			//							+ "div_id, dept_id, sect_id, project_id, sub_projectid, sum(pv_amt) as pv_amt\n"
+			//							+ "from rf_request_detail \n"
+			//							+ "where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"' \n"
+			//							+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n";
 
-				// Accounts Payable - Trade
-				sql = sql + "union all \n"+ 
+			sql = sql + "\n\n"+
+					"UNION ALL \n"+
+					"select \n"
+					+ "'01-02-22-000',\n"
+					+ "NULL,\n"
+					+ "NULL,\n"
+					+ "NULL,\n"
+					+ "NULL,\n"
+					+ "NULL,\n"
+					+ "'Allowance for Uncollectible Advances',\n"
+					+ "0 as debit,\n"
+					+ "sum(a.pv_amt) as credit, true\n"
+					+ "from rf_request_detail a\n"
+					+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"'\n";
+		}
+
+		if(rplf_type_id.equals("17")) {
+			sql = sql + "\n\n"+
+					"UNION ALL \n"+
+					"select \n"
+					+ "'01-02-22-000',\n"
+					+ "NULL,\n"
+					+ "NULL,\n"
+					+ "NULL,\n"
+					+ "NULL,\n"
+					+ "NULL,\n"
+					+ "'Allowance for Uncollectible Advances',\n"
+					+ "0 as debit,\n"
+					+ "sum(a.pv_amt) as credit, true\n"
+					+ "from rf_request_detail a\n"
+					+ "where a.rplf_no = '"+rplf_no+"' and a.status_id = 'A' and co_id = '"+co_id+"'\n";
+		}
+
+		// Accounts Payable - Trade
+		sql = sql + "union all \n"+ 
 				"\n" +
 				"select \r\n" + "'03-01-01-001',\r\n" + "a.div_id,\r\n" + "a.dept_id,\r\n"
 				+ "a.sect_id,\r\n" + "a.project_id,\r\n" + "a.sub_projectid,\r\n" + "'Accounts Payable - Trade',\r\n"
@@ -1930,8 +1965,8 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				+ "from rf_request_detail \r\n" + "where rplf_no = '" + rplf_no + "' and status_id = 'A' and co_id = '"
 				+ lookupCompany.getValue() + "' \r\n"
 				+ "group by div_id, dept_id, sect_id, project_id, sub_projectid ) a \n";
-				
-		
+
+
 
 		System.out.printf("displayDRF_toPVdetails");
 		System.out.printf("SQL #1: %s", sql);
@@ -1946,7 +1981,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 
 			totalPV(modelMain, modelTotal);
 		}
-		
+
 
 		txtDRFRemark.setText(particulars);
 		adjustRowHeight_account();
@@ -1966,7 +2001,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				+ "a.project_id,\n" + "a.sub_projectid,\n" + "a.div_id,\n" + "a.dept_id,\n" + "is_taxpaidbyco,\n"
 				+ "b.acct_name,\n" + "c.proj_name,\n" + "trim(d.entity_name),\n" + "trim(e.entity_type_desc),\n"
 				+ "get_div_alias(a.div_id),			\n" + "get_department_alias_new(a.dept_id),			\n"
-		//		+ "get_project_alias(a.project_id),			\n" + "get_sub_proj_alias(a.sub_projectid)\n" + "\n"
+				//		+ "get_project_alias(a.project_id),			\n" + "get_sub_proj_alias(a.sub_projectid)\n" + "\n"
 				+ "f.sub_proj_id	\n"
 				+ "from rf_request_detail a\n" + "left join mf_boi_chart_of_accounts b on a.acct_id=b.acct_id\n"
 				+ "left join mf_project c on a.project_id = c.proj_id\n"
@@ -2010,6 +2045,8 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		tagPayeeType.setText((String) pv_hrd[11]);
 		txtStatus.setText((String) pv_hrd[13]);
 		txtDRFRemark.setText(pv_hrd[14].toString());
+		lookupReqType.setValue(pv_hrd[15].toString());
+		tagRequestType.setTag(pv_hrd[16].toString());
 
 		pay_type = (String) pv_hrd[5];
 		payee1 = (String) pv_hrd[7];
@@ -2047,7 +2084,9 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		tagPayee2.setTag(availer);
 		lookupPayeeType.setText((String) drf_hrd[5]);
 		tagPayeeType.setText((String) drf_hrd[6]);
-
+		lookupReqType.setValue((String) drf_hrd[9]);
+		tagRequestType.setTag((String) drf_hrd[10]);
+		
 		try {
 			pay_type = (String) drf_hrd[7];
 			lookupPaymentType.setValue((String) drf_hrd[7]);
@@ -2386,7 +2425,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 	public static void edit() {
 		lblDateTrans.setEnabled(true);
 		lblDateNeeded.setEnabled(true);
-		
+
 		if(UserInfo.EmployeeCode.equals("901284") || UserInfo.EmployeeCode.equals("900655") || UserInfo.ADMIN) {
 			dteRequest.setEnabled(true);
 			dteNeeded.setEnabled(true);
@@ -2398,8 +2437,8 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 			dteRequest.setEditable(false);
 			dteNeeded.setEditable(false);
 		}
-		
-		
+
+
 		lblPaymentType.setEnabled(true);
 		lookupPaymentType.setEnabled(true);
 		// lookupPaymentType.setEditable(true);
@@ -2422,7 +2461,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		modelPV_SL.setEditable(false);
 		to_do = "edit";
 
-		
+
 
 	}
 
@@ -2471,18 +2510,18 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		displayPV_subsidiaryledgers(modelPV_SL, rowHeaderPV_SL, modelPV_SL_total, lookupPV_no.getText().trim());
 		cv_no = lookupCV_no.getText();
 
-//		if (getPV_status(pv_no).equals("P")&&lookupPV_no.isEnabled()) 
-//		{								
-//			btnSave.setText("Post");  
-//			btnSave.setActionCommand("Post");		
-//			enable_buttons(false, false, false, true, true, true);
-//			mniInactivate.setEnabled(false);
-//			mnireversePV.setEnabled(true);
-//		} 
+		//		if (getPV_status(pv_no).equals("P")&&lookupPV_no.isEnabled()) 
+		//		{								
+		//			btnSave.setText("Post");  
+		//			btnSave.setActionCommand("Post");		
+		//			enable_buttons(false, false, false, true, true, true);
+		//			mniInactivate.setEnabled(false);
+		//			mnireversePV.setEnabled(true);
+		//		} 
 		if (getPV_status(pv_no).equals("P")
 				&& (checkDV_status_id(cv_no, co_id).equals("D") || cv_no.equals(null) || cv_no.equals(""))
 				&& lookupPV_no.isEnabled()) {// ----modified by JED 2018-09-27: DCRF no. 786 for disabling auto reversal
-												// of Posted PV with active, tagged, posted paid out DV
+			// of Posted PV with active, tagged, posted paid out DV
 			btnSave.setText("Post");
 			btnSave.setActionCommand("Post");
 			enable_buttons(false, false, false, true, true, true);
@@ -2523,7 +2562,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 
 				if (checkAcctBalanceIfEqual() == true) {// **ADDED BY JED 2019-04-22 : TO CHECK TOTAL IF BALANCE OR NOT
-														// BEFORE POSTING**//
+					// BEFORE POSTING**//
 
 					String pv = lookupPV_no.getText().trim();
 
@@ -2635,27 +2674,27 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		String remark_unliq_ca = "";
 
 		/* COMMENTED BY JED 2021-02-01 : FOR FAST PREVIEW OF PV */
-//		if (RequestForPayment.entityhasUnliquidatedCA(lookupPayee1.getText().trim())==true) {payee_unliq_ca = "Payee";}
-//		if (RequestForPayment.entityhasUnliquidatedCA(lookupPayee2.getText().trim())==true) {availer_unliq_ca = "Availer";}		
+		//		if (RequestForPayment.entityhasUnliquidatedCA(lookupPayee1.getText().trim())==true) {payee_unliq_ca = "Payee";}
+		//		if (RequestForPayment.entityhasUnliquidatedCA(lookupPayee2.getText().trim())==true) {availer_unliq_ca = "Availer";}		
 
-//		if (payee_unliq_ca.equals("")&&availer_unliq_ca.equals("")) {} else {	
-//
-//			/*if (payee_unliq_ca.equals("")) {} 
-//			else {
-//				remark_unliq_ca = ""+payee_unliq_ca+"";
-//				if (!availer_unliq_ca.equals("")) {remark_unliq_ca = remark_unliq_ca + " and ";} 
-//				else {}  
-//			}  */
-//
-//			if (availer_unliq_ca.equals("")) {} 
-//			else {remark_unliq_ca = remark_unliq_ca + ""+availer_unliq_ca+"";}  
-//
-//			/*if (!payee_unliq_ca.equals("")&&!availer_unliq_ca.equals("")) {remark_unliq_ca = remark_unliq_ca + " have ";} 
-//			else {remark_unliq_ca = remark_unliq_ca + " has ";} */
-//
-//			remark_unliq_ca = remark_unliq_ca + " has Unliquidated Cash Advance (CA)." ; 
-//
-//		}
+		//		if (payee_unliq_ca.equals("")&&availer_unliq_ca.equals("")) {} else {	
+		//
+		//			/*if (payee_unliq_ca.equals("")) {} 
+		//			else {
+		//				remark_unliq_ca = ""+payee_unliq_ca+"";
+		//				if (!availer_unliq_ca.equals("")) {remark_unliq_ca = remark_unliq_ca + " and ";} 
+		//				else {}  
+		//			}  */
+		//
+		//			if (availer_unliq_ca.equals("")) {} 
+		//			else {remark_unliq_ca = remark_unliq_ca + ""+availer_unliq_ca+"";}  
+		//
+		//			/*if (!payee_unliq_ca.equals("")&&!availer_unliq_ca.equals("")) {remark_unliq_ca = remark_unliq_ca + " have ";} 
+		//			else {remark_unliq_ca = remark_unliq_ca + " has ";} */
+		//
+		//			remark_unliq_ca = remark_unliq_ca + " has Unliquidated Cash Advance (CA)." ; 
+		//
+		//		}
 		/* COMMENTED BY JED 2021-02-01 : FOR FAST PREVIEW OF PV */
 
 		String criteria = "Payable Voucher";
@@ -2760,7 +2799,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 
 		return
 
-		"select \r\n" + "a.pv_no as \"PV No.\" , \r\n" + "a.pv_date as \"PV Date\"      ,\r\n"
+				"select \r\n" + "a.pv_no as \"PV No.\" , \r\n" + "a.pv_date as \"PV Date\"      ,\r\n"
 				+ "d.amt as \"PV Amount\"      ,\r\n" +
 				// "(case when a.pay_type_id = 'B' then 'CHECK' else 'CASH' end) as \"Pay
 				// Type\", \r\n" +
@@ -2781,13 +2820,13 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 
 	public static String getDRF_no() {// used
 		return "select \r\n" + "a.rplf_no as \"DRF No.\", \n" + "a.rplf_date as \"DRF Date\",\r\n"
-				+ "trim(b.entity_name) as \"Payee\"  \r\n" + "from rf_request_header a\r\n"
-				+ "left join rf_entity b on a.entity_id1 = b.entity_id  \r\n" + "where a.co_id = '" + co_id + "' \n"
-				+ "and rplf_no not in ( select rplf_no from rf_pv_header where co_id = '" + co_id + "' and status_id ='P')  \n"
-				+ "and a.status_id = 'A'\n" + "order by a.rplf_no desc ";
+		+ "trim(b.entity_name) as \"Payee\"  \r\n" + "from rf_request_header a\r\n"
+		+ "left join rf_entity b on a.entity_id1 = b.entity_id  \r\n" + "where a.co_id = '" + co_id + "' \n"
+		+ "and rplf_no not in ( select rplf_no from rf_pv_header where co_id = '" + co_id + "' and status_id ='P')  \n"
+		+ "and a.status_id = 'A'\n" + "order by a.rplf_no desc ";
 
 	}
-	
+
 	public static String GetDRF_noAddNew() {
 		return "select \r\n" + "a.rplf_no as \"DRF No.\", \n" + "a.rplf_date as \"DRF Date\",\r\n"
 				+ "trim(b.entity_name) as \"Payee\"  \r\n" + "from rf_request_header a\r\n"
@@ -2798,7 +2837,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 
 	public static String getPayment_type() {// used
 		return "select 'B' as \"Code\", 'CHECK' as \"Payment Type\" union all "
-				+ "select 'A' as \"Code\", 'CASH'  as \"Payment Type\"   ";
+		+ "select 'A' as \"Code\", 'CASH'  as \"Payment Type\"   ";
 
 	}
 
@@ -2853,8 +2892,8 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				 */
 
 				"select \r\n" + "distinct on (a.proj_id, a.sub_proj_id)\r\n" + "\r\n"
-						+ "a.sub_proj_id  as \"Subproj Code\",\r\n" + "a.phase as \"Phase\",  \r\n"
-						+ "a.proj_id as \"Proj Code\",\r\n" + "b.proj_name as \"Proj Name\"  \r\n" +
+				+ "a.sub_proj_id  as \"Subproj Code\",\r\n" + "a.phase as \"Phase\",  \r\n"
+				+ "a.proj_id as \"Proj Code\",\r\n" + "b.proj_name as \"Proj Name\"  \r\n" +
 
 						"from mf_sub_project a\r\n" + "left join mf_project b on a.proj_id = b.proj_id\r\n"
 						+ "where b.co_id = '" + co_id + "' and phase != '' AND a.status_id = 'A'";//ADDED STATUS ID BY LESTER DCRF 2718
@@ -2901,12 +2940,14 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				+ "(case when a.pay_type_id = 'A' then 'CASH' else 'CHECK' end) as pay_type_desc,\r\n"
 				+ "a.entity_id1,\r\n" + "trim(b.entity_name) as payee_1,\r\n" + "a.entity_id2,\r\n"
 				+ "trim(c.entity_name) as payee_2,\r\n" + "a.entity_type_id,\r\n" + "d.entity_type_desc,\r\n"
-				+ "a.credit_term_id,\r\n" + "e.status_desc," + "trim(a.remarks) \r\n" + ""
+				+ "a.credit_term_id,\r\n" + "e.status_desc," + "trim(a.remarks),f.rplf_type_id, g.rplf_type_desc  \r\n" + ""
 				+ "from rf_pv_header a\r\n" + "left join rf_entity b on a.entity_id1 = b.entity_id\r\n"
 				+ "left join rf_entity c on a.entity_id2 = c.entity_id\r\n"
 				+ "left join mf_entity_type d on a.entity_type_id = d.entity_type_id\r\n"
-				+ "left join mf_record_status e on a.status_id = e.status_id\r\n" + "" + "where a.pv_no = '" + req_no
-				+ "' and a.co_id = '" + co_id + "'\r\n" + "";
+				+ "left join mf_record_status e on a.status_id = e.status_id\r\n" + ""
+				+ "left join rf_request_header f on f.rplf_no = a.pv_no and f.co_id = a.co_id \n"
+				+ "left join mf_rplf_type g on g.rplf_type_id = f.rplf_type_id \n"
+				+ "" + "where a.pv_no = '" + req_no +"' and a.co_id = '" + co_id + "'\r\n" + "";
 
 		System.out.printf("SQL #1 PV Header: %s", strSQL);
 		pgSelect db = new pgSelect();
@@ -2951,13 +2992,13 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 
 				"a.date_needed,\r\n" + "a.entity_id1,\r\n" + "trim(b.entity_name) as payee_1,\r\n" + "a.entity_id2,\r\n"
 				+ "trim(c.entity_name) as payee_2,\r\n" + "a.entity_type_id,\r\n" + "d.entity_type_desc,"
-				+ "a.pay_type_id," + "(case when a.pay_type_id = 'B' then 'CHECK' else 'CASH' end) as py_type  \r\n" +
-
+				+ "a.pay_type_id," + "(case when a.pay_type_id = 'B' then 'CHECK' else 'CASH' end) as py_type,  \r\n"
+				+ "a.rplf_type_id, f.rplf_type_desc \r\n"+
 				"from rf_request_header a\r\n" + "left join rf_entity b on a.entity_id1 = b.entity_id\r\n"
 				+ "left join rf_entity c on a.entity_id2 = c.entity_id\r\n"
 				+ "left join mf_entity_type d on a.entity_type_id = d.entity_type_id\r\n"
-				+ "left join mf_record_status e on a.status_id = e.status_id\r\n" +
-
+				+ "left join mf_record_status e on a.status_id = e.status_id\r\n" 
+				+ "left join mf_rplf_type f on f.rplf_type_id = a.rplf_type_id \r\n"+
 				"where a.rplf_no = '" + rplf_no + "'   and a.co_id = '" + co_id + "' \r\n";
 
 		pgSelect db = new pgSelect();
@@ -3018,9 +3059,9 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				+ "	where a.rplf_no = '"+rplf_no+"'\n"
 				+ "	and a.co_id = '"+co_id+"'\n"
 				+ "	) x group by x.remarks";
-		
+
 		FncSystem.out("getorreference", sql);
-		
+
 		pgSelect db = new pgSelect();
 		db.select(sql);
 		if (db.isNotNull()) {
@@ -3038,16 +3079,16 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		String strSQL = 
 				//"select amount||'  -  '|| '(' || a.entity_type_id || ')' || ' ' ||  b.entity_name \n" +
 				"SELECT FORMAT('%s - (%s %s) %s', a.amount, CASE WHEN a.is_vatentity THEN 'V' ELSE 'NV' END, a.entity_type_id, b.entity_name)\n"+
-		// "select coalesce(sp_add_whitespace_right(15,(case when amount::text is null
-		// then null else amount::text end)))::text \n" +
+				// "select coalesce(sp_add_whitespace_right(15,(case when amount::text is null
+				// then null else amount::text end)))::text \n" +
 				"from rf_request_detail a\n" + "left join rf_entity b on a.entity_id = b.entity_id\n"
 				+ "where rplf_no = '" + req_no + "'  \n" + "and a.status_id != 'I'  \r\n" + "and a.line_no = " + line_no
 				+ " " + "and a.co_id = '" + co_id + "' "
-//				+ "and rplf_no not in (select rplf_no from rf_processing_cost where status_id = 'A' and co_id = '"
-//				+ co_id + "' and rplf_no is not null)\n"
+				//				+ "and rplf_no not in (select rplf_no from rf_processing_cost where status_id = 'A' and co_id = '"
+				//				+ co_id + "' and rplf_no is not null)\n"
 				+ "and rplf_no not in (select rplf_no from rf_transfer_cost where status_id = 'A' and co_id = '" + co_id
 				+ "' and rplf_no is not null and date_created::DATE >= '2022-07-05'::Date)";
-		
+
 		System.out.println("getDRFAvailerAmt: "+strSQL);
 		pgSelect db = new pgSelect();
 		db.select(strSQL);
@@ -3253,23 +3294,23 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 	public static String getDRF_remarks(String req_no) {// used
 
 		String strSQL =
-				
-				  "select \n " + "trim(remarks)  \r\n" +
-				  
+
+				"select \n " + "trim(remarks)  \r\n" +
+
 				  "from rf_request_header a \r\n" +
 				  "where a.rplf_no = '"+req_no+"' and a.co_id = '"
 				  +co_id+"' and a.status_id = 'A'  ";
-				 
 
-				/*
-				 * "select \n " + "trim(part_desc)   \r\n" +
-				 * 
-				 * "from rf_request_detail a \r\n" +
-				 * "where a.rplf_no = '"+req_no+"' and a.co_id = '"
-				 * +co_id+"' and a.status_id = 'A'  ";
-				 */
 
-				FncSystem.out("Remarks", strSQL);
+		/*
+		 * "select \n " + "trim(part_desc)   \r\n" +
+		 * 
+		 * "from rf_request_detail a \r\n" +
+		 * "where a.rplf_no = '"+req_no+"' and a.co_id = '"
+		 * +co_id+"' and a.status_id = 'A'  ";
+		 */
+
+		FncSystem.out("Remarks", strSQL);
 
 		pgSelect db = new pgSelect();
 		db.select(strSQL);
@@ -3386,7 +3427,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		String sql[] = { "", "", "", "", "", "", getProject(), getSubproject(tblPV_SL, modelPV_SL, 6), getDivision(),
 				getDepartment(tblPV_SL, modelPV_SL, 7), "", "", "", "", "" };
 		String lookup_name[] = { "", "", "", "", "", "", "Project", "Division", "", "Department", "", "", "", "", "",
-				"" };
+		"" };
 
 		if (column == x[column] && modelPV_SL.isEditable() && sql[column] != "") {
 			_JLookupTable dlg = new _JLookupTable(FncGlobal.homeMDI, null, lookup_name[column], sql[column], false);
@@ -3553,7 +3594,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 						enable_buttons(false, false, false, false, false, true);
 					} else if (to_do.equals("set-up")) {
 						if (checkAcctBalanceIfEqual() == true) {// **ADDED BY JED 2019-04-22 : TO CHECK TOTAL IF BALANCE
-																// OR NOT BEFORE SAVING OR POSTING**//
+							// OR NOT BEFORE SAVING OR POSTING**//
 							pgUpdate db = new pgUpdate();
 							updatePV_header_forsetup(rplf_no, db);
 							updateRPLF_detail(rplf_no, db);
@@ -3790,7 +3831,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 	public void updateRPLF_detail(String rplf_no, pgUpdate db) {
 
 		String sqlDetail = "update rf_pv_detail set status_id = 'I' where trim(pv_no) = '" + lookupPV_no.getText()
-				+ "' and co_id = '" + co_id + "'   ";
+		+ "' and co_id = '" + co_id + "'   ";
 
 		System.out.printf("SQL #1: %s", sqlDetail);
 		db.executeUpdate(sqlDetail, false);
@@ -3811,15 +3852,15 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		remarks = txtDRFRemark.getText().trim().replace("'", "''").trim();
 
 		String sqlDetail = "update rf_pv_header set " + "pv_date = '" + dateFormat.format(dteRequest.getDate())
-				+ "',  \n" + // 4
-				"due_date = '" + dateFormat.format(dteNeeded.getDate()) + "',  \n" + // 5
-				"pay_type_id = '" + pay_type_id + "' , \n" + // 7
-				"entity_id1 = '" + entity_id1 + "' , \n" + // 7
-				"entity_id2 = '" + entity_id2 + "' , \n" + // 7
-				"edited_by = '" + edited_by + "' , \n" + // 20
-				"date_edited = now()," + "remarks = '" + remarks + "' , \n" + // 20
-				"status_id = 'A' \n" + // 21
-				"where pv_no = '" + lookupPV_no.getText() + "' and co_id = '" + co_id + "'   ";
+		+ "',  \n" + // 4
+		"due_date = '" + dateFormat.format(dteNeeded.getDate()) + "',  \n" + // 5
+		"pay_type_id = '" + pay_type_id + "' , \n" + // 7
+		"entity_id1 = '" + entity_id1 + "' , \n" + // 7
+		"entity_id2 = '" + entity_id2 + "' , \n" + // 7
+		"edited_by = '" + edited_by + "' , \n" + // 20
+		"date_edited = now()," + "remarks = '" + remarks + "' , \n" + // 20
+		"status_id = 'A' \n" + // 21
+		"where pv_no = '" + lookupPV_no.getText() + "' and co_id = '" + co_id + "'   ";
 
 		System.out.printf("SQL #1: %s", sqlDetail);
 		db.executeUpdate(sqlDetail, false);
@@ -3843,16 +3884,16 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		remarks = txtDRFRemark.getText().trim().replace("'", "''");
 
 		String sqlDetail = "update rf_pv_header set " + "pv_date = '" + dateFormat.format(dteRequest.getDate())
-				+ "',  \n" + // 4
-				"due_date = '" + dateFormat.format(dteNeeded.getDate()) + "',  \n" + // 5
-				"pay_type_id = '" + pay_type_id + "' , \n" + // 7
-				"entity_id1 = '" + entity_id1 + "' , \n" + // 7
-				"entity_id2 = '" + entity_id2 + "' , \n" + // 7
-				"entity_type_id = '" + ent_type_id + "' , \n" + // ---added by jed 2018-10-30 no dcrf---//
-				"edited_by = '" + edited_by + "' , \n" + // 20
-				"date_edited = now()," + "remarks = '" + remarks + "' , \n" + // 20
-				"status_id = 'A' \n" + // 21
-				"where pv_no = '" + lookupPV_no.getText() + "' and co_id = '" + co_id + "'   ";
+		+ "',  \n" + // 4
+		"due_date = '" + dateFormat.format(dteNeeded.getDate()) + "',  \n" + // 5
+		"pay_type_id = '" + pay_type_id + "' , \n" + // 7
+		"entity_id1 = '" + entity_id1 + "' , \n" + // 7
+		"entity_id2 = '" + entity_id2 + "' , \n" + // 7
+		"entity_type_id = '" + ent_type_id + "' , \n" + // ---added by jed 2018-10-30 no dcrf---//
+		"edited_by = '" + edited_by + "' , \n" + // 20
+		"date_edited = now()," + "remarks = '" + remarks + "' , \n" + // 20
+		"status_id = 'A' \n" + // 21
+		"where pv_no = '" + lookupPV_no.getText() + "' and co_id = '" + co_id + "'   ";
 
 		System.out.printf("SQL #1: %s", sqlDetail);
 		db.executeUpdate(sqlDetail, false);
@@ -3862,8 +3903,8 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 	public void updatePV_header_pvdate(String rplf_no, pgUpdate db) {
 
 		String sqlDetail = "update rf_pv_header set " + "pv_date = '" + dateFormat.format(dteRequest.getDate())
-				+ "',  \n" + "edited_by = '" + UserInfo.EmployeeCode + "' , \n" + "date_edited = now() \n"
-				+ "where pv_no = '" + lookupPV_no.getText() + "' and co_id = '" + co_id + "'   ";
+		+ "',  \n" + "edited_by = '" + UserInfo.EmployeeCode + "' , \n" + "date_edited = now() \n"
+		+ "where pv_no = '" + lookupPV_no.getText() + "' and co_id = '" + co_id + "'   ";
 
 		System.out.printf("SQL #1: %s", sqlDetail);
 		db.executeUpdate(sqlDetail, false);
@@ -4252,15 +4293,15 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		String co_address = "";
 		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
 		String secondPayor = "CARLOS CHENG / PRESIDENT / TIN 100-775-734-000"; // added by jed 8/29/18, change by JED
-																				// 2018-12-10 from VICTOR H. MANARANG TO
-																				// CARLOS CHENG dcrf no.879 for CDC//
+		// 2018-12-10 from VICTOR H. MANARANG TO
+		// CARLOS CHENG dcrf no.879 for CDC//
 		String firstPayor = "ANDRES CHUA / PRESIDENT / TIN 147-299-505-000"; // added by jed 8/29/18 for VDC
 		String thirdPayor = "VICTOR MANARANG / PRESIDENT / TIN 108-728-634-000"; // added by jari cruz july 20, 2022 for
-																					// acerhomes
+		// acerhomes
 		String fourthPayor = "MYDIE CARISSE M. ARUCAN / COST ACCOUNTING OFFICER / TIN 428-793-727-000"; // added by jari
-																										// cruz july 20,
-																										// 2022 for
-																										// extraordinary
+		// cruz july 20,
+		// 2022 for
+		// extraordinary
 
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
 		mapParameters.put("co_id", co_id);
@@ -4323,9 +4364,9 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		// this.getClass().getClassLoader().getResourceAsStream("Images/BIR.jpg").toString());
 
 		/* COMMENTED BY JED 2021-05-04 DUE TO PV 871 USE OLD FORMAT BIR */
-//		if (lookupPV_no.getText().equals("000000871") || lookupPV_no.getText().equals("000001332")  || lookupPV_no.getText().equals("000002219")) {
-//			FncReport.generateReport("/Reports/rptForm2307_PVnew.jasper", reportTitle, company, mapParameters);	
-//		} 
+		//		if (lookupPV_no.getText().equals("000000871") || lookupPV_no.getText().equals("000001332")  || lookupPV_no.getText().equals("000002219")) {
+		//			FncReport.generateReport("/Reports/rptForm2307_PVnew.jasper", reportTitle, company, mapParameters);	
+		//		} 
 		/* COMMENTED BY JED 2021-05-04 DUE TO PV 871 USE OLD FORMAT BIR */
 
 		/*
@@ -4370,7 +4411,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 			String criteria = "Official Receipt";
 			String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
 			String co_id = lookupCompany.getValue(); // ---added by jed 2018-11-08 : parameter added for previewing
-														// OR---//
+			// OR---//
 			String entity_type_id = lookupPayeeType.getText();
 
 			System.out.printf("The value of entity_type_id: %s\n", entity_type_id);
@@ -4378,12 +4419,12 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 			Map<String, Object> mapParameters = new HashMap<String, Object>();
 			mapParameters.put("co_id", co_id);
 			mapParameters.put("co_name", company); // ---added by jed 2018-11-08 : parameter added for previewing
-													// OR---//
+			// OR---//
 			mapParameters.put("pv_no", lookupPV_no.getText());
 			mapParameters.put("paytype", lookupPaymentType.getText());
 			mapParameters.put("bg", this.getClass().getClassLoader().getResourceAsStream("Images/bgOR.jpg"));
 			mapParameters.put("entity_type_id", entity_type_id);// --added by JED 2018-12-11 drcf no. 878 : include
-																// nature of payment in sample OR--//
+			// nature of payment in sample OR--//
 
 			FncReport.generateReport("/Reports/rptOR_v2.jasper", reportTitle, company, mapParameters);
 
@@ -4461,7 +4502,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 	}
 
 	private void generateDetail_SL(String lineno) {// **ADDED BY JED 2020-08-03 : DISPLAY TAG DETAILS IN SUBSIDIARY
-													// LEDGER**//
+		// LEDGER**//
 		Object[] listCode = new Object[5];
 		int row = tblPV_SL.convertRowIndexToModel(tblPV_SL.getSelectedRow());
 
@@ -4565,27 +4606,27 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 
 	}
 
-//	private static String checkDatePaid (String cv_no, String co_id){
-//		
-//		String dte_paid = "";
-//		String sql =
-//				"select (date_paid)::varchar from rf_cv_header where cv_no = '"+cv_no+"' and co_id = '"+co_id+"' and status_id in ('A', 'P')" ;
-//		
-//		pgSelect db = new pgSelect();
-//		db.select(sql);
-//		
-//		if(db.isNotNull()){
-//			if((String) db.getResult()[0][0] == null || db.getResult()[0][0].equals("null")){
-//				dte_paid = "";
-//			}else{
-//				dte_paid = (String)db.getResult()[0][0].toString();
-//			}
-//		}else{
-//			dte_paid = "";
-//		}
-//		
-//		return dte_paid;
-//	}
+	//	private static String checkDatePaid (String cv_no, String co_id){
+	//		
+	//		String dte_paid = "";
+	//		String sql =
+	//				"select (date_paid)::varchar from rf_cv_header where cv_no = '"+cv_no+"' and co_id = '"+co_id+"' and status_id in ('A', 'P')" ;
+	//		
+	//		pgSelect db = new pgSelect();
+	//		db.select(sql);
+	//		
+	//		if(db.isNotNull()){
+	//			if((String) db.getResult()[0][0] == null || db.getResult()[0][0].equals("null")){
+	//				dte_paid = "";
+	//			}else{
+	//				dte_paid = (String)db.getResult()[0][0].toString();
+	//			}
+	//		}else{
+	//			dte_paid = "";
+	//		}
+	//		
+	//		return dte_paid;
+	//	}
 
 	private static String checkDV_status_id(String cv_no, String co_id) {
 
@@ -4639,7 +4680,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		return x;
 
 	}
-	
+
 	//Added by Erick
 	private static Boolean checktag(String rplf_no, String co_id) {
 		Boolean with_tag = false;
@@ -4648,7 +4689,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 				+ "and (exists (select rplf_no from rf_transfer_cost where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"')\n"
 				+ "OR exists (select rplf_no  from rf_processing_cost where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"'))\n"
 				+ "";
-		
+
 		System.out.println("checktag: "+sql);
 		pgSelect db = new pgSelect();
 		db.select(sql);
@@ -4657,7 +4698,7 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		}else {
 			with_tag = false;
 		}
-		
+
 		return with_tag;
 	}
 }

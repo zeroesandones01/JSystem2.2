@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCDR_detailed" pageWidth="936" pageHeight="612" orientation="Landscape" columnWidth="936" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.9487171000000285"/>
-	<property name="ireport.x" value="15"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="company" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="proj_id" class="java.lang.String" isForPrompting="false">
@@ -48,9 +48,10 @@
 	</parameter>
 	<queryString>
 		<![CDATA[select *, 1::int as counter
-from view_cdr_detailed_spec_req_v3($P{proj_id}, $P{branch_id}, $P{co_id}, $P{date}, $P{date_cdr}, $P{DateTo}, $P{sort}) where c_new_receipt_type is not null
-order by c_old_entity_name, c_request_type, c_new_receipt_type, c_old_trans_date, c_new_amount desc]]>
+from view_cdr_detailed_spec_req_v3($P{proj_id}, $P{branch_id}, $P{co_id}, $P{date}, $P{date_cdr}::VARCHAR, $P{DateTo}, $P{sort}) where c_new_receipt_type is not null
+order by c_request_no, c_old_trans_date]]>
 	</queryString>
+	<field name="c_request_no" class="java.lang.String"/>
 	<field name="c_old_entity_name" class="java.lang.String"/>
 	<field name="c_new_entity_name" class="java.lang.String"/>
 	<field name="c_old_unit" class="java.lang.String"/>

@@ -3293,7 +3293,7 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 	}
 
 	private void clickTableColumn() {
-		int column = tblDRF_part.getSelectedColumn();
+		int column = tblDRF_part.convertColumnIndexToModel(tblDRF_part.getSelectedColumn());
 		int row = tblDRF_part.convertRowIndexToModel(tblDRF_part.getSelectedRow());
 
 		System.out.printf("column : " + column);
@@ -5264,6 +5264,19 @@ public class RequestForPayment extends _JInternalFrame implements _GUI, ActionLi
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
+	}
+	
+	private String sqlRequestType() {
+		String SQL = "select \r\n" + "a.rplf_no as \"DRF No.\", \n" + "a.rplf_date as \"DRF Date\",\r\n"
+				+ "trim(b.entity_name) as \"Payee\" , a.rplf_type_id as \"Req ID\",\n"
+				+ "c.rplf_type_desc as \"Request Type\" \r\n" + "from rf_request_header a\r\n"
+				+ "left join rf_entity b on a.entity_id1 = b.entity_id  \r\n" 
+				+ "LEFT JOIN mf_rplf_type c on c.rplf_type_id = a.rplf_type_id \r\n"
+				+ "where a.co_id = '" + co_id + "' \n"
+				+ "and rplf_no not in ( select rplf_no from rf_pv_header where co_id = '" + co_id + "' and status_id ='P')  \n"
+				+ "and a.status_id = 'A'\n" + "order by a.rplf_no desc ";
+		
+		return SQL;
 	}
 
 	private void generateDetail(String lineno) {

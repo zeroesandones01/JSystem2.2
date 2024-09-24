@@ -20,6 +20,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
+import Database.pgSelect;
 import Database.pgUpdate;
 import Functions.FncSystem;
 import Functions.UserInfo;
@@ -164,7 +165,7 @@ public class DeletePCostTCostEntries extends _JInternalFrame implements _GUI {
 										if (data != null) {
 											projcode = (String) data[0];
 											txtProject.setText(data[1].toString());
-											
+
 											KEYBOARD_MANAGER.focusNextComponent();
 										}else {
 											txtProject.setText("");
@@ -385,6 +386,21 @@ public class DeletePCostTCostEntries extends _JInternalFrame implements _GUI {
 				"With RPLF No.",
 		};
 	}
+
+	private Boolean withExistingPV(String rplf_no, String co_id) {
+
+		pgSelect db = new pgSelect();
+		String SQL = "SELECT * FROM rf_pv_header where pv_no = '"+rplf_no+"' and co_id = '"+co_id+"'";
+		db.select(SQL);
+
+		if(db.isNotNull()) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+
 	public void actionPerformed(ActionEvent arg0) {
 		String actionCommand = arg0.getActionCommand();
 
@@ -424,123 +440,133 @@ public class DeletePCostTCostEntries extends _JInternalFrame implements _GUI {
 					}
 				}
 				if (cmbDeleteBy.getSelectedIndex() == 2) {
-					if(JOptionPane.showConfirmDialog(getContentPane(), "Are you sure you want to delete?", "Confirm", JOptionPane.YES_NO_OPTION, 
-							JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 
-						String SQL = "UPDATE rf_request_header SET status_id = 'I', edited_by = '"+UserInfo.EmployeeCode+"', date_edited = now() \n" +
-								"WHERE rplf_no in (SELECT rplf_no FROM rf_processing_cost WHERE rplf_no = '"+lookupBatch.getValue()+"' and co_id ='"+co_id+"')  \n";
+					if(withExistingPV(lookupBatch.getValue(), co_id) == false) {
+						if(JOptionPane.showConfirmDialog(getContentPane(), "Are you sure you want to delete?", "Confirm", JOptionPane.YES_NO_OPTION, 
+								JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 
-						FncSystem.out("DISPLAY rf_processing_cost UPDATE", SQL);
+							String SQL = "UPDATE rf_request_header SET status_id = 'I', edited_by = '"+UserInfo.EmployeeCode+"', date_edited = now() \n" +
+									"WHERE rplf_no in (SELECT rplf_no FROM rf_processing_cost WHERE rplf_no = '"+lookupBatch.getValue()+"' and co_id ='"+co_id+"')  \n";
 
-						pgUpdate db = new pgUpdate();
-						db.executeUpdate(SQL, false);
-						db.commit();
+							FncSystem.out("DISPLAY rf_processing_cost UPDATE", SQL);
 
-						String SQL1 = "UPDATE rf_request_detail SET status_id = 'I', edited_by = '"+UserInfo.EmployeeCode+"', date_edited = now() \n" +
-								"WHERE rplf_no in (SELECT rplf_no FROM rf_processing_cost WHERE rplf_no = '"+lookupBatch.getValue()+"' and co_id ='"+co_id+"') \n";
+							pgUpdate db = new pgUpdate();
+							db.executeUpdate(SQL, false);
+							db.commit();
 
-						FncSystem.out("DISPLAY rf_processing_cost UPDATE", SQL1);
+							String SQL1 = "UPDATE rf_request_detail SET status_id = 'I', edited_by = '"+UserInfo.EmployeeCode+"', date_edited = now() \n" +
+									"WHERE rplf_no in (SELECT rplf_no FROM rf_processing_cost WHERE rplf_no = '"+lookupBatch.getValue()+"' and co_id ='"+co_id+"') \n";
 
-						pgUpdate db1 = new pgUpdate();
-						db1.executeUpdate(SQL1, false);
-						db1.commit();
+							FncSystem.out("DISPLAY rf_processing_cost UPDATE", SQL1);
 
-						String SQL2 = "UPDATE rf_processing_cost SET status_id = 'I'\n" +
-								"WHERE rplf_no in (SELECT rplf_no FROM rf_processing_cost WHERE rplf_no = '"+lookupBatch.getValue()+"' and co_id ='"+co_id+"')\n";
+							pgUpdate db1 = new pgUpdate();
+							db1.executeUpdate(SQL1, false);
+							db1.commit();
 
-						FncSystem.out("DISPLAY rf_processing_cost UPDATE", SQL2);
+							String SQL2 = "UPDATE rf_processing_cost SET status_id = 'I'\n" +
+									"WHERE rplf_no in (SELECT rplf_no FROM rf_processing_cost WHERE rplf_no = '"+lookupBatch.getValue()+"' and co_id ='"+co_id+"')\n";
 
-						pgUpdate db2 = new pgUpdate();
-						db2.executeUpdate(SQL2, false);
-						db2.commit();
+							FncSystem.out("DISPLAY rf_processing_cost UPDATE", SQL2);
 
-						JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Delete.", "DELETED", JOptionPane.INFORMATION_MESSAGE);
+							pgUpdate db2 = new pgUpdate();
+							db2.executeUpdate(SQL2, false);
+							db2.commit();
 
-						lookupProject.setText(" ");
-						refreshPCost();
+							JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Delete.", "DELETED", JOptionPane.INFORMATION_MESSAGE);
+
+							lookupProject.setText(" ");
+							refreshPCost();
+						}
+					}else {
+						JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Cannot delete rplf because it has existing PV", "Delete", JOptionPane.WARNING_MESSAGE);
 					}
 				}
 			}
 
 			if (tabNorth.getSelectedIndex() == 1) {
-				if (cmbDeleteBy1.getSelectedIndex() == 1) {
-					if(JOptionPane.showConfirmDialog(getContentPane(), "Are you sure you want to delete?", "Confirm", JOptionPane.YES_NO_OPTION, 
-							JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 
-						System.out.println("UNANG DINAANAN!!!!!!!!!!!!!!!!!!!!!");
+				if(withExistingPV(lookupBatch.getValue(), co_id) == false) {
+					if (cmbDeleteBy1.getSelectedIndex() == 1) {
+						if(JOptionPane.showConfirmDialog(getContentPane(), "Are you sure you want to delete?", "Confirm", JOptionPane.YES_NO_OPTION, 
+								JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 
-						String SQL = "UPDATE rf_request_header SET status_id = 'I', edited_by = '"+UserInfo.EmployeeCode+"', date_edited = now() \n" +
-								"WHERE rplf_no in (SELECT rplf_no FROM rf_transfer_cost WHERE batch_no = '"+lookupBatch1.getValue()+"' and co_id ='"+co_id+"') \n";
+							System.out.println("UNANG DINAANAN!!!!!!!!!!!!!!!!!!!!!");
 
-						pgUpdate db = new pgUpdate();
-						db.executeUpdate(SQL, false);
-						db.commit();
+							String SQL = "UPDATE rf_request_header SET status_id = 'I', edited_by = '"+UserInfo.EmployeeCode+"', date_edited = now() \n" +
+									"WHERE rplf_no in (SELECT rplf_no FROM rf_transfer_cost WHERE batch_no = '"+lookupBatch1.getValue()+"' and co_id ='"+co_id+"') \n";
 
-						FncSystem.out("UNA", SQL);
-						System.out.println("PANGALAWANG DINAANAN!!!!!!!!!!!!!!!!!!!!!");
+							pgUpdate db = new pgUpdate();
+							db.executeUpdate(SQL, false);
+							db.commit();
 
-						String SQL1 = "UPDATE rf_request_detail SET status_id = 'I', edited_by = '"+UserInfo.EmployeeCode+"', date_edited = now() \n" +
-								"WHERE rplf_no in (SELECT rplf_no FROM rf_transfer_cost WHERE batch_no = '"+lookupBatch1.getValue()+"' and co_id ='"+co_id+"') \n";
+							FncSystem.out("UNA", SQL);
+							System.out.println("PANGALAWANG DINAANAN!!!!!!!!!!!!!!!!!!!!!");
 
-						pgUpdate db1 = new pgUpdate();
-						db1.executeUpdate(SQL1, false);
-						db1.commit();
+							String SQL1 = "UPDATE rf_request_detail SET status_id = 'I', edited_by = '"+UserInfo.EmployeeCode+"', date_edited = now() \n" +
+									"WHERE rplf_no in (SELECT rplf_no FROM rf_transfer_cost WHERE batch_no = '"+lookupBatch1.getValue()+"' and co_id ='"+co_id+"') \n";
 
-						FncSystem.out("PANGALAWA", SQL1);
-						System.out.println("HULING DINAANAN!!!!!!!!!!!!!!!!!!!!!");
+							pgUpdate db1 = new pgUpdate();
+							db1.executeUpdate(SQL1, false);
+							db1.commit();
 
-						String SQL2 = "UPDATE rf_transfer_cost SET status_id = 'I'\n" +
-								"WHERE batch_no = '"+lookupBatch1.getValue()+"' and co_id ='"+co_id+"'\n";
+							FncSystem.out("PANGALAWA", SQL1);
+							System.out.println("HULING DINAANAN!!!!!!!!!!!!!!!!!!!!!");
 
-						FncSystem.out("PANGATLO", SQL2);
-						pgUpdate db2 = new pgUpdate();
-						db2.executeUpdate(SQL2, false);
-						db2.commit();
+							String SQL2 = "UPDATE rf_transfer_cost SET status_id = 'I'\n" +
+									"WHERE batch_no = '"+lookupBatch1.getValue()+"' and co_id ='"+co_id+"'\n";
 
-						JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Delete.", "DELETED", JOptionPane.INFORMATION_MESSAGE);
+							FncSystem.out("PANGATLO", SQL2);
+							pgUpdate db2 = new pgUpdate();
+							db2.executeUpdate(SQL2, false);
+							db2.commit();
 
-						lookupProject1.setText(" ");
-						refreshTCost();	
+							JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Delete.", "DELETED", JOptionPane.INFORMATION_MESSAGE);
+
+							lookupProject1.setText(" ");
+							refreshTCost();	
+						}
 					}
-				}
-				if (cmbDeleteBy1.getSelectedIndex() == 2) {
-					if(JOptionPane.showConfirmDialog(getContentPane(), "Are you sure you want to delete?", "Confirm", JOptionPane.YES_NO_OPTION, 
-							JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+					if (cmbDeleteBy1.getSelectedIndex() == 2) {
+						if(JOptionPane.showConfirmDialog(getContentPane(), "Are you sure you want to delete?", "Confirm", JOptionPane.YES_NO_OPTION, 
+								JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 
-						String SQL = "UPDATE rf_request_header SET status_id = 'I', edited_by = '"+UserInfo.EmployeeCode+"', date_edited = now() \n" +
-								"WHERE rplf_no = '"+lookupBatch1.getValue()+"' and co_id ='"+co_id+"'\n";
+							String SQL = "UPDATE rf_request_header SET status_id = 'I', edited_by = '"+UserInfo.EmployeeCode+"', date_edited = now() \n" +
+									"WHERE rplf_no = '"+lookupBatch1.getValue()+"' and co_id ='"+co_id+"'\n";
 
-						FncSystem.out("DISPLAY rf_request_header UPDATE", SQL);
+							FncSystem.out("DISPLAY rf_request_header UPDATE", SQL);
 
-						pgUpdate db = new pgUpdate();
-						db.executeUpdate(SQL, false);
-						db.commit();
+							pgUpdate db = new pgUpdate();
+							db.executeUpdate(SQL, false);
+							db.commit();
 
-						String SQL1 = "UPDATE rf_request_detail SET status_id = 'I', edited_by = '"+UserInfo.EmployeeCode+"', date_edited = now() \n" +
-								"WHERE rplf_no = '"+lookupBatch1.getValue()+"' and co_id ='"+co_id+"'\n";
+							String SQL1 = "UPDATE rf_request_detail SET status_id = 'I', edited_by = '"+UserInfo.EmployeeCode+"', date_edited = now() \n" +
+									"WHERE rplf_no = '"+lookupBatch1.getValue()+"' and co_id ='"+co_id+"'\n";
 
-						FncSystem.out("DISPLAY rf_request_detail UPDATE", SQL1);
+							FncSystem.out("DISPLAY rf_request_detail UPDATE", SQL1);
 
-						pgUpdate db1 = new pgUpdate();
-						db1.executeUpdate(SQL1, false);
-						db1.commit();
+							pgUpdate db1 = new pgUpdate();
+							db1.executeUpdate(SQL1, false);
+							db1.commit();
 
-						String SQL2 = "UPDATE rf_transfer_cost SET status_id = 'I'\n" +
-								"WHERE rplf_no = '"+lookupBatch1.getValue()+"' and co_id ='"+co_id+"'\n";
+							String SQL2 = "UPDATE rf_transfer_cost SET status_id = 'I'\n" +
+									"WHERE rplf_no = '"+lookupBatch1.getValue()+"' and co_id ='"+co_id+"'\n";
 
-						FncSystem.out("DISPLAY rf_transfer_cost UPDATE", SQL2);
+							FncSystem.out("DISPLAY rf_transfer_cost UPDATE", SQL2);
 
 
-						pgUpdate db2 = new pgUpdate();
-						db2.executeUpdate(SQL2, false);
-						db2.commit();
+							pgUpdate db2 = new pgUpdate();
+							db2.executeUpdate(SQL2, false);
+							db2.commit();
 
-						JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Delete.", "DELETED", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Delete.", "DELETED", JOptionPane.INFORMATION_MESSAGE);
 
-						lookupProject1.setText(" ");
-						refreshTCost();
+							lookupProject1.setText(" ");
+							refreshTCost();
 
+						}
 					}
+				}else {
+					JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Cannot delete rplf because it has existing PV", "Delete", JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		}

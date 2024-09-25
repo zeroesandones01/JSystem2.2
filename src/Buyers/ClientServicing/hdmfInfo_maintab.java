@@ -2,12 +2,15 @@ package Buyers.ClientServicing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -18,11 +21,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -282,6 +288,68 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 	
 	private void createEPEBG2G(){
 		pnlEPEBG2G = new JXPanel(new BorderLayout(5, 5));
+		{// **ADDED BY JED 2019-04-16 : TO SELECT AND DISPLAY 2ND LOTS**//
+			JPanel pnlG2GNorth = new JPanel(new BorderLayout(5, 5));
+			pnlEPEBG2G.add(pnlG2GNorth, BorderLayout.NORTH);
+			pnlG2GNorth.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+			{
+				JPanel pnlWestLabel = new JPanel(new BorderLayout(5, 5));
+				pnlG2GNorth.add(pnlWestLabel, BorderLayout.WEST);
+				{
+					JLabel lblLot = new JLabel("Select Lot to Preview");
+					pnlWestLabel.add(lblLot);
+				}
+			}
+			{
+				JPanel pnlG2GCenter = new JPanel(new GridLayout(1, 4, 5, 5));
+				pnlG2GNorth.add(pnlG2GCenter, BorderLayout.CENTER);
+				{
+					JComboBox cmblotG2G = new JComboBox();
+					pnlG2GCenter.add(cmblotG2G);
+					cmblotG2G.addItemListener(new ItemListener() {
+
+						@Override
+						public void itemStateChanged(ItemEvent e) {
+							int selected_index = ((JComboBox) e.getSource()).getSelectedIndex();
+							String entity_id = lookupClient.getValue();
+							String pbl_id = txtPblID.getText();
+							String proj_id = txtProjectID.getText();
+
+							if (selected_index == 0) {
+								/*
+								 * System.out.printf("The value of seq_no is: %s\n", seq_no);
+								 * System.out.printf("The value of pbl_id is: %s\n", pbl_id);
+								 * System.out.printf("The value of entity_id is: %s\n", entity_id);
+								 * System.out.printf("The value of proj_id is: %s\n", proj_id);
+								 */
+								_CARD.displayTCostDetails(modelTCT, modelTCTTotal, entity_id,
+										proj_id, pbl_id, seq_no);
+							}
+
+							if (selected_index == 1) {
+								String other_pbl_id = checkOtherLots(entity_id, pbl_id, proj_id,
+										seq_no);
+								/*
+								 * System.out.printf("The value of seq_no is: %s\n", seq_no);
+								 * System.out.printf("The value of other_pbl_id is: %s\n",
+								 * other_pbl_id);
+								 * System.out.printf("The value of entity_id is: %s\n", entity_id);
+								 * System.out.printf("The value of proj_id is: %s\n", proj_id);
+								 */
+								_CARD.displayTCostDetails(modelTCT, modelTCTTotal, entity_id,
+										proj_id, other_pbl_id, seq_no);
+							}
+						}
+					});
+				}
+				{
+					pnlG2GCenter.add(Box.createHorizontalBox());
+					pnlG2GCenter.add(Box.createHorizontalBox());
+					pnlG2GCenter.add(Box.createHorizontalBox());
+				}
+			}
+		}
+	
 		{
 			scrollEPEBG2G = new _JScrollPaneMain();
 			pnlEPEBG2G.add(scrollEPEBG2G, BorderLayout.CENTER);

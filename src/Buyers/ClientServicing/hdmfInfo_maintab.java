@@ -325,8 +325,10 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 								 * System.out.printf("The value of entity_id is: %s\n", entity_id);
 								 * System.out.printf("The value of proj_id is: %s\n", proj_id);
 								 */
-								_CARD.displayTCostDetails(modelTCT, modelTCTTotal, entity_id,
-										proj_id, pbl_id, seq_no);
+//								_CARD.displayTCostDetails(modelTCT, modelTCTTotal, entity_id,
+//										proj_id, pbl_id, seq_no);
+								
+								displayEPEBG2G(entity_id, proj_id, pbl_id, seq_no);
 							}
 
 							if (selected_index == 1) {
@@ -339,8 +341,10 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 								 * System.out.printf("The value of entity_id is: %s\n", entity_id);
 								 * System.out.printf("The value of proj_id is: %s\n", proj_id);
 								 */
-								_CARD.displayTCostDetails(modelTCT, modelTCTTotal, entity_id,
-										proj_id, other_pbl_id, seq_no);
+//								_CARD.displayTCostDetails(modelTCT, modelTCTTotal, entity_id,
+//										proj_id, other_pbl_id, seq_no);
+								
+								displayEPEBG2G(entity_id, proj_id, other_pbl_id, seq_no);
 							}
 						}
 					});
@@ -2100,5 +2104,27 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 		return lots.toArray();
 	}
 	
+	private static String checkOtherLots(String entity_id, String pbl_id, String proj_id, String seq_no) {
+
+		String other_pbl_id = "";
+		String SQL = "SELECT oth_pbl_id FROM hs_sold_other_lots \n" + "where entity_id = '" + entity_id + "' \n"
+				+ "and proj_id = '" + proj_id + "' \n" + "and pbl_id = '" + pbl_id + "' \n" + "and seq_no = '" + seq_no
+				+ "' \n " + "and status_id = 'A' ";
+
+		pgSelect db = new pgSelect();
+		db.select(SQL);
+
+		if (db.isNotNull()) {
+			if ((String) db.getResult()[0][0] == null || db.getResult()[0][0].equals("null")) {
+			} else {
+				other_pbl_id = (String) db.getResult()[0][0].toString();
+			}
+		} else {
+			other_pbl_id = "0";
+		}
+
+		return other_pbl_id;
+
+	}
 
 }

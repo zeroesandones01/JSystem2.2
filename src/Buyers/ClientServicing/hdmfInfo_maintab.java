@@ -17,11 +17,13 @@ import java.awt.event.MouseListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -306,14 +308,15 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 				{
 					JComboBox cmblotG2G = new JComboBox();
 					pnlG2GCenter.add(cmblotG2G);
+					cmblotG2G.setModel(new DefaultComboBoxModel(getLots(entity_id, proj_id, pbl_id, seq_no)));
 					cmblotG2G.addItemListener(new ItemListener() {
 
 						@Override
 						public void itemStateChanged(ItemEvent e) {
 							int selected_index = ((JComboBox) e.getSource()).getSelectedIndex();
-							String entity_id = lookupClient.getValue();
-							String pbl_id = txtPblID.getText();
-							String proj_id = txtProjectID.getText();
+							String entity_id = hdmfInfo_maintab.entity_id;
+							String pbl_id = hdmfInfo_maintab.pbl_id;
+							String proj_id = hdmfInfo_maintab.proj_id;
 
 							if (selected_index == 0) {
 								/*
@@ -2067,6 +2070,34 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 			lblRatSales.setText("");
 	
 		}
+	}
+	
+	private Object[] getLots(String entity, String proj_id, String pbl_id, String seq_no) {//ARRAYLIST FOR THE CIVIL STATUS
+		ArrayList<Object> lots = new ArrayList<Object>();
+
+		pgSelect db = new pgSelect();
+		String SQL = "SELECT FORMAT('LOT %s', b.lot)\n" + 
+				"FROM rf_sold_unit a\n" + 
+				"LEFT JOIN mf_unit_info b on b.proj_id = a.projcode and b.pbl_id = a.pbl_id \n" + 
+				"WHERE a.entity_id = '"+entity+"'\n" + 
+				"AND a.projcode = '"+proj_id+"'\n" + 
+				"AND a.pbl_id = '"+pbl_id+"'\n" + 
+				"AND a.seq_no = "+seq_no+"\n" + 
+				"UNION \n" + 
+				"SELECT FORMAT('LOT %s', b.lot)\n" + 
+				"FROM hs_sold_other_lots a\n" + 
+				"LEFT JOIN mf_unit_info b on b.proj_id = a.proj_id and b.pbl_id = a.oth_pbl_id \n" + 
+				"WHERE a.entity_id = '"+entity+"'\n" + 
+				"AND a.proj_id = '"+proj_id+"'\n" + 
+				"AND a.pbl_id = '"+pbl_id+"'\n" + 
+				"AND a.seq_no = "+seq_no+" ";
+		db.select(SQL);
+		if(db.isNotNull()){
+			for(int x=0; x < db.getRowCount(); x++){
+				lots.add(db.getResult()[x][0]);
+			}
+		}
+		return lots.toArray();
 	}
 	
 

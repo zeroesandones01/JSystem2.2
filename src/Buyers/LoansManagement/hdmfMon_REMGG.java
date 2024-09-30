@@ -808,7 +808,7 @@ public class hdmfMon_REMGG extends JXPanel implements _GUI {
 			mapParameters.put("signatory", signatory);
 			mapParameters.put("position", position);
 
-			FncReport.generateReport("/Reports/ .jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
+			FncReport.generateReport("/Reports/rptREMGTG_sixth.jasper", "PAGIBIG REM Conversion (G-G)", "", mapParameters);
 					
 		}else if(intIndex == 6) {
 			String selectedStatus = (String) cboStatus.getSelectedItem();

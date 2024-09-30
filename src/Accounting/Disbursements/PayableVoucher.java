@@ -2167,7 +2167,10 @@ public class PayableVoucher extends _JInternalFrame implements _GUI, ActionListe
 		btnSave.setText("Save");
 		btnSave.setActionCommand("Save");
 		txtDRFRemark.setText("");
-
+		
+		lookupReqType.setValue(null);
+		tagRequestType.setText("[ ]");
+		
 		payee1 = "";
 		availer_id = "";
 		rplf_no = "";

@@ -1235,13 +1235,19 @@ public class CheckVoucherMC extends _JInternalFrame implements _GUI, ActionListe
 		DefaultListModel listModel = new DefaultListModel();//Creating DefaultListModel for rowHeader.
 		rowHeader.setModel(listModel);//Setting of DefaultListModel into rowHeader.
 
-		String sql = "select a.pv_no, b.pv_date, sum(a.tran_amt) as tran_amt, c.check_no, c.date_due \n" + 
-				"from rf_pv_detail a \n" + 
-				"inner join rf_pv_header b on a.pv_no = b.pv_no \n" + 
-				"left join rf_check c on b.cv_no = c.cv_no and b.oth_ref_no = c.check_no \n" + 
-				"where b.cv_no = '"+req_no+"' and b.co_id = '"+co_id+"' \n" + 
-				"and a.status_id = 'A' and a.bal_side = 'D' \n" + 
-				"group by a.pv_no, b.pv_date, c.check_no, c.date_due";
+//		String sql = "select a.pv_no, b.pv_date, sum(a.tran_amt) as tran_amt, NULL, c.check_no, c.date_due, \n"+
+//				"(select e.rplf_type_desc\n"
+//				+ "from rf_request_header d\n"
+//				+ "LEFT JOIN mf_rplf_type e on e.rplf_type_id = d.rplf_type_id\n"
+//				+ "where d.rplf_no = a.pv_no and d.co_id = a.co_id) \n" + 
+//				"from rf_pv_detail a \n" + 
+//				"inner join rf_pv_header b on a.pv_no = b.pv_no \n" + 
+//				"left join rf_check c on b.cv_no = c.cv_no and b.oth_ref_no = c.check_no \n" + 
+//				"where b.cv_no = '"+req_no+"' and b.co_id = '"+co_id+"' \n" + 
+//				"and a.status_id = 'A' and a.bal_side = 'D' \n" + 
+//				"group by a.pv_no, b.pv_date, c.check_no, c.date_due";
+		
+		String sql = "select * from view_disbursementmc_pv('"+co_id+"', '"+req_no+"', '"+UserInfo.EmployeeCode+"')";
 
 		System.out.println("sql: "+sql);
 		
@@ -1657,6 +1663,7 @@ public class CheckVoucherMC extends _JInternalFrame implements _GUI, ActionListe
 			modelDV_pv.setValueAt(data[0], 0, 0);
 			modelDV_pv.setValueAt(data[1], 0, 1);
 			modelDV_pv.setValueAt(data[2], 0, 2);
+			modelDV_pv.setValueAt(data[7], 0, 6);
 			totalDV_pv(modelDV_pv, modelDV_pvtotal);
 			AddRow();
 			enable_fields_to_addNew();
@@ -2210,7 +2217,8 @@ public class CheckVoucherMC extends _JInternalFrame implements _GUI, ActionListe
 			"trim(c.entity_name) as \"Payee\"," +  //3 
 			"trim(cc.entity_name) as \"Availer\", " +  //4
 			"a.pay_type_id as \"Type\" ," + //5
-			"d.rplf_type_id as \"Request Type\" \n"  + //6
+			"d.rplf_type_id as \"Request Type ID\", \n"  + //6
+			"e.rplf_type_desc as \"Request Type\" \n" + // 6
 
 			"from (select * from rf_pv_header where status_id = 'P' and co_id = '"+co_id+"' and proc_id = '3'  " ;
 		if (payee.equals("")) {} else {sql = sql + "and entity_id1 = '"+payee+"' and pay_type_id = '"+lookupPaymentType.getText()+"' " ; } 
@@ -2231,6 +2239,7 @@ public class CheckVoucherMC extends _JInternalFrame implements _GUI, ActionListe
 		"left join rf_entity c on a.entity_id1 = c.entity_id \r\n" +
 		"left join rf_entity cc on a.entity_id2 = cc.entity_id \r\n" +
 		"left join (select * from rf_request_header where co_id = '"+co_id+"') d on a.pv_no = d.rplf_no \r\n" + 
+		"left join mf_rplf_type e on e.rplf_type_id = d.rplf_type_id \r\n"+
 		"where trim(a.cv_no) not in (select cv_no from rf_cv_header where status_id != 'D' and co_id = '"+co_id+"')  " +
 		"order by a.pv_no \r\n" ;	
 
@@ -2717,6 +2726,7 @@ public class CheckVoucherMC extends _JInternalFrame implements _GUI, ActionListe
 				modelDV_pv.setValueAt(data[0], row, column);
 				modelDV_pv.setValueAt(data[1], row, column+1);
 				modelDV_pv.setValueAt(data[2], row, column+2);
+				modelDV_pv.setValueAt(data[7], row, column+6);
 				totalDV_pv(modelDV_pv, modelDV_pvtotal);
 				AddRow();
 
@@ -2736,6 +2746,8 @@ public class CheckVoucherMC extends _JInternalFrame implements _GUI, ActionListe
 				AddRow_acctEntries(amount);
 
 				txtDV_particular.setText(setPVRemarks(rem));
+				
+				tblDV_pv.packAll();
 
 				if(data[4].equals("B")) 
 				{

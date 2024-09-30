@@ -225,6 +225,8 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 	private static String pbl_id;
 	private static String seq_no;
 	
+	private static JComboBox cmblotG2G;
+	
 	public hdmfInfo_maintab(CARD card) {
 		this.main_card = card;
 		initGUI(); 
@@ -306,17 +308,17 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 				JPanel pnlG2GCenter = new JPanel(new GridLayout(1, 4, 5, 5));
 				pnlG2GNorth.add(pnlG2GCenter, BorderLayout.CENTER);
 				{
-					JComboBox cmblotG2G = new JComboBox();
+					cmblotG2G = new JComboBox();
 					pnlG2GCenter.add(cmblotG2G);
-					cmblotG2G.setModel(new DefaultComboBoxModel(getLots(entity_id, proj_id, pbl_id, seq_no)));
+					
 					cmblotG2G.addItemListener(new ItemListener() {
 
 						@Override
 						public void itemStateChanged(ItemEvent e) {
 							int selected_index = ((JComboBox) e.getSource()).getSelectedIndex();
-							String entity_id = hdmfInfo_maintab.entity_id;
-							String pbl_id = hdmfInfo_maintab.pbl_id;
-							String proj_id = hdmfInfo_maintab.proj_id;
+//							String entity_id = hdmfInfo_maintab.entity_id;
+//							String pbl_id = hdmfInfo_maintab.pbl_id;
+//							String proj_id = hdmfInfo_maintab.proj_id;
 
 							if (selected_index == 0) {
 								/*
@@ -1652,14 +1654,20 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 	
 	public static Boolean displayEPEBG2G(String entity_id, String proj_id, String pbl_id, String seq_no) {
 		Boolean blnRev = false;
+		
 		FncTables.clearTable(modelEPEB);
-		hdmfInfo_maintab.entity_id = entity_id;
-		hdmfInfo_maintab.proj_id = proj_id;
-		hdmfInfo_maintab.pbl_id = pbl_id;
-		hdmfInfo_maintab.seq_no = seq_no;
-	
+		
+		if(hdmfInfo_maintab.entity_id == null) {
+			hdmfInfo_maintab.entity_id = entity_id;
+			hdmfInfo_maintab.proj_id = proj_id;
+			hdmfInfo_maintab.pbl_id = pbl_id;
+			hdmfInfo_maintab.seq_no = seq_no;
+		}
+		
 		pgSelect db = new pgSelect();
-		db.select("select * from view_card_epeb_g2g_tcost_v2('"+entity_id+"', '"+proj_id+"', '"+pbl_id+"', '"+seq_no+"')");
+		String SQL = "select * from view_card_epeb_g2g_tcost_v2('"+entity_id+"', '"+proj_id+"', '"+pbl_id+"', '"+seq_no+"')";
+		
+		db.select(SQL);
 		if (db.isNotNull()){
 			for (int x = 0; x < db.getRowCount(); x++) {
 				modelEPEB.addRow(db.getResult()[x]);
@@ -1675,6 +1683,10 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 		tblEPEBG2G.packAll();
 				
 		return blnRev;
+	}
+	
+	public static void setLotsToPreview(String entity_id, String proj_id, String pbl_id, String seq_no) {
+		cmblotG2G.setModel(new DefaultComboBoxModel(getLots(entity_id, proj_id, pbl_id, seq_no)));
 	}
 	
 	public static Boolean displayHDMFUnitInspection(String entity_id, String proj_id, String pbl_id, String seq_no) {
@@ -2076,7 +2088,7 @@ public class hdmfInfo_maintab extends JXPanel implements _GUI {
 		}
 	}
 	
-	private Object[] getLots(String entity, String proj_id, String pbl_id, String seq_no) {//ARRAYLIST FOR THE CIVIL STATUS
+	private static Object[] getLots(String entity, String proj_id, String pbl_id, String seq_no) {//ARRAYLIST FOR THE CIVIL STATUS
 		ArrayList<Object> lots = new ArrayList<Object>();
 
 		pgSelect db = new pgSelect();

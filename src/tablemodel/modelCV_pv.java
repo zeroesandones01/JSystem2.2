@@ -49,7 +49,8 @@ public class modelCV_pv	 extends DefaultTableModel {
 		"Amount", 
 		"MC No",
 		"Check No", 
-		"Check Date"
+		"Check Date",
+		"Request Type"
 	};
 
 	
@@ -66,7 +67,8 @@ public class modelCV_pv	 extends DefaultTableModel {
 		BigDecimal.class, 	//Amount
 		String.class,		//MC No
 		String.class,		//Check No
-		Timestamp.class 	//Check Date
+		Timestamp.class, 	//Check Date
+		String.class
 	};
 
 	private void initThis() {
@@ -77,7 +79,8 @@ public class modelCV_pv	 extends DefaultTableModel {
 				false, 	//Amount
 				false, 	//MC No
 				false,	//Check No
-				false	//Check Date
+				false,	//Check Date
+				false
 		};
 	}
 
@@ -102,6 +105,7 @@ public class modelCV_pv	 extends DefaultTableModel {
 					false, 	//Amount
 					false, 	//MC No
 					false, 
+					false,
 					false
 			};
 		}else{
@@ -110,6 +114,7 @@ public class modelCV_pv	 extends DefaultTableModel {
 					false,	// PV Date
 					false, 	//Amount
 					false, 	//MC No
+					false, 
 					false, 
 					false
 			};

@@ -1262,13 +1262,15 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 
 		String sql = "-----display DV payable vouchers \r\n" +
 
-				"select a.pv_no,b.pv_date, a.tran_amt, c.mc_no\n" + 
+				"select a.pv_no,b.pv_date, a.tran_amt, c.mc_no, null, null, e.rplf_type_desc \n" + 
 				"\n" + 
 				"				from ( select distinct on (pv_no) pv_no, sum(tran_amt) as tran_amt, co_id from rf_pv_detail\n" + 
 				"				where co_id = '"+co_id+"' and pv_no in ( select pv_no from  rf_pv_header where cv_no = '" + lookupDV_no.getValue() + "'  and co_id = '"+co_id+"'  and status_id != 'I' and NULLIF(pv_no, '') is not null) \n" + 
 				"				and status_id = 'A' and bal_side = 'D' group by pv_no, co_id) a\n" + 
 				"				left join rf_pv_header b on a.pv_no = b.pv_no and a.co_id = b.co_id\n" + 
-				"                left join rf_mc_detail c on a.pv_no = c.pv_no and a.co_id = c.co_id\n" + 
+				"                left join rf_mc_detail c on a.pv_no = c.pv_no and a.co_id = c.co_id\n" +
+				"left join (select * from rf_request_header where co_id = '"+co_id+"') d on a.pv_no = d.rplf_no \n"+
+				"left join mf_rplf_type e on e.rplf_type_id = d.rplf_type_id"+
 				"                and a.co_id = b.co_id";
 		
 		FncSystem.out("ditos peros", sql);
@@ -1735,6 +1737,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 			modelDV_pv.setValueAt(data[0], 0, 0);
 			modelDV_pv.setValueAt(data[1], 0, 1);
 			modelDV_pv.setValueAt(data[2], 0, 2);
+			modelDV_pv.setValueAt(data[7], 0, 6);
 			totalDV_pv(modelDV_pv, modelDV_pvtotal);
 			AddRow();
 			enable_fields_to_addNew();
@@ -1754,6 +1757,8 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 			lookupPayeeType.setText((String) pv_hdr[4]);
 			tagPayeeType.setTag((String) pv_hdr[5]);
 			AddRow_acctEntries(amount, request_type, (String) data[0]);
+			
+			tblDV_pv.packAll();
 
 			String default_payee = "";
 			if (!sql_getDefaultBroker(payee).equals("")) {
@@ -1762,6 +1767,8 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 			txtDV_particular.setText(setPVRemarks(rem) + default_payee);
 
 			txtDV_particular.setText(setPVRemarks(rem));
+			
+			tblDV_pv.packAll();
 
 			if (data[5].equals("B")) {
 				lookupPaymentType.setValue("B");
@@ -2401,7 +2408,8 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				"trim(c.entity_name) as \"Payee\"," + // 3
 				"trim(cc.entity_name) as \"Availer\", " + // 4
 				"a.pay_type_id as \"Type\" ," + // 5
-				"d.rplf_type_id as \"Request Type\" \n" + // 6
+				"d.rplf_type_id as \"Request Type ID\", "+
+				"e.rplf_type_desc as \"Request Type\" \n" + // 6
 
 				"from (select * from rf_pv_header where status_id = 'P' and co_id = '" + co_id
 				+ "' and proc_id = '3' and nullif(cv_no, '') is null ";
@@ -2443,6 +2451,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				+ "left join rf_entity cc on a.entity_id2 = cc.entity_id \r\n"
 				+ "left join (select * from rf_request_header where co_id = '" + co_id
 				+ "') d on a.pv_no = d.rplf_no \r\n"
+				+ "left join mf_rplf_type e on e.rplf_type_id = d.rplf_type_id \r\n"
 				+ "where trim(a.cv_no) not in (select cv_no from rf_cv_header where status_id != 'D' and co_id = '"
 				+ co_id + "')\n" + "and a.remarks !~* 'auto-reversed'\n" + "order by a.pv_no \r\n";
 
@@ -2927,6 +2936,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				modelDV_pv.setValueAt(data[1], row, column + 1);
 				modelDV_pv.setValueAt(data[2], row, column + 2);
 				modelDV_pv.setValueAt(data[3], row, column + 3);
+				modelDV_pv.setValueAt(data[7], row, column + 6);
 				totalDV_pv(modelDV_pv, modelDV_pvtotal);
 				AddRow();
 
@@ -2946,8 +2956,10 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				AddRow_acctEntries(amount, "", "");
 
 				txtDV_particular.setText(setPVRemarks(rem));
+				
+				tblDV_pv.packAll();
 
-				if (data[4].equals("B")) {
+				if (data[5].equals("B")) {
 					// lookupPaymentType.setValue("B");
 					// tagPmtType.setTag("CHECK");
 					lblBankNo.setEnabled(true);
@@ -2959,7 +2971,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 					txtCheckNo.setEditable(true);
 					lblDateNeeded.setEnabled(true);
 					dteCheck.setEnabled(true);
-				} else if (data[4].equals("A")) {
+				} else if (data[5].equals("A")) {
 					// lookupPaymentType.setValue("A");
 					// tagPmtType.setTag("CASH");
 					lblBankNo.setEnabled(false);

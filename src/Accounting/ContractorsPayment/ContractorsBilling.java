@@ -3096,7 +3096,7 @@ public class ContractorsBilling extends _JInternalFrame implements _GUI, ActionL
 						"	when billing_type='02' and accomp_pctg = 100 then '03' \n"
 						+ "   when billing_type = '03' and accomp_pctg =  0.000000  then '03' end \n"
 						+ "	from co_billing_detail where ntp_no='" + ntp_no
-						+ "' and status_id != 'I' order by rec_id desc limit 1 \n" + "	) \n";
+						+ "' and status_id != 'I' order by  date_created::date desc limit 1 \n" + "	) \n";//Edited by Erick 09-20-2024 replace order by rec_id into order by date_created.
 
 		System.out.println("getNextBillingType= " + strSQL);
 		pgSelect db = new pgSelect();

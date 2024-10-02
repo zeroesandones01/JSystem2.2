@@ -89,7 +89,7 @@ public class LateOrAutoJv extends _JInternalFrame {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						pgSelect db = new pgSelect();
-							String query = "SELECT sp_run_or();";
+							String query = "SELECT sp_run_or('"+UserInfo.EmployeeCode+"');";
 							db.select(query);
 					JOptionPane.showMessageDialog(getContentPane(),"Run Successfully","Succes",JOptionPane.INFORMATION_MESSAGE);
 

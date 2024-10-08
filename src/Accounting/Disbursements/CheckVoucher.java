@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -146,6 +147,8 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 	private JLabel lblChkAmount;
 	private JLabel lblPaymentType;
 	private JLabel lblBankNo;
+	private JLabel lblReqType;
+	private _JTagLabel taglblReqType;
 
 	public static _JLookup lookupCompany;
 	public static _JLookup lookupDV_no;
@@ -178,6 +181,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 	private static _JTagLabel tagPayeeType;
 	private static _JTagLabel tagCheckPayee;
 	private static _JTagLabel tagPmtType;
+	private static _JTagLabel tagRequestType;
 
 	private static JButton btnSave;
 	private static JButton btnCancel;
@@ -239,7 +243,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 	//BigInteger last_chk_no_int = null;
 	String next_chk_no_int = "";
 	String last_chk_no_int = "";
-	
+
 	Integer next_rec_id = 0;
 	public static String company = "";
 	public static String company_logo = "";
@@ -254,7 +258,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 	private double amt_remove = 0.00;
 	// static String isCurrentYear = "2018";
 	static String isCurrentYear = getCurrentYear();// **added by JED 2019-01-03 : to get current year for DV no
-													// lookup**//
+	// lookup**//
 
 	public CheckVoucher() {
 		super(title, true, true, true, true);
@@ -285,7 +289,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 	public void initGUI() {
 		this.setLayout(new BorderLayout(5, 5));
 		this.setSize(SIZE);
-		this.setPreferredSize(new java.awt.Dimension(866, 530));
+		this.setPreferredSize(new java.awt.Dimension(866, 540));
 		this.setBounds(0, 0, 866, 530);
 
 		pnlMain = new JPanel();
@@ -547,246 +551,283 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				txtStatus.addMouseListener(new PopupTriggerListener_panel2());
 			}
 			{
-				pnlDVDtl = new JPanel(new BorderLayout(0, 5));
-				pnlDV.add(pnlDVDtl, BorderLayout.WEST);
-				pnlDVDtl.setPreferredSize(new java.awt.Dimension(911, 132));
+				JPanel pnlDVDtl_Center = new JPanel(new BorderLayout(5, 5));
+				pnlDV.add(pnlDVDtl_Center, BorderLayout.CENTER);
+				{
+					JPanel pnlRequestType = new JPanel(new BorderLayout(5, 5));
+					pnlDVDtl_Center.add(pnlRequestType, BorderLayout.NORTH);
+					{
+						lblReqType = new JLabel("Request Type");
+						pnlRequestType.add(lblReqType, BorderLayout.WEST);
+					}
+					{
+						taglblReqType = new _JTagLabel("[ ]");
+						pnlRequestType.add(taglblReqType, BorderLayout.CENTER);
+					}
+				}
+				{
+					pnlDVDtl = new JPanel(new GridLayout(1, 2, 5, 5));
+					pnlDVDtl_Center.add(pnlDVDtl, BorderLayout.CENTER);
+					//pnlDVDtl.setBorder(lineBorder);
+					pnlDVDtl.setPreferredSize(new java.awt.Dimension(911, 132));
+					{
+						pnlDVDtl_1 = new JPanel(new BorderLayout(0, 5));
+						pnlDVDtl.add(pnlDVDtl_1, BorderLayout.WEST);
+						pnlDVDtl_1.setPreferredSize(new java.awt.Dimension(237, 116));
+						pnlDVDtl_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-				pnlDVDtl_1 = new JPanel(new BorderLayout(0, 5));
-				pnlDVDtl.add(pnlDVDtl_1, BorderLayout.WEST);
-				pnlDVDtl_1.setPreferredSize(new java.awt.Dimension(237, 116));
-				pnlDVDtl_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-				pnlDVDtl_1a = new JPanel(new GridLayout(4, 1, 0, 5));
-				pnlDVDtl_1.add(pnlDVDtl_1a, BorderLayout.WEST);
-				pnlDVDtl_1a.setPreferredSize(new java.awt.Dimension(110, 116));
-				pnlDVDtl_1a.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-				{
-					lblDV_date = new JLabel("DV Date", JLabel.TRAILING);
-					pnlDVDtl_1a.add(lblDV_date);
-					lblDV_date.setEnabled(false);
-				}
-				{
-					lblDateNeeded = new JLabel("Check Date", JLabel.TRAILING);
-					pnlDVDtl_1a.add(lblDateNeeded);
-					lblDateNeeded.setEnabled(false);
-				}
-				{
-					lblDatePaid = new JLabel("Date Paid", JLabel.TRAILING);
-					pnlDVDtl_1a.add(lblDatePaid);
-					lblDatePaid.setEnabled(false);
-				}
-				{
-					lblCheckNo = new JLabel("Check No.", JLabel.TRAILING);
-					pnlDVDtl_1a.add(lblCheckNo);
-					lblCheckNo.setEnabled(false);
-				}
-
-				pnlDVDtl_1b = new JPanel(new GridLayout(4, 1, 5, 5));
-				pnlDVDtl_1.add(pnlDVDtl_1b, BorderLayout.CENTER);
-				pnlDVDtl_1b.setPreferredSize(new java.awt.Dimension(135, 119));
-				pnlDVDtl_1b.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-
-				{
-					dteDV = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
-					pnlDVDtl_1b.add(dteDV);
-					dteDV.setBounds(485, 7, 125, 21);
-					dteDV.setDate(null);
-					dteDV.setEnabled(false);
-					dteDV.setDateFormatString("yyyy-MM-dd");
-					((JTextFieldDateEditor) dteDV.getDateEditor()).setEditable(false);
-					dteDV.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
-				}
-				{
-					dteCheck = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
-					pnlDVDtl_1b.add(dteCheck);
-					dteCheck.setBounds(485, 7, 125, 21);
-					dteCheck.setDate(null);
-					dteCheck.setEnabled(false);
-					dteCheck.setDateFormatString("yyyy-MM-dd");
-					((JTextFieldDateEditor) dteCheck.getDateEditor()).setEditable(false);
-					dteCheck.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
-				}
-				{
-					dtePaid = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
-					pnlDVDtl_1b.add(dtePaid);
-					dtePaid.setBounds(485, 7, 125, 21);
-					dtePaid.setDate(null);
-					dtePaid.setEnabled(false);
-					dtePaid.setDateFormatString("yyyy-MM-dd");
-					((JTextFieldDateEditor) dtePaid.getDateEditor()).setEditable(false);
-				//	dtePaid.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
-				}
-				{
-					txtCheckNo = new JXTextField("");
-					pnlDVDtl_1b.add(txtCheckNo);
-					txtCheckNo.setEnabled(false);
-					txtCheckNo.setEditable(false);
-					txtCheckNo.setBounds(120, 25, 300, 22);
-					txtCheckNo.setHorizontalAlignment(JTextField.CENTER);
-				}
-
-				// Start of Left Panel
-				pnlDVInfo = new JPanel(new BorderLayout(0, 0));
-				pnlDVDtl.add(pnlDVInfo, BorderLayout.EAST);
-				pnlDVInfo.setPreferredSize(new java.awt.Dimension(674, 140));
-				pnlDVInfo.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-				pnlDVInfo_1 = new JPanel(new GridLayout(4, 1, 5, 5));
-				pnlDVInfo.add(pnlDVInfo_1, BorderLayout.WEST);
-				pnlDVInfo_1.setPreferredSize(new java.awt.Dimension(84, 140));
-				pnlDVInfo_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-				{
-					lblCheckPayee = new JLabel("Payee", JLabel.TRAILING);
-					pnlDVInfo_1.add(lblCheckPayee);
-					lblCheckPayee.setEnabled(false);
-				}
-				{
-					lblPayeeType = new JLabel("Payee Type", JLabel.TRAILING);
-					pnlDVInfo_1.add(lblPayeeType);
-					lblPayeeType.setEnabled(false);
-				}
-				{
-					lblPaymentType = new JLabel("Payment Type", JLabel.TRAILING);
-					pnlDVInfo_1.add(lblPaymentType);
-					lblPaymentType.setEnabled(false);
-				}
-				{
-					lblChkAmount = new JLabel("Amount", JLabel.TRAILING);
-					pnlDVInfo_1.add(lblChkAmount);
-					lblChkAmount.setEnabled(false);
-				}
-
-				pnlDVDtl_2 = new JPanel(new BorderLayout(5, 0));
-				pnlDVInfo.add(pnlDVDtl_2, BorderLayout.CENTER);
-				pnlDVDtl_2.setPreferredSize(new java.awt.Dimension(203, 118));
-				pnlDVDtl_2.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-
-				pnlDVDtl_2a = new JPanel(new GridLayout(4, 1, 0, 5));
-				pnlDVDtl_2.add(pnlDVDtl_2a, BorderLayout.WEST);
-				pnlDVDtl_2a.setPreferredSize(new java.awt.Dimension(119, 119));
-				pnlDVDtl_2a.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-				{
-					lookupChkPayee = new _JLookup(null, "Payee", 2, 2);
-					pnlDVDtl_2a.add(lookupChkPayee);
-					lookupChkPayee.setBounds(20, 27, 20, 25);
-					lookupChkPayee.setReturnColumn(0);
-					lookupChkPayee.setFilterIndex(1);
-					lookupChkPayee.setEnabled(false);
-					lookupChkPayee.setPreferredSize(new java.awt.Dimension(157, 22));
-					lookupChkPayee.addLookupListener(new LookupListener() {
-						public void lookupPerformed(LookupEvent event) {
-							Object[] data = ((_JLookup) event.getSource()).getDataSet();
-							FncSystem.out("Display SQL Query", lookupChkPayee.getLookupSQL());
-							if (data != null) {
-
-								String entity_name = (String) data[1];
-								tagCheckPayee.setTag(entity_name);
+						{
+							pnlDVDtl_1a = new JPanel(new GridLayout(5, 1, 0, 5));
+							pnlDVDtl_1.add(pnlDVDtl_1a, BorderLayout.WEST);
+							pnlDVDtl_1a.setPreferredSize(new java.awt.Dimension(110, 116));
+							pnlDVDtl_1a.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+							{
+								lblDV_date = new JLabel("DV Date", JLabel.TRAILING);
+								pnlDVDtl_1a.add(lblDV_date);
+								lblDV_date.setEnabled(false);
+							}
+							{
+								lblDateNeeded = new JLabel("Check Date", JLabel.TRAILING);
+								pnlDVDtl_1a.add(lblDateNeeded);
+								lblDateNeeded.setEnabled(false);
+							}
+							{
+								lblDatePaid = new JLabel("Date Paid", JLabel.TRAILING);
+								pnlDVDtl_1a.add(lblDatePaid);
+								lblDatePaid.setEnabled(false);
+							}
+							{
+								lblCheckNo = new JLabel("Check No.", JLabel.TRAILING);
+								pnlDVDtl_1a.add(lblCheckNo);
+								lblCheckNo.setEnabled(false);
 							}
 						}
-					});
-				}
-				{
-					lookupPayeeType = new _JLookup(null, "Payee Type", 2, 2);
-					pnlDVDtl_2a.add(lookupPayeeType);
-					lookupPayeeType.setBounds(20, 27, 20, 25);
-					lookupPayeeType.setReturnColumn(0);
-					lookupPayeeType.setEnabled(false);
-					lookupPayeeType.setPreferredSize(new java.awt.Dimension(157, 22));
-					lookupPayeeType.addLookupListener(new LookupListener() {
-						public void lookupPerformed(LookupEvent event) {
-							Object[] data = ((_JLookup) event.getSource()).getDataSet();
-							if (data != null) {
-								String payee_type = (String) data[1];
-								tagPayeeType.setTag(payee_type);
+						{
+							pnlDVDtl_1b = new JPanel(new GridLayout(4, 1, 5, 5));
+							pnlDVDtl_1.add(pnlDVDtl_1b, BorderLayout.CENTER);
+							pnlDVDtl_1b.setPreferredSize(new java.awt.Dimension(135, 119));
+							pnlDVDtl_1b.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+
+							{
+								dteDV = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
+								pnlDVDtl_1b.add(dteDV);
+								dteDV.setBounds(485, 7, 125, 21);
+								dteDV.setDate(null);
+								dteDV.setEnabled(false);
+								dteDV.setDateFormatString("yyyy-MM-dd");
+								((JTextFieldDateEditor) dteDV.getDateEditor()).setEditable(false);
+								dteDV.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
+							}
+							{
+								dteCheck = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
+								pnlDVDtl_1b.add(dteCheck);
+								//dteCheck.setBounds(485, 7, 125, 21);
+								dteCheck.setDate(null);
+								dteCheck.setEnabled(false);
+								dteCheck.setDateFormatString("yyyy-MM-dd");
+								((JTextFieldDateEditor) dteCheck.getDateEditor()).setEditable(false);
+								dteCheck.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
+							}
+							{
+								dtePaid = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
+								pnlDVDtl_1b.add(dtePaid);
+								//dtePaid.setBounds(485, 7, 125, 21);
+								dtePaid.setDate(null);
+								dtePaid.setEnabled(false);
+								dtePaid.setDateFormatString("yyyy-MM-dd");
+								((JTextFieldDateEditor) dtePaid.getDateEditor()).setEditable(false);
+								//	dtePaid.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
+							}
+							{
+								txtCheckNo = new JXTextField("");
+								pnlDVDtl_1b.add(txtCheckNo);
+								txtCheckNo.setEnabled(false);
+								txtCheckNo.setEditable(false);
+								//txtCheckNo.setBounds(120, 25, 300, 22);
+								txtCheckNo.setHorizontalAlignment(JTextField.CENTER);
 							}
 						}
-					});
-				}
-				{
-					lookupPaymentType = new _JLookup(null, "Payment Type", 2, 2);
-					pnlDVDtl_2a.add(lookupPaymentType);
-					lookupPaymentType.setBounds(20, 27, 20, 25);
-					lookupPaymentType.setReturnColumn(0);
-					lookupPaymentType.setEnabled(false);
-					lookupPaymentType.setPreferredSize(new java.awt.Dimension(157, 22));
-					lookupPaymentType.addLookupListener(new LookupListener() {
-						public void lookupPerformed(LookupEvent event) {
-							Object[] data = ((_JLookup) event.getSource()).getDataSet();
-							if (data != null) {
-								String rplf_type = (String) data[1];
-								tagPmtType.setTag(rplf_type);
-								if (rplf_type.equals("CASH")) {
-									lblBankNo.setEnabled(false);
-									lookupBankAcctNo.setEnabled(false);
-									lookupBankAcctNo.setValue("");
-									txtBankAlias.setText("");
-									txtBankAcct.setText("");
-									txtBankAlias.setText("");
-									txtBankAccountType.setText("");
-									modelDV_acct_entries.setValueAt("01-01-01-002", 1, 0);
-									modelDV_acct_entries.setValueAt("Cash on Hand - Disbursement", 1, 1);
-									lblCheckNo.setEnabled(false);
-									txtCheckNo.setEnabled(false);
-									txtCheckNo.setEditable(false);
-									txtCheckNo.setText("");
-									lblDateNeeded.setEnabled(false);
-									dteCheck.setEnabled(false);
-								} else {
-									lblBankNo.setEnabled(true);
-									lookupBankAcctNo.setEnabled(true);
-									modelDV_acct_entries.setValueAt("", 1, 0);
-									modelDV_acct_entries.setValueAt("", 1, 1);
-									lblCheckNo.setEnabled(true);
-									txtCheckNo.setEnabled(true);
-									txtCheckNo.setEditable(true);
-									lblDateNeeded.setEnabled(true);
-									dteCheck.setEnabled(true);
+					}
+
+					// Start of Left Panel
+					{
+						pnlDVInfo = new JPanel(new BorderLayout(0, 0));
+						pnlDVDtl.add(pnlDVInfo);
+						pnlDVInfo.setPreferredSize(new java.awt.Dimension(674, 140));
+						pnlDVInfo.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+						{
+							pnlDVInfo_1 = new JPanel(new GridLayout(4, 1, 5, 5));
+							pnlDVInfo.add(pnlDVInfo_1, BorderLayout.WEST);
+							pnlDVInfo_1.setPreferredSize(new java.awt.Dimension(84, 140));
+							pnlDVInfo_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+							{
+								lblCheckPayee = new JLabel("Payee", JLabel.TRAILING);
+								pnlDVInfo_1.add(lblCheckPayee);
+								lblCheckPayee.setEnabled(false);
+							}
+							{
+								lblPayeeType = new JLabel("Payee Type", JLabel.TRAILING);
+								pnlDVInfo_1.add(lblPayeeType);
+								lblPayeeType.setEnabled(false);
+							}
+							{
+								lblPaymentType = new JLabel("Payment Type", JLabel.TRAILING);
+								pnlDVInfo_1.add(lblPaymentType);
+								lblPaymentType.setEnabled(false);
+							}
+							{
+								lblChkAmount = new JLabel("Amount", JLabel.TRAILING);
+								pnlDVInfo_1.add(lblChkAmount);
+								lblChkAmount.setEnabled(false);
+							}
+							{
+								pnlDVInfo.add(Box.createHorizontalBox());
+							}
+						}
+
+						{
+							pnlDVDtl_2 = new JPanel(new BorderLayout(5, 0));
+							pnlDVInfo.add(pnlDVDtl_2, BorderLayout.CENTER);
+							pnlDVDtl_2.setPreferredSize(new java.awt.Dimension(203, 118));
+							pnlDVDtl_2.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+							{
+								pnlDVDtl_2a = new JPanel(new GridLayout(4, 1, 0, 5));
+								pnlDVDtl_2.add(pnlDVDtl_2a, BorderLayout.WEST);
+								pnlDVDtl_2a.setPreferredSize(new java.awt.Dimension(119, 119));
+								pnlDVDtl_2a.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+								//					{
+								//						pnlDVDtl_2a.add(Box.createHorizontalBox());
+								//					}
+								{
+									lookupChkPayee = new _JLookup(null, "Payee", 2, 2);
+									pnlDVDtl_2a.add(lookupChkPayee);
+									//lookupChkPayee.setBounds(20, 27, 20, 25);
+									lookupChkPayee.setReturnColumn(0);
+									lookupChkPayee.setFilterIndex(1);
+									lookupChkPayee.setEnabled(false);
+									lookupChkPayee.setPreferredSize(new java.awt.Dimension(157, 22));
+									lookupChkPayee.addLookupListener(new LookupListener() {
+										public void lookupPerformed(LookupEvent event) {
+											Object[] data = ((_JLookup) event.getSource()).getDataSet();
+											FncSystem.out("Display SQL Query", lookupChkPayee.getLookupSQL());
+											if (data != null) {
+
+												String entity_name = (String) data[1];
+												tagCheckPayee.setTag(entity_name);
+											}
+										}
+									});
+								}
+								{
+									lookupPayeeType = new _JLookup(null, "Payee Type", 2, 2);
+									pnlDVDtl_2a.add(lookupPayeeType);
+									//lookupPayeeType.setBounds(20, 27, 20, 25);
+									lookupPayeeType.setReturnColumn(0);
+									lookupPayeeType.setEnabled(false);
+									lookupPayeeType.setPreferredSize(new java.awt.Dimension(157, 22));
+									lookupPayeeType.addLookupListener(new LookupListener() {
+										public void lookupPerformed(LookupEvent event) {
+											Object[] data = ((_JLookup) event.getSource()).getDataSet();
+											if (data != null) {
+												String payee_type = (String) data[1];
+												tagPayeeType.setTag(payee_type);
+											}
+										}
+									});
+								}
+								{
+									lookupPaymentType = new _JLookup(null, "Payment Type", 2, 2);
+									pnlDVDtl_2a.add(lookupPaymentType);
+									//lookupPaymentType.setBounds(20, 27, 20, 25);
+									lookupPaymentType.setReturnColumn(0);
+									lookupPaymentType.setEnabled(false);
+									lookupPaymentType.setPreferredSize(new java.awt.Dimension(157, 22));
+									lookupPaymentType.addLookupListener(new LookupListener() {
+										public void lookupPerformed(LookupEvent event) {
+											Object[] data = ((_JLookup) event.getSource()).getDataSet();
+											if (data != null) {
+												String rplf_type = (String) data[1];
+												tagPmtType.setTag(rplf_type);
+												if (rplf_type.equals("CASH")) {
+													lblBankNo.setEnabled(false);
+													lookupBankAcctNo.setEnabled(false);
+													lookupBankAcctNo.setValue("");
+													txtBankAlias.setText("");
+													txtBankAcct.setText("");
+													txtBankAlias.setText("");
+													txtBankAccountType.setText("");
+													modelDV_acct_entries.setValueAt("01-01-01-002", 1, 0);
+													modelDV_acct_entries.setValueAt("Cash on Hand - Disbursement", 1, 1);
+													lblCheckNo.setEnabled(false);
+													txtCheckNo.setEnabled(false);
+													txtCheckNo.setEditable(false);
+													txtCheckNo.setText("");
+													lblDateNeeded.setEnabled(false);
+													dteCheck.setEnabled(false);
+												} else {
+													lblBankNo.setEnabled(true);
+													lookupBankAcctNo.setEnabled(true);
+													modelDV_acct_entries.setValueAt("", 1, 0);
+													modelDV_acct_entries.setValueAt("", 1, 1);
+													lblCheckNo.setEnabled(true);
+													txtCheckNo.setEnabled(true);
+													txtCheckNo.setEditable(true);
+													lblDateNeeded.setEnabled(true);
+													dteCheck.setEnabled(true);
+												}
+											}
+										}
+									});
+								}
+								{
+									txtCheckAmt = new _JXFormattedTextField(JXFormattedTextField.CENTER);
+									pnlDVDtl_2a.add(txtCheckAmt);
+									txtCheckAmt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+									txtCheckAmt.setText("0.00");
+									//txtCheckAmt.setBounds(120, 0, 72, 22);
+									txtCheckAmt.setEnabled(false);
+								}
+							}
+							{
+								pnlDVDtl_2b = new JPanel(new GridLayout(4, 1, 0, 5));
+								pnlDVDtl_2.add(pnlDVDtl_2b, BorderLayout.CENTER);
+								pnlDVDtl_2b.setPreferredSize(new java.awt.Dimension(140, 118));
+								pnlDVDtl_2b.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+
+								{
+									tagCheckPayee = new _JTagLabel("[ ]", JLabel.RIGHT);
+									pnlDVDtl_2b.add(tagCheckPayee);
+									//tagCheckPayee.setBounds(209, 27, 700, 22);
+									tagCheckPayee.setEnabled(false);
+									tagCheckPayee.setPreferredSize(new java.awt.Dimension(27, 33));
+									tagCheckPayee.addMouseListener(new PopupTriggerListener_panel2());
+								}
+								{
+									tagPayeeType = new _JTagLabel("[ ]");
+									pnlDVDtl_2b.add(tagPayeeType);
+									//tagPayeeType.setBounds(209, 27, 700, 22);
+									tagPayeeType.setEnabled(false);
+									tagPayeeType.setPreferredSize(new java.awt.Dimension(27, 33));
+									tagPayeeType.addMouseListener(new PopupTriggerListener_panel2());
+								}
+								{
+									tagPmtType = new _JTagLabel("[ ]");
+									pnlDVDtl_2b.add(tagPmtType);
+									//tagPmtType.setBounds(209, 27, 700, 22);
+									tagPmtType.setEnabled(false);
+									tagPmtType.setPreferredSize(new java.awt.Dimension(27, 33));
+									tagPmtType.addMouseListener(new PopupTriggerListener_panel2());
 								}
 							}
 						}
-					});
-				}
-				{
-					txtCheckAmt = new _JXFormattedTextField(JXFormattedTextField.CENTER);
-					pnlDVDtl_2a.add(txtCheckAmt);
-					txtCheckAmt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
-					txtCheckAmt.setText("0.00");
-					txtCheckAmt.setBounds(120, 0, 72, 22);
-					txtCheckAmt.setEnabled(false);
-				}
-
-				pnlDVDtl_2b = new JPanel(new GridLayout(4, 1, 0, 5));
-				pnlDVDtl_2.add(pnlDVDtl_2b, BorderLayout.CENTER);
-				pnlDVDtl_2b.setPreferredSize(new java.awt.Dimension(140, 118));
-				pnlDVDtl_2b.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-				{
-					tagCheckPayee = new _JTagLabel("[ ]", JLabel.RIGHT);
-					pnlDVDtl_2b.add(tagCheckPayee);
-					tagCheckPayee.setBounds(209, 27, 700, 22);
-					tagCheckPayee.setEnabled(false);
-					tagCheckPayee.setPreferredSize(new java.awt.Dimension(27, 33));
-					tagCheckPayee.addMouseListener(new PopupTriggerListener_panel2());
-				}
-				{
-					tagPayeeType = new _JTagLabel("[ ]");
-					pnlDVDtl_2b.add(tagPayeeType);
-					tagPayeeType.setBounds(209, 27, 700, 22);
-					tagPayeeType.setEnabled(false);
-					tagPayeeType.setPreferredSize(new java.awt.Dimension(27, 33));
-					tagPayeeType.addMouseListener(new PopupTriggerListener_panel2());
-				}
-				{
-					tagPmtType = new _JTagLabel("[ ]");
-					pnlDVDtl_2b.add(tagPmtType);
-					tagPmtType.setBounds(209, 27, 700, 22);
-					tagPmtType.setEnabled(false);
-					tagPmtType.setPreferredSize(new java.awt.Dimension(27, 33));
-					tagPmtType.addMouseListener(new PopupTriggerListener_panel2());
+					}
 				}
 			}
+
+
 
 			pnlDV_south_main = new JPanel(new BorderLayout(5, 5));
 			pnlNorth.add(pnlDV_south_main, BorderLayout.SOUTH);
@@ -819,6 +860,8 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 					public void lookupPerformed(LookupEvent event) {
 						Object[] data = ((_JLookup) event.getSource()).getDataSet();
 						if (data != null) {
+							
+							FncSystem.out("Display SQL for lookupBankAccount", lookupBankAcctNo.getLookupSQL());
 
 							txtBankAlias.setText((String) data[3]);
 							txtBankAcct.setText((String) data[2]);
@@ -834,7 +877,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 							last_chk_no_used = sql_getLastCheckNoUsed(data[0].toString());
 							//next_chk_no_int = new BigInteger(sql_getNextCheckNo(data[0].toString()));
 							//last_chk_no_int = new BigInteger(sql_getLastCheckNo(data[0].toString()));
-							
+
 							next_chk_no_int = sql_getNextCheckNo(data[0].toString());
 							last_chk_no_int = sql_getLastCheckNo(data[0].toString());
 
@@ -843,7 +886,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 									JOptionPane.showMessageDialog(getContentPane(),
 											"All check numbers have been used up.     " + "\n"
 													+ "Upload new check numbers.",
-											"Information", JOptionPane.INFORMATION_MESSAGE);
+													"Information", JOptionPane.INFORMATION_MESSAGE);
 								}
 							}
 							// else if ()
@@ -861,17 +904,17 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 					}
 				});
 				lookupBankAcctNo.addFocusListener(new FocusListener() {
-					
+
 					@Override
 					public void focusLost(FocusEvent e) {
 						// TODO Auto-generated method stub
-						
+
 					}
-					
+
 					@Override
 					public void focusGained(FocusEvent e) {
 						FncSystem.out("Display SQL for Lookup", lookupBankAcctNo.getLookupSQL());
-						
+
 					}
 				});
 			}
@@ -998,7 +1041,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 					{
 						modelDV_accttotal = new modelCV_acct_entries();
 						modelDV_accttotal
-								.addRow(new Object[] { "Total", null, new BigDecimal(0.00), new BigDecimal(0.00) });
+						.addRow(new Object[] { "Total", null, new BigDecimal(0.00), new BigDecimal(0.00) });
 
 						tblDV_acct_entries_total = new _JTableTotal(modelDV_accttotal, tblDV_acct_entries);
 						tblDV_acct_entries_total.setFont(dialog11Bold);
@@ -1214,11 +1257,11 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				+ "from rf_cv_detail a\n" + "left join mf_boi_chart_of_accounts b on a.acct_id = b.acct_id\n" +
 				// "left join mf_bank_account c on a.acct_id = c.acct_id \n" +
 				"left join mf_bank_account c on a.acct_id = c.acct_id and c.status_id = 'A' \n" + // edited by
-																										// Erick dated
-																										// 05-22-20 to
-																										// remove
-																										// inactive bank
-																										// account
+				// Erick dated
+				// 05-22-20 to
+				// remove
+				// inactive bank
+				// account
 				"\n" + "where a.cv_no = '" + req_no + "'  and a.co_id = '" + co_id
 				+ "' and a.status_id != 'I'   --order by a.acct_id desc"; //REMOVED ORDERING BY LESTER 2024-09-04
 
@@ -1272,9 +1315,9 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				"left join (select * from rf_request_header where co_id = '"+co_id+"') d on a.pv_no = d.rplf_no \n"+
 				"left join mf_rplf_type e on e.rplf_type_id = d.rplf_type_id"+
 				"                and a.co_id = b.co_id";
-		
+
 		FncSystem.out("ditos peros", sql);
-		
+
 		pgSelect db = new pgSelect();
 		db.select(sql);
 		if (db.isNotNull()) {
@@ -1732,7 +1775,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		Object[] data = dlg.getReturnDataSet();
 		if (data != null) {
 			String request_type = (String) data[6];
-			
+
 			FncSystem.out("PV List", getPV_list());
 			modelDV_pv.setValueAt(data[0], 0, 0);
 			modelDV_pv.setValueAt(data[1], 0, 1);
@@ -1757,7 +1800,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 			lookupPayeeType.setText((String) pv_hdr[4]);
 			tagPayeeType.setTag((String) pv_hdr[5]);
 			AddRow_acctEntries(amount, request_type, (String) data[0]);
-			
+
 			tblDV_pv.packAll();
 
 			String default_payee = "";
@@ -1767,7 +1810,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 			txtDV_particular.setText(setPVRemarks(rem) + default_payee);
 
 			txtDV_particular.setText(setPVRemarks(rem));
-			
+
 			tblDV_pv.packAll();
 
 			if (data[5].equals("B")) {
@@ -2076,15 +2119,15 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
 
 		//Double pv_amt = Double.parseDouble(modelDV_accttotal.getValueAt(0, 3).toString());
-		
+
 		BigDecimal pv_amt = new BigDecimal(0.00);
-		
-		
+
+
 		for (int x = 0; x < modelDV_acct_entries.getRowCount(); x++) {
-			
+
 			Boolean isCorollary = (Boolean) modelDV_acct_entries.getValueAt(x, 4);
-			
-			
+
+
 			if(isCorollary == false) {
 
 
@@ -2095,7 +2138,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				}
 			}
 		}
-				
+
 
 		String check_payee = "";
 		if (sql_getDefaultBroker(payee).equals("")) {
@@ -2113,45 +2156,45 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 			// FncReport.generateReport("/Reports/rptCV_checkAUB.jasper", reportTitle,
 			// company, mapParameters);
 			FncReport.generateReport("/Reports/rptCV_checkAUB_new.jasper", reportTitle, company, mapParameters);// **EDITED
-																												// BY
-																												// JED
-																												// 2020-07-21:
-																												// CHANGE
-																												// DATE
-																												// FORMAT
-																												// UPON
-																												// PRINTING
-																												// OF
-																												// CHECK**//
+			// BY
+			// JED
+			// 2020-07-21:
+			// CHANGE
+			// DATE
+			// FORMAT
+			// UPON
+			// PRINTING
+			// OF
+			// CHECK**//
 		} else if (txtBankAlias.getText().trim().equals("ABC")) {
 			FncReport.generateReport("/Reports/rptCV_checkAllied.jasper", reportTitle, company, mapParameters);
 		} else if (txtBankAlias.getText().trim().equals("MBTC")) {
 			FncReport.generateReport("/Reports/rptCV_checkAUB.jasper", reportTitle, company, mapParameters);// **EDITED
-																											// BY JED
-																											// 2020-07-21:
-																											// CHANGE
-																											// DATE
-																											// FORMAT
-																											// UPON
-																											// PRINTING
-																											// OF
-																											// CHECK**//
+			// BY JED
+			// 2020-07-21:
+			// CHANGE
+			// DATE
+			// FORMAT
+			// UPON
+			// PRINTING
+			// OF
+			// CHECK**//
 		}
 		/* Added by Mann2x; Date Added: March 26, 2018; */
 		else {
 			// FncReport.generateReport("/Reports/rptCV_checkAUB.jasper", reportTitle,
 			// company, mapParameters);
 			FncReport.generateReport("/Reports/rptCV_checkAUB_new.jasper", reportTitle, company, mapParameters);// **EDITED
-																												// BY
-																												// JED
-																												// 2020-07-21:
-																												// CHANGE
-																												// DATE
-																												// FORMAT
-																												// UPON
-																												// PRINTING
-																												// OF
-																												// CHECK**//
+			// BY
+			// JED
+			// 2020-07-21:
+			// CHANGE
+			// DATE
+			// FORMAT
+			// UPON
+			// PRINTING
+			// OF
+			// CHECK**//
 		}
 
 	}
@@ -2164,14 +2207,14 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
 
 		Double dv_total_amt = Double.parseDouble(modelDV_accttotal.getValueAt(0, 3).toString());
-		
+
 		BigDecimal dv_amt = new BigDecimal(0.00);
 
 		for (int x = 0; x < modelDV_acct_entries.getRowCount(); x++) {
-			
+
 			Boolean isCorollary = (Boolean) modelDV_acct_entries.getValueAt(x, 4);
-			
-			
+
+
 			if(isCorollary == false) {
 
 
@@ -2192,7 +2235,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		mapParameters.put("due_date", dteCheck.getDate());
 		mapParameters.put("dv_total_amt", dv_total_amt);
 		mapParameters.put("dv_amt", dv_amt);
-		
+
 		mapParameters.put("dv_date", dteDV.getDate());
 		mapParameters.put("payee_", sql_getPV_payee().toUpperCase());
 		mapParameters.put("prepared_by", sql_getCV_preparedBy());
@@ -2246,7 +2289,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 
 			if (to_do.equals("addnew")) {
 				if (checkAcctBalanceIfEqual() == true) {// **ADDED BY JED 2019-04-22 : TO CHECK TOTAL IF BALANCE OR NOT
-														// BEFORE SAVING OR POSTING**//
+					// BEFORE SAVING OR POSTING**//
 
 					next_cv_no = sql_getNextCVno(co_id);
 					pgUpdate db = new pgUpdate();
@@ -2294,7 +2337,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 					}else {
 						insertAP_check(dv, db);
 					}
-					
+
 					updateCheck_book(db);
 				} else {
 				}
@@ -2359,7 +2402,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 
 	public static String getPayment_type() {// used
 		return "select 'B' as \"Code\", 'CHECK' as \"Payment Type\" union all "
-				+ "select 'A' as \"Code\", 'CASH'  as \"Payment Type\"   ";
+		+ "select 'A' as \"Code\", 'CASH'  as \"Payment Type\"   ";
 
 	}
 
@@ -2374,8 +2417,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 						+ "				case when b.fund_class_id = '03' then 'MONEY MARKET PLACEMENT ACCOUNT 'end end end) , \r\n"
 						+ "		b.acct_id,\r\n" + "		a.from_check_no,\r\n" + "		a.to_check_no, \n"
 						+ "		a.last_no_used \r\n" + "\r\n"
-						+ "		from ( select * from rf_check_book where rec_id in ( select rec_id from rf_check_book where trim(user_id) = '"
-						+ UserInfo.EmployeeCode + "' and status_id = 'A' ) ) a\r\n"
+						+ "		from rf_check_book a\r\n"
 						+ "		left join mf_bank_account b on a.bank_acct_id = b.bank_acct_id  \r\n"
 						+ "		left join mf_bank_branch c on b.bank_branch_id = c.bank_branch_id  \r\n"
 						+ "		left join mf_bank d on c.bank_id = d.bank_id   \r\n";
@@ -2386,6 +2428,8 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		else {
 			sql = sql + "where b.is_comm_disb is null or b.is_comm_disb is false  ";
 		}
+		
+		sql = sql + "AND a.status_id = 'A' AND CASE WHEN '"+UserInfo.ADMIN+"' THEN TRUE else trim(a.user_id) = '"+UserInfo.EmployeeCode+"' end";
 
 		sql = sql +
 
@@ -2564,8 +2608,8 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				"coalesce(i.bank_alias,''),\r\n" + // 15
 				"j.status_desc, \r\n" + // 16
 				"(case when d.entity_id is null then a.entity_id1 else d.entity_id end) ,\r\n" + // 17 03-11-2016 -
-																									// actual check
-																									// payee (rf_check)
+				// actual check
+				// payee (rf_check)
 				"a.entity_id2,\r\n" + // 18
 				"a.entity_id1,  \n" + // 19
 				"a.pay_type_id," + // 20
@@ -2600,30 +2644,30 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 	}
 
 	public Object[] getPVdetails(String req_no) {// **EDITED BY JED 2019-09-16 DCRF No. 1214 : MAKE FUNCTION FOR GETTING
-													// CV HEADER**//
+		// CV HEADER**//
 
-//		String strSQL = 
-//			"select \r\n" + 
-//
-//			"a.entity_id1,\r\n" + 
-//			"trim(b.entity_name),\r\n" + 
-//			"a.entity_id2,\r\n" + 
-//			"trim(c.entity_name),\r\n" + 
-//			"a.entity_type_id,\r\n" + 
-//			"d.entity_type_desc,\r\n" +
-//			"trim(a.remarks)," +
-//			"e.rplf_type_id  \r\n" + 
-//
-//			"from \r\n" + 
-//			"rf_pv_header a\r\n" + 
-//			"left join rf_entity b on a.entity_id1 = b.entity_id\r\n" + 
-//			"left join rf_entity c on a.entity_id2 = c.entity_id\r\n" + 
-//			"left join mf_entity_type d on a.entity_type_id = d.entity_type_id\r\n" + 
-//			"left join rf_request_header e on a.pv_no = e.rplf_no \r\n" + 
-//
-//			"where a.pv_no = '"+req_no+"'\r\n" + 
-//			"and a.co_id = '"+co_id+"'" 
-//			;
+		//		String strSQL = 
+		//			"select \r\n" + 
+		//
+		//			"a.entity_id1,\r\n" + 
+		//			"trim(b.entity_name),\r\n" + 
+		//			"a.entity_id2,\r\n" + 
+		//			"trim(c.entity_name),\r\n" + 
+		//			"a.entity_type_id,\r\n" + 
+		//			"d.entity_type_desc,\r\n" +
+		//			"trim(a.remarks)," +
+		//			"e.rplf_type_id  \r\n" + 
+		//
+		//			"from \r\n" + 
+		//			"rf_pv_header a\r\n" + 
+		//			"left join rf_entity b on a.entity_id1 = b.entity_id\r\n" + 
+		//			"left join rf_entity c on a.entity_id2 = c.entity_id\r\n" + 
+		//			"left join mf_entity_type d on a.entity_type_id = d.entity_type_id\r\n" + 
+		//			"left join rf_request_header e on a.pv_no = e.rplf_no \r\n" + 
+		//
+		//			"where a.pv_no = '"+req_no+"'\r\n" + 
+		//			"and a.co_id = '"+co_id+"'" 
+		//			;
 
 		String strSQL = "select * from get_pv_details('" + req_no + "', '" + co_id + "')";
 
@@ -2641,8 +2685,8 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 	private String sql_getNextCVno(String co_id) {// used
 
 		String SQL = "select * from fn_get_cv_no('" + co_id +"')";
-				
-			/*	"select trim(to_char(max(coalesce(cv_no::int,0))+1,'000000000')) from rf_cv_header where co_id = '"
+
+		/*	"select trim(to_char(max(coalesce(cv_no::int,0))+1,'000000000')) from rf_cv_header where co_id = '"
 				+ co_id + "' ";*/
 
 		pgSelect db = new pgSelect();
@@ -2778,9 +2822,9 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		String SQL = "select broker_name from mf_brokers_details where agent_id = '" + agent + "' \n"
 				+ "and default_check_payee = true and status_id = 'A'";
 
-		
-		
-		
+
+
+
 		pgSelect db = new pgSelect();
 		db.select(SQL);
 
@@ -2879,20 +2923,20 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		BigDecimal credit = new BigDecimal(0.00);
 
 		for (int x = 0; x < modelMain.getRowCount(); x++) {
-			
-			
-				try {
-					debit = debit.add(((BigDecimal) modelMain.getValueAt(x, 2)));
-				} catch (NullPointerException e) {
-					debit = debit.add(new BigDecimal(0.00));
-				}
 
-				try {
-					credit = credit.add(((BigDecimal) modelMain.getValueAt(x, 3)));
-				} catch (NullPointerException e) {
-					credit = credit.add(new BigDecimal(0.00));
-				}
-		
+
+			try {
+				debit = debit.add(((BigDecimal) modelMain.getValueAt(x, 2)));
+			} catch (NullPointerException e) {
+				debit = debit.add(new BigDecimal(0.00));
+			}
+
+			try {
+				credit = credit.add(((BigDecimal) modelMain.getValueAt(x, 3)));
+			} catch (NullPointerException e) {
+				credit = credit.add(new BigDecimal(0.00));
+			}
+
 		}
 
 		modelTotal.addRow(new Object[] { "Total", null, debit, credit });
@@ -2956,7 +3000,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				AddRow_acctEntries(amount, "", "");
 
 				txtDV_particular.setText(setPVRemarks(rem));
-				
+
 				tblDV_pv.packAll();
 
 				if (data[5].equals("B")) {
@@ -3036,7 +3080,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		String pay_type = lookupPaymentType.getText();
 		if (pay_type.equals("B")) {
 			modelDV_acct_entries
-					.addRow(new Object[] { acct_id, sql_getAcctDesc(), new BigDecimal(0.00), new BigDecimal(amount), false});
+			.addRow(new Object[] { acct_id, sql_getAcctDesc(), new BigDecimal(0.00), new BigDecimal(amount), false});
 			listModel.addElement(modelDV_acct_entries.getRowCount());
 		} else if (pay_type.equals("A")) {
 			modelDV_acct_entries.addRow(new Object[] { "01-01-01-002", "Cash on Hand - Disbursement",
@@ -3046,12 +3090,12 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 			modelDV_acct_entries.addRow(new Object[] { "", "", new BigDecimal(0.00), new BigDecimal(amount), false });
 			listModel.addElement(modelDV_acct_entries.getRowCount());
 		}
-		
+
 		if(request_type.equals("04") || request_type.equals("14") || request_type.equals("16")) {
 			pgSelect db = new pgSelect();
 			String SQL = "SELECT * FROM sp_generate_cv_input_vat_clearing('"+lookupCompany.getValue()+"', '"+pv_no+"');";
 			db.select(SQL);
-			
+
 			if(db.isNotNull()) {
 				for(int x = 0; x<db.getRowCount(); x++) {
 					modelDV_acct_entries.addRow(db.getResult()[x]);
@@ -3091,7 +3135,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 
 		return
 
-		remarks = remarks + "\n" + rem;
+				remarks = remarks + "\n" + rem;
 
 	}
 
@@ -3218,13 +3262,13 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		System.out.printf("SQL #1: %s", sqlDetail);
 		db.executeUpdate(sqlDetail, false);
 	}
-	
+
 	private Boolean isCheckExisting(String cv_no, String co_id) {
-		
+
 		pgSelect db = new pgSelect();
 		String SQL = "SELECT * FROM rf_check where cv_no = '"+cv_no+"' and co_id = '"+co_id+"' and status_id = 'A'";
 		db.select(SQL);
-		
+
 		if(db.isNotNull()) {
 			return true;
 		}else {
@@ -3398,11 +3442,11 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		System.out.printf("SQL #1: %s", sqlDetail);
 		db.executeUpdate(sqlDetail, false);
 	}
-	
+
 	private void deleteTagMCDetails(String co_id, String cv_no) {
 		pgUpdate db = new pgUpdate();
 		//String SQL = "UPDATE rf_cm_detail set status_id = 'I', mc_no = '' where cv_no = '"+cv_no+"' and co_id = '"+co_id+"'";
-		
+
 		String SQL = "DELETE FROM rf_mc_detail where cv_no = '"+cv_no+"' and co_id = '"+co_id+"' and status_id = 'A'";
 		db.executeUpdate(SQL, true);
 		db.commit();

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCV_preview" pageWidth="612" pageHeight="432" columnWidth="577" leftMargin="25" rightMargin="10" topMargin="43" bottomMargin="20">
 	<property name="ireport.zoom" value="1.3310000000000004"/>
-	<property name="ireport.x" value="103"/>
-	<property name="ireport.y" value="66"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="40"/>
 	<parameter name="prepared_by" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["AAGONZALES"]]></defaultValueExpression>
 	</parameter>
@@ -33,7 +33,7 @@ null as credit,
 trim(d.entity_name) as payee,
 trim(get_employee_name((select case when edited_by is null or edited_by = '' then created_by else edited_by end from rf_cv_header where cv_no = $P{cv_no} and co_id = $P{co_id}))) as prepared_by
 
-from ( select * from rf_pv_header where cv_no = $P{cv_no} and co_id = $P{co_id} and status_id = 'P' ) a
+from ( select * from rf_pv_header where cv_no = $P{cv_no} and co_id = $P{co_id} and status_id = 'P' and trim(pv_no) != '') a
 left join ( select * from rf_pv_detail where acct_id in ('22010001', '03-01-01-001') and status_id = 'A' and co_id = $P{co_id} ) b on a.pv_no = b.pv_no and a.co_id=b.co_id
 left join mf_boi_chart_of_accounts c on b.acct_id = c.acct_id
 left join rf_entity d on a.entity_id1 = d.entity_id

@@ -148,7 +148,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 	private JLabel lblPaymentType;
 	private JLabel lblBankNo;
 	private JLabel lblReqType;
-	private _JTagLabel taglblReqType;
+	private static _JTagLabel taglblReqType;
 
 	public static _JLookup lookupCompany;
 	public static _JLookup lookupDV_no;
@@ -1325,12 +1325,13 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				// Adding of row in table
 				modelMain.addRow(db.getResult()[x]);
 				listModel.addElement(modelMain.getRowCount());
+				System.out.printf("Display value of request type: %s%n", db.getResult()[x][6]);
+				
+				String req_type = (String) db.getResult()[x][6];
+				taglblReqType.setTag(req_type);
 			}
-
 			totalDV_pv(modelMain, modelTotal);
-		}
-
-		else {
+		}else{
 
 			JOptionPane.showMessageDialog(null, "Payable Voucher(s) was/were transferred to a new CV.", "Warning",
 					JOptionPane.INFORMATION_MESSAGE);
@@ -1528,6 +1529,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 		tagPayeeType.setText("[ ]");
 		tagPmtType.setText("[ ]");
 		tagCheckPayee.setText("[ ]");
+		taglblReqType.setText("[ ]");
 
 		lookupBankAcctNo.setValue("");
 		txtBankAlias.setText("");

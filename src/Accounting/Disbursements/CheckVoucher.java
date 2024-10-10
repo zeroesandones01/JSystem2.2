@@ -3224,7 +3224,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 					"'" + rec_no + "',  \n" + // 3 cv_no
 					"" + total + ",  \n" + // 4 tran_amt
 					"'" + bal_side + "',  \n" + // 5 bal_side
-					"'" + acct_id + "',  \n" + // 6 acct_id
+					"NULLIF('" + acct_id + "', ''),  \n" + // 6 acct_id
 					"null,  \n" + // 7 old_acct_id
 					"'A', null, null,  \n" + // 8 status_id
 					""+corollary+")   ";

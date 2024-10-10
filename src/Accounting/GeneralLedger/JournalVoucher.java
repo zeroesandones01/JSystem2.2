@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -241,6 +242,8 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 	int seq_no = 1;
 	private Integer fiscalyear;
 	private JCheckBox chkCurrentYear;
+	private static _JLookup lookupreqtype;
+	private static _JTagLabel tagreqtype;
 	private static JButton btnRemoveAcct;
 	static String isCurrentYear = getCurrentYear();
 
@@ -372,398 +375,435 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 			pnlMain.add(pnlNorth, BorderLayout.NORTH);
 			pnlNorth.setLayout(new BorderLayout(5, 5));
 			pnlNorth.setBorder(lineBorder);
-			pnlNorth.setPreferredSize(new java.awt.Dimension(923, 177));
-
-			pnlComp = new JPanel(new BorderLayout(5, 0));
-			pnlNorth.add(pnlComp, BorderLayout.NORTH);
-
-			// company
-			pnlComp_a = new JPanel(new BorderLayout(5, 5));
-			pnlComp.add(pnlComp_a, BorderLayout.NORTH);
-			pnlComp_a.setPreferredSize(new java.awt.Dimension(610, 30));
-
-			pnlComp_a1 = new JPanel(new GridLayout(1, 2, 5, 5));
-			pnlComp_a.add(pnlComp_a1, BorderLayout.WEST);
-			pnlComp_a1.setPreferredSize(new java.awt.Dimension(209, 30));
-			pnlComp_a1.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
-
+			//pnlNorth.setPreferredSize(new java.awt.Dimension(923, 177));
+			pnlNorth.setPreferredSize(new java.awt.Dimension(923, 210));
+			
 			{
-				lblCompany = new JLabel("        COMPANY", JLabel.TRAILING);
-				pnlComp_a1.add(lblCompany);
-				lblCompany.setBounds(8, 11, 62, 12);
-				lblCompany.setPreferredSize(new java.awt.Dimension(105, 25));
-				lblCompany.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12));
+				pnlComp = new JPanel(new BorderLayout(5, 0));
+				pnlNorth.add(pnlComp, BorderLayout.NORTH);
+				{
+					// company
+					pnlComp_a = new JPanel(new BorderLayout(5, 5));
+					pnlComp.add(pnlComp_a, BorderLayout.NORTH);
+					pnlComp_a.setPreferredSize(new java.awt.Dimension(610, 30));
+					{
+						pnlComp_a1 = new JPanel(new GridLayout(1, 2, 5, 5));
+						pnlComp_a.add(pnlComp_a1, BorderLayout.WEST);
+						pnlComp_a1.setPreferredSize(new java.awt.Dimension(209, 30));
+						pnlComp_a1.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
+
+						{
+							lblCompany = new JLabel("        COMPANY", JLabel.TRAILING);
+							pnlComp_a1.add(lblCompany);
+							lblCompany.setBounds(8, 11, 62, 12);
+							lblCompany.setPreferredSize(new java.awt.Dimension(105, 25));
+							lblCompany.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12));
+						}
+						{
+							lookupCompany = new _JLookup(null, "Company", 0, 2);
+							pnlComp_a1.add(lookupCompany);
+							lookupCompany.setLookupSQL(SQL_COMPANY());
+							lookupCompany.setReturnColumn(0);
+							lookupCompany.addLookupListener(new LookupListener() {
+								public void lookupPerformed(LookupEvent event) {
+									Object[] data = ((_JLookup) event.getSource()).getDataSet();
+									if (data != null) {
+
+										co_id = (String) data[0];
+										company = (String) data[1];
+										tagCompany.setTag((String) data[1]);
+										company_logo = (String) data[3];
+
+										lblJV_no.setEnabled(true);
+										lookupJV.setEnabled(true);
+
+										lookupJV.setLookupSQL(getJV_no());
+
+										{
+											enableButtons(true, false, false, false, false, false, false, false, false, false);
+										}
+									}
+								}
+							});
+						}
+					}
+					{
+						pnlComp_a2 = new JPanel(new GridLayout(1, 1, 5, 5));
+						pnlComp_a.add(pnlComp_a2, BorderLayout.CENTER);
+						pnlComp_a2.setPreferredSize(new java.awt.Dimension(423, 20));
+						pnlComp_a2.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+						{
+							tagCompany = new _JTagLabel("[ ]");
+							pnlComp_a2.add(tagCompany);
+							tagCompany.setBounds(209, 27, 700, 22);
+							tagCompany.setEnabled(true);
+							tagCompany.setPreferredSize(new java.awt.Dimension(27, 33));
+							tagCompany.addMouseListener(new PopupTriggerListener_panel2());
+						}
+					}
+				}
 			}
 			{
-				lookupCompany = new _JLookup(null, "Company", 0, 2);
-				pnlComp_a1.add(lookupCompany);
-				lookupCompany.setLookupSQL(SQL_COMPANY());
-				lookupCompany.setReturnColumn(0);
-				lookupCompany.addLookupListener(new LookupListener() {
-					public void lookupPerformed(LookupEvent event) {
-						Object[] data = ((_JLookup) event.getSource()).getDataSet();
-						if (data != null) {
+				pnlJV = new JPanel(new BorderLayout(5, 5));
+				pnlNorth.add(pnlJV, BorderLayout.CENTER);
+				pnlJV.setPreferredSize(new java.awt.Dimension(921, 233));
+				pnlJV.setBorder(JTBorderFactory.createTitleBorder("Contract Details"));
+				pnlJV.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+				{
+					pnlJV_a = new JPanel(new BorderLayout(5, 5));
+					pnlJV.add(pnlJV_a, BorderLayout.NORTH);
+					pnlJV_a.setPreferredSize(new java.awt.Dimension(911, 42));
+					pnlJV_a.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+					pnlJV_a.setBorder(lineBorder);
+					{
+						pnlJV_a1 = new JPanel(new GridLayout(1, 1, 5, 10));
+						pnlJV_a.add(pnlJV_a1, BorderLayout.WEST);
+						pnlJV_a1.setPreferredSize(new java.awt.Dimension(92, 40));
+						pnlJV_a1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-							co_id = (String) data[0];
-							company = (String) data[1];
-							tagCompany.setTag((String) data[1]);
-							company_logo = (String) data[3];
-
-							lblJV_no.setEnabled(true);
-							lookupJV.setEnabled(true);
-
-							lookupJV.setLookupSQL(getJV_no());
+						{
+							lblJV_no = new JLabel("Journal No.", JLabel.TRAILING);
+							pnlJV_a1.add(lblJV_no);
+							lblJV_no.setEnabled(false);
+							lblJV_no.setPreferredSize(new java.awt.Dimension(86, 40));
+							lblJV_no.setFont(new java.awt.Font("Segoe UI", Font.ITALIC, 12));
+							lblJV_no.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12));
+						}
+					}
+					{
+						pnlJV_a2 = new JPanel(new BorderLayout(5, 5));
+						pnlJV_a.add(pnlJV_a2, BorderLayout.CENTER);
+						pnlJV_a2.setPreferredSize(new java.awt.Dimension(814, 40));
+						pnlJV_a2.setBorder(BorderFactory.createEmptyBorder(8, 5, 8, 5));
+						{
+							pnlJV_a2_1 = new JPanel(new GridLayout(1, 1, 5, 10));
+							pnlJV_a2.add(pnlJV_a2_1, BorderLayout.WEST);
+							// pnlJV_a2_1.setPreferredSize(new java.awt.Dimension(197, 22));
+							pnlJV_a2_1.setPreferredSize(new java.awt.Dimension(286, 24));
 
 							{
-								enableButtons(true, false, false, false, false, false, false, false, false, false);
+								lookupJV = new _JLookup(null, "JV No.", 2, 2);
+								pnlJV_a2_1.add(lookupJV);
+								lookupJV.setBounds(20, 27, 20, 25);
+								lookupJV.setReturnColumn(0);
+								lookupJV.setEnabled(false);
+								// lookupJV.setEditable(false);
+								lookupJV.setPreferredSize(new java.awt.Dimension(157, 22));
+								lookupJV.addLookupListener(new LookupListener() {
+									public void lookupPerformed(LookupEvent event) {
+										Object[] data = ((_JLookup) event.getSource()).getDataSet();
+										// int row = tblJV_account.getRowCount();
+										if (data != null) {
+
+											refresh_fields();
+
+											jv_no = (String) data[0];
+											fiscalyear = (Integer) data[3];
+
+											System.out.println("lookupJV");
+											System.out.println("jv_no = " + jv_no);
+											System.out.println("fiscalyear = " + fiscalyear);
+
+											lookupJV.setValue(jv_no);
+											lookupPeriod.setText(String.format("%s", data[4]));
+
+											setJV_header(jv_no);
+											displayJV_details(modelJV_account, rowHeaderJV_account, modelJV_accounttotal, jv_no);
+											displayJV_subsidiaryledgers(modelJV_SL, rowHeaderJV_SL, modelJV_SL_total, jv_no);
+
+											mnidelete.setEnabled(false);
+											mniaddrow.setEnabled(false);
+
+											tagDetail.setText(null);
+
+										}
+									}
+								});
+							}
+							{// Added by ERICK 2021-09-01 AS REQUESTED BY ORLY OF GFC FOR FASTER LOADING OF
+								// LOOKUP
+								chkCurrentYear = new JCheckBox("current year only?");
+								pnlJV_a2_1.add(chkCurrentYear);
+								chkCurrentYear.setEnabled(true);
+								chkCurrentYear.setSelected(true);
+								chkCurrentYear.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 9));
+								chkCurrentYear.setPreferredSize(new java.awt.Dimension(148, 24));
+								chkCurrentYear.addItemListener(new ItemListener() {
+									@Override
+									public void itemStateChanged(ItemEvent arg0) {
+										if (chkCurrentYear.isSelected()) {
+											isCurrentYear = getCurrentYear();
+											lookupJV.setLookupSQL(getJV_no());
+
+										} else {
+											isCurrentYear = "";
+											lookupJV.setLookupSQL(getJV_no());
+										}
+									}
+								});
+							}
+							/*
+							 * pnlJV_a2_2 = new JPanel(new GridLayout(1, 2, 5, 0)); pnlJV_a2.add(pnlJV_a2_2,
+							 * BorderLayout.CENTER); pnlJV_a2_2.setPreferredSize(new java.awt.Dimension(357,
+							 * 25)); pnlJV_a2_2.addMouseListener(new PopupTriggerListener_panel2());
+							 */
+							pnlJV_a2_3 = new JPanel(new GridLayout(1, 2, 5, 0));
+							pnlJV_a2.add(pnlJV_a2_3, BorderLayout.EAST);
+							//pnlJV_a2_3.setPreferredSize(new java.awt.Dimension(310, 20));
+							pnlJV_a2_3.setPreferredSize(new java.awt.Dimension(310, 20));
+							pnlJV_a2_3.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+							{
+								lblStatus = new JLabel("Status", JLabel.TRAILING);
+								pnlJV_a2_3.add(lblStatus);
+								lblStatus.setEnabled(false);
+								lblStatus.addMouseListener(new PopupTriggerListener_panel2());
+							}
+							{
+								txtStatus = new JXTextField("");
+								pnlJV_a2_3.add(txtStatus);
+								txtStatus.setEnabled(false);
+								txtStatus.setEditable(false);
+								txtStatus.setBounds(120, 25, 300, 22);
+								txtStatus.setHorizontalAlignment(JTextField.CENTER);
+								txtStatus.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12));
+								txtStatus.addMouseListener(new PopupTriggerListener_panel2());
 							}
 						}
 					}
-				});
-			}
+				}
+				{
+					pnlJVDtl = new JPanel(new BorderLayout(0, 5));
+					pnlJV.add(pnlJVDtl, BorderLayout.WEST);
+					pnlJVDtl.setPreferredSize(new java.awt.Dimension(911, 187));
+					{
+						pnlJVDtl_1 = new JPanel(new BorderLayout(0, 5));
+						pnlJVDtl.add(pnlJVDtl_1, BorderLayout.WEST);
+						pnlJVDtl_1.setPreferredSize(new java.awt.Dimension(221, 116));
+						pnlJVDtl_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+						{
+							pnlJVDtl_1a = new JPanel(new GridLayout(4, 1, 0, 5));
+							pnlJVDtl_1.add(pnlJVDtl_1a, BorderLayout.WEST);
+							pnlJVDtl_1a.setPreferredSize(new java.awt.Dimension(99, 116));
+							pnlJVDtl_1a.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+							{
+								lblDateTrans = new JLabel("Trans. Date", JLabel.TRAILING);
+								pnlJVDtl_1a.add(lblDateTrans);
+								lblDateTrans.setEnabled(false);
+							}
+							{
+								lblDateEdited = new JLabel("Date Edited", JLabel.TRAILING);
+								pnlJVDtl_1a.add(lblDateEdited);
+								lblDateEdited.setEnabled(false);
+							}
+							{
+								lblDatePosted = new JLabel("Date Posted", JLabel.TRAILING);
+								pnlJVDtl_1a.add(lblDatePosted);
+								lblDatePosted.setEnabled(false);
+							}
+							pnlJVDtl_1a.add(Box.createHorizontalBox());
+						}
+						{
+							pnlJVDtl_1b = new JPanel(new GridLayout(4, 1, 5, 5));
+							pnlJVDtl_1.add(pnlJVDtl_1b, BorderLayout.CENTER);
+							pnlJVDtl_1b.setPreferredSize(new java.awt.Dimension(135, 119));
+							pnlJVDtl_1b.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 
-			pnlComp_a2 = new JPanel(new GridLayout(1, 1, 5, 5));
-			pnlComp_a.add(pnlComp_a2, BorderLayout.CENTER);
-			pnlComp_a2.setPreferredSize(new java.awt.Dimension(423, 20));
-			pnlComp_a2.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+							{
+								dteTransaction = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
+								pnlJVDtl_1b.add(dteTransaction);
+								dteTransaction.setBounds(485, 7, 125, 21);
+								dteTransaction.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
+								dteTransaction.setEnabled(true);
+								dteTransaction.setDateFormatString("yyyy-MM-dd");
+								((JTextFieldDateEditor) dteTransaction.getDateEditor()).setEditable(false);
+								dteTransaction.addPropertyChangeListener(new PropertyChangeListener() {
+									public void propertyChange(PropertyChangeEvent e) {
 
-			{
-				tagCompany = new _JTagLabel("[ ]");
-				pnlComp_a2.add(tagCompany);
-				tagCompany.setBounds(209, 27, 700, 22);
-				tagCompany.setEnabled(true);
-				tagCompany.setPreferredSize(new java.awt.Dimension(27, 33));
-				tagCompany.addMouseListener(new PopupTriggerListener_panel2());
-			}
+										Object[] month_year = getMonthYear();
+										lookupFiscalYr.setText((String) month_year[4]);
 
-			pnlJV = new JPanel(new BorderLayout(5, 5));
-			pnlNorth.add(pnlJV, BorderLayout.CENTER);
-			pnlJV.setPreferredSize(new java.awt.Dimension(921, 233));
-			pnlJV.setBorder(JTBorderFactory.createTitleBorder("Contract Details"));
-			pnlJV.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+										System.out.println("dteTransaction:");
+										System.out.println("lookupFiscalYr = " + ((String) month_year[4]));
+										System.out.println("JV = " + (lookupJV.getValue()));
 
-			pnlJV_a = new JPanel(new BorderLayout(5, 5));
-			pnlJV.add(pnlJV_a, BorderLayout.NORTH);
-			pnlJV_a.setPreferredSize(new java.awt.Dimension(911, 42));
-			pnlJV_a.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
-			pnlJV_a.setBorder(lineBorder);
+										if (isYearMonthOpen((String) month_year[4], (String) month_year[0]) == true) {
+										} else {
+											JOptionPane.showMessageDialog(null,
+													"Year [" + (String) month_year[4] + "] ; " + "Month [" + (String) month_year[0]
+															+ "] is closed." + "\n" + "Please ask your Department Head to open.",
+													"Information", JOptionPane.WARNING_MESSAGE);
+											// System.out.println("Year:"+(String) month_year[4]);
+											// System.out.println("Year:"+(String) month_year[0]);
 
-			pnlJV_a1 = new JPanel(new GridLayout(1, 1, 5, 10));
-			pnlJV_a.add(pnlJV_a1, BorderLayout.WEST);
-			pnlJV_a1.setPreferredSize(new java.awt.Dimension(92, 40));
-			pnlJV_a1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-			{
-				lblJV_no = new JLabel("Journal No.", JLabel.TRAILING);
-				pnlJV_a1.add(lblJV_no);
-				lblJV_no.setEnabled(false);
-				lblJV_no.setPreferredSize(new java.awt.Dimension(86, 40));
-				lblJV_no.setFont(new java.awt.Font("Segoe UI", Font.ITALIC, 12));
-				lblJV_no.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12));
-			}
-
-			pnlJV_a2 = new JPanel(new BorderLayout(5, 5));
-			pnlJV_a.add(pnlJV_a2, BorderLayout.CENTER);
-			pnlJV_a2.setPreferredSize(new java.awt.Dimension(814, 40));
-			pnlJV_a2.setBorder(BorderFactory.createEmptyBorder(8, 5, 8, 5));
-
-			pnlJV_a2_1 = new JPanel(new GridLayout(1, 1, 5, 10));
-			pnlJV_a2.add(pnlJV_a2_1, BorderLayout.WEST);
-			// pnlJV_a2_1.setPreferredSize(new java.awt.Dimension(197, 22));
-			pnlJV_a2_1.setPreferredSize(new java.awt.Dimension(286, 24));
-
-			{
-				lookupJV = new _JLookup(null, "JV No.", 2, 2);
-				pnlJV_a2_1.add(lookupJV);
-				lookupJV.setBounds(20, 27, 20, 25);
-				lookupJV.setReturnColumn(0);
-				lookupJV.setEnabled(false);
-				// lookupJV.setEditable(false);
-				lookupJV.setPreferredSize(new java.awt.Dimension(157, 22));
-				lookupJV.addLookupListener(new LookupListener() {
-					public void lookupPerformed(LookupEvent event) {
-						Object[] data = ((_JLookup) event.getSource()).getDataSet();
-						// int row = tblJV_account.getRowCount();
-						if (data != null) {
-
-							refresh_fields();
-
-							jv_no = (String) data[0];
-							fiscalyear = (Integer) data[3];
-
-							System.out.println("lookupJV");
-							System.out.println("jv_no = " + jv_no);
-							System.out.println("fiscalyear = " + fiscalyear);
-
-							lookupJV.setValue(jv_no);
-							lookupPeriod.setText(String.format("%s", data[4]));
-
-							setJV_header(jv_no);
-							displayJV_details(modelJV_account, rowHeaderJV_account, modelJV_accounttotal, jv_no);
-							displayJV_subsidiaryledgers(modelJV_SL, rowHeaderJV_SL, modelJV_SL_total, jv_no);
-
-							mnidelete.setEnabled(false);
-							mniaddrow.setEnabled(false);
-
-							tagDetail.setText(null);
-
+										}
+									}
+								});
+							}
+							{
+								dteEdited = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
+								pnlJVDtl_1b.add(dteEdited);
+								dteEdited.setBounds(485, 7, 125, 21);
+								dteEdited.setDate(null);
+								dteEdited.setEnabled(false);
+								dteEdited.setDateFormatString("yyyy-MM-dd");
+								((JTextFieldDateEditor) dteEdited.getDateEditor()).setEditable(false);
+							}
+							{
+								dtePosted = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
+								pnlJVDtl_1b.add(dtePosted);
+								dtePosted.setBounds(485, 7, 125, 21);
+								dtePosted.setDate(null);
+								dtePosted.setEnabled(false);
+								dtePosted.setDateFormatString("yyyy-MM-dd");
+								((JTextFieldDateEditor) dtePosted.getDateEditor()).setEditable(false);
+							}
+							pnlJVDtl_1b.add(Box.createHorizontalBox());
 						}
 					}
-				});
-			}
-			{// Added by ERICK 2021-09-01 AS REQUESTED BY ORLY OF GFC FOR FASTER LOADING OF
-				// LOOKUP
-				chkCurrentYear = new JCheckBox("current year only?");
-				pnlJV_a2_1.add(chkCurrentYear);
-				chkCurrentYear.setEnabled(true);
-				chkCurrentYear.setSelected(true);
-				chkCurrentYear.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 9));
-				chkCurrentYear.setPreferredSize(new java.awt.Dimension(148, 24));
-				chkCurrentYear.addItemListener(new ItemListener() {
-					@Override
-					public void itemStateChanged(ItemEvent arg0) {
-						if (chkCurrentYear.isSelected()) {
-							isCurrentYear = getCurrentYear();
-							lookupJV.setLookupSQL(getJV_no());
-
-						} else {
-							isCurrentYear = "";
-							lookupJV.setLookupSQL(getJV_no());
-						}
-					}
-				});
-			}
-			/*
-			 * pnlJV_a2_2 = new JPanel(new GridLayout(1, 2, 5, 0)); pnlJV_a2.add(pnlJV_a2_2,
-			 * BorderLayout.CENTER); pnlJV_a2_2.setPreferredSize(new java.awt.Dimension(357,
-			 * 25)); pnlJV_a2_2.addMouseListener(new PopupTriggerListener_panel2());
-			 */
-			pnlJV_a2_3 = new JPanel(new GridLayout(1, 2, 5, 0));
-			pnlJV_a2.add(pnlJV_a2_3, BorderLayout.EAST);
-			pnlJV_a2_3.setPreferredSize(new java.awt.Dimension(310, 20));
-			pnlJV_a2_3.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-			{
-				lblStatus = new JLabel("Status", JLabel.TRAILING);
-				pnlJV_a2_3.add(lblStatus);
-				lblStatus.setEnabled(false);
-				lblStatus.addMouseListener(new PopupTriggerListener_panel2());
-			}
-			{
-				txtStatus = new JXTextField("");
-				pnlJV_a2_3.add(txtStatus);
-				txtStatus.setEnabled(false);
-				txtStatus.setEditable(false);
-				txtStatus.setBounds(120, 25, 300, 22);
-				txtStatus.setHorizontalAlignment(JTextField.CENTER);
-				txtStatus.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12));
-				txtStatus.addMouseListener(new PopupTriggerListener_panel2());
-			}
-			{
-				pnlJVDtl = new JPanel(new BorderLayout(0, 5));
-				pnlJV.add(pnlJVDtl, BorderLayout.WEST);
-				pnlJVDtl.setPreferredSize(new java.awt.Dimension(911, 187));
-
-				pnlJVDtl_1 = new JPanel(new BorderLayout(0, 5));
-				pnlJVDtl.add(pnlJVDtl_1, BorderLayout.WEST);
-				pnlJVDtl_1.setPreferredSize(new java.awt.Dimension(221, 116));
-				pnlJVDtl_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-				pnlJVDtl_1a = new JPanel(new GridLayout(3, 1, 0, 5));
-				pnlJVDtl_1.add(pnlJVDtl_1a, BorderLayout.WEST);
-				pnlJVDtl_1a.setPreferredSize(new java.awt.Dimension(99, 116));
-				pnlJVDtl_1a.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-				{
-					lblDateTrans = new JLabel("Trans. Date", JLabel.TRAILING);
-					pnlJVDtl_1a.add(lblDateTrans);
-					lblDateTrans.setEnabled(false);
-				}
-				{
-					lblDateEdited = new JLabel("Date Edited", JLabel.TRAILING);
-					pnlJVDtl_1a.add(lblDateEdited);
-					lblDateEdited.setEnabled(false);
-				}
-				{
-					lblDatePosted = new JLabel("Date Posted", JLabel.TRAILING);
-					pnlJVDtl_1a.add(lblDatePosted);
-					lblDatePosted.setEnabled(false);
-				}
-
-				pnlJVDtl_1b = new JPanel(new GridLayout(3, 1, 5, 5));
-				pnlJVDtl_1.add(pnlJVDtl_1b, BorderLayout.CENTER);
-				pnlJVDtl_1b.setPreferredSize(new java.awt.Dimension(135, 119));
-				pnlJVDtl_1b.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-
-				{
-					dteTransaction = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
-					pnlJVDtl_1b.add(dteTransaction);
-					dteTransaction.setBounds(485, 7, 125, 21);
-					dteTransaction.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));
-					dteTransaction.setEnabled(true);
-					dteTransaction.setDateFormatString("yyyy-MM-dd");
-					((JTextFieldDateEditor) dteTransaction.getDateEditor()).setEditable(false);
-					dteTransaction.addPropertyChangeListener(new PropertyChangeListener() {
-						public void propertyChange(PropertyChangeEvent e) {
-
-							Object[] month_year = getMonthYear();
-							lookupFiscalYr.setText((String) month_year[4]);
-
-							System.out.println("dteTransaction:");
-							System.out.println("lookupFiscalYr = " + ((String) month_year[4]));
-							System.out.println("JV = " + (lookupJV.getValue()));
-
-							if (isYearMonthOpen((String) month_year[4], (String) month_year[0]) == true) {
-							} else {
-								JOptionPane.showMessageDialog(null,
-										"Year [" + (String) month_year[4] + "] ; " + "Month [" + (String) month_year[0]
-												+ "] is closed." + "\n" + "Please ask your Department Head to open.",
-										"Information", JOptionPane.WARNING_MESSAGE);
-								// System.out.println("Year:"+(String) month_year[4]);
-								// System.out.println("Year:"+(String) month_year[0]);
-
+					// Start of Left Panel
+					{
+						pnlJVInfo = new JPanel(new BorderLayout(0, 0));
+						pnlJVDtl.add(pnlJVInfo, BorderLayout.EAST);
+						pnlJVInfo.setPreferredSize(new java.awt.Dimension(694, 113));
+						pnlJVInfo.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+						{
+							pnlJVInfo_1 = new JPanel(new GridLayout(4, 1, 5, 5));
+							pnlJVInfo.add(pnlJVInfo_1, BorderLayout.WEST);
+							pnlJVInfo_1.setPreferredSize(new java.awt.Dimension(112, 113));
+							pnlJVInfo_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+							{
+								JLabel lblreqtype = new JLabel("Request Type", JLabel.TRAILING);
+								pnlJVInfo_1.add(lblreqtype);
+								lblreqtype.setEnabled(false);
+							}
+							{
+								lblTransType = new JLabel("Transaction Type", JLabel.TRAILING);
+								pnlJVInfo_1.add(lblTransType);
+								lblTransType.setEnabled(false);
+							}
+							{
+								lblFiscalyear = new JLabel("Fiscal Year", JLabel.TRAILING);
+								pnlJVInfo_1.add(lblFiscalyear);
+								lblFiscalyear.setEnabled(false);
+							}
+							{
+								lblPeriod = new JLabel("Period", JLabel.TRAILING);
+								pnlJVInfo_1.add(lblPeriod);
+								lblPeriod.setEnabled(false);
 							}
 						}
-					});
-				}
-				{
-					dteEdited = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
-					pnlJVDtl_1b.add(dteEdited);
-					dteEdited.setBounds(485, 7, 125, 21);
-					dteEdited.setDate(null);
-					dteEdited.setEnabled(false);
-					dteEdited.setDateFormatString("yyyy-MM-dd");
-					((JTextFieldDateEditor) dteEdited.getDateEditor()).setEditable(false);
-				}
-				{
-					dtePosted = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
-					pnlJVDtl_1b.add(dtePosted);
-					dtePosted.setBounds(485, 7, 125, 21);
-					dtePosted.setDate(null);
-					dtePosted.setEnabled(false);
-					dtePosted.setDateFormatString("yyyy-MM-dd");
-					((JTextFieldDateEditor) dtePosted.getDateEditor()).setEditable(false);
-				}
+						{
+							pnlJVDtl_2 = new JPanel(new BorderLayout(5, 0));
+							pnlJVInfo.add(pnlJVDtl_2, BorderLayout.CENTER);
+							pnlJVDtl_2.setPreferredSize(new java.awt.Dimension(203, 118));
+							pnlJVDtl_2.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+							{
+								pnlJVDtl_2a = new JPanel(new GridLayout(4, 1, 0, 5));
+								pnlJVDtl_2.add(pnlJVDtl_2a, BorderLayout.WEST);
+								pnlJVDtl_2a.setPreferredSize(new java.awt.Dimension(119, 119));
+								pnlJVDtl_2a.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+								{
+									lookupreqtype = new _JLookup(null, "Request Type", 2,2);
+									pnlJVDtl_2a.add(lookupreqtype);
+									lookupreqtype.setEnabled(false);
+									lookupreqtype.setPreferredSize(new java.awt.Dimension(157, 22));
+								}
+								{
+									lookupTranType = new _JLookup(null, "Transaction Type", 2, 2);
+									pnlJVDtl_2a.add(lookupTranType);
+									lookupTranType.setBounds(20, 27, 20, 25);
+									lookupTranType.setReturnColumn(0);
+									lookupTranType.setFilterName(true);
+									lookupTranType.setEnabled(false);
+									lookupTranType.setPreferredSize(new java.awt.Dimension(157, 22));
+									lookupTranType.addLookupListener(new LookupListener() {
+										public void lookupPerformed(LookupEvent event) {
+											Object[] data = ((_JLookup) event.getSource()).getDataSet();
+											if (data != null) {
+												tran_desc = (String) data[1];
+												tagTranType.setTag(tran_desc);
+											}
+										}
+									});
+								}
+								{
+									lookupFiscalYr = new _JLookup(null, "Fiscal Year", 2, 2);
+									pnlJVDtl_2a.add(lookupFiscalYr);
+									lookupFiscalYr.setBounds(20, 27, 20, 25);
+									lookupFiscalYr.setReturnColumn(0);
+									lookupFiscalYr.setEnabled(false);
+									// lookupFiscalYr.setEditable(false);
+									lookupFiscalYr.setPreferredSize(new java.awt.Dimension(157, 22));
+								}
+								{
+									lookupPeriod = new _JLookup(null, "Period", 2, 2);
+									pnlJVDtl_2a.add(lookupPeriod);
+									lookupPeriod.setBounds(20, 27, 20, 25);
+									lookupPeriod.setReturnColumn(0);
+									lookupPeriod.setEnabled(false);
+									// lookupPeriod.setEditable(false);
+									lookupPeriod.setPreferredSize(new java.awt.Dimension(157, 22));
+									lookupPeriod.addLookupListener(new LookupListener() {
+										public void lookupPerformed(LookupEvent event) {
+											Object[] data = ((_JLookup) event.getSource()).getDataSet();
+											if (data != null) {
+												String period = (String) data[1];
+												tagPeriod.setTag(period);
 
-				// Start of Left Panel
-				pnlJVInfo = new JPanel(new BorderLayout(0, 0));
-				pnlJVDtl.add(pnlJVInfo, BorderLayout.EAST);
-				pnlJVInfo.setPreferredSize(new java.awt.Dimension(694, 113));
-				pnlJVInfo.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-				pnlJVInfo_1 = new JPanel(new GridLayout(3, 1, 5, 5));
-				pnlJVInfo.add(pnlJVInfo_1, BorderLayout.WEST);
-				pnlJVInfo_1.setPreferredSize(new java.awt.Dimension(112, 113));
-				pnlJVInfo_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-				{
-					lblTransType = new JLabel("Transaction Type", JLabel.TRAILING);
-					pnlJVInfo_1.add(lblTransType);
-					lblTransType.setEnabled(false);
-				}
-				{
-					lblFiscalyear = new JLabel("Fiscal Year", JLabel.TRAILING);
-					pnlJVInfo_1.add(lblFiscalyear);
-					lblFiscalyear.setEnabled(false);
-				}
-				{
-					lblPeriod = new JLabel("Period", JLabel.TRAILING);
-					pnlJVInfo_1.add(lblPeriod);
-					lblPeriod.setEnabled(false);
-				}
-
-				pnlJVDtl_2 = new JPanel(new BorderLayout(5, 0));
-				pnlJVInfo.add(pnlJVDtl_2, BorderLayout.CENTER);
-				pnlJVDtl_2.setPreferredSize(new java.awt.Dimension(203, 118));
-				pnlJVDtl_2.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-
-				pnlJVDtl_2a = new JPanel(new GridLayout(3, 1, 0, 5));
-				pnlJVDtl_2.add(pnlJVDtl_2a, BorderLayout.WEST);
-				pnlJVDtl_2a.setPreferredSize(new java.awt.Dimension(119, 119));
-				pnlJVDtl_2a.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-				{
-					lookupTranType = new _JLookup(null, "Transaction Type", 2, 2);
-					pnlJVDtl_2a.add(lookupTranType);
-					lookupTranType.setBounds(20, 27, 20, 25);
-					lookupTranType.setReturnColumn(0);
-					lookupTranType.setFilterName(true);
-					lookupTranType.setEnabled(false);
-					lookupTranType.setPreferredSize(new java.awt.Dimension(157, 22));
-					lookupTranType.addLookupListener(new LookupListener() {
-						public void lookupPerformed(LookupEvent event) {
-							Object[] data = ((_JLookup) event.getSource()).getDataSet();
-							if (data != null) {
-								tran_desc = (String) data[1];
-								tagTranType.setTag(tran_desc);
+												if (isYearMonthOpen(lookupFiscalYr.getText(), (String) data[0]) == true) {
+												} else {
+													JOptionPane.showMessageDialog(null,
+															"Year [" + lookupFiscalYr.getText() + "] ; " + "Month [" + (String) data[0]
+																	+ "] is closed." + "\n"
+																	+ "Please ask your Department Head to open.",
+															"Information", JOptionPane.WARNING_MESSAGE);
+												}
+											}
+										}
+									});
+								}
 							}
-						}
-					});
-				}
-				{
-					lookupFiscalYr = new _JLookup(null, "Fiscal Year", 2, 2);
-					pnlJVDtl_2a.add(lookupFiscalYr);
-					lookupFiscalYr.setBounds(20, 27, 20, 25);
-					lookupFiscalYr.setReturnColumn(0);
-					lookupFiscalYr.setEnabled(false);
-					// lookupFiscalYr.setEditable(false);
-					lookupFiscalYr.setPreferredSize(new java.awt.Dimension(157, 22));
-				}
-				{
-					lookupPeriod = new _JLookup(null, "Period", 2, 2);
-					pnlJVDtl_2a.add(lookupPeriod);
-					lookupPeriod.setBounds(20, 27, 20, 25);
-					lookupPeriod.setReturnColumn(0);
-					lookupPeriod.setEnabled(false);
-					// lookupPeriod.setEditable(false);
-					lookupPeriod.setPreferredSize(new java.awt.Dimension(157, 22));
-					lookupPeriod.addLookupListener(new LookupListener() {
-						public void lookupPerformed(LookupEvent event) {
-							Object[] data = ((_JLookup) event.getSource()).getDataSet();
-							if (data != null) {
-								String period = (String) data[1];
-								tagPeriod.setTag(period);
-
-								if (isYearMonthOpen(lookupFiscalYr.getText(), (String) data[0]) == true) {
-								} else {
-									JOptionPane.showMessageDialog(null,
-											"Year [" + lookupFiscalYr.getText() + "] ; " + "Month [" + (String) data[0]
-													+ "] is closed." + "\n"
-													+ "Please ask your Department Head to open.",
-											"Information", JOptionPane.WARNING_MESSAGE);
+							{
+								pnlJVDtl_2b = new JPanel(new GridLayout(4, 1, 0, 5));
+								pnlJVDtl_2.add(pnlJVDtl_2b, BorderLayout.CENTER);
+								pnlJVDtl_2b.setPreferredSize(new java.awt.Dimension(140, 118));
+								pnlJVDtl_2b.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+								pnlJVDtl_2b.addMouseListener(new PopupTriggerListener_panel2());
+								{
+									tagreqtype = new _JTagLabel("[ ]");
+									pnlJVDtl_2b.add(tagreqtype);
+									tagreqtype.setEnabled(false);
+									tagreqtype.setPreferredSize(new java.awt.Dimension(27, 33));
+								}
+								{
+									tagTranType = new _JTagLabel("[ ]");
+									pnlJVDtl_2b.add(tagTranType);
+									tagTranType.setBounds(209, 27, 700, 22);
+									tagTranType.setEnabled(false);
+									tagTranType.setPreferredSize(new java.awt.Dimension(27, 33));
+									tagTranType.addMouseListener(new PopupTriggerListener_panel2());
+								}
+								{
+									tagBlank = new _JTagLabel("[ ]");
+									pnlJVDtl_2b.add(tagBlank);
+									tagBlank.setBounds(209, 27, 700, 22);
+									tagBlank.setEnabled(false);
+									tagBlank.setVisible(false);
+									tagBlank.setPreferredSize(new java.awt.Dimension(27, 33));
+								}
+								{
+									tagPeriod = new _JTagLabel("[ ]");
+									pnlJVDtl_2b.add(tagPeriod);
+									tagPeriod.setBounds(209, 27, 700, 22);
+									tagPeriod.setEnabled(false);
+									tagPeriod.setPreferredSize(new java.awt.Dimension(27, 33));
+									tagPeriod.addMouseListener(new PopupTriggerListener_panel2());
 								}
 							}
 						}
-					});
-				}
-				pnlJVDtl_2b = new JPanel(new GridLayout(3, 1, 0, 5));
-				pnlJVDtl_2.add(pnlJVDtl_2b, BorderLayout.CENTER);
-				pnlJVDtl_2b.setPreferredSize(new java.awt.Dimension(140, 118));
-				pnlJVDtl_2b.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-				pnlJVDtl_2b.addMouseListener(new PopupTriggerListener_panel2());
-
-				{
-					tagTranType = new _JTagLabel("[ ]");
-					pnlJVDtl_2b.add(tagTranType);
-					tagTranType.setBounds(209, 27, 700, 22);
-					tagTranType.setEnabled(false);
-					tagTranType.setPreferredSize(new java.awt.Dimension(27, 33));
-					tagTranType.addMouseListener(new PopupTriggerListener_panel2());
-				}
-				{
-					tagBlank = new _JTagLabel("[ ]");
-					pnlJVDtl_2b.add(tagBlank);
-					tagBlank.setBounds(209, 27, 700, 22);
-					tagBlank.setEnabled(false);
-					tagBlank.setVisible(false);
-					tagBlank.setPreferredSize(new java.awt.Dimension(27, 33));
-				}
-				{
-					tagPeriod = new _JTagLabel("[ ]");
-					pnlJVDtl_2b.add(tagPeriod);
-					tagPeriod.setBounds(209, 27, 700, 22);
-					tagPeriod.setEnabled(false);
-					tagPeriod.setPreferredSize(new java.awt.Dimension(27, 33));
-					tagPeriod.addMouseListener(new PopupTriggerListener_panel2());
+					}
 				}
 			}
 		}
@@ -1558,6 +1598,8 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 
 		String period = (String) jv_hrd[6];
 		posted_by = (String) jv_hrd[10];
+		lookupreqtype.setValue((String) jv_hrd[11]);
+		tagreqtype.setTag((String) jv_hrd[12]);
 
 		if (period.equals("01")) {
 			tagPeriod.setTag("JANUARY");
@@ -1852,6 +1894,8 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 		txtJV_Remark.setText("");
 		tagTranType.setText("[ ]");
 		tagPeriod.setText("[ ]");
+		lookupreqtype.setValue("");
+		tagreqtype.setTag("");
 	}
 
 	public static void refresh_tablesMain() {// used
@@ -3134,20 +3178,42 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 	}
 
 	public static Object[] getJVdetails(String rec_no) {// used
-
-		String strSQL = "--- Display JV Header\r\n" +
-
-				"select \r\n" + "\r\n" + "a.jv_no,\r\n" + "a.jv_date,\r\n" + "a.date_edited,\r\n" + "a.date_posted, \n"
-				+ "a.tran_id,\r\n" + "a.fiscal_yr,\r\n" + "a.period_id,\r\n" + "trim(c.status_desc),\r\n"
-				+ "a.remarks, \n" +
-				// "a.remarks || E'\n' ||e.entity_name||' '|| d.trans_amt, \n" +
-				"b.tran_desc, \n" + "a.posted_by   \n" + "\r\n" + "from rf_jv_header a\r\n"
-				+ "left join mf_acctg_trans b on a.tran_id = b.tran_id\r\n"
-				+ "left join mf_record_status c on a.status_id = c.status_id  \n" +
-				// "left join (select * from rf_subsidiary_ledger where status_id='A')d on
-				// a.jv_no=d.jv_no \n" +
-				// "left join rf_entity e on d.entity_id=e.entity_id \n" +
-				"where trim(a.jv_no) = trim('" + rec_no + "') and a.co_id = '" + co_id + "'   ";
+// Comment by Erick 2024-10-09 below is the new sql
+//		String strSQL = "--- Display JV Header\r\n" +
+//
+//				"select \r\n" + "\r\n" + "a.jv_no,\r\n" + "a.jv_date,\r\n" + "a.date_edited,\r\n" + "a.date_posted, \n"
+//				+ "a.tran_id,\r\n" + "a.fiscal_yr,\r\n" + "a.period_id,\r\n" + "trim(c.status_desc),\r\n"
+//				+ "a.remarks, \n" +
+//				// "a.remarks || E'\n' ||e.entity_name||' '|| d.trans_amt, \n" +
+//				"b.tran_desc, \n" + "a.posted_by   \n" + "\r\n" + "from rf_jv_header a\r\n"
+//				+ "left join mf_acctg_trans b on a.tran_id = b.tran_id\r\n"
+//				+ "left join mf_record_status c on a.status_id = c.status_id  \n" +
+//				// "left join (select * from rf_subsidiary_ledger where status_id='A')d on
+//				// a.jv_no=d.jv_no \n" +
+//				// "left join rf_entity e on d.entity_id=e.entity_id \n" +
+//				"where trim(a.jv_no) = trim('" + rec_no + "') and a.co_id = '" + co_id + "'   ";
+		
+		String strSQL = "select \n"
+				+ "a.jv_no,\n"
+				+ "a.jv_date,\n"
+				+ "a.date_edited,\n"
+				+ "a.date_posted, \n"
+				+ "a.tran_id,\n"
+				+ "a.fiscal_yr,\n"
+				+ "a.period_id,\n"
+				+ "trim(c.status_desc),\n"
+				+ "a.remarks, \n"
+				+ "b.tran_desc, \n"
+				+ "a.posted_by,   \n"
+				+ "e.rplf_type_id, \n"
+				+ "trim(f.rplf_type_desc)\n"
+				+ "from rf_jv_header a\n"
+				+ "left join mf_acctg_trans b on a.tran_id = b.tran_id\n"
+				+ "left join mf_record_status c on a.status_id = c.status_id  \n"
+				+ "left join rf_liq_header d on a.jv_no = d.jv_no and a.co_id = d.co_id\n"
+				+ "left join rf_request_header e on d.rplf_no = e.rplf_no and d.co_id = e.co_id\n"
+				+ "left join mf_rplf_type f on e.rplf_type_id = f.rplf_type_id\n"
+				+ "where trim(a.jv_no) = trim('" + rec_no + "') and a.co_id = '" + co_id + "'  ";
 
 		System.out.printf("SQL #1: %s", strSQL);
 		pgSelect db = new pgSelect();

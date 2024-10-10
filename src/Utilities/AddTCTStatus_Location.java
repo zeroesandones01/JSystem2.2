@@ -43,6 +43,7 @@ import org.jdesktop.swingx.JXTextField;
 
 import Buyers.ClientServicing._RefundofPayment;
 import Database.pgSelect;
+import Database.pgUpdate;
 import DateChooser._JDateChooser;
 import Functions.FncFocusTraversalPolicy;
 import Functions.FncGlobal;
@@ -114,6 +115,12 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 	private JButton btnSave;
 	private JButton btnCancel;
 
+	private JPanel pnlNELookup;
+
+	private _JLookup lookupID;
+	
+	String to_do 	= "";
+
 	
 
 	
@@ -182,11 +189,49 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 					pnlNorthEast = new JPanel(new BorderLayout(5, 5));
 					pnlNorth.add(pnlNorthEast);
 					{
-						pnlNELabel = new JPanel(new GridLayout(1, 1, 3, 3));
-						pnlNorthEast.add(pnlNELabel, BorderLayout.WEST);
+						
+						pnlNELookup = new JPanel(new GridLayout(1, 1, 3, 3));
+						pnlNorthEast.add(pnlNELookup, BorderLayout.WEST);
 						{
-							JLabel lblStatusID = new JLabel("Status ID: ");
-							pnlNELabel.add(lblStatusID);
+							lookupID = new _JLookup(null, "Status ID");
+							pnlNELookup.add(lookupID, BorderLayout.WEST);
+							//lookupID.setPreferredSize(new Dimension(200, 20));
+							lookupID.setReturnColumn(1);
+							lookupID.setFilterName(true);
+							lookupID.addActionListener(this);
+							lookupID.setEnabled(false);
+							lookupID.addLookupListener(new LookupListener() {
+								public void lookupPerformed(LookupEvent event) {
+									Object[] data = ((_JLookup) event.getSource()).getDataSet();
+									
+										if (data != null) {
+										
+										rec_id = (Integer) data[13];
+										
+										txtDescription.setText(String.format("%s", data[2]));
+										txtAlias.setText(String.format("%s", data[3]));
+										txtAmt.setValue(data[4]);
+										cmbClass.setSelectedItem(String.format("%s", data[6]));
+										lookupAcctID.setValue(String.format("%s", data[5]));
+										lookupRefundAcct.setValue(String.format("%s", data[14]));
+										lookupPayee.setValue(String.format("%s", data[7]));
+										lookupPayeeType.setValue(String.format("%s", data[8]));
+										cmbRefundable.setSelectedItem(String.format("%s", data[9]));
+										if (data[11] != null){
+											txtRemarks.setText(String.format("%s", data[10]));
+										} else {
+											txtRemarks.setText(" ");
+										}
+										cmbStatus.setSelectedItem(String.format("%s", data[0]));
+										lblPayee.setText(String.format("[ %s ]", data[11]));
+										lblPayeeType.setText(String.format("[ %s ]", data[12]));
+										
+										btnEdit.setEnabled(true);
+								
+										KEYBOARD_MANAGER.focusNextComponent();
+									}
+								}
+							});
 						}
 					}
 					{
@@ -299,6 +344,36 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 		txtStatusAlias.setEditable(true);
 		btnState(false, false, true, true);
 
+	private void save() {
+
+		if (JOptionPane.showConfirmDialog(getContentPane(), "Are all entries correct?", "Confirmation", 
+			JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+
+			pgUpdate db = new pgUpdate();	
+
+			if (to_do.equals("Add")) 
+			{
+				saving();
+				JOptionPane.showMessageDialog(getContentPane(),"New TCT Status/Location was added.","Information",JOptionPane.INFORMATION_MESSAGE);
+				cancel();
+
+			} 
+
+			else if (to_do.equals("edit"))
+			{				
+				//updatePCost(db); 
+				updatePCost();
+				//db.commit();				
+				JOptionPane.showMessageDialog(getContentPane(),"PCost/TCost ID was successfully updated.","Information",JOptionPane.INFORMATION_MESSAGE);
+				cancel();
+				}			
+			}
+
+			else {}	
+
+
+
+		
 	}
 	
 	@Override
@@ -314,6 +389,15 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 			grpNewEdit.setSelectedButton(e);
 			edit();
 		}
+	}
+	
+	private void saving(){
+		
+		String status_type = (String) cmbStatusType.getSelectedItem();
+		String id = (String) lookupID.getValue();
+		String description = (String) txtStatusName.getText();
+		String alias = (String) txtStatusAlias.getText();
+		
 	}
 }
 

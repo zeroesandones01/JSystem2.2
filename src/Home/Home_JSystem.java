@@ -461,6 +461,7 @@ import Utilities.AddCheckNumber;
 import Utilities.AddEditTransactionRemarks;
 import Utilities.AddEditTransactionRemarks2;
 import Utilities.AddPromo;
+import Utilities.AddTCTStatus_Location;
 import Utilities.AssetInventory;
 import Utilities.BankAccounts;
 import Utilities.CancelCPF_comm;
@@ -6803,6 +6804,18 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 											if (isNotExisting("AddEditTransactionRemarks")) {
 												AddEditTransactionRemarks2 editrem2 = new AddEditTransactionRemarks2();
 												addWindow(editrem2, e);
+											}
+										}
+									});
+								}
+								{
+									JMenuItem menuAddTCTStatusLocation = new JMenuItem("Add TCT Status/Location");
+									menuUtilitieLegalAndLiaisoning.add(menuAddTCTStatusLocation);
+									menuAddTCTStatusLocation.addActionListener(new ActionListener() {
+										public void actionPerformed(ActionEvent e) {
+											if (isNotExisting("AddTCTStatusLocation")) {
+												AddTCTStatus_Location ATSL = new AddTCTStatus_Location();
+												addWindow(ATSL, e);
 											}
 										}
 									});

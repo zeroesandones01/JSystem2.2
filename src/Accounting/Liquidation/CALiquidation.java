@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -139,10 +140,12 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	private JLabel lblRequestNo;
 	private JLabel lblLiqNo;
 	private JLabel lblStatus;
+
 	private JLabel lblJV_no;
 	private JLabel lblGL_year;
 	private JLabel lblPeriod;
 	private JLabel lblLiqDate;
+	private JLabel lblRequestType;
 	private JLabel lblDV_no;
 	private JLabel lblDate;
 
@@ -170,6 +173,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	private _JTagLabel tagPayee2;
 	private _JTagLabel tagPeriod;
 	private _JTagLabel tagDetail;
+	private _JTagLabel tagRequestType;
 
 	private JButton btnSave;
 	private JButton btnCancel;
@@ -226,7 +230,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	Integer lineno = 0;
 	private _JTagLabel tagCAtype;
 	Double tax_rate		= 0.00;
-	
+
 	//String liq_remarks = "";
 	//String rplf_particular = "";
 	private JPopupMenu menu;
@@ -284,7 +288,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 					AddRow();
 				}
 			});
-			
+
 		}
 		{
 			menu2 = new JPopupMenu("Popup");	
@@ -311,7 +315,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 					}
 				}
 			});
-			
+
 			mniopenPV.addActionListener(new ActionListener(){
 				public void	actionPerformed(ActionEvent evt){
 					if(FncGlobal.homeMDI.isNotExisting("PayableVoucher")){
@@ -352,7 +356,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			pnlMain.add(pnlNorth, BorderLayout.NORTH);
 			pnlNorth.setLayout(new BorderLayout(5, 5));
 			pnlNorth.setBorder(lineBorder);		
-			pnlNorth.setPreferredSize(new java.awt.Dimension(923, 175));
+			pnlNorth.setPreferredSize(new java.awt.Dimension(923, 200));
 
 			pnlComp = new JPanel(new BorderLayout(5, 0));
 			pnlNorth.add(pnlComp, BorderLayout.NORTH);	
@@ -416,7 +420,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			pnlLiq = new JPanel(new BorderLayout(5, 5));
 			pnlNorth.add(pnlLiq, BorderLayout.CENTER);				
 			pnlLiq.setPreferredSize(new java.awt.Dimension(921, 233));
-			pnlLiq.setBorder(JTBorderFactory.createTitleBorder("Contract Details"));
+			//			pnlLiq.setBorder(JTBorderFactory.createTitleBorder("Contract Details"));
 			pnlLiq.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
 			pnlLiq_a = new JPanel(new BorderLayout(5, 5));
@@ -460,32 +464,32 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 						Object[] data = ((_JLookup)event.getSource()).getDataSet();
 						if(data != null){								
 							liq_no = (String) data[0];
-							
-//							//ADDED BY JED 2022-01-18 : TO GET THE RIGHT PERIOD ID
-//							strJV_no = (String) data[3];
-//							
-//							System.out.printf("strJV_no lookup:%s\n", strJV_no);
-//							System.out.printf("co_id:%s\n", co_id);
-//							
-//							//ADDED BY JED 2022-01-18 : TO GET THE CORRECT PERIOD ID IN CA
-//							String period_id = getPeriod(strJV_no, co_id);
-//
-//							Object[] month_year = getMonthYear();									
-//							//lookupGL_year.setText((String) month_year[4]);
-//							lookupGL_year.setValue((String) month_year[4]);
-//							
-//							//COMMENTED BY JED 2022-01-18 : TO GET THE CORRECT PERIOD ID IN CA
-//							//lookupPeriod.setText((String) month_year[0]);
-//							if(period_id.equals("")) {
-//								System.out.println("Dumaan 1");
-//								//lookupPeriod.setText((String) month_year[0]);
-//								lookupPeriod.setValue((String) month_year[0]);
-//							}else {
-//								System.out.println("Dumaan 2");
-//								//lookupPeriod.setText(period_id);
-//								lookupPeriod.setValue(period_id);
-//							}
-							
+
+							//							//ADDED BY JED 2022-01-18 : TO GET THE RIGHT PERIOD ID
+							//							strJV_no = (String) data[3];
+							//							
+							//							System.out.printf("strJV_no lookup:%s\n", strJV_no);
+							//							System.out.printf("co_id:%s\n", co_id);
+							//							
+							//							//ADDED BY JED 2022-01-18 : TO GET THE CORRECT PERIOD ID IN CA
+							//							String period_id = getPeriod(strJV_no, co_id);
+							//
+							//							Object[] month_year = getMonthYear();									
+							//							//lookupGL_year.setText((String) month_year[4]);
+							//							lookupGL_year.setValue((String) month_year[4]);
+							//							
+							//							//COMMENTED BY JED 2022-01-18 : TO GET THE CORRECT PERIOD ID IN CA
+							//							//lookupPeriod.setText((String) month_year[0]);
+							//							if(period_id.equals("")) {
+							//								System.out.println("Dumaan 1");
+							//								//lookupPeriod.setText((String) month_year[0]);
+							//								lookupPeriod.setValue((String) month_year[0]);
+							//							}else {
+							//								System.out.println("Dumaan 2");
+							//								//lookupPeriod.setText(period_id);
+							//								lookupPeriod.setValue(period_id);
+							//							}
+
 							refresh_fields();
 							refresh_tablesMain();
 							setLiqui_header(liq_no);	
@@ -513,7 +517,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			pnlLiq_a2_2 = new JPanel(new GridLayout(1, 2, 5, 0));
 			pnlLiq_a2.add(pnlLiq_a2_2, BorderLayout.CENTER);	
 			pnlLiq_a2_2.setPreferredSize(new java.awt.Dimension(357, 25));	
-			
+
 			{
 				tagCAtype = new _JTagLabel("[ ]");
 				pnlLiq_a2_2.add(tagCAtype);
@@ -522,7 +526,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				tagCAtype.setPreferredSize(new java.awt.Dimension(27, 33));
 				tagCAtype.addMouseListener(new PopupTriggerListener_panel2());
 			}	
-			
+
 
 			pnlLiq_a2_3 = new JPanel(new GridLayout(1, 2,5,0));
 			pnlLiq_a2.add(pnlLiq_a2_3, BorderLayout.EAST);	
@@ -545,20 +549,25 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				txtStatus.addMouseListener(new PopupTriggerListener_panel2());
 			}	
 			{
-				pnlLiqDtl = new JPanel(new BorderLayout(0, 5));
-				pnlLiq.add(pnlLiqDtl, BorderLayout.WEST);	
+				pnlLiqDtl = new JPanel(new BorderLayout(5, 5));
+				pnlLiq.add(pnlLiqDtl, BorderLayout.CENTER);	
 				pnlLiqDtl.setPreferredSize(new java.awt.Dimension(911, 187));
 				pnlLiqDtl.addMouseListener(new PopupTriggerListener_panel2());
 
-				pnlLiqDtl_1 = new JPanel(new BorderLayout(0, 5));
+				pnlLiqDtl_1 = new JPanel(new BorderLayout(5, 5));
 				pnlLiqDtl.add(pnlLiqDtl_1, BorderLayout.WEST);	
-				pnlLiqDtl_1.setPreferredSize(new java.awt.Dimension(237, 116));
+				pnlLiqDtl_1.setPreferredSize(new java.awt.Dimension(400, 116));
 				pnlLiqDtl_1.setBorder(BorderFactory.createEmptyBorder(0,0,0, 0));
 
-				pnlLiqDtl_1a = new JPanel(new GridLayout(3, 1, 0, 5));
+				pnlLiqDtl_1a = new JPanel(new GridLayout(4, 1, 0, 5));
 				pnlLiqDtl_1.add(pnlLiqDtl_1a, BorderLayout.WEST);	
 				pnlLiqDtl_1a.setPreferredSize(new java.awt.Dimension(110, 116));
-				pnlLiqDtl_1a.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));							
+				pnlLiqDtl_1a.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+				{
+					lblRequestType = new JLabel("Request Type", JLabel.TRAILING);
+					pnlLiqDtl_1a.add(lblRequestType);
+					lblRequestType.setEnabled(false);
+				}
 				{
 					lblLiqDate = new JLabel("Liquidation Date", JLabel.TRAILING);
 					pnlLiqDtl_1a.add(lblLiqDate);
@@ -575,15 +584,23 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 					lblDV_no.setEnabled(false);	
 				}
 
-				pnlLiqDtl_1b = new JPanel(new GridLayout(3, 1, 5, 5));
+				pnlLiqDtl_1b = new JPanel(new GridLayout(4, 1, 5, 5));
 				pnlLiqDtl_1.add(pnlLiqDtl_1b, BorderLayout.CENTER);	
 				pnlLiqDtl_1b.setPreferredSize(new java.awt.Dimension(135, 119));
 				pnlLiqDtl_1b.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 
 				{
+					tagRequestType = new _JTagLabel("[ ]");
+					pnlLiqDtl_1b.add(tagRequestType);
+					//					tagRequestType.setBounds(209, 27, 700, 22);
+					tagRequestType.setEnabled(false);						
+					tagRequestType.setPreferredSize(new java.awt.Dimension(27, 33));
+					tagRequestType.addMouseListener(new PopupTriggerListener_panel2());
+				}
+				{
 					dteLiqui = new _JDateChooser("MM/dd/yy", "##/##/##", '_');
 					pnlLiqDtl_1b.add(dteLiqui);
-					dteLiqui.setBounds(485, 7, 125, 21);
+					//					dteLiqui.setBounds(485, 7, 125, 21);
 					//dteLiqui.setDate(null);
 					dteLiqui.setEnabled(false);
 					//dteLiqui.setDateFormatString("yyyy-MM-dd");
@@ -591,46 +608,46 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 					dteLiqui.setDate(FncGlobal.dateFormat(FncGlobal.getDateSQL()));				
 					dteLiqui.addPropertyChangeListener( new PropertyChangeListener() {
 						public void propertyChange(PropertyChangeEvent e) {
-							
+
 							Object[] month_year = getMonthYear();	
-							
+
 							lookupGL_year.setValue(((String) month_year[4]).trim());
-							
+
 							lookupPeriod.setText((String) month_year[0]);
-							
-//							System.out.printf("strJV_no:%s\n", txtJV_no.getText());
-//							System.out.printf("co_id:%s\n", co_id);
-//							
-//							//ADDED BY JED 2022-01-18 : TO GET THE CORRECT PERIOD ID IN CA
-//							String period_id = getPeriod(strJV_no, co_id);
-//
-//							Object[] month_year = getMonthYear();									
-//							//lookupGL_year.setText((String) month_year[4]);
-//							lookupGL_year.setValue(((String) month_year[4]).trim());
-//							
-//							//COMMENTED BY JED 2022-01-18 : TO GET THE CORRECT PERIOD ID IN CA
-//							//lookupPeriod.setText((String) month_year[0]);
-//							if(period_id.equals("")) {
-//								System.out.println("Dumaan 1");
-//								//lookupPeriod.setText((String) month_year[0]);
-//								lookupPeriod.setValue(((String) month_year[0]).trim());
-//							}else {
-//								System.out.println("Dumaan 2");
-//								//lookupPeriod.setText(period_id);
-//								lookupPeriod.setValue(period_id.trim());
-//							}
-//							
-//							System.out.printf("period_id:%s\n", period_id);
-//							System.out.printf("month_year:%s\n", month_year[4]);
-												
+
+							//							System.out.printf("strJV_no:%s\n", txtJV_no.getText());
+							//							System.out.printf("co_id:%s\n", co_id);
+							//							
+							//							//ADDED BY JED 2022-01-18 : TO GET THE CORRECT PERIOD ID IN CA
+							//							String period_id = getPeriod(strJV_no, co_id);
+							//
+							//							Object[] month_year = getMonthYear();									
+							//							//lookupGL_year.setText((String) month_year[4]);
+							//							lookupGL_year.setValue(((String) month_year[4]).trim());
+							//							
+							//							//COMMENTED BY JED 2022-01-18 : TO GET THE CORRECT PERIOD ID IN CA
+							//							//lookupPeriod.setText((String) month_year[0]);
+							//							if(period_id.equals("")) {
+							//								System.out.println("Dumaan 1");
+							//								//lookupPeriod.setText((String) month_year[0]);
+							//								lookupPeriod.setValue(((String) month_year[0]).trim());
+							//							}else {
+							//								System.out.println("Dumaan 2");
+							//								//lookupPeriod.setText(period_id);
+							//								lookupPeriod.setValue(period_id.trim());
+							//							}
+							//							
+							//							System.out.printf("period_id:%s\n", period_id);
+							//							System.out.printf("month_year:%s\n", month_year[4]);
+
 							tagPeriod.setTag(((String) month_year[3]).toUpperCase());
-							
+
 							if (isYearMonthOpen((String) month_year[4], (String) month_year[0])==true){}
 							else {JOptionPane.showMessageDialog(null,
 									"Year [" + (String) month_year[4] + "] ; " + "Month [" + (String) month_year[0] + "] is closed." + "\n" +
-									"Please ask your Department Head to open.", 
-									"Information", 
-									JOptionPane.WARNING_MESSAGE);
+											"Please ask your Department Head to open.", 
+											"Information", 
+											JOptionPane.WARNING_MESSAGE);
 							}
 
 						}
@@ -639,7 +656,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				{
 					lookupRequest = new _JLookup(null, "Request No.", 2, 2);
 					pnlLiqDtl_1b.add(lookupRequest);
-					lookupRequest.setBounds(20, 27, 20, 25);
+					//					lookupRequest.setBounds(20, 27, 20, 25);
 					lookupRequest.setReturnColumn(0);
 					lookupRequest.setEnabled(false);	
 					lookupRequest.setPreferredSize(new java.awt.Dimension(157, 22));
@@ -654,7 +671,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 								lookupGL_year.setText((String) month_year[4]);
 								lookupPeriod.setText((String) month_year[0]);
 								tagPeriod.setTag(((String) month_year[3]).toUpperCase());
-								
+
 								lookupRequest.getLookupSQL();
 
 								displayRequest_particulars(modelLiq_part, rowHeaderLiq_part, modelLiq_part_total, liq_no );	
@@ -667,59 +684,65 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 					pnlLiqDtl_1b.add(txtDV_no);
 					txtDV_no.setEnabled(false);	
 					txtDV_no.setEditable(false);
-					txtDV_no.setBounds(120, 25, 300, 22);	
+					//					txtDV_no.setBounds(120, 25, 300, 22);	
 					txtDV_no.setHorizontalAlignment(JTextField.CENTER);	
 				}	
 
 				//Start of Left Panel 
-				pnlLiqInfo = new JPanel(new BorderLayout(0,0));
-				pnlLiqDtl.add(pnlLiqInfo, BorderLayout.EAST);
-				pnlLiqInfo.setPreferredSize(new java.awt.Dimension(674, 140));
+				pnlLiqInfo = new JPanel(new BorderLayout(5,5));
+				pnlLiqDtl.add(pnlLiqInfo, BorderLayout.CENTER);
+//				pnlLiqInfo.setPreferredSize(new java.awt.Dimension(674, 140));
 				pnlLiqInfo.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-				pnlLiqInfo_1 = new JPanel(new GridLayout(3, 1, 5, 5));
-				pnlLiqInfo.add(pnlLiqInfo_1, BorderLayout.WEST);
-				pnlLiqInfo_1.setPreferredSize(new java.awt.Dimension(84, 140));
-				pnlLiqInfo_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
 				{
-					lblJV_no = new JLabel("JV No.", JLabel.TRAILING);
-					pnlLiqInfo_1.add(lblJV_no);
-					lblJV_no.setEnabled(false);	
-				}	
-				{
-					lblGL_year = new JLabel("GL Year", JLabel.TRAILING);
-					pnlLiqInfo_1.add(lblGL_year);
-					lblGL_year.setEnabled(false);	
+					pnlLiqInfo_1 = new JPanel(new GridLayout(4, 1, 5, 5));
+					pnlLiqInfo.add(pnlLiqInfo_1, BorderLayout.WEST);
+					pnlLiqInfo_1.setPreferredSize(new java.awt.Dimension(84, 140));
+					pnlLiqInfo_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+					{
+						pnlLiqInfo_1.add(Box.createHorizontalBox());
+					}
+					{
+						lblJV_no = new JLabel("JV No.", JLabel.TRAILING);
+						pnlLiqInfo_1.add(lblJV_no);
+						lblJV_no.setEnabled(false);	
+					}	
+					{
+						lblGL_year = new JLabel("GL Year", JLabel.TRAILING);
+						pnlLiqInfo_1.add(lblGL_year);
+						lblGL_year.setEnabled(false);	
+					}
+					{
+						lblPeriod = new JLabel("Period", JLabel.TRAILING);
+						pnlLiqInfo_1.add(lblPeriod);
+						lblPeriod.setEnabled(false);	
+					}
 				}
-				{
-					lblPeriod = new JLabel("Period", JLabel.TRAILING);
-					pnlLiqInfo_1.add(lblPeriod);
-					lblPeriod.setEnabled(false);	
-				}
-
-				pnlLiqDtl_2 = new JPanel(new BorderLayout(5,0));
+				pnlLiqDtl_2 = new JPanel(new BorderLayout(5,5));
 				pnlLiqInfo.add(pnlLiqDtl_2, BorderLayout.CENTER);
 				pnlLiqDtl_2.setPreferredSize(new java.awt.Dimension(203, 118));
 				pnlLiqDtl_2.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
 
-				pnlLiqDtl_2a = new JPanel(new GridLayout(3, 1, 0, 5));
+				{
+				pnlLiqDtl_2a = new JPanel(new GridLayout(4, 1, 0, 5));
 				pnlLiqDtl_2.add(pnlLiqDtl_2a, BorderLayout.WEST);
 				pnlLiqDtl_2a.setPreferredSize(new java.awt.Dimension(119, 119));
 				pnlLiqDtl_2a.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
+				{
+					pnlLiqDtl_2a.add(Box.createHorizontalBox());
+				}
 				{
 					txtJV_no = new JXTextField("");
 					pnlLiqDtl_2a.add(txtJV_no);
 					txtJV_no.setEnabled(false);	
 					txtJV_no.setEditable(false);
-					txtJV_no.setBounds(120, 25, 300, 22);	
+					//					txtJV_no.setBounds(120, 25, 300, 22);	
 					txtJV_no.setHorizontalAlignment(JTextField.CENTER);	
 				}		
 				{
 					lookupGL_year = new _JLookup(null, "GL Year", 2, 2);
 					pnlLiqDtl_2a.add(lookupGL_year);
-					lookupGL_year.setBounds(20, 27, 20, 25);
+					//					lookupGL_year.setBounds(20, 27, 20, 25);
 					lookupGL_year.setReturnColumn(0);
 					lookupGL_year.setEnabled(false);	
 					lookupGL_year.setPreferredSize(new java.awt.Dimension(157, 22));
@@ -736,7 +759,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				{
 					lookupPeriod= new _JLookup(null, "Payee Type", 2, 2);
 					pnlLiqDtl_2a.add(lookupPeriod);
-					lookupPeriod.setBounds(20, 27, 20, 25);
+					//					lookupPeriod.setBounds(20, 27, 20, 25);
 					lookupPeriod.setReturnColumn(0);
 					lookupPeriod.setEnabled(false);	
 					lookupPeriod.setPreferredSize(new java.awt.Dimension(157, 22));
@@ -750,16 +773,19 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 						}
 					});	
 				}	
-
-				pnlLiqDtl_2b = new JPanel(new GridLayout(3, 1, 0, 5));
+				}
+				pnlLiqDtl_2b = new JPanel(new GridLayout(4, 1, 0, 5));
 				pnlLiqDtl_2.add(pnlLiqDtl_2b, BorderLayout.CENTER);
 				pnlLiqDtl_2b.setPreferredSize(new java.awt.Dimension(140, 118));
 				pnlLiqDtl_2b.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
 				{
+					pnlLiqDtl_2b.add(Box.createHorizontalBox());
+				}
+				{
 					tagJVstatus = new _JTagLabel("[ ]");
 					pnlLiqDtl_2b.add(tagJVstatus);
-					tagJVstatus.setBounds(209, 27, 700, 22);
+					//					tagJVstatus.setBounds(209, 27, 700, 22);
 					tagJVstatus.setEnabled(false);						
 					tagJVstatus.setPreferredSize(new java.awt.Dimension(27, 33));
 					tagJVstatus.addMouseListener(new PopupTriggerListener_panel2());
@@ -767,7 +793,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				{
 					tagPayee2 = new _JTagLabel("[ ]");
 					pnlLiqDtl_2b.add(tagPayee2);
-					tagPayee2.setBounds(209, 27, 700, 22);
+					//					tagPayee2.setBounds(209, 27, 700, 22);
 					tagPayee2.setEnabled(false);	
 					tagPayee2.setVisible(false);	
 					tagPayee2.setPreferredSize(new java.awt.Dimension(27, 33));
@@ -776,7 +802,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				{
 					tagPeriod = new _JTagLabel("[ ]");
 					pnlLiqDtl_2b.add(tagPeriod);
-					tagPeriod.setBounds(209, 27, 700, 22);
+					//					tagPeriod.setBounds(209, 27, 700, 22);
 					tagPeriod.setEnabled(false);	
 					tagPeriod.setPreferredSize(new java.awt.Dimension(27, 33));
 					tagPeriod.addMouseListener(new PopupTriggerListener_panel2());
@@ -803,7 +829,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				pnlLiq_part = new JPanel(new BorderLayout());
 				tabCenter.addTab("Particulars", null, pnlLiq_part, null);
 				pnlLiq_part.setPreferredSize(new java.awt.Dimension(1183, 365));	
-				
+
 				{
 					tagDetail = new _JTagLabel("");
 					pnlLiq_part.add(tagDetail, BorderLayout.NORTH);
@@ -829,7 +855,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 									}
 								}
 							});
-					
+
 				}
 				{
 					scrollLiq_part = new _JScrollPaneMain();
@@ -879,28 +905,28 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 								}
 							}
 						});
-						
+
 						tblLiq_part.addKeyListener(this);
-						
+
 						tblLiq_part.hideColumns("div");
 						tblLiq_part.hideColumns("dep");
 						tblLiq_part.hideColumns("proj");
 						tblLiq_part.hideColumns("sub");
 						tblLiq_part.hideColumns("availer");
-						
+
 						tblLiq_part.hideColumns("div");
 						tblLiq_part.hideColumns("dep");
 						tblLiq_part.hideColumns("proj");
 						tblLiq_part.hideColumns("sub");
 						tblLiq_part.hideColumns("availer");
-						
+
 						tblLiq_part.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 							public void valueChanged(ListSelectionEvent arg0) {
 								try {
 									if(!arg0.getValueIsAdjusting()){
-										
+
 										System.out.println("Dumaan sa addListSelectionListener");
-							
+
 										lineno = (Integer) modelLiq_part.getValueAt(tblLiq_part.getSelectedRow(), 0);
 										generateDetail(lineno);
 									}
@@ -908,7 +934,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 							}
 						});
 						tblLiq_part.putClientProperty("terminateEditOnFocusLost", true);
-						
+
 					}
 					{
 						rowHeaderLiq_part = tblLiq_part.getRowHeader();
@@ -1079,22 +1105,22 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				}		
 			}
 		}
-		
+
 		//added 01/26/2016 - purpose - set CENQHOMES as default company
 		initialize_comp();
-		
+
 	}
-	
+
 	//ADDED BY JED 2022-01-18 : TO GET THE CORRECT PERIOD ID IN CA
 	private String getPeriod(String jv_no, String co_id) {
-		
+
 		String period_id = "";
-		
+
 		String sql = "select period_id from rf_jv_header where jv_no = '"+jv_no+"' and status_id in ('A', 'P', 'F') and co_id = '"+co_id+"'";
-		
+
 		pgSelect db = new pgSelect();
 		db.select(sql);
-		
+
 		if(db.isNotNull()){
 			if((String) db.getResult()[0][0]==null||db.getResult()[0][0].equals("null")) { period_id = "";}
 			else {period_id = (String) db.getResult()[0][0]; }
@@ -1102,20 +1128,20 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		}else{
 			period_id = "";
 		}
-		
+
 		return period_id;
-		
+
 	}
-	
+
 	private String getMonth(String liq_no, String co_id) {
-		
+
 		String month = "";
-		
+
 		String sql = "select right(left((liq_date)::varchar, 7),2) from rf_liq_header where liq_no = '"+liq_no+"' and co_id = '"+co_id+"'";
-		
+
 		pgSelect db = new pgSelect();
 		db.select(sql);
-		
+
 		if(db.isNotNull()){
 			if((String) db.getResult()[0][0]==null||db.getResult()[0][0].equals("null")) { month = "";}
 			else {month = (String) db.getResult()[0][0]; }
@@ -1123,9 +1149,9 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		}else{
 			month = "";
 		}
-		
+
 		return month;
-		
+
 	}
 
 
@@ -1137,50 +1163,50 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		rowHeader.setModel(listModel);//Setting of DefaultListModel into rowHeader.
 
 		String sql = 			
-			"-----display Liquidation particulars\r\n" + 
-			"			select \r\n" + 
-			"			\r\n" + 
-			"			a.rplf_line_no,\r\n" + 
-			"			a.part_desc,\r\n" + 
-			"			a.acct_id,\r\n" + 
-			"			a.div_id,\r\n" + 
-			"			a.dept_id,\r\n" + 
-			"			a.sect_id,\r\n" + 
-			"			a.project_id,\r\n" + 
-			"			a.sub_projectid,\r\n" + 
-			"			b.acct_name,\r\n" + 
-			"			a.tran_amt,\r\n" + 
-			"			a.return_amt,\r\n" + 
-			"			a.refund_amt,\r\n" + 
-			"			a.entity_id,\r\n" + 
-			"			a.entity_type_id,\r\n" + 
-			"			a.ref_doc_id,\r\n" + 
-			"			a.ref_doc_no,\r\n" + 
-			"			a.ref_doc_date,\r\n" + 
-			"			a.is_vatproject,\r\n" + 
-			"			a.is_vatentity,\r\n" + 
-			"			a.is_taxpaidbyco,\r\n" + 
-			"			a.is_gross,\r\n" + 
-			"			a.vat_rate,\r\n" + 
-			"			a.wtax_id,\r\n" + 
-			"			a.wtax_rate,\r\n" + 
-			"			a.wtax_amt,\r\n" + 
-			"			a.vat_amt,\r\n" + 
-			"			a.exp_amt,\r\n" + 
-			"			a.ca_amt,			\r\n" + 
-			"			'',			\r\n" + 
-			"			get_div_alias(a.div_id),			\r\n" + 
-			"			get_department_alias_new(a.dept_id),			\r\n" + 
-			"			get_project_alias(a.project_id),			\r\n" + 
-			"			get_sub_proj_alias(a.sub_projectid),			\r\n" + 
-			"			get_client_name(a.entity_id)			\r\n" + 
-			"			\r\n" + 
-			"			from (select * from rf_liq_detail where co_id = '"+co_id+"') a\r\n" + 
-			"			left join mf_boi_chart_of_accounts b on a.acct_id = b.acct_id\r\n" + 
-			"			\r\n" + 
-			"			where a.liq_no = '"+rec_no+"' \r\n" + 
-			"			and a.status_id = 'A'  \r\n" + 
-			"			order by a.rplf_line_no  " ;
+				"-----display Liquidation particulars\r\n" + 
+						"			select \r\n" + 
+						"			\r\n" + 
+						"			a.rplf_line_no,\r\n" + 
+						"			a.part_desc,\r\n" + 
+						"			a.acct_id,\r\n" + 
+						"			a.div_id,\r\n" + 
+						"			a.dept_id,\r\n" + 
+						"			a.sect_id,\r\n" + 
+						"			a.project_id,\r\n" + 
+						"			a.sub_projectid,\r\n" + 
+						"			b.acct_name,\r\n" + 
+						"			a.tran_amt,\r\n" + 
+						"			a.return_amt,\r\n" + 
+						"			a.refund_amt,\r\n" + 
+						"			a.entity_id,\r\n" + 
+						"			a.entity_type_id,\r\n" + 
+						"			a.ref_doc_id,\r\n" + 
+						"			a.ref_doc_no,\r\n" + 
+						"			a.ref_doc_date,\r\n" + 
+						"			a.is_vatproject,\r\n" + 
+						"			a.is_vatentity,\r\n" + 
+						"			a.is_taxpaidbyco,\r\n" + 
+						"			a.is_gross,\r\n" + 
+						"			a.vat_rate,\r\n" + 
+						"			a.wtax_id,\r\n" + 
+						"			a.wtax_rate,\r\n" + 
+						"			a.wtax_amt,\r\n" + 
+						"			a.vat_amt,\r\n" + 
+						"			a.exp_amt,\r\n" + 
+						"			a.ca_amt,			\r\n" + 
+						"			'',			\r\n" + 
+						"			get_div_alias(a.div_id),			\r\n" + 
+						"			get_department_alias_new(a.dept_id),			\r\n" + 
+						"			get_project_alias(a.project_id),			\r\n" + 
+						"			get_sub_proj_alias(a.sub_projectid),			\r\n" + 
+						"			get_client_name(a.entity_id)			\r\n" + 
+						"			\r\n" + 
+						"			from (select * from rf_liq_detail where co_id = '"+co_id+"') a\r\n" + 
+						"			left join mf_boi_chart_of_accounts b on a.acct_id = b.acct_id\r\n" + 
+						"			\r\n" + 
+						"			where a.liq_no = '"+rec_no+"' \r\n" + 
+						"			and a.status_id = 'A'  \r\n" + 
+						"			order by a.rplf_line_no  " ;
 
 		FncSystem.out("Liquidation particulars", sql);
 		pgSelect db = new pgSelect();
@@ -1212,7 +1238,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		if (tblLiq_part.getColumnModel().getColumn(1).getPreferredWidth() >= 200) {
 			tblLiq_part.getColumnModel().getColumn(1).setPreferredWidth(200);
 		}
-		
+
 	}	
 
 	private void displayRequest_particulars(DefaultTableModel modelMain, JList rowHeader, DefaultTableModel modelTotal, String rec_no) {//used
@@ -1222,8 +1248,8 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		rowHeader.setModel(listModel);//Setting of DefaultListModel into rowHeader.
 
 		String sql = 			
-			"-----------display Request particulars\r\n" + 			
-			"select \r\n" + 
+				"-----------display Request particulars\r\n" + 			
+						"select \r\n" + 
 
 			"a.line_no,\r\n" + 
 			"a.part_desc,\r\n" + 
@@ -1325,6 +1351,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		tagCAtype.setTag((String) liq_hdr[8]);
 		lookupGL_year.setText((String) liq_hdr[10]);
 		lookupPeriod.setText((String) liq_hdr[9]);
+		tagRequestType.setTag((String) liq_hdr[8]);
 
 	}
 
@@ -1368,6 +1395,9 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		txtStatus.setEnabled(true);
 		lblStatus.setEnabled(true);	
 
+		lblRequestType.setEnabled(true);
+		tagRequestType.setEnabled(true);
+
 		lblLiqDate.setEnabled(true);	
 		lblRequestNo.setEnabled(true);	
 		lblDV_no.setEnabled(false);
@@ -1404,6 +1434,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		tagPeriod.setText("[ ]");
 		txtDV_particular.setText("");	
 		tagJVstatus.setText("[ ]");
+		tagRequestType.setText("[ ]");
 	}
 
 	private void refresh_tablesMain(){
@@ -1435,7 +1466,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	}
 
 	private void initialize_comp(){
-		
+
 		co_id 		= "";	
 		company		= "";			
 		tagCompany.setTag(company);
@@ -1445,10 +1476,10 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		lookupLiqNo.setEnabled(true);	
 		lookupLiqNo.setLookupSQL(getLiquiList());
 		enableButtons(true, false, false, false, false, false, false, false, false );
-		
+
 		lookupCompany.setValue(co_id);
-}
-	
+	}
+
 
 	//action performed
 	@Override
@@ -1457,7 +1488,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		if(e.getActionCommand().equals("Refresh")){ refresh();	} //ok
 
 		if(e.getActionCommand().equals("Cancel")){ cancel();  } //ok
-		
+
 		if(e.getActionCommand().equals("Preview")){ preview();  } //ok
 
 		if (e.getActionCommand().equals("Add") && FncAcounting.EmpCanAddNew(UserInfo.EmployeeCode, "10")==true) {addnew();  } //ok
@@ -1489,21 +1520,21 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	}
 
 	public void mouseClicked(MouseEvent evt) {
-		
+
 		int row = tblLiq_part.convertRowIndexToModel(tblLiq_part.getSelectedRow());
-		
+
 		if ((evt.getClickCount() >= 2)) {
 			System.out.println("Dumaan sa mouseClicked double click");
 			clickTableColumn();
 		}	
-		
+
 		else if ((evt.getClickCount() == 1) && row== 19)  {
-			
+
 			System.out.println("Dumaan sa mouseClicked 1");
 
 			for(int x = 0; x < modelLiq_part.getRowCount(); x++){
-					Boolean isSelected1 = (Boolean) modelLiq_part.getValueAt(x, 19);
-				
+				Boolean isSelected1 = (Boolean) modelLiq_part.getValueAt(x, 19);
+
 				if (isSelected1) {
 					if (tax_rate>=0.00) 
 					{
@@ -1512,20 +1543,20 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				}else{
 					modelLiq_part.setValueAt(new BigDecimal(0.00), x, 23);
 				}
-				
+
 			}
 
 		}
 		if (evt.getSource().equals(tblLiq_part)) {
 			System.out.println("Dumaan sa mouseClicked 2");
 			for(int x = 0; x < modelLiq_part.getRowCount(); x++){
-					Boolean isSelected = (Boolean) modelLiq_part.getValueAt(x, 18);
+				Boolean isSelected = (Boolean) modelLiq_part.getValueAt(x, 18);
 				if (isSelected) {
 					modelLiq_part.setValueAt(new BigDecimal(12.00), x, 21);
 				}else{
 					modelLiq_part.setValueAt(new BigDecimal(0.00), x, 21);
 				}
-				
+
 				computeBillAmounts();
 			}
 
@@ -1564,7 +1595,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			}
 		}
 	}
-	
+
 	class PopupTriggerListener_panel2 extends MouseAdapter {
 		public void mousePressed(MouseEvent ev) {
 			if (ev.isPopupTrigger()) {
@@ -1578,7 +1609,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		}
 	}
 
-	
+
 	//action performed continued
 	private void addnew(){//used
 		String co_id = lookupCompany.getValue();
@@ -1591,7 +1622,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		lookupRequest.setLookupSQL(getRequestList(co_id));
 		modelLiq_part.setEditable(true, true);
 		dteLiqui.setEditable(true);
-		
+
 
 		_JLookupTable dlg = new _JLookupTable(FncGlobal.homeMDI, null, "Request No.", getRequestList(co_id), false);
 		dlg.setLocationRelativeTo(getContentPane());
@@ -1603,29 +1634,30 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			rplf_no = (String) data[0];
 			txtDV_no.setText((String) data[3]);
 			lookupRequest.setValue(rplf_no);
+			tagRequestType.setTag((String) data[6]);
 			//rplf_particular = data[4].toString();
 
 			Object[] month_year = getMonthYear();									
 			lookupGL_year.setText((String) month_year[4]);
 			lookupPeriod.setText((String) month_year[0]);
 			tagPeriod.setTag(((String) month_year[3]).toUpperCase());
-			
+
 			if (isYearMonthOpen((String) month_year[4], (String) month_year[0])==true){}
 			else {JOptionPane.showMessageDialog(null,
 					"Year [" + (String) month_year[4] + "] ; " + "Month [" + (String) month_year[0] + "] is closed." + "\n" +
-					"Please ask your Department Head to open.", 
-					"Information", 
-					JOptionPane.WARNING_MESSAGE);
+							"Please ask your Department Head to open.", 
+							"Information", 
+							JOptionPane.WARNING_MESSAGE);
 			}
 			//String check_no= "Check No."+CheckVoucher.txtCheckNo.getText()+"";
-			
-			
-			
-			
+
+
+
+
 			String liq_remarks = " TO LIQUIDATE " + "RPLF No. : " + rplf_no + "; " + "\n" +
 					" WITH DV No." + data[3].toString()+ "\n" ;
-					//+check_no ;
-			
+			//+check_no ;
+
 			txtDV_particular.setText(liq_remarks );
 			displayRequest_particulars(modelLiq_part, rowHeaderLiq_part, modelLiq_part_total, liq_no );	
 		}
@@ -1638,7 +1670,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				+ "and (exists (select rplf_no from rf_transfer_cost where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"')\n"
 				+ "OR exists (select rplf_no  from rf_processing_cost where rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"'))\n"
 				+ "";
-		
+
 		pgSelect db = new pgSelect();
 		db.select(sql);
 		if(db.isNotNull()) {
@@ -1646,7 +1678,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		}else {
 			with_tag = false;
 		}
-		
+
 		return with_tag;
 	}
 
@@ -1736,22 +1768,22 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			}}
 		tagDetail.setText(null);
 	}
-	
+
 	private void preview(){//used
 
 		String criteria = "CA Liquidation";		
 		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
 		String SQL ="";
-		
-		for (int i = 0; i < tblLiq_part.getRowCount(); i++) {
-			
-				SQL = (!SQL.isEmpty() ? SQL + "UNION\n" : "") +
 
-						"SELECT \n" +
-						"'"+modelLiq_part.getValueAt(i, 1)+"' AS particulars, \n" +
-						"'"+modelLiq_part.getValueAt(i, 8)+"' AS account, \n" +
-						"'"+modelLiq_part.getValueAt(i, 27)+"' AS amount, \n" +
-						"get_client_name('"+modelLiq_part.getValueAt(0, 12)+"') AS payee \n";
+		for (int i = 0; i < tblLiq_part.getRowCount(); i++) {
+
+			SQL = (!SQL.isEmpty() ? SQL + "UNION\n" : "") +
+
+					"SELECT \n" +
+					"'"+modelLiq_part.getValueAt(i, 1)+"' AS particulars, \n" +
+					"'"+modelLiq_part.getValueAt(i, 8)+"' AS account, \n" +
+					"'"+modelLiq_part.getValueAt(i, 27)+"' AS amount, \n" +
+					"get_client_name('"+modelLiq_part.getValueAt(0, 12)+"') AS payee \n";
 		}
 
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
@@ -1766,14 +1798,14 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		mapParameters.put("liqno", lookupLiqNo.getValue());
 
 		FncReport.generateReport("/Reports/rptCALiq_preview.jasper", reportTitle, mapParameters, SQL);
-		
+
 	}
 
 	private void refresh(){//used
 		liq_no = lookupLiqNo.getText().trim();
 		refresh_fields();
 		generateDetail();
-		
+
 		refresh_tablesMain();
 		setLiqui_header(liq_no);
 		displayLiq_particulars(modelLiq_part, rowHeaderLiq_part, modelLiq_part_total, liq_no );	
@@ -1798,9 +1830,9 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		else								 				
 		{enableButtons(false, false, true,  true, 
 				false, false, false, false, true );} 
-		
+
 		JOptionPane.showMessageDialog(getContentPane(),"Data refreshed.","Information",JOptionPane.INFORMATION_MESSAGE);
-		
+
 		tagDetail.setText(null);
 
 
@@ -1810,18 +1842,18 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 		if (isYearMonthOpen(lookupGL_year.getText(), lookupPeriod.getText())==true){
 			if(checkPeriod()==true)
-				{JOptionPane.showMessageDialog(getContentPane(), "Month for Transaction Date and Period is not equal.", "Information", 
-						JOptionPane.WARNING_MESSAGE);}
+			{JOptionPane.showMessageDialog(getContentPane(), "Month for Transaction Date and Period is not equal.", "Information", 
+					JOptionPane.WARNING_MESSAGE);}
 			else {
 				if(checkOR_submission()==false)
-					{if (JOptionPane.showConfirmDialog(getContentPane(), "Liquidation references (ID, Number and Date) are incomplete, \n" +
+				{if (JOptionPane.showConfirmDialog(getContentPane(), "Liquidation references (ID, Number and Date) are incomplete, \n" +
 						"proceed anyway?", "Confirmation", 
 						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) 
-						{if (JOptionPane.showConfirmDialog(getContentPane(), "Are all entries correct?", "Confirmation", 
-								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-								save_main();}
-						} else {}
-					}
+				{if (JOptionPane.showConfirmDialog(getContentPane(), "Are all entries correct?", "Confirmation", 
+						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+					save_main();}
+				} else {}
+				}
 				else {
 					if (JOptionPane.showConfirmDialog(getContentPane(), "Are all entries correct?", "Confirmation", 
 							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
@@ -1829,114 +1861,114 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 						if(jv_status.equals("POSTED")){  //for inserting references only
 							save_references();}
 						else {save_main();}   //if new liquidation
-						}
-					}	
+					}
+				}	
 			}
 		}
 		else {JOptionPane.showMessageDialog(null,
 				"Year [" + lookupGL_year.getText() + "] ; " + "Month [" + lookupPeriod.getText() + "] is closed." + "\n" +
-				"Please ask your Department Head to open.", 
-				"Information", 
-				JOptionPane.WARNING_MESSAGE);
+						"Please ask your Department Head to open.", 
+						"Information", 
+						JOptionPane.WARNING_MESSAGE);
 		}
 	}
-	
-//	private void save_main(){//used
-//		int rw = tblLiq_part.getModel().getRowCount();	
-//		int x = 0;
-//		String add_remarks1 = "";
-//		int liq_line_no = 1;
-//		String liq = lookupLiqNo.getText().trim();
-//		
-//		//New Liquidation
-//		if(liq.equals("")) {							
-//			next_liq_no = sql_getNextLIQno();
-//			pgUpdate db = new pgUpdate();	
-//			setJV_no();	
-//			//Added by Erick date 2019-08-19 DCRF 1174
-//			while(x<rw){
-//				
-//				String entity_id	= modelLiq_part.getValueAt(x,12).toString().trim();	
-//				Double tran_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,9).toString());	
-//				//if (tran_amt == 0){}else{add_remarks1 =add_remarks1.concat("\n") + FncGlobal.GetString("select entity_name from rf_entity  where entity_id='"+entity_id+"'") + " - " +  tran_amt ; }
-//				if (tran_amt == 0){}else{add_remarks1 =add_remarks1.concat("\n")  +   tran_amt + " - " +  FncGlobal.GetString("select entity_name from rf_entity  where entity_id='"+entity_id+"'")  ; }
-//				x++;
-//			}
-//
-//			//Auto-creation of payment request when there is a refund
-//			Double refund_amt	= Double.parseDouble(modelLiq_part_total.getValueAt(0,11).toString());	
-//			refund_rplf_no = sql_getNextRPLFno();	
-//			
-//			String cv_no= txtDV_no.getText();
-//			//String strCheck = FncGlobal.GetString("select check_no from rf_check values where cv_no='"+cv_no+"'");
-//			String strCheck = getCheckNo(cv_no, rplf_no, co_id);//ADDED BY JED 2020-02-04 : TO GET THE CORRECT CHECK NO
-//			String liq_remarks = 
-//				txtDV_particular.getText().trim() + "; " + "\n" + 
-//				" THRU LIQ No. " + next_liq_no + "; " +  "\n" +
-//			"Check No."+strCheck ;
-//			
-//			
-//			//if(PayableVoucher.getPayment_type()==B)?"":"Check No.+(CheckVoucher.txtCheckNo.getText())");
-//				if(refund_amt>0) {liq_remarks = liq_remarks + " Auto-Reimbursement RPLF No. : " + refund_rplf_no + "\n";} else {}
-//				liq_remarks = liq_remarks +
-//				" c/o : "+ getRequestAvailerIDName() + "; " +  "\n" +
-//				getParticular_n_ReceiptNos().concat(add_remarks1) ;
-//			
-//				
-//			
-//			insertLiquiHeader(next_liq_no, db, liq_remarks);
-//			insertLiquiDetails(next_liq_no, db);
-//			insertJV_header(db, liq_remarks);
-//			insertJV_detail(db, next_liq_no);
-//			insertAudit_trail("Add-CA Liquidation", next_liq_no, db);
-//			
-//			txtDV_particular.setText("Liquidation of Cash Advance \n" + "RPLF No. : " + rplf_no + "\n" + "Reimbursement RPLF No. :" + refund_rplf_no );
-//			
-//			if(refund_amt>0)
-//			{
-//				insertRPLF_header(db, refund_amt);  
-//				insertRPLF_detail(db);
-//			}			
-//			
-//			
-//			db.commit();	
-//			lookupLiqNo.setText(next_liq_no);
-//			txtJV_no.setText(jv_no);
-//			enable_fields(false);						
-//			tabCenter.setSelectedIndex(0);	
-//			JOptionPane.showMessageDialog(getContentPane(),"Liquidation details saved.","Information",JOptionPane.INFORMATION_MESSAGE);		
-//			jv_status = "ACTIVE";
-//		}
-//		
-//		//Edit Liquidation
-//		else {
-//
-//			liq_no = lookupLiqNo.getText().trim();
-//			jv_no  = txtJV_no.getText().trim();
-//			pgUpdate db = new pgUpdate();			
-//
-//			updateLiq_header(liq_no, db);
-//			updateLiq_detail(liq_no, db);
-//			updateJV_detail(jv_no, db);
-//			insertLiquiDetails(liq_no, db);
-//			insertJV_detail(db, liq_no);
-//			insertAudit_trail("Edit-CA Liquidation", liq_no, db);
-//
-//			db.commit();	
-//			lookupLiqNo.setText(liq_no);
-//			enable_fields(false);								
-//			tabCenter.setSelectedIndex(0);								
-//			JOptionPane.showMessageDialog(getContentPane(),"Liquidation details updated.","Information",JOptionPane.INFORMATION_MESSAGE);
-//			jv_status = "ACTIVE";
-//		}
-//
-//		lblLiqNo.setEnabled(true);	
-//		lookupLiqNo.setEnabled(true);
-//		enableButtons(false, true, true, true, false, false, true, true, true );
-//		modelLiq_part.setEditable(false, false);
-//		generateDetail();
-//		tagDetail.setText(null);
-//	}
+
+	//	private void save_main(){//used
+	//		int rw = tblLiq_part.getModel().getRowCount();	
+	//		int x = 0;
+	//		String add_remarks1 = "";
+	//		int liq_line_no = 1;
+	//		String liq = lookupLiqNo.getText().trim();
+	//		
+	//		//New Liquidation
+	//		if(liq.equals("")) {							
+	//			next_liq_no = sql_getNextLIQno();
+	//			pgUpdate db = new pgUpdate();	
+	//			setJV_no();	
+	//			//Added by Erick date 2019-08-19 DCRF 1174
+	//			while(x<rw){
+	//				
+	//				String entity_id	= modelLiq_part.getValueAt(x,12).toString().trim();	
+	//				Double tran_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,9).toString());	
+	//				//if (tran_amt == 0){}else{add_remarks1 =add_remarks1.concat("\n") + FncGlobal.GetString("select entity_name from rf_entity  where entity_id='"+entity_id+"'") + " - " +  tran_amt ; }
+	//				if (tran_amt == 0){}else{add_remarks1 =add_remarks1.concat("\n")  +   tran_amt + " - " +  FncGlobal.GetString("select entity_name from rf_entity  where entity_id='"+entity_id+"'")  ; }
+	//				x++;
+	//			}
+	//
+	//			//Auto-creation of payment request when there is a refund
+	//			Double refund_amt	= Double.parseDouble(modelLiq_part_total.getValueAt(0,11).toString());	
+	//			refund_rplf_no = sql_getNextRPLFno();	
+	//			
+	//			String cv_no= txtDV_no.getText();
+	//			//String strCheck = FncGlobal.GetString("select check_no from rf_check values where cv_no='"+cv_no+"'");
+	//			String strCheck = getCheckNo(cv_no, rplf_no, co_id);//ADDED BY JED 2020-02-04 : TO GET THE CORRECT CHECK NO
+	//			String liq_remarks = 
+	//				txtDV_particular.getText().trim() + "; " + "\n" + 
+	//				" THRU LIQ No. " + next_liq_no + "; " +  "\n" +
+	//			"Check No."+strCheck ;
+	//			
+	//			
+	//			//if(PayableVoucher.getPayment_type()==B)?"":"Check No.+(CheckVoucher.txtCheckNo.getText())");
+	//				if(refund_amt>0) {liq_remarks = liq_remarks + " Auto-Reimbursement RPLF No. : " + refund_rplf_no + "\n";} else {}
+	//				liq_remarks = liq_remarks +
+	//				" c/o : "+ getRequestAvailerIDName() + "; " +  "\n" +
+	//				getParticular_n_ReceiptNos().concat(add_remarks1) ;
+	//			
+	//				
+	//			
+	//			insertLiquiHeader(next_liq_no, db, liq_remarks);
+	//			insertLiquiDetails(next_liq_no, db);
+	//			insertJV_header(db, liq_remarks);
+	//			insertJV_detail(db, next_liq_no);
+	//			insertAudit_trail("Add-CA Liquidation", next_liq_no, db);
+	//			
+	//			txtDV_particular.setText("Liquidation of Cash Advance \n" + "RPLF No. : " + rplf_no + "\n" + "Reimbursement RPLF No. :" + refund_rplf_no );
+	//			
+	//			if(refund_amt>0)
+	//			{
+	//				insertRPLF_header(db, refund_amt);  
+	//				insertRPLF_detail(db);
+	//			}			
+	//			
+	//			
+	//			db.commit();	
+	//			lookupLiqNo.setText(next_liq_no);
+	//			txtJV_no.setText(jv_no);
+	//			enable_fields(false);						
+	//			tabCenter.setSelectedIndex(0);	
+	//			JOptionPane.showMessageDialog(getContentPane(),"Liquidation details saved.","Information",JOptionPane.INFORMATION_MESSAGE);		
+	//			jv_status = "ACTIVE";
+	//		}
+	//		
+	//		//Edit Liquidation
+	//		else {
+	//
+	//			liq_no = lookupLiqNo.getText().trim();
+	//			jv_no  = txtJV_no.getText().trim();
+	//			pgUpdate db = new pgUpdate();			
+	//
+	//			updateLiq_header(liq_no, db);
+	//			updateLiq_detail(liq_no, db);
+	//			updateJV_detail(jv_no, db);
+	//			insertLiquiDetails(liq_no, db);
+	//			insertJV_detail(db, liq_no);
+	//			insertAudit_trail("Edit-CA Liquidation", liq_no, db);
+	//
+	//			db.commit();	
+	//			lookupLiqNo.setText(liq_no);
+	//			enable_fields(false);								
+	//			tabCenter.setSelectedIndex(0);								
+	//			JOptionPane.showMessageDialog(getContentPane(),"Liquidation details updated.","Information",JOptionPane.INFORMATION_MESSAGE);
+	//			jv_status = "ACTIVE";
+	//		}
+	//
+	//		lblLiqNo.setEnabled(true);	
+	//		lookupLiqNo.setEnabled(true);
+	//		enableButtons(false, true, true, true, false, false, true, true, true );
+	//		modelLiq_part.setEditable(false, false);
+	//		generateDetail();
+	//		tagDetail.setText(null);
+	//	}
 
 	private void save_main(){//used
 		int rw = tblLiq_part.getModel().getRowCount();	
@@ -1945,7 +1977,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		int liq_line_no = 1;
 		String liq = lookupLiqNo.getText().trim();
 		String or_no_ref,mc_no;
-		
+
 		//New Liquidation
 		if(liq.equals("")) {							
 			next_liq_no = sql_getNextLIQno();
@@ -1953,7 +1985,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			setJV_no();	
 			//Added by Erick date 2019-08-19 DCRF 1174
 			while(x<rw){
-				
+
 				String entity_id	= modelLiq_part.getValueAt(x,12).toString().trim();	
 				Double tran_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,9).toString());	
 				//if (tran_amt == 0){}else{add_remarks1 =add_remarks1.concat("\n") + FncGlobal.GetString("select entity_name from rf_entity  where entity_id='"+entity_id+"'") + " - " +  tran_amt ; }
@@ -1964,34 +1996,34 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			//Auto-creation of payment request when there is a refund
 			Double refund_amt	= Double.parseDouble(modelLiq_part_total.getValueAt(0,11).toString());	
 			refund_rplf_no = sql_getNextRPLFno();	
-			
+
 			String cv_no= txtDV_no.getText();
 			//String strCheck = FncGlobal.GetString("select check_no from rf_check values where cv_no='"+cv_no+"'");
 			String strCheck = getCheckNo(cv_no, rplf_no, co_id);//ADDED BY JED 2020-02-04 : TO GET THE CORRECT CHECK NO
-			
+
 			//Added by Erick 2023-08-04 DCRF 2683
 			System.out.println("checktag: "+checktag(rplf_no, co_id));
 			if(checktag(rplf_no, co_id)) {
 				//Added by Erick 2023-08-04 (or_no_ref,mc_no)
-				 or_no_ref  = FncGlobal.GetString ("select 'OR NO.: ' || coalesce(string_agg(remarks, ','), '') \n"
-				 		+ "from (\n"
-				 		+ "	select (case when c.pcostid_dl in ('215','216') \n"
-				 		+ "					then c.rpt_or_no\n"
-				 		+ "				else case when b.or_no_reference is not null then b.or_no_reference else  c.or_no_reference end\n"
-				 		+ "			end) as remarks,\n"
-				 		+ "	a.rplf_no \n"
-				 		+ "	from rf_request_header a\n"
-				 		+ "	left join rf_transfer_cost b on a.rplf_no = b.rplf_no and a.co_id = b.co_id\n"
-				 		+ "	left join rf_processing_cost c on a.rplf_no = c.rplf_no and a.co_id = c.co_id\n"
-				 		+ "	where a.rplf_no = '"+rplf_no+"' \n"
-				 		+ "	and a.co_id = '"+co_id+"' \n"
-				 		+ "	group by a.rplf_no,\n"
-				 		+ "	b.or_no_reference , \n"
-				 		+ "	c.or_no_reference, \n"
-				 		+ "	rpt_or_no,\n"
-				 		+ "	c.pcostid_dl \n"
-				 		+ ") x group by x.rplf_no");
-				 mc_no = FncGlobal.GetString("select 'Mc No.: ' || coalesce(string_agg(c.mc_no, ','), 'No MC') as mc_no\n"
+				or_no_ref  = FncGlobal.GetString ("select 'OR NO.: ' || coalesce(string_agg(remarks, ','), '') \n"
+						+ "from (\n"
+						+ "	select (case when c.pcostid_dl in ('215','216') \n"
+						+ "					then c.rpt_or_no\n"
+						+ "				else case when b.or_no_reference is not null then b.or_no_reference else  c.or_no_reference end\n"
+						+ "			end) as remarks,\n"
+						+ "	a.rplf_no \n"
+						+ "	from rf_request_header a\n"
+						+ "	left join rf_transfer_cost b on a.rplf_no = b.rplf_no and a.co_id = b.co_id\n"
+						+ "	left join rf_processing_cost c on a.rplf_no = c.rplf_no and a.co_id = c.co_id\n"
+						+ "	where a.rplf_no = '"+rplf_no+"' \n"
+						+ "	and a.co_id = '"+co_id+"' \n"
+						+ "	group by a.rplf_no,\n"
+						+ "	b.or_no_reference , \n"
+						+ "	c.or_no_reference, \n"
+						+ "	rpt_or_no,\n"
+						+ "	c.pcostid_dl \n"
+						+ ") x group by x.rplf_no");
+				mc_no = FncGlobal.GetString("select 'Mc No.: ' || coalesce(string_agg(c.mc_no, ','), 'No MC') as mc_no\n"
 						+ "from ( select distinct on (pv_no) pv_no, co_id  from rf_pv_detail\n"
 						+ "where co_id = '"+co_id+"' and pv_no in ( select pv_no from  rf_pv_header where pv_no = '"+rplf_no+"'  and co_id = '"+co_id+"'  and status_id != 'I' and NULLIF(pv_no, '') is not null) \n"
 						+ "and status_id = 'A' and bal_side = 'D' group by pv_no, co_id) a\n"
@@ -1999,34 +2031,34 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 						+ "left join rf_mc_detail c on a.pv_no = c.pv_no and a.co_id = c.co_id\n"
 						+ "and a.co_id = b.co_id");
 			}else {
-				 or_no_ref  = "";
-				 mc_no = "";
+				or_no_ref  = "";
+				mc_no = "";
 			}
-			
+
 			String liq_remarks = 
-				txtDV_particular.getText().trim().replace("'", "''") + "; " + "\n" + 
-				" THRU LIQ No. " + next_liq_no + "; " +  "\n" +
-			"Check No."+strCheck ;
-					
+					txtDV_particular.getText().trim().replace("'", "''") + "; " + "\n" + 
+							" THRU LIQ No. " + next_liq_no + "; " +  "\n" +
+							"Check No."+strCheck ;
+
 			//if(PayableVoucher.getPayment_type()==B)?"":"Check No.+(CheckVoucher.txtCheckNo.getText())");
-				if(refund_amt>0) {
-					liq_remarks = liq_remarks + " Auto-Reimbursement RPLF No. : " + refund_rplf_no + "\n";
-				} else {
-					
-				}
-				liq_remarks = liq_remarks +
-				" c/o : "+ getRequestAvailerIDName() + "; " +  "\n" +
-				getParticular_n_ReceiptNos() + "\n"+or_no_ref +"\n"+mc_no.concat (add_remarks1).replace("'", "''");
-			
+			if(refund_amt>0) {
+				liq_remarks = liq_remarks + " Auto-Reimbursement RPLF No. : " + refund_rplf_no + "\n";
+			} else {
+
+			}
+			liq_remarks = liq_remarks +
+					" c/o : "+ getRequestAvailerIDName() + "; " +  "\n" +
+					getParticular_n_ReceiptNos() + "\n"+or_no_ref +"\n"+mc_no.concat (add_remarks1).replace("'", "''");
+
 			//**ADDED BY JED 2020-11-09 : TO AVOID SAVING OF UNBALANCED JV**//
 			insertJV_detail_tmp(liq_no);
-			
+
 			System.out.printf("debit:%s\n", getDebitSide(co_id, jv_no));
 			System.out.printf("credit:%s\n", getCreditSide(co_id, jv_no));
 			System.out.printf("value of Liquidation Remarks: %s%n", liq_remarks);
-				
+
 			if(getDebitSide(co_id, jv_no).equals(getCreditSide(co_id, jv_no))) {
-				
+
 				System.out.printf("debit:%s\n", getDebitSide(co_id, jv_no));
 				System.out.printf("credit:%s\n", getCreditSide(co_id, jv_no));
 				System.out.printf("value of Liquidation Remarks: %s%n", liq_remarks);
@@ -2036,15 +2068,15 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				insertJV_detail(next_liq_no);
 				insertAudit_trail("Add-CA Liquidation", next_liq_no);
 				updateJVTempTable(UserInfo.EmployeeCode, co_id, jv_no);
-				
+
 				txtDV_particular.setText("Liquidation of Cash Advance \n" + "RPLF No. : " + rplf_no + "\n" + "Reimbursement RPLF No. :" + refund_rplf_no );
-				
+
 				if(refund_amt>0)
 				{
 					insertRPLF_header(refund_rplf_no, refund_amt);  
 					insertRPLF_detail(refund_rplf_no, next_liq_no);
 				}			
-				
+
 				//db.commit();	
 				lookupLiqNo.setText(next_liq_no);
 				txtJV_no.setText(jv_no);
@@ -2052,14 +2084,14 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				tabCenter.setSelectedIndex(0);	
 				JOptionPane.showMessageDialog(getContentPane(),"Liquidation details saved.","Information",JOptionPane.INFORMATION_MESSAGE);		
 				jv_status = "ACTIVE";
-				
+
 				lblLiqNo.setEnabled(true);	
 				lookupLiqNo.setEnabled(true);
 				enableButtons(false, true, true, true, false, false, true, true, true );
 				modelLiq_part.setEditable(false, false);
 				generateDetail();
 				tagDetail.setText(null);
-				
+
 				refresh();
 			}else {
 				JOptionPane.showMessageDialog(getContentPane(),"Debit and credit side is not equal!","Error",JOptionPane.ERROR_MESSAGE);
@@ -2067,67 +2099,67 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				enableButtons(false, false, false, true, true, false, false, false, false );
 			}	
 		}
-		
-//		else {
-//
-//			liq_no = lookupLiqNo.getText().trim();
-//			jv_no  = txtJV_no.getText().trim();
-//			//pgUpdate db = new pgUpdate();	
-//			
-//			//**ADDED BY JED 2020-11-09 : TO AVOID SAVING OF UNBALANCED JV**//
-//			insertJV_detail_tmp(liq_no);
-//			
-//			System.out.printf("debit:%s\n", getDebitSide(co_id, jv_no));
-//			System.out.printf("credit:%s\n", getCreditSide(co_id, jv_no));
-//			
-//			if(getDebitSide(co_id, jv_no).equals(getCreditSide(co_id, jv_no))) {
-//				
-//				/*ADDED BY JED 2021-01-15 : FOR UPDATING REMARKS IF REFUND IS PRESENT*/
-//				//Auto-creation of payment request when there is a refund
-//				Double refund_amt	= Double.parseDouble(modelLiq_part_total.getValueAt(0,11).toString());	
-//				refund_rplf_no = sql_getNextRPLFno();
-//				
-//				String liq_remarks = txtDV_particular.getText().trim();
-//				
-//				if(refund_amt>0)
-//				{
-//					insertRPLF_header(refund_amt);  
-//					insertRPLF_detail();
-//					
-//					liq_remarks = "Auto-Reimbursement RPLF No. : " + refund_rplf_no + "\n" + liq_remarks;
-//				}
-//				
-//				//updateLiq_header(liq_no);
-//				updateLiq_header(liq_no, liq_remarks);
-//				updateLiq_detail(liq_no);
-//				updateJVHeader(jv_no, liq_remarks);/*ADDED BY JED 2021-01-15 : FOR UPDATING JV HEADER*/
-//				updateJV_detail(jv_no);
-//				insertLiquiDetails(liq_no);
-//				insertJV_detail(liq_no);
-//				insertAudit_trail("Edit-CA Liquidation", liq_no);
-//
-//				lookupLiqNo.setText(liq_no);
-//				enable_fields(false);								
-//				tabCenter.setSelectedIndex(0);								
-//				JOptionPane.showMessageDialog(getContentPane(),"Liquidation details updated.","Information",JOptionPane.INFORMATION_MESSAGE);
-//				jv_status = "ACTIVE";
-//				
-//				lblLiqNo.setEnabled(true);	
-//				lookupLiqNo.setEnabled(true);
-//				enableButtons(false, true, true, true, false, false, true, true, true );
-//				modelLiq_part.setEditable(false, false);
-//				generateDetail();
-//				tagDetail.setText(null);	
-//			}else {
-//				JOptionPane.showMessageDialog(getContentPane(),"Debit and credit side is not equal!","Error",JOptionPane.ERROR_MESSAGE);
-//				updateJVTempTable(UserInfo.EmployeeCode, co_id, jv_no);
-//				enableButtons(false, false, false, true, true, false, false, false, false );
-//			}
-//		}
-		
+
+		//		else {
+		//
+		//			liq_no = lookupLiqNo.getText().trim();
+		//			jv_no  = txtJV_no.getText().trim();
+		//			//pgUpdate db = new pgUpdate();	
+		//			
+		//			//**ADDED BY JED 2020-11-09 : TO AVOID SAVING OF UNBALANCED JV**//
+		//			insertJV_detail_tmp(liq_no);
+		//			
+		//			System.out.printf("debit:%s\n", getDebitSide(co_id, jv_no));
+		//			System.out.printf("credit:%s\n", getCreditSide(co_id, jv_no));
+		//			
+		//			if(getDebitSide(co_id, jv_no).equals(getCreditSide(co_id, jv_no))) {
+		//				
+		//				/*ADDED BY JED 2021-01-15 : FOR UPDATING REMARKS IF REFUND IS PRESENT*/
+		//				//Auto-creation of payment request when there is a refund
+		//				Double refund_amt	= Double.parseDouble(modelLiq_part_total.getValueAt(0,11).toString());	
+		//				refund_rplf_no = sql_getNextRPLFno();
+		//				
+		//				String liq_remarks = txtDV_particular.getText().trim();
+		//				
+		//				if(refund_amt>0)
+		//				{
+		//					insertRPLF_header(refund_amt);  
+		//					insertRPLF_detail();
+		//					
+		//					liq_remarks = "Auto-Reimbursement RPLF No. : " + refund_rplf_no + "\n" + liq_remarks;
+		//				}
+		//				
+		//				//updateLiq_header(liq_no);
+		//				updateLiq_header(liq_no, liq_remarks);
+		//				updateLiq_detail(liq_no);
+		//				updateJVHeader(jv_no, liq_remarks);/*ADDED BY JED 2021-01-15 : FOR UPDATING JV HEADER*/
+		//				updateJV_detail(jv_no);
+		//				insertLiquiDetails(liq_no);
+		//				insertJV_detail(liq_no);
+		//				insertAudit_trail("Edit-CA Liquidation", liq_no);
+		//
+		//				lookupLiqNo.setText(liq_no);
+		//				enable_fields(false);								
+		//				tabCenter.setSelectedIndex(0);								
+		//				JOptionPane.showMessageDialog(getContentPane(),"Liquidation details updated.","Information",JOptionPane.INFORMATION_MESSAGE);
+		//				jv_status = "ACTIVE";
+		//				
+		//				lblLiqNo.setEnabled(true);	
+		//				lookupLiqNo.setEnabled(true);
+		//				enableButtons(false, true, true, true, false, false, true, true, true );
+		//				modelLiq_part.setEditable(false, false);
+		//				generateDetail();
+		//				tagDetail.setText(null);	
+		//			}else {
+		//				JOptionPane.showMessageDialog(getContentPane(),"Debit and credit side is not equal!","Error",JOptionPane.ERROR_MESSAGE);
+		//				updateJVTempTable(UserInfo.EmployeeCode, co_id, jv_no);
+		//				enableButtons(false, false, false, true, true, false, false, false, false );
+		//			}
+		//		}
+
 		//Edit Liquidation
 		else {
-			
+
 			liq_no = lookupLiqNo.getText().trim();
 			jv_no  = txtJV_no.getText().trim();
 			String cv_no = txtDV_no.getText();
@@ -2136,27 +2168,27 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			String old_remarks = txtDV_particular.getText().replace("'", "''");
 			rplf_no = lookupRequest.getText();
 			//pgUpdate db = new pgUpdate();	
-			
+
 			//**ADDED BY JED 2020-11-09 : TO AVOID SAVING OF UNBALANCED JV**//
 			insertJV_detail_tmp(liq_no);
-			
+
 			System.out.printf("debit:%s\n", getDebitSide(co_id, jv_no));
 			System.out.printf("credit:%s\n", getCreditSide(co_id, jv_no));
-			
-			
+
+
 			if(getDebitSide(co_id, jv_no).equals(getCreditSide(co_id, jv_no))) {
-				
+
 				while(x<rw){
-					
+
 					String entity_id	= modelLiq_part.getValueAt(x,12).toString().trim();	
 					Double tran_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,9).toString());	
 					//if (tran_amt == 0){}else{add_remarks1 =add_remarks1.concat("\n") + FncGlobal.GetString("select entity_name from rf_entity  where entity_id='"+entity_id+"'") + " - " +  tran_amt ; }
 					if (tran_amt == 0){}else{add_remarks1 =add_remarks1.concat("\n")  +   tran_amt + " - " +  FncGlobal.GetString("select entity_name from rf_entity  where entity_id='"+entity_id+"'")  ; }
 					x++;
 				}
-				
+
 				String liq_remarks = "";
-				
+
 				//if refund is present
 				Double refund_amt	= Double.parseDouble(modelLiq_part_total.getValueAt(0,11).toString());
 				if(refund_amt>0) {
@@ -2164,37 +2196,37 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 						System.out.println("Already refund!!!");
 						liq_remarks = txtDV_particular.getText();
 						String gnrtd_rplf = getRplfNoforRefund(liq_no);
-						
+
 						updateRPLF_header(gnrtd_rplf, refund_amt);
 						updateRPLF_detail(gnrtd_rplf, refund_amt);
-						
+
 					}else {	
 						System.out.println("First refund!!!");
 						refund_rplf_no = sql_getNextRPLFno();
 
 						if(refund_amt>0){
 							liq_remarks = " TO LIQUIDATE " + "RPLF No. : " + old_rplf_no + "; " + "\n" +
-							" WITH DV No." +cv_no+"\n" +
-							" THRU LIQ No. " + liq_no + "; " +  "\n" +
-							"Check No."+strCheck+ " Auto-Reimbursement RPLF No. : " + refund_rplf_no + "\n" +
-							" c/o : "+ getRequestAvailerIDName() + "; " +  "\n" +
-							getParticular_n_ReceiptNos().concat(add_remarks1).replace("'", "''");
-							
+									" WITH DV No." +cv_no+"\n" +
+									" THRU LIQ No. " + liq_no + "; " +  "\n" +
+									"Check No."+strCheck+ " Auto-Reimbursement RPLF No. : " + refund_rplf_no + "\n" +
+									" c/o : "+ getRequestAvailerIDName() + "; " +  "\n" +
+									getParticular_n_ReceiptNos().concat(add_remarks1).replace("'", "''");
+
 							insertRPLF_header(refund_rplf_no, refund_amt);  
 							insertRPLF_detail(refund_rplf_no, liq_no);
 						} else {}
 					}
 				}else {
-//					liq_remarks = " TO LIQUIDATE " + "RPLF No. : " + old_rplf_no + "; " + "\n" +
-//					" WITH DV No." +cv_no+"\n" +
-//					" THRU LIQ No. " + liq_no + "; " +  "\n" +
-//					"Check No."+strCheck+ 
-//					" c/o : "+ getRequestAvailerIDName() + "; " +  "\n" +
-//					getParticular_n_ReceiptNos().concat(add_remarks1);
-					
+					//					liq_remarks = " TO LIQUIDATE " + "RPLF No. : " + old_rplf_no + "; " + "\n" +
+					//					" WITH DV No." +cv_no+"\n" +
+					//					" THRU LIQ No. " + liq_no + "; " +  "\n" +
+					//					"Check No."+strCheck+ 
+					//					" c/o : "+ getRequestAvailerIDName() + "; " +  "\n" +
+					//					getParticular_n_ReceiptNos().concat(add_remarks1);
+
 					liq_remarks = old_remarks;
 				}
-				
+
 				System.out.printf("value of Liquidation Remarks: %s%n", liq_remarks);
 				//updateLiq_header(liq_no);
 				updateLiq_header(liq_no, liq_remarks);
@@ -2210,14 +2242,14 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				tabCenter.setSelectedIndex(0);								
 				JOptionPane.showMessageDialog(getContentPane(),"Liquidation details updated.","Information",JOptionPane.INFORMATION_MESSAGE);
 				jv_status = "ACTIVE";
-				
+
 				lblLiqNo.setEnabled(true);	
 				lookupLiqNo.setEnabled(true);
 				enableButtons(false, true, true, true, false, false, true, true, true );
 				modelLiq_part.setEditable(false, false);
 				generateDetail();
 				tagDetail.setText(null);	
-				
+
 				refresh();
 			}else {
 				JOptionPane.showMessageDialog(getContentPane(),"Debit and credit side is not equal!","Error",JOptionPane.ERROR_MESSAGE);
@@ -2226,60 +2258,60 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			}
 		}
 
-//		lblLiqNo.setEnabled(true);	
-//		lookupLiqNo.setEnabled(true);
-//		enableButtons(false, true, true, true, false, false, true, true, true );
-//		modelLiq_part.setEditable(false, false);
-//		generateDetail();
-//		tagDetail.setText(null);
+		//		lblLiqNo.setEnabled(true);	
+		//		lookupLiqNo.setEnabled(true);
+		//		enableButtons(false, true, true, true, false, false, true, true, true );
+		//		modelLiq_part.setEditable(false, false);
+		//		generateDetail();
+		//		tagDetail.setText(null);
 	}
-	
+
 	private String getRplfNoforRefund(String liq_no) {
-		
+
 		String rplf_no = "";
-		
+
 		String sql = "select \n" + 
 				"left(trim(right(remarks, length(remarks)-(position('Auto-Reimbursement RPLF No.' in remarks)+29))),9) \n" + 
 				"--position('Auto-Reimbursement RPLF No.' in remarks)+30\n" + 
 				"from rf_liq_header\n" + 
 				"where liq_no = '"+liq_no+"' and status_id = 'A'";
-		
+
 		FncSystem.out("Get RPLF No Refund:", sql);
 		pgSelect db = new pgSelect();
 		db.select(sql);
-		
+
 		if(db.isNotNull()) {
 			rplf_no = db.getResult()[0][0].toString();
 		}else {
 			rplf_no = "";
 		}
-		
+
 		return rplf_no;
 	}
-	
+
 	private Boolean isTrue(String liq_no) {
-		
+
 		Boolean x = false;
-		
+
 		String sql = "select liq_no from rf_liq_header where remarks ~* 'Auto-Reimbursement' and status_id = 'A' and liq_no = '"+liq_no+"'";
-		
+
 		FncSystem.out("If already refund:", sql);
 		pgSelect db = new pgSelect();
 		db.select(sql);
-		
+
 		if(db.isNotNull()) {
 			x = true;
 		}else {
 			x = false;
 		}
-		
+
 		return x;
 	}
-	
+
 	private static String getDebitSide(String co_id, String jv_no) {//**ADDED BY JED 2020-11-09 : TO AVOID SAVING OF UNBALANCED JV**//
-		
+
 		String debit_amt = "";
-		
+
 		String sql = "select\n" + 
 				"sum(tran_amt)::varchar as debit\n" + 
 				"from tmp_jv_detail\n" + 
@@ -2287,11 +2319,11 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				"and bal_side = 'D'\n" + 
 				"and status_id = 'A'\n" + 
 				"and co_id = '"+co_id+"'";
-		
+
 		FncSystem.out("Get Debit side", sql);
 		pgSelect db1 = new pgSelect();
 		db1.select(sql);
-		
+
 		if(db1.isNotNull()){
 			debit_amt = (String) db1.getResult()[0][0];
 		}else{
@@ -2299,11 +2331,11 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		}
 		return debit_amt;
 	}
-	
+
 	private static String getCreditSide(String co_id, String jv_no) {//**ADDED BY JED 2020-11-09 : TO AVOID SAVING OF UNBALANCED JV**//
-		
+
 		String credit_amt = "";
-		
+
 		String sql = "select\n" + 
 				"sum(tran_amt)::varchar as debit\n" + 
 				"from tmp_jv_detail\n" + 
@@ -2311,11 +2343,11 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				"and bal_side = 'C'\n" + 
 				"and status_id = 'A'\n" + 
 				"and co_id = '"+co_id+"'";
-		
+
 		FncSystem.out("Get Credit side", sql);
 		pgSelect db2 = new pgSelect();
 		db2.select(sql);
-		
+
 		if(db2.isNotNull()){
 			credit_amt = (String) db2.getResult()[0][0];
 		}else{
@@ -2323,22 +2355,22 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		}
 		return credit_amt;
 	}
-	
+
 	private static String getCheckNo(String cv_no, String pv_no, String co_id) {//ADDED BY JED 2020-02-04 : TO GET THE CORRECT CHECK NO
-		
+
 		String check_no = "";
 		String sql =
 				"select c.check_no\n" + 
-				"from rf_pv_detail a \n" + 
-				"inner join rf_pv_header b on a.pv_no = b.pv_no \n" + 
-				"left join rf_check c on b.cv_no = c.cv_no /*and b.oth_ref_no = c.check_no*/ and b.co_id = c.co_id  \n" + 
-				"where b.cv_no = '"+cv_no+"' and b.co_id = '"+co_id+"' and a.pv_no = '"+pv_no+"'\n" + 
-				"and a.status_id = 'A' and a.bal_side = 'D' \n" + 
-				"group by a.pv_no, b.pv_date, c.check_no, c.date_due limit 1";
-		
+						"from rf_pv_detail a \n" + 
+						"inner join rf_pv_header b on a.pv_no = b.pv_no \n" + 
+						"left join rf_check c on b.cv_no = c.cv_no /*and b.oth_ref_no = c.check_no*/ and b.co_id = c.co_id  \n" + 
+						"where b.cv_no = '"+cv_no+"' and b.co_id = '"+co_id+"' and a.pv_no = '"+pv_no+"'\n" + 
+						"and a.status_id = 'A' and a.bal_side = 'D' \n" + 
+						"group by a.pv_no, b.pv_date, c.check_no, c.date_due limit 1";
+
 		pgSelect db = new pgSelect();
 		db.select(sql);
-		
+
 		if(db.isNotNull()){
 			check_no = (String) db.getResult()[0][0];
 		}else{
@@ -2404,47 +2436,49 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 	private String getRequestList(String co_id){//used
 		//**edited by jed 2020-02-11 : proc_id 13 & 14 was added on filter
-		
+
 		String sql = 
-		
-		"-----------Display Unliquidated Cash Advances\r\n" + 		
-		"select a.pv_no  as \"RPLF No.\" ,\n" + 
-		"a.rplf_type_id  as \"Type\"  ,\n" + 
-		"a.pv_date as \"PV Date\",  \n" + 
-		"a.cv_no  as \"DV No.\", a.remarks as \"Remarks\", \n" + 
-		"a.status_desc  as \"Status\"  \n" + 
-		" from ( \n" + 
-		"select distinct on (a.pv_no)\n" + 
-		"a.pv_no ,\n" + 
-		"e.rplf_type_id   ,\n" + 
-		"a.pv_date ,  \n" + 
-		"a.cv_no 	,\n" + 
-		"c.status_desc,d.proc_id,trim(a.remarks) as remarks \n" + 
-		"from ( select * from rf_pv_header where cv_no is not null or trim(cv_no) != '' ) a\n" + 
-		"left join rf_pv_detail b on a.pv_no = b.pv_no and a.co_id = b.co_id\n" + 
-		"left join mf_record_status c on a.status_id = c.status_id  \n" + 
-		"left join rf_cv_header d on a.cv_no = d.cv_no and a.co_id =d.co_id  \n" + 
-		"left join rf_request_header e on a.rplf_no = e.rplf_no and a.co_id = e.co_id\n" + 
-		"where b.acct_id in ( \n" + 
-		"'01-02-04-000') \n" + 
-		"and a.status_id = 'P'\n" + 
-		"and b.bal_side = 'D'\n" + 
-		"and a.pv_no not in ( select rplf_no from rf_liq_header where status_id in ('A', 'G', 'P' ) and co_id = '"+co_id+"' )\n" + 
-		"and a.co_id = '"+co_id+"' \n" + 
-		"and e.rplf_type_id in ('02', '07', '14','17') ) a   \n" + 
-		"where trim(a.cv_no) != '' and a.proc_id in ('5', '13', '14','3')	\n" + // To show/view pv that has proc.id ='03' ADDED by Tim 10-19-2022
-		"order by a.pv_date desc" ;
+
+				"-----------Display Unliquidated Cash Advances\r\n" + 		
+						"select a.pv_no  as \"RPLF No.\" ,\n" + 
+						"a.rplf_type_id  as \"Type\"  ,\n" + 
+						"a.pv_date as \"PV Date\",  \n" + 
+						"a.cv_no  as \"DV No.\", a.remarks as \"Remarks\", \n" + 
+						"a.status_desc  as \"Status\",  \n" +
+						"a.rplf_type_desc as \"Request Type\" \n"+
+						" from ( \n" + 
+						"select distinct on (a.pv_no)\n" + 
+						"a.pv_no ,\n" + 
+						"e.rplf_type_id   ,\n" + 
+						"a.pv_date ,  \n" + 
+						"a.cv_no 	,\n" + 
+						"c.status_desc,d.proc_id,trim(a.remarks) as remarks, f.rplf_type_desc \n" + 
+						"from ( select * from rf_pv_header where cv_no is not null or trim(cv_no) != '' ) a\n" + 
+						"left join rf_pv_detail b on a.pv_no = b.pv_no and a.co_id = b.co_id\n" + 
+						"left join mf_record_status c on a.status_id = c.status_id  \n" + 
+						"left join rf_cv_header d on a.cv_no = d.cv_no and a.co_id =d.co_id  \n" + 
+						"left join rf_request_header e on a.rplf_no = e.rplf_no and a.co_id = e.co_id\n" +
+						"left join mf_rplf_type f on f.rplf_type_id = e.rplf_type_id \n"+
+						"where b.acct_id in ( \n" + 
+						"'01-02-04-000') \n" + 
+						"and a.status_id = 'P'\n" + 
+						"and b.bal_side = 'D'\n" + 
+						"and a.pv_no not in ( select rplf_no from rf_liq_header where status_id in ('A', 'G', 'P' ) and co_id = '"+co_id+"' )\n" + 
+						"and a.co_id = '"+co_id+"' \n" + 
+						"and e.rplf_type_id in ('02', '07', '14','17') ) a   \n" + 
+						"where trim(a.cv_no) != '' and a.proc_id in ('5', '13', '14','3')	\n" + // To show/view pv that has proc.id ='03' ADDED by Tim 10-19-2022
+						"order by a.pv_date desc" ;
 		System.out.printf("getRequestList : " + sql);
-		
+
 		return sql;
 	}
 
 	private String getDivision(){//used
 
 		String sql = "select trim(division_code) as \"Div Code\", " +
-		"trim(division_name) as \"Div Name\", " +
-		"division_alias as \"Div Alias\" " +
-		"from mf_division " ;		
+				"trim(division_name) as \"Div Name\", " +
+				"division_alias as \"Div Alias\" " +
+				"from mf_division " ;		
 		return sql;
 
 	}	
@@ -2452,31 +2486,31 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	private String getLiquiList(){//**EDITED BY JED VICEDO 2019-07-29 : ONLY CASH ADVANCE AND CASH FUND ADVANCE ARE ALLOWED TO BE LIQUIDATED**//
 
 		String sql = 
-			"select   			 \n" + 
-			"a.liq_no as \"Liqui. No.\",\n" + 
-			"a.liq_date as \" Liqui. Date\"    ,\n" + 
-			"a.rplf_no  as \" RPLF No.\"  ,\n" + 
-			"a.jv_no   as \" JV No.\"   ,\n" + 
-			"b.status_desc  as \" Status\" \n" + 
-			"from rf_liq_header a\n" + 
-			"left join mf_record_status b on a.status_id = b.status_id\n" + 
-			"left join rf_request_header c on a.rplf_no = c.rplf_no and c.status_id = 'A' and c.co_id = a.co_id\n" + 
-			"where a.co_id = '"+co_id+"'\n" + 
-			"and c.rplf_type_id in ('02', '07', '14')\n" + 
-			"order by a.liq_no desc" ;	
+				"select   			 \n" + 
+						"a.liq_no as \"Liqui. No.\",\n" + 
+						"a.liq_date as \" Liqui. Date\"    ,\n" + 
+						"a.rplf_no  as \" RPLF No.\"  ,\n" + 
+						"a.jv_no   as \" JV No.\"   ,\n" + 
+						"b.status_desc  as \" Status\" \n" + 
+						"from rf_liq_header a\n" + 
+						"left join mf_record_status b on a.status_id = b.status_id\n" + 
+						"left join rf_request_header c on a.rplf_no = c.rplf_no and c.status_id = 'A' and c.co_id = a.co_id\n" + 
+						"where a.co_id = '"+co_id+"'\n" + 
+						"and c.rplf_type_id in ('02', '07', '14')\n" + 
+						"order by a.liq_no desc" ;	
 
 		FncSystem.out("Liquidation SQL", sql);
-	
+
 		return sql;
-		
-		
+
+
 	}
 
 	private Object [] getLiquiHeaderDetails() {//EDITED BY JED 2022-01-21 - ADDITIONAL COLUMNS FOR GL YEAR AND PERIOD ID
 
 		String strSQL = 
-			"---display Liquidation header\r\n" + 
-			"select \r\n" + 
+				"---display Liquidation header\r\n" + 
+						"select \r\n" + 
 
 			"a.liq_no,\r\n" + 
 			"a.liq_date,\r\n" + 
@@ -2488,8 +2522,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			"trim(e.status_desc), \n " +
 			"trim(g.rplf_type_desc) as liq_type, \n" +
 			"nullif(right(left((liq_date)::varchar, 7),2),'') as month,\n" + 
-			"nullif(left((liq_date)::varchar, 4),'') as gl_year\n" +
-
+			"nullif(left((liq_date)::varchar, 4),'') as gl_year \n" +
 			"from (select * from rf_liq_header where co_id = '"+co_id+"') a\r\n" + 			
 			"left join mf_record_status b on a.status_id = b.status_id\r\n" + 			
 			"left join (select * from rf_pv_header where co_id = '"+co_id+"') c on a.rplf_no = c.rplf_no and a.co_id = c.co_id \n" +
@@ -2500,7 +2533,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			"where a.liq_no = '"+liq_no+"' "  ;
 
 		FncSystem.out("getLiquiHeaderDetails", strSQL);
-		
+
 		pgSelect db = new pgSelect();
 		db.select(strSQL);		
 
@@ -2514,7 +2547,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	private String sql_getNextLIQno() {//used
 
 		String SQL = 
-			"select trim(to_char(max(coalesce(liq_no::int,0))+1,'000000000')) from rf_liq_header where co_id = '"+co_id+"' " ;
+				"select trim(to_char(max(coalesce(liq_no::int,0))+1,'000000000')) from rf_liq_header where co_id = '"+co_id+"' " ;
 
 		pgSelect db = new pgSelect();
 		db.select(SQL);
@@ -2537,15 +2570,15 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		"bs_is as \"Balance\"  " +
 		"from mf_boi_chart_of_accounts where status_id = 'A' and w_subacct is null ";		
 		return sql;*/
-		
+
 		String sql = "select " +
-		"acct_id as \"Acct ID\", " +
-		"trim(acct_name) as \"Acct Name\",    " +
-		"bs_is as \"Balance\"  " +
-		"from mf_boi_chart_of_accounts " +
-		"where status_id = 'A' " +
-		"and (w_subacct is null OR filtered = false)" + //ADDED FILTERED BY LESTER DCRF 2719
-		"order by acct_id ";		
+				"acct_id as \"Acct ID\", " +
+				"trim(acct_name) as \"Acct Name\",    " +
+				"bs_is as \"Balance\"  " +
+				"from mf_boi_chart_of_accounts " +
+				"where status_id = 'A' " +
+				"and (w_subacct is null OR filtered = false)" + //ADDED FILTERED BY LESTER DCRF 2719
+				"order by acct_id ";		
 
 		System.out.printf("getChartofAccount : " + sql);
 
@@ -2559,9 +2592,9 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		String div = modelLiq_part.getValueAt(row,3).toString();
 
 		String sql = "select dept_code as \"Dept Code\", " +
-		"trim(dept_name) as \"Dept Name\", " +
-		"dept_alias as \"Dept Alias\" " +
-		"from mf_department " ;
+				"trim(dept_name) as \"Dept Name\", " +
+				"dept_alias as \"Dept Alias\" " +
+				"from mf_department " ;
 		if (div.equals("")){sql = sql + "";} 
 		else {sql = sql + "where division_code = '"+div+"' ";}
 
@@ -2572,16 +2605,16 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	private String getProject(String co_id){//used
 
 		String sql = "select a.proj_id as \"Project ID\", " +
-		"trim(a.proj_name) as \"Project Name\", " +
-		"a.proj_alias as \"Project Alias\", " +
-		"b.sub_proj_id as \"SubProject ID\", " +
-		"a.vatable as \"Vatable\" " +
-		"from mf_project a " +
-		"left join ( select distinct on (proj_id) proj_id, sub_proj_id from mf_unit_info ) b  on a.proj_id=b.proj_id where a.status_id='A'"+ 
-		"and a.co_id = '"+co_id+"'";
-		
+				"trim(a.proj_name) as \"Project Name\", " +
+				"a.proj_alias as \"Project Alias\", " +
+				"b.sub_proj_id as \"SubProject ID\", " +
+				"a.vatable as \"Vatable\" " +
+				"from mf_project a " +
+				"left join ( select distinct on (proj_id) proj_id, sub_proj_id from mf_unit_info ) b  on a.proj_id=b.proj_id where a.status_id='A'"+ 
+				"and a.co_id = '"+co_id+"'";
+
 		FncSystem.out("PROJECT DITO",sql);
-		
+
 		return sql;
 
 	}	
@@ -2590,13 +2623,13 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		int row = table.getSelectedRow();
 		String proj = model.getValueAt(row,col_no).toString();
 		String sql = 
-			"select \r\n" + 
-			"distinct on (a.proj_id, a.sub_proj_id)\r\n" + 
-			"\r\n" + 
-			"a.sub_proj_id  as \"Subproj Code\",\r\n" + 
-			"a.phase as \"Phase\",  \r\n" + 
-			"a.proj_id as \"Proj Code\",\r\n" + 
-			"b.proj_name as \"Proj Name\"  \r\n" + 
+				"select \r\n" + 
+						"distinct on (a.proj_id, a.sub_proj_id)\r\n" + 
+						"\r\n" + 
+						"a.sub_proj_id  as \"Subproj Code\",\r\n" + 
+						"a.phase as \"Phase\",  \r\n" + 
+						"a.proj_id as \"Proj Code\",\r\n" + 
+						"b.proj_name as \"Proj Name\"  \r\n" + 
 
 			"from mf_sub_project a\r\n" + 
 			"left join mf_project b on a.proj_id = b.proj_id\r\n and b.status_id='A'\r\n" + 
@@ -2611,10 +2644,10 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		String orig_trans_amt = "0.00";
 
 		String SQL = 
-			"select amount::text from rf_request_detail " +
-			"where rplf_no = '"+lookupRequest.getText().trim()+"' " +
-			"and line_no = "+line_no+" " +
-			"and co_id = '"+co_id+"' " ;
+				"select amount::text from rf_request_detail " +
+						"where rplf_no = '"+lookupRequest.getText().trim()+"' " +
+						"and line_no = "+line_no+" " +
+						"and co_id = '"+co_id+"' " ;
 
 		pgSelect db = new pgSelect();
 		db.select(SQL);
@@ -2628,7 +2661,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		return orig_trans_amt;
 
 	}	
-	
+
 	/*private String getEntityID(String emp_code){//used
 
 		String emp_entity_id = "";
@@ -2648,14 +2681,14 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		return emp_entity_id;
 
 	}	*/
-	
+
 	private String getRequestAvailerID(){//used
 
 		String request_availer = "";
 
 		String SQL = 
-			"select entity_id2 from rf_request_header \n" +
-			"where trim(rplf_no) = '"+rplf_no+"' and co_id = '"+co_id+"' " ;
+				"select entity_id2 from rf_request_header \n" +
+						"where trim(rplf_no) = '"+rplf_no+"' and co_id = '"+co_id+"' " ;
 
 		pgSelect db = new pgSelect();
 		db.select(SQL);
@@ -2669,17 +2702,17 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		return request_availer;
 
 	}	
-	
+
 	private String getRequestAvailerIDName(){//used
 
 		String request_availer_name = "";
 
 		String SQL = 
-			"select \r\n" + 
-			"trim(b.entity_name) as availer \r\n" + 
-			"from rf_request_header a \r\n" + 
-			"left join rf_entity b on a.entity_id2 = b.entity_id \n" +
-			"where trim(a.rplf_no) = '"+rplf_no+"' and a.co_id = '"+co_id+"' " ;
+				"select \r\n" + 
+						"trim(b.entity_name) as availer \r\n" + 
+						"from rf_request_header a \r\n" + 
+						"left join rf_entity b on a.entity_id2 = b.entity_id \n" +
+						"where trim(a.rplf_no) = '"+rplf_no+"' and a.co_id = '"+co_id+"' " ;
 
 		pgSelect db = new pgSelect();
 		db.select(SQL);
@@ -2693,13 +2726,13 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		return request_availer_name;
 
 	}	
-	
+
 	private String getReceiptTypeAlias(String x){//used
 
 		String recpt_alias = "";
 
 		String SQL = 
-			"select doc_alias from mf_system_doc where doc_id = '"+x+"' " ;
+				"select doc_alias from mf_system_doc where doc_id = '"+x+"' " ;
 
 		pgSelect db = new pgSelect();
 		db.select(SQL);
@@ -2718,8 +2751,8 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 		String rplf = "";
 
-//		String SQL = 
-//			"select trim(to_char(max(coalesce(rplf_no::int,0))+1,'000000000')) from rf_request_header where co_id = '"+co_id+"' " ;
+		//		String SQL = 
+		//			"select trim(to_char(max(coalesce(rplf_no::int,0))+1,'000000000')) from rf_request_header where co_id = '"+co_id+"' " ;
 		String SQL = 
 				"select * from fn_get_rplf_no('"+lookupCompany.getValue()+"')" ;
 
@@ -2736,14 +2769,14 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 		return rplf;
 	}
-	
+
 	private String getPV_remarks(){//used
 
 		String request_availer = "";
 
 		String SQL = 
-			"select remarks from rf_pv_header \n" +
-			"where trim(rplf_no) = '"+rplf_no+"' and co_id = '"+co_id+"' " ;
+				"select remarks from rf_pv_header \n" +
+						"where trim(rplf_no) = '"+rplf_no+"' and co_id = '"+co_id+"' " ;
 
 		pgSelect db = new pgSelect();
 		db.select(SQL);
@@ -2757,14 +2790,14 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		return request_availer;
 
 	}	
-	
+
 	private String getRequestParticular(){//used
 
 		String request_particular = "";
 
 		String SQL = 
-			"select remarks from rf_pv_header \n" +
-			"where trim(pv_no) = '"+rplf_no+"' and co_id = '"+co_id+"' " ;
+				"select remarks from rf_pv_header \n" +
+						"where trim(pv_no) = '"+rplf_no+"' and co_id = '"+co_id+"' " ;
 
 		pgSelect db = new pgSelect();
 		db.select(SQL);
@@ -2778,8 +2811,8 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		return request_particular;
 
 	}
-	
-	
+
+
 	//check and validate	
 	private Boolean checkOR_submission(){//used
 
@@ -2820,7 +2853,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				{boo=false; break;} 
 				else {boo=true;}	
 			}			
-			
+
 			x++;
 		}		
 
@@ -2833,7 +2866,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	private void totalLiqui(DefaultTableModel modelMain, DefaultTableModel modelTotal) {//used
 
 		FncTables.clearTable(modelTotal);//Code to clear modelMain.		
-		
+
 		Double trans_amt 	= 0.00;
 		Double return_amt 	= 0.00;
 		Double refund_amt 	= 0.00;
@@ -2843,7 +2876,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		Double ca_amt 		= 0.00;		
 
 		for(int x=0; x < modelMain.getRowCount(); x++){	
-			
+
 			Double trans 	= 0.00;
 			Double retrn 	= 0.00;
 			Double refund 	= 0.00;
@@ -2851,7 +2884,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			Double vat 		= 0.00;
 			Double exp 		= 0.00;
 			Double ca		= 0.00;		
-			
+
 			try { trans = Double.parseDouble(modelLiq_part.getValueAt(x,9).toString().trim());} catch (NullPointerException e) { trans = 0.00; }
 			try { retrn = Double.parseDouble(modelLiq_part.getValueAt(x,10).toString().trim());} catch (NullPointerException e) { retrn = 0.00; }
 			try { refund = Double.parseDouble(modelLiq_part.getValueAt(x,11).toString().trim());} catch (NullPointerException e) { refund = 0.00; }
@@ -2859,7 +2892,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			try { vat = Double.parseDouble(modelLiq_part.getValueAt(x,25).toString().trim());} catch (NullPointerException e) { vat = 0.00; }
 			try { exp = Double.parseDouble(modelLiq_part.getValueAt(x,26).toString().trim());} catch (NullPointerException e) { exp = 0.00; }
 			try { ca = Double.parseDouble(modelLiq_part.getValueAt(x,27).toString().trim());} catch (NullPointerException e) { ca = 0.00; }
-			
+
 			trans_amt 	= trans_amt + trans;
 			return_amt 	= return_amt + retrn;
 			refund_amt 	= refund_amt + refund;
@@ -2867,7 +2900,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			vat_amt 	= vat_amt + vat;
 			exp_amt 	= exp_amt + exp;
 			ca_amt 		= ca_amt + ca;					
-			
+
 			/*try { trans_amt 	= trans_amt.add(((BigDecimal) modelMain.getValueAt(x,10)));} 
 			catch (NullPointerException e) { trans_amt 	= trans_amt.add(new BigDecimal(0.00)); }
 
@@ -2890,7 +2923,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			catch (NullPointerException e) { ca_amt 	= ca_amt.add(new BigDecimal(0.00)); }	*/
 
 		}		
-		
+
 		BigDecimal trans_amt_bd 	= new BigDecimal(trans_amt);	
 		BigDecimal return_amt_bd 	= new BigDecimal(return_amt);	
 		BigDecimal refund_amt_bd 	= new BigDecimal(refund_amt);	
@@ -2904,14 +2937,14 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	}
 
 	private void clickTableColumn() {//used
-		
+
 		System.out.println("Dumaan sa clickTableColumn");
 
 		int column = tblLiq_part.getSelectedColumn();
 		int row = tblLiq_part.getSelectedRow();		
 		String entity_id = "";
 		try {  entity_id = modelLiq_part.getValueAt(row,12).toString().trim(); } catch (NullPointerException e) { entity_id = ""; }
-		
+
 
 		Integer x[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28};
 		String sql[] = {"","",getChartofAccount(),getDivision(), getDepartment(),"",getProject(co_id),getSubproject(tblLiq_part, modelLiq_part,6),
@@ -2944,7 +2977,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			}else {
 				dlg.setFilterIndex(0);
 			}
-			
+
 			dlg.setFilterClientName(true);
 			dlg.setVisible(true);
 
@@ -3047,7 +3080,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	}
 
 	private void computeBillAmounts(KeyEvent evt){//used
-		
+
 		System.out.println("Dumaan sa computeBillAmounts");
 
 		if (modelLiq_part.isEditable() && !jv_status.equals("POSTED")) {
@@ -3055,7 +3088,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			int c  = tblLiq_part.getSelectedColumn();
 			int r  = tblLiq_part.getSelectedRow();
 			int selected_row = tblLiq_part.convertRowIndexToModel(tblLiq_part.getSelectedRow());
-			
+
 			/**COMMENTED BY JED**/
 			//for (int x = 0; x < modelLiq_part.getRowCount(); x++) {
 			/*double trans_amt	= 0.00;
@@ -3072,8 +3105,8 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			double vat_rate		= Double.parseDouble(modelLiq_part.getValueAt(x,21).toString())/100;
 			double tranamt2	= Double.parseDouble(modelLiq_part.getValueAt(r,9).toString());*/
 			/**COMMENTED BY JED**/
-			
-			
+
+
 			double trans_amt	= 0.00;
 			if(txtJV_no.getText().trim().equals("")) // meaning - new liquidation is being created
 			{trans_amt	= Double.parseDouble(modelLiq_part.getValueAt(selected_row,28).toString());}
@@ -3087,7 +3120,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			double wtax_amt		= Double.parseDouble(modelLiq_part.getValueAt(selected_row,24).toString());
 			double vat_rate		= Double.parseDouble(modelLiq_part.getValueAt(selected_row,21).toString())/100;
 			double tranamt2		= Double.parseDouble(modelLiq_part.getValueAt(selected_row,9).toString());
-			
+
 			System.out.printf("tranamt:%s\n", tranamt);
 			System.out.printf("return_amt:%s\n", return_amt);
 			System.out.printf("refund_amt:%s\n", refund_amt);
@@ -3103,8 +3136,8 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			double cv_amount	= tranamt2 - wtax_amt + return_amt-refund_amt;
 			double vat_amount	= ( tranamt2 / (1+vat_rate) ) * vat_rate;
 			//double exp_amount	= trans_amt_new - vat_amount + return_amt - refund_amt; 
-			
-			
+
+
 			/**COMMENTED BY JED**/
 			/*if (evt.getKeyChar() == KeyEvent.VK_ENTER && c == 10 && return_amt > tranamt2  )  //
 			{										
@@ -3137,7 +3170,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				//modelLiq_part.setValueAt(cv_amount, r, 27);
 			}*/
 			/**COMMENTED BY JED**/
-			
+
 			if (evt.getKeyChar() == KeyEvent.VK_ENTER && c == 10 && return_amt > tranamt2  )  //
 			{										
 				JOptionPane.showMessageDialog(getContentPane(), "Amount for return cannot be greater than \n " +
@@ -3179,7 +3212,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				try { wtax_rate	= Double.parseDouble(modelLiq_part.getValueAt(rw,23).toString())/100; } catch (NullPointerException e) { wtax_rate	= 0.00; }
 				BigDecimal grossAmt_bd 	= new BigDecimal(amount);	
 				BigDecimal watx_amt_bd 	= new BigDecimal(amount*wtax_rate);	
-				
+
 				modelLiq_part.setValueAt(grossAmt_bd, r, 9);
 				modelLiq_part.setValueAt(grossAmt_bd, r, 28);				
 				//modelLiq_part.setValueAt(0, r, 10);
@@ -3195,7 +3228,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 					Double wtax_rate= 0.00;
 					try { wtax_rate	= Double.parseDouble(modelLiq_part.getValueAt(rw,23).toString())/100; } catch (NullPointerException e) { wtax_rate	= 0.00; }
 					BigDecimal watx_amt_bd 	= new BigDecimal(trans_amt*wtax_rate);	
-					
+
 					modelLiq_part.setValueAt(0, r, 11);
 					modelLiq_part.setValueAt(reduced_amt, r, 9);
 					modelLiq_part.setValueAt(watx_amt_bd, r, 24);
@@ -3209,7 +3242,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 					Double wtax_rate= 0.00;
 					try { wtax_rate	= Double.parseDouble(modelLiq_part.getValueAt(rw,23).toString())/100; } catch (NullPointerException e) { wtax_rate	= 0.00; }
 					BigDecimal watx_amt_bd 	= new BigDecimal(exp_amount*wtax_rate);	
-					
+
 					modelLiq_part.setValueAt(0,r, 10);
 					modelLiq_part.setValueAt(added_amt, r, 9);	
 					modelLiq_part.setValueAt(watx_amt_bd, r, 24);
@@ -3223,7 +3256,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		totalLiqui(modelLiq_part, modelLiq_part_total);	
 		computeBillAmounts();
 	}
-	
+
 	private static BigDecimal getVatAmount(Double gr_amt, Double vat_rate){//compute vat amount
 
 		BigDecimal vat_amt = BigDecimal.valueOf(0.00);
@@ -3245,7 +3278,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		return vat_amt;
 
 	}
-	
+
 	private static BigDecimal getExpAmount(Double gr_amt, Double vatAmt, Double return_amt, Double refund_amt){//compute expense amount
 
 		BigDecimal exp_amt = BigDecimal.valueOf(0.00);
@@ -3268,14 +3301,14 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 
 	}
-	
+
 	private static BigDecimal getWtaxAmount(Double gr_amt, Double vat_rate, Double tax_rate){//compute wtax amount
 
 		BigDecimal wtax_amt = BigDecimal.valueOf(0.00);
 
 		String SQL =
 				"SELECT * FROM compute_wtax_amount('"+gr_amt+"', '"+vat_rate+"', '"+tax_rate+"')";
-		
+
 		FncSystem.out("SQL", SQL);
 
 		pgSelect db = new pgSelect();
@@ -3296,7 +3329,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 	private void computeBillAmounts (){//used
 		/*EDITEDB BY JED 2021-08-19 : CHANGE THE PROCESS OF GETTING WTAX, EXP AND VAT AMOUNT THRU POSTGRES TO CONTROL ROUNDING OFF*/
-		
+
 		System.out.println("Dumaan sa computeBillAmounts 2");  
 
 		if (modelLiq_part.isEditable() && !jv_status.equals("POSTED")) {			
@@ -3326,9 +3359,9 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			double exp_amount	= getExpAmount(trans_amt_new, vat_amount, return_amt, refund_amt).doubleValue();
 			//double wtax_amt	= Double.parseDouble(modelLiq_part.getValueAt(r,24).toString());
 			//double wtax_amt		= getWtaxAmount(tranamt, vat_rate, wtax_rate).doubleValue();
-			
+
 			BigDecimal wtax_amt = getWtaxAmount(tranamt, vat_rate, wtax_rate);
-			
+
 			System.out.printf("tranamt:%s\n", tranamt);
 			System.out.printf("vat_amount:%s\n", vat_amount);
 			System.out.printf("exp_amount:%s\n", exp_amount);
@@ -3339,22 +3372,22 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			System.out.printf("tranamt2:%s\n", tranamt2);
 			System.out.printf("trans_amt_new:%s\n", trans_amt_new);
 			System.out.printf("wtax_amt:%s\n", wtax_amt);
-			
+
 			modelLiq_part.setValueAt(wtax_amt, r, 24);	
 			modelLiq_part.setValueAt(vat_amount, r, 25);	
 			modelLiq_part.setValueAt(exp_amount, r, 26);	
 			//modelLiq_part.setValueAt(cv_amount, r, 27);/**COMMENTED BY JED 2020-07-30 : fix unbalanced debit credit amt on jv**/	
-	
+
 			//double cv_amount	= tranamt2 - wtax_amt + return_amt - refund_amt;
-			
+
 			BigDecimal cv_amt = new BigDecimal(tranamt2).subtract(wtax_amt).add(new BigDecimal(return_amt)).subtract(new BigDecimal(refund_amt));
 			modelLiq_part.setValueAt(cv_amt, r, 27);	
-			
+
 			System.out.printf("cv_amount:%s\n", cv_amt);
 		}	
 		totalLiqui(modelLiq_part, modelLiq_part_total);		
 	}
- 
+
 	private void adjustRowHeight(){//used
 
 		int rw = tblLiq_part.getModel().getRowCount();
@@ -3367,7 +3400,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	}
 
 	private void AddRow(){//used	
-		
+
 		String payee_id = "";
 		String div_id = "";
 		String dept_id = "";
@@ -3379,7 +3412,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		Double vat_rate = null;
 		String wtax_id = "";
 		Double wtax_rate = null;	
-		
+
 		try { payee_id = modelLiq_part.getValueAt(0,12).toString().trim(); } catch (NullPointerException e) { payee_id = ""; }
 		try { div_id = modelLiq_part.getValueAt(0,3).toString().trim();} catch (NullPointerException e) { div_id = ""; }		
 		try { dept_id = modelLiq_part.getValueAt(0,4).toString().trim();} catch (NullPointerException e) { dept_id = ""; }
@@ -3400,11 +3433,11 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		totalLiqui(modelLiq_part, modelLiq_part_total);			
 		((DefaultListModel) rowHeaderLiq_part.getModel()).addElement(modelLiq_part.getRowCount());
 		adjustRowHeight();
-		
+
 		tblLiq_part.setEditable(true);
 		adjustRowModel();		
 	}
-	
+
 	private void removeRow(){//used
 
 		/*int r  = tblLiq_part.getSelectedRow();		
@@ -3427,13 +3460,13 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 			modelLiq_part.removeRow(row);
 		}
-		
+
 		totalLiqui(modelLiq_part, modelLiq_part_total);					
 		adjustRowModel();
 	}
-	
+
 	private void AddExtraRows(){//used		
-		
+
 		String payee_id = "";
 		String div_id = "";
 		String dept_id = "";
@@ -3445,7 +3478,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		Double vat_rate = null;
 		String wtax_id = "";
 		Double wtax_rate = null;	
-		
+
 		try { payee_id = modelLiq_part.getValueAt(0,12).toString().trim(); } catch (NullPointerException e) { payee_id = ""; }
 		try { div_id = modelLiq_part.getValueAt(0,3).toString().trim();} catch (NullPointerException e) { div_id = ""; }		
 		try { dept_id = modelLiq_part.getValueAt(0,4).toString().trim();} catch (NullPointerException e) { dept_id = ""; }
@@ -3459,20 +3492,20 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		try { wtax_rate = Double.parseDouble(modelLiq_part.getValueAt(0,23).toString().trim());} catch (NullPointerException e) { wtax_rate = 0.00; }
 
 		int x = 0;
-		
+
 		while (x<=9)
 		{
 			modelLiq_part.addRow(new Object[] { modelLiq_part.getRowCount() + 1 ,"","",div_id,dept_id,"",proj_id,sub_proj_id,"",
 					new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00),payee_id,payee_type_id,"","",null,
 					vatable_proj,vatable_entity,false,false,vat_rate,wtax_id,wtax_rate, new BigDecimal(0.00), 
 					new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00), new BigDecimal(0.00)});
-			
+
 			x++;
 		}
-		
+
 		adjustRowModel();		
 	}
-	
+
 	private void adjustRowModel(){
 		DefaultListModel listModel = new DefaultListModel();//Creating DefaultListModel for rowHeader.
 		rowHeaderLiq_part.setModel(listModel);
@@ -3485,9 +3518,9 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		}		
 		adjustRowHeight();
 	}
-	
+
 	/*private void insertStringToAllRows(String x, Integer column){
-		
+
 		Integer r = tblLiq_part.getRowCount();
 		Integer s = 0;
 		while (s<r)
@@ -3496,9 +3529,9 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			s++;
 		}
 	}*/
-	
+
 	/*private void removeToAllRows(Integer column){
-		
+
 		Integer r = tblLiq_part.getRowCount();
 		Integer s = 0;
 		while (s<r)
@@ -3507,9 +3540,9 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			s++;
 		}
 	}
-	
+
 	private void insertBooleanToAllRows(Boolean x, Integer column){
-		
+
 		Integer r = tblLiq_part.getRowCount();
 		Integer s = 0;
 		while (s<r)
@@ -3518,8 +3551,8 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			s++;
 		}
 	}*/
-	
-	
+
+
 	//save and insert		
 	private void insertLiquiHeader(String rec_no, /*pgUpdate db,*/ String liq_remarks){//used
 
@@ -3538,156 +3571,156 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		edited_date	= null;		
 
 		String sqlDetail = 
-			"INSERT into rf_liq_header values (" +
-			"'"+co_id+"',  \n" +  		//1 co_id
-			"'"+co_id+"',  \n" +		//2 busunit_id
-			"'"+rec_no+"',  \n" +		//3 liq_no
-			"'"+dateFormat.format(dteLiqui.getDate())+"',  \n" +	//4 liq_date
-			"'"+rplf_no+"' , \n" +		//5 rplf_no		
-			"'"+jv_no+"',  \n" +		//6 jv_no
-			"'"+doc_id+"' , \n" +		//7 doc_id	
-			""+proc_id+",  \n" +		//8 proc_id  (ask Emer where this comes from)
-			"'"+liq_remarks.replace("'","''")+"' , \n" +	//9 remarks
-			"'"+status_id+"' , \n" +	//10 status_id
-			"'"+created_by+"',  \n" +	//11 created_by
-			"'"+dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL()))+"',  \n" +	//12 date_created
-			"'"+edited_by+"', \n" +		//13 edited_by
-			""+edited_date+", \n" +		//14 date_edited
-			"''," +						//15 deleted_by
-			"'',  \n" +					//16 tagged_by			
-			"null," +					//17 date_tagged
-			"null " +					//18 deleted_date
+				"INSERT into rf_liq_header values (" +
+						"'"+co_id+"',  \n" +  		//1 co_id
+						"'"+co_id+"',  \n" +		//2 busunit_id
+						"'"+rec_no+"',  \n" +		//3 liq_no
+						"'"+dateFormat.format(dteLiqui.getDate())+"',  \n" +	//4 liq_date
+						"'"+rplf_no+"' , \n" +		//5 rplf_no		
+						"'"+jv_no+"',  \n" +		//6 jv_no
+						"'"+doc_id+"' , \n" +		//7 doc_id	
+						""+proc_id+",  \n" +		//8 proc_id  (ask Emer where this comes from)
+						"'"+liq_remarks.replace("'","''")+"' , \n" +	//9 remarks
+						"'"+status_id+"' , \n" +	//10 status_id
+						"'"+created_by+"',  \n" +	//11 created_by
+						"'"+dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL()))+"',  \n" +	//12 date_created
+						"'"+edited_by+"', \n" +		//13 edited_by
+						""+edited_date+", \n" +		//14 date_edited
+						"''," +						//15 deleted_by
+						"'',  \n" +					//16 tagged_by			
+						"null," +					//17 date_tagged
+						"null " +					//18 deleted_date
 
 			")   " ;
-		
+
 		System.out.printf("SQL #1: %s", sqlDetail);
 		pgUpdate db = new pgUpdate();
 		db.executeUpdate(sqlDetail, false);	
 		db.commit();	
 	}
-	
-//	private void insertLiquiDetails(String rec_no, pgUpdate db){//used
-//
-//		int rw = tblLiq_part.getModel().getRowCount();	
-//		int x = 0;
-//		int liq_line_no = 1;		
-//
-//		while (x < rw) {	
-//
-//			String ref_doc_no  	= "";
-//			String div_id  		= "";
-//			String dept_id 		= "";
-//			String tran_type    ="";
-//			tran_type="00011";
-//			
-//			Integer rplf_line_no= Integer.parseInt(modelLiq_part.getValueAt(x,0).toString());	
-//			String ref_doc_id	= modelLiq_part.getValueAt(x,14).toString();	
-//			try { ref_doc_no	= modelLiq_part.getValueAt(x,15).toString(); } 	catch (NullPointerException e) { ref_doc_no = "" ; }				
-//			String ref_doc_date	= "";
-//			if (modelLiq_part.getValueAt(x,16)==null)  {} else {ref_doc_date= modelLiq_part.getValueAt(x,16).toString().trim();}
-//			String part_desc	= modelLiq_part.getValueAt(x,1).toString().replace("'","''");	
-//			String acct_id		= modelLiq_part.getValueAt(x,2).toString().trim();
-//			String entity_id	= modelLiq_part.getValueAt(x,12).toString().trim();
-//			String entity_type_id	= modelLiq_part.getValueAt(x,13).toString().trim();
-//			try { div_id		= modelLiq_part.getValueAt(x,3).toString().trim(); } 	catch (NullPointerException e) { div_id = "" ; }
-//			try { dept_id		= modelLiq_part.getValueAt(x,4).toString().trim(); } 	catch (NullPointerException e) { dept_id = "" ; }			
-//			//String sect_id		= modelLiq_part.getValueAt(x,5).toString().trim();
-//			String project_id	= modelLiq_part.getValueAt(x,6).toString().trim();
-//			String sub_projectid= modelLiq_part.getValueAt(x,7).toString().trim();
-//			Double tran_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,9).toString());	
-//			Double return_amt	= Double.parseDouble(modelLiq_part.getValueAt(x,10).toString());	
-//			Double refund_amt	= Double.parseDouble(modelLiq_part.getValueAt(x,11).toString());	
-//			Boolean is_vatproject 	= (Boolean) modelLiq_part.getValueAt(x,17);	
-//			Boolean is_vatentity 	= (Boolean) modelLiq_part.getValueAt(x,18);	
-//			//Boolean is_taxpaidbyco 	= (Boolean) modelLiq_part.getValueAt(x,19);
-//			//Boolean is_gross 		= (Boolean) modelLiq_part.getValueAt(x,20);
-//			String wtax_id			= modelLiq_part.getValueAt(x,22).toString().trim();	
-//			String vat_acct_id		= "";	
-//
-//			Double wtax_rate	= Double.parseDouble(modelLiq_part.getValueAt(x,23).toString());	
-//			Double wtax_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,24).toString());
-//			Double vat_rate		= Double.parseDouble(modelLiq_part.getValueAt(x,21).toString());
-//			Double vat_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,25).toString());
-//			Double exp_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,26).toString());
-//			Double ca_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,27).toString());	
-//			
-//			/*if (modelLiq_part.getValueAt(x,24) != null) {
-//				is_taxpaidbyco = true;
-//			} else {
-//				is_taxpaidbyco = false;
-//			}*/
-//
-//			if (tran_amt==0.00){}
-//			else 
-//			{
-//				String sqlDetail = 
-//					"INSERT into rf_liq_detail values (" +
-//					"'"+co_id+"',  \n" +  		//1 co_id
-//					"'"+co_id+"',  \n" +		//2 busunit_id
-//					"'"+rec_no+"',  \n" +		//3 liq_no
-//					""+liq_line_no+",  \n" +	//4 line_no
-//					""+rplf_line_no+",  \n" +	//5 rplf_line_no
-//					"'"+ref_doc_id+"',  \n" +	//6 ref_doc_id
-//					"'"+ref_doc_no+"',  \n" ;	//7 ref_doc_no
-//				if (modelLiq_part.getValueAt(x,16)==null) {sqlDetail = sqlDetail + "null,";} else {sqlDetail = sqlDetail + "'"+ref_doc_date+"',  \n"  ; } //8 ref_doc_date					
-//				sqlDetail = sqlDetail +		
-//				"'"+part_desc+"',  \n" +	//9 part_desc
-//				"'"+acct_id+"',  \n" +		//10 acct_id
-//				"'"+entity_id+"',  \n" +	//11 entity_id
-//				"'"+entity_type_id+"',  \n" +	//12 entity_type_id
-//				"'"+div_id+"',  \n" +		//13 div_id
-//				"'"+dept_id+"',  \n" +		//14 dept_id
-//				"'',  \n" +		//15 sect_id
-//				"'"+project_id+"',  \n" +	//16 project_id
-//				"'"+sub_projectid+"',  \n" +//17 sub_projectid
-//				"'"+co_id+"',  \n" +		//18 inter_busunit_id
-//				""+tran_amt+",  \n" + 		//19 tran_amt		
-//				""+return_amt+",  \n" + 	//20 return_amt		
-//				""+refund_amt+",  \n" + 	//21 refund_amt	
-//				""+is_vatproject+",  \n" + 	//22 is_vatproject	
-//				""+is_vatentity+",  \n" + 	//23 is_vatentity	
-//				"false,  \n" + //24 is_taxpaidbyco	
-//				"false,  \n" + 		//25 is_gross	
-//				"'"+wtax_id+"',  \n" + 		//26 wtax_id	
-//				""+wtax_rate+",  \n" + 		//27 wtax_rate	
-//				""+wtax_amt+",  \n" + 		//28 wtax_amt	
-//				"'"+vat_acct_id+"',  \n" + 	//29 vat_acct_id	
-//				""+vat_rate+",  \n" + 		//30 vat_rate	
-//				""+vat_amt+",  \n" + 		//31 vat_amt	
-//				""+exp_amt+",  \n" + 		//32 exp_amt	
-//				""+ca_amt+",  \n" + 		//33 ca_amt					
-//				"'',  \n" + 				//34 old_acct_id	
-//				"'A'  \n" + 				//35 status_id
-//				")   " ;
-//
-//				System.out.printf("SQL #1: %s", sqlDetail);
-//				db.executeUpdate(sqlDetail, false);	
-//				
-//				//added by Erick DCRF 997
-//				String strsql = 
-//						"INSERT INTO rf_subsidiary_ledger(\n" + 
-//						"            co_id, jv_no, tran_type, entity_id, entity_type_id, trans_amt, \n" + 
-//						"            vat_amt, wtax_amt, sundry_acct, proj_id, sub_proj, div_id, dep_id, \n" + 
-//						"            status_id, created_by, date_created\n" +
-//						"            )\n" + 
-//						"    VALUES ('"+co_id+"', '"+jv_no+"', '"+tran_type+"', '"+entity_id+"', '"+entity_type_id+"', "+tran_amt+", \n" + 
-//						"            "+vat_amt+", "+wtax_amt+", '"+acct_id+"', NULLIF('"+project_id+"','null'), NULLIF('"+sub_projectid+"','null'), NULLIF('"+div_id+"','null'), NULLIF('"+dept_id+"','null'), 'A',\n" +
-//						"            '"+UserInfo.EmployeeCode+"', '"+dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL()))+"'\n" + 
-//						"            );\n" + 
-//						"" ;
-//				System.out.printf("SQL #1: %s", strsql);
-//				db.executeUpdate(strsql, false);
-//				liq_line_no++;
-//			}
-//			
-//			x++;
-//		}
-//
-//	}
+
+	//	private void insertLiquiDetails(String rec_no, pgUpdate db){//used
+	//
+	//		int rw = tblLiq_part.getModel().getRowCount();	
+	//		int x = 0;
+	//		int liq_line_no = 1;		
+	//
+	//		while (x < rw) {	
+	//
+	//			String ref_doc_no  	= "";
+	//			String div_id  		= "";
+	//			String dept_id 		= "";
+	//			String tran_type    ="";
+	//			tran_type="00011";
+	//			
+	//			Integer rplf_line_no= Integer.parseInt(modelLiq_part.getValueAt(x,0).toString());	
+	//			String ref_doc_id	= modelLiq_part.getValueAt(x,14).toString();	
+	//			try { ref_doc_no	= modelLiq_part.getValueAt(x,15).toString(); } 	catch (NullPointerException e) { ref_doc_no = "" ; }				
+	//			String ref_doc_date	= "";
+	//			if (modelLiq_part.getValueAt(x,16)==null)  {} else {ref_doc_date= modelLiq_part.getValueAt(x,16).toString().trim();}
+	//			String part_desc	= modelLiq_part.getValueAt(x,1).toString().replace("'","''");	
+	//			String acct_id		= modelLiq_part.getValueAt(x,2).toString().trim();
+	//			String entity_id	= modelLiq_part.getValueAt(x,12).toString().trim();
+	//			String entity_type_id	= modelLiq_part.getValueAt(x,13).toString().trim();
+	//			try { div_id		= modelLiq_part.getValueAt(x,3).toString().trim(); } 	catch (NullPointerException e) { div_id = "" ; }
+	//			try { dept_id		= modelLiq_part.getValueAt(x,4).toString().trim(); } 	catch (NullPointerException e) { dept_id = "" ; }			
+	//			//String sect_id		= modelLiq_part.getValueAt(x,5).toString().trim();
+	//			String project_id	= modelLiq_part.getValueAt(x,6).toString().trim();
+	//			String sub_projectid= modelLiq_part.getValueAt(x,7).toString().trim();
+	//			Double tran_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,9).toString());	
+	//			Double return_amt	= Double.parseDouble(modelLiq_part.getValueAt(x,10).toString());	
+	//			Double refund_amt	= Double.parseDouble(modelLiq_part.getValueAt(x,11).toString());	
+	//			Boolean is_vatproject 	= (Boolean) modelLiq_part.getValueAt(x,17);	
+	//			Boolean is_vatentity 	= (Boolean) modelLiq_part.getValueAt(x,18);	
+	//			//Boolean is_taxpaidbyco 	= (Boolean) modelLiq_part.getValueAt(x,19);
+	//			//Boolean is_gross 		= (Boolean) modelLiq_part.getValueAt(x,20);
+	//			String wtax_id			= modelLiq_part.getValueAt(x,22).toString().trim();	
+	//			String vat_acct_id		= "";	
+	//
+	//			Double wtax_rate	= Double.parseDouble(modelLiq_part.getValueAt(x,23).toString());	
+	//			Double wtax_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,24).toString());
+	//			Double vat_rate		= Double.parseDouble(modelLiq_part.getValueAt(x,21).toString());
+	//			Double vat_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,25).toString());
+	//			Double exp_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,26).toString());
+	//			Double ca_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,27).toString());	
+	//			
+	//			/*if (modelLiq_part.getValueAt(x,24) != null) {
+	//				is_taxpaidbyco = true;
+	//			} else {
+	//				is_taxpaidbyco = false;
+	//			}*/
+	//
+	//			if (tran_amt==0.00){}
+	//			else 
+	//			{
+	//				String sqlDetail = 
+	//					"INSERT into rf_liq_detail values (" +
+	//					"'"+co_id+"',  \n" +  		//1 co_id
+	//					"'"+co_id+"',  \n" +		//2 busunit_id
+	//					"'"+rec_no+"',  \n" +		//3 liq_no
+	//					""+liq_line_no+",  \n" +	//4 line_no
+	//					""+rplf_line_no+",  \n" +	//5 rplf_line_no
+	//					"'"+ref_doc_id+"',  \n" +	//6 ref_doc_id
+	//					"'"+ref_doc_no+"',  \n" ;	//7 ref_doc_no
+	//				if (modelLiq_part.getValueAt(x,16)==null) {sqlDetail = sqlDetail + "null,";} else {sqlDetail = sqlDetail + "'"+ref_doc_date+"',  \n"  ; } //8 ref_doc_date					
+	//				sqlDetail = sqlDetail +		
+	//				"'"+part_desc+"',  \n" +	//9 part_desc
+	//				"'"+acct_id+"',  \n" +		//10 acct_id
+	//				"'"+entity_id+"',  \n" +	//11 entity_id
+	//				"'"+entity_type_id+"',  \n" +	//12 entity_type_id
+	//				"'"+div_id+"',  \n" +		//13 div_id
+	//				"'"+dept_id+"',  \n" +		//14 dept_id
+	//				"'',  \n" +		//15 sect_id
+	//				"'"+project_id+"',  \n" +	//16 project_id
+	//				"'"+sub_projectid+"',  \n" +//17 sub_projectid
+	//				"'"+co_id+"',  \n" +		//18 inter_busunit_id
+	//				""+tran_amt+",  \n" + 		//19 tran_amt		
+	//				""+return_amt+",  \n" + 	//20 return_amt		
+	//				""+refund_amt+",  \n" + 	//21 refund_amt	
+	//				""+is_vatproject+",  \n" + 	//22 is_vatproject	
+	//				""+is_vatentity+",  \n" + 	//23 is_vatentity	
+	//				"false,  \n" + //24 is_taxpaidbyco	
+	//				"false,  \n" + 		//25 is_gross	
+	//				"'"+wtax_id+"',  \n" + 		//26 wtax_id	
+	//				""+wtax_rate+",  \n" + 		//27 wtax_rate	
+	//				""+wtax_amt+",  \n" + 		//28 wtax_amt	
+	//				"'"+vat_acct_id+"',  \n" + 	//29 vat_acct_id	
+	//				""+vat_rate+",  \n" + 		//30 vat_rate	
+	//				""+vat_amt+",  \n" + 		//31 vat_amt	
+	//				""+exp_amt+",  \n" + 		//32 exp_amt	
+	//				""+ca_amt+",  \n" + 		//33 ca_amt					
+	//				"'',  \n" + 				//34 old_acct_id	
+	//				"'A'  \n" + 				//35 status_id
+	//				")   " ;
+	//
+	//				System.out.printf("SQL #1: %s", sqlDetail);
+	//				db.executeUpdate(sqlDetail, false);	
+	//				
+	//				//added by Erick DCRF 997
+	//				String strsql = 
+	//						"INSERT INTO rf_subsidiary_ledger(\n" + 
+	//						"            co_id, jv_no, tran_type, entity_id, entity_type_id, trans_amt, \n" + 
+	//						"            vat_amt, wtax_amt, sundry_acct, proj_id, sub_proj, div_id, dep_id, \n" + 
+	//						"            status_id, created_by, date_created\n" +
+	//						"            )\n" + 
+	//						"    VALUES ('"+co_id+"', '"+jv_no+"', '"+tran_type+"', '"+entity_id+"', '"+entity_type_id+"', "+tran_amt+", \n" + 
+	//						"            "+vat_amt+", "+wtax_amt+", '"+acct_id+"', NULLIF('"+project_id+"','null'), NULLIF('"+sub_projectid+"','null'), NULLIF('"+div_id+"','null'), NULLIF('"+dept_id+"','null'), 'A',\n" +
+	//						"            '"+UserInfo.EmployeeCode+"', '"+dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL()))+"'\n" + 
+	//						"            );\n" + 
+	//						"" ;
+	//				System.out.printf("SQL #1: %s", strsql);
+	//				db.executeUpdate(strsql, false);
+	//				liq_line_no++;
+	//			}
+	//			
+	//			x++;
+	//		}
+	//
+	//	}
 
 	@SuppressWarnings("unlikely-arg-type")
 	private void insertLiquiDetails(String rec_no/*, pgUpdate db*/){//used
-	//**EDITED BY JED 2020-11-18 : FIX THE SAVING OF SL ON JV**//
+		//**EDITED BY JED 2020-11-18 : FIX THE SAVING OF SL ON JV**//
 		int rw = tblLiq_part.getModel().getRowCount();	
 		int x = 0;
 		int liq_line_no = 1;
@@ -3701,21 +3734,21 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			String dept_id 		= "";
 			String tran_type    ="";
 			tran_type="00011";
-			
+
 			Integer rplf_line_no= Integer.parseInt(modelLiq_part.getValueAt(x,0).toString());	
 			String ref_doc_id	= modelLiq_part.getValueAt(x,14).toString();	
 			try { ref_doc_no	= modelLiq_part.getValueAt(x,15).toString(); } 	catch (NullPointerException e) { ref_doc_no = "" ; }				
-			
+
 			//java.util.Date ref_doc_date = (Date) modelLiq_part.getValueAt(x,16);
 			//try {ref_doc_date = (Date) modelLiq_part.getValueAt(x,16); } 	catch (NullPointerException e) { ref_doc_date = null ; }
 			//if (ref_doc_date.equals("null")){ref_doc_date = null;} 
 			//else {ref_doc_date = (Date) modelLiq_part.getValueAt(x,16);}
-			
+
 			String ref_doc_date = ""; 
 			if (modelLiq_part.getValueAt(x,16)==null){} 
 			else {ref_doc_date= modelLiq_part.getValueAt(x,16).toString().trim();}
-			 
-			
+
+
 			String part_desc	= modelLiq_part.getValueAt(x,1).toString().replace("'","''");	
 			String acct_id		= modelLiq_part.getValueAt(x,2).toString().trim();
 			String entity_id	= modelLiq_part.getValueAt(x,12).toString().trim();
@@ -3741,7 +3774,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			Double vat_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,25).toString());
 			Double exp_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,26).toString());
 			Double ca_amt		= Double.parseDouble(modelLiq_part.getValueAt(x,27).toString());	
-			
+
 			/*if (modelLiq_part.getValueAt(x,24) != null) {
 				is_taxpaidbyco = true;
 			} else {
@@ -3751,147 +3784,147 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			if (tran_amt==0.00){}
 			else 
 			{
-//				String sqlDetail = 
-//					"INSERT into rf_liq_detail values (" +
-//					"'"+co_id+"',  \n" +  		//1 co_id
-//					"'"+co_id+"',  \n" +		//2 busunit_id
-//					"'"+rec_no+"',  \n" +		//3 liq_no
-//					""+liq_line_no+",  \n" +	//4 line_no
-//					""+rplf_line_no+",  \n" +	//5 rplf_line_no
-//					"'"+ref_doc_id+"',  \n" +	//6 ref_doc_id
-//					"'"+ref_doc_no+"',  \n" ;	//7 ref_doc_no
-//				if (modelLiq_part.getValueAt(x,16)==null) {sqlDetail = sqlDetail + "null,";} else {sqlDetail = sqlDetail + "'"+ref_doc_date+"',  \n"  ; } //8 ref_doc_date					
-//				sqlDetail = sqlDetail +		
-//				"'"+part_desc+"',  \n" +	//9 part_desc
-//				"'"+acct_id+"',  \n" +		//10 acct_id
-//				"'"+entity_id+"',  \n" +	//11 entity_id
-//				"'"+entity_type_id+"',  \n" +	//12 entity_type_id
-//				"'"+div_id+"',  \n" +		//13 div_id
-//				"'"+dept_id+"',  \n" +		//14 dept_id
-//				"'',  \n" +		//15 sect_id
-//				"'"+project_id+"',  \n" +	//16 project_id
-//				"'"+sub_projectid+"',  \n" +//17 sub_projectid
-//				"'"+co_id+"',  \n" +		//18 inter_busunit_id
-//				""+tran_amt+",  \n" + 		//19 tran_amt		
-//				""+return_amt+",  \n" + 	//20 return_amt		
-//				""+refund_amt+",  \n" + 	//21 refund_amt	
-//				""+is_vatproject+",  \n" + 	//22 is_vatproject	
-//				""+is_vatentity+",  \n" + 	//23 is_vatentity	
-//				"false,  \n" + //24 is_taxpaidbyco	
-//				"false,  \n" + 		//25 is_gross	
-//				"'"+wtax_id+"',  \n" + 		//26 wtax_id	
-//				""+wtax_rate+",  \n" + 		//27 wtax_rate	
-//				""+wtax_amt+",  \n" + 		//28 wtax_amt	
-//				"'"+vat_acct_id+"',  \n" + 	//29 vat_acct_id	
-//				""+vat_rate+",  \n" + 		//30 vat_rate	
-//				""+vat_amt+",  \n" + 		//31 vat_amt	
-//				""+exp_amt+",  \n" + 		//32 exp_amt	
-//				""+ca_amt+",  \n" + 		//33 ca_amt					
-//				"'',  \n" + 				//34 old_acct_id	
-//				"'A'  \n" + 				//35 status_id
-//				")   " ;
-				
+				//				String sqlDetail = 
+				//					"INSERT into rf_liq_detail values (" +
+				//					"'"+co_id+"',  \n" +  		//1 co_id
+				//					"'"+co_id+"',  \n" +		//2 busunit_id
+				//					"'"+rec_no+"',  \n" +		//3 liq_no
+				//					""+liq_line_no+",  \n" +	//4 line_no
+				//					""+rplf_line_no+",  \n" +	//5 rplf_line_no
+				//					"'"+ref_doc_id+"',  \n" +	//6 ref_doc_id
+				//					"'"+ref_doc_no+"',  \n" ;	//7 ref_doc_no
+				//				if (modelLiq_part.getValueAt(x,16)==null) {sqlDetail = sqlDetail + "null,";} else {sqlDetail = sqlDetail + "'"+ref_doc_date+"',  \n"  ; } //8 ref_doc_date					
+				//				sqlDetail = sqlDetail +		
+				//				"'"+part_desc+"',  \n" +	//9 part_desc
+				//				"'"+acct_id+"',  \n" +		//10 acct_id
+				//				"'"+entity_id+"',  \n" +	//11 entity_id
+				//				"'"+entity_type_id+"',  \n" +	//12 entity_type_id
+				//				"'"+div_id+"',  \n" +		//13 div_id
+				//				"'"+dept_id+"',  \n" +		//14 dept_id
+				//				"'',  \n" +		//15 sect_id
+				//				"'"+project_id+"',  \n" +	//16 project_id
+				//				"'"+sub_projectid+"',  \n" +//17 sub_projectid
+				//				"'"+co_id+"',  \n" +		//18 inter_busunit_id
+				//				""+tran_amt+",  \n" + 		//19 tran_amt		
+				//				""+return_amt+",  \n" + 	//20 return_amt		
+				//				""+refund_amt+",  \n" + 	//21 refund_amt	
+				//				""+is_vatproject+",  \n" + 	//22 is_vatproject	
+				//				""+is_vatentity+",  \n" + 	//23 is_vatentity	
+				//				"false,  \n" + //24 is_taxpaidbyco	
+				//				"false,  \n" + 		//25 is_gross	
+				//				"'"+wtax_id+"',  \n" + 		//26 wtax_id	
+				//				""+wtax_rate+",  \n" + 		//27 wtax_rate	
+				//				""+wtax_amt+",  \n" + 		//28 wtax_amt	
+				//				"'"+vat_acct_id+"',  \n" + 	//29 vat_acct_id	
+				//				""+vat_rate+",  \n" + 		//30 vat_rate	
+				//				""+vat_amt+",  \n" + 		//31 vat_amt	
+				//				""+exp_amt+",  \n" + 		//32 exp_amt	
+				//				""+ca_amt+",  \n" + 		//33 ca_amt					
+				//				"'',  \n" + 				//34 old_acct_id	
+				//				"'A'  \n" + 				//35 status_id
+				//				")   " ;
+
 				String sqlDetail = 
 						"SELECT sp_save_liq_detail (" +
-						"'"+co_id+"',  \n" +  			//1 co_id
-						"'"+co_id+"',  \n" +			//2 busunit_id
-						"'"+rec_no+"',  \n" +			//3 liq_no
-						""+liq_line_no+",  \n" +		//4 line_no
-						""+rplf_line_no+",  \n" +		//5 rplf_line_no
-						"'"+ref_doc_id+"',  \n" +		//6 ref_doc_id
-						"'"+ref_doc_no+"',  \n" +		//7 ref_doc_no
-						"NULLIF('"+ref_doc_date+"', '')::date, \n" +		//8 ref_doc_date						
-						"'"+part_desc+"',  \n" +		//9 part_desc
-						"'"+acct_id+"',  \n" +			//10 acct_id
-						"'"+entity_id+"',  \n" +		//11 entity_id
-						"'"+entity_type_id+"',  \n" +	//12 entity_type_id
-						"'"+div_id+"',  \n" +			//13 div_id
-						"'"+dept_id+"',  \n" +			//14 dept_id
-						"'',  \n" +						//15 sect_id
-						"'"+project_id+"',  \n" +		//16 project_id
-						"'"+sub_projectid+"',  \n" +	//17 sub_projectid
-						"'"+co_id+"',  \n" +			//18 inter_busunit_id
-						""+tran_amt+",  \n" + 			//19 tran_amt		
-						""+return_amt+",  \n" + 		//20 return_amt		
-						""+refund_amt+",  \n" + 		//21 refund_amt	
-						""+is_vatproject+",  \n" + 		//22 is_vatproject	
-						""+is_vatentity+",  \n" + 		//23 is_vatentity	
-						"false,  \n" + 					//24 is_taxpaidbyco	
-						"false,  \n" + 					//25 is_gross	
-						"'"+wtax_id+"',  \n" + 			//26 wtax_id	
-						""+wtax_rate+",  \n" + 			//27 wtax_rate	
-						""+wtax_amt+",  \n" + 			//28 wtax_amt	
-						"'"+vat_acct_id+"',  \n" + 		//29 vat_acct_id	
-						""+vat_rate+",  \n" + 			//30 vat_rate	
-						""+vat_amt+",  \n" + 			//31 vat_amt	
-						""+exp_amt+",  \n" + 			//32 exp_amt	
-						""+ca_amt+",  \n" + 			//33 ca_amt					
-						"'',  \n" + 					//34 old_acct_id	
-						"'A'  \n" + 					//35 status_id
-						")   " ;
+								"'"+co_id+"',  \n" +  			//1 co_id
+								"'"+co_id+"',  \n" +			//2 busunit_id
+								"'"+rec_no+"',  \n" +			//3 liq_no
+								""+liq_line_no+",  \n" +		//4 line_no
+								""+rplf_line_no+",  \n" +		//5 rplf_line_no
+								"'"+ref_doc_id+"',  \n" +		//6 ref_doc_id
+								"'"+ref_doc_no+"',  \n" +		//7 ref_doc_no
+								"NULLIF('"+ref_doc_date+"', '')::date, \n" +		//8 ref_doc_date						
+								"'"+part_desc+"',  \n" +		//9 part_desc
+								"'"+acct_id+"',  \n" +			//10 acct_id
+								"'"+entity_id+"',  \n" +		//11 entity_id
+								"'"+entity_type_id+"',  \n" +	//12 entity_type_id
+								"'"+div_id+"',  \n" +			//13 div_id
+								"'"+dept_id+"',  \n" +			//14 dept_id
+								"'',  \n" +						//15 sect_id
+								"'"+project_id+"',  \n" +		//16 project_id
+								"'"+sub_projectid+"',  \n" +	//17 sub_projectid
+								"'"+co_id+"',  \n" +			//18 inter_busunit_id
+								""+tran_amt+",  \n" + 			//19 tran_amt		
+								""+return_amt+",  \n" + 		//20 return_amt		
+								""+refund_amt+",  \n" + 		//21 refund_amt	
+								""+is_vatproject+",  \n" + 		//22 is_vatproject	
+								""+is_vatentity+",  \n" + 		//23 is_vatentity	
+								"false,  \n" + 					//24 is_taxpaidbyco	
+								"false,  \n" + 					//25 is_gross	
+								"'"+wtax_id+"',  \n" + 			//26 wtax_id	
+								""+wtax_rate+",  \n" + 			//27 wtax_rate	
+								""+wtax_amt+",  \n" + 			//28 wtax_amt	
+								"'"+vat_acct_id+"',  \n" + 		//29 vat_acct_id	
+								""+vat_rate+",  \n" + 			//30 vat_rate	
+								""+vat_amt+",  \n" + 			//31 vat_amt	
+								""+exp_amt+",  \n" + 			//32 exp_amt	
+								""+ca_amt+",  \n" + 			//33 ca_amt					
+								"'',  \n" + 					//34 old_acct_id	
+								"'A'  \n" + 					//35 status_id
+								")   " ;
 
 				System.out.printf("SQL #1: %s", sqlDetail);
 				//db.executeUpdate(sqlDetail, false);	
 				db.select(sqlDetail);
 				insertSubsidiaryLedger(rplf_line_no, rec_no, tran_type, entity_id, entity_type_id, tran_amt, vat_amt, wtax_amt, acct_id, project_id, sub_projectid, div_id, dept_id);
-				
-//				Integer liq_row = getLiqRow(rplf_line_no, rec_no);
-//				System.out.printf("liq_row:%s\n", liq_row);
-				
+
+				//				Integer liq_row = getLiqRow(rplf_line_no, rec_no);
+				//				System.out.printf("liq_row:%s\n", liq_row);
+
 				//added by Erick DCRF 997
-//				String strsql = 
-//						"INSERT INTO rf_subsidiary_ledger(\n" + 
-//						"            co_id, jv_no, tran_type, entity_id, entity_type_id, trans_amt, \n" + 
-//						"            vat_amt, wtax_amt, sundry_acct, proj_id, sub_proj, div_id, dep_id, \n" + 
-//						"            status_id, created_by, date_created, liq_row\n" +
-//						"            )\n" + 
-//						"    VALUES ('"+co_id+"', '"+jv_no+"', '"+tran_type+"', '"+entity_id+"', '"+entity_type_id+"', "+tran_amt+", \n" + 
-//						"            "+vat_amt+", "+wtax_amt+", '"+acct_id+"', NULLIF('"+project_id+"','null'), NULLIF('"+sub_projectid+"','null'), NULLIF('"+div_id+"','null'), NULLIF('"+dept_id+"','null'), 'A',\n" +
-//						"            '"+UserInfo.EmployeeCode+"', '"+dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL()))+"', '"+liq_row+"'\n" + 
-//						"            );\n" + 
-//						"" ;
-//				System.out.printf("SQL #1: %s", strsql);
-//				db.executeUpdate(strsql, false);
+				//				String strsql = 
+				//						"INSERT INTO rf_subsidiary_ledger(\n" + 
+				//						"            co_id, jv_no, tran_type, entity_id, entity_type_id, trans_amt, \n" + 
+				//						"            vat_amt, wtax_amt, sundry_acct, proj_id, sub_proj, div_id, dep_id, \n" + 
+				//						"            status_id, created_by, date_created, liq_row\n" +
+				//						"            )\n" + 
+				//						"    VALUES ('"+co_id+"', '"+jv_no+"', '"+tran_type+"', '"+entity_id+"', '"+entity_type_id+"', "+tran_amt+", \n" + 
+				//						"            "+vat_amt+", "+wtax_amt+", '"+acct_id+"', NULLIF('"+project_id+"','null'), NULLIF('"+sub_projectid+"','null'), NULLIF('"+div_id+"','null'), NULLIF('"+dept_id+"','null'), 'A',\n" +
+				//						"            '"+UserInfo.EmployeeCode+"', '"+dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL()))+"', '"+liq_row+"'\n" + 
+				//						"            );\n" + 
+				//						"" ;
+				//				System.out.printf("SQL #1: %s", strsql);
+				//				db.executeUpdate(strsql, false);
 				liq_line_no++;
 			}	
 			x++;
 		}	
 		//db.commit();	
 	}		
-	
+
 	//**ADDED BY JED 2020-11-18 : INSERTING SL ON JV**//
 	private void insertSubsidiaryLedger(Integer rplf_line_no, String liq_no, String tran_type, String entity_id, String entity_type_id, Double tran_amt, Double vat_amt, Double wtax_amt, String acct_id, String project_id, String sub_projectid, String div_id, String dept_id) {
 		Integer liq_row = getLiqRow(rplf_line_no, liq_no);
 		System.out.printf("liq_row:%s\n", liq_row);
-		
+
 		String strsql = 
 				"INSERT INTO rf_subsidiary_ledger(\n" + 
-				"            co_id, busunit_id, jv_no, tran_type, entity_id, entity_type_id, trans_amt, \n" + 
-				"            vat_amt, wtax_amt, sundry_acct, proj_id, sub_proj, div_id, dep_id, \n" + 
-				"            status_id, created_by, date_created, liq_row\n" +
-				"            )\n" + 
-				"    VALUES ('"+co_id+"', '"+co_id+"', '"+jv_no+"', '"+tran_type+"', '"+entity_id+"', '"+entity_type_id+"', "+tran_amt+", \n" + 
-				"            "+vat_amt+", "+wtax_amt+", '"+acct_id+"', NULLIF('"+project_id+"','null'), NULLIF('"+sub_projectid+"','null'), NULLIF('"+div_id+"','null'), NULLIF('"+dept_id+"','null'), 'A',\n" +
-				"            '"+UserInfo.EmployeeCode+"', '"+dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL()))+"', '"+liq_row+"'\n" + 
-				"            );\n" + 
-				"" ;
+						"            co_id, busunit_id, jv_no, tran_type, entity_id, entity_type_id, trans_amt, \n" + 
+						"            vat_amt, wtax_amt, sundry_acct, proj_id, sub_proj, div_id, dep_id, \n" + 
+						"            status_id, created_by, date_created, liq_row\n" +
+						"            )\n" + 
+						"    VALUES ('"+co_id+"', '"+co_id+"', '"+jv_no+"', '"+tran_type+"', '"+entity_id+"', '"+entity_type_id+"', "+tran_amt+", \n" + 
+						"            "+vat_amt+", "+wtax_amt+", '"+acct_id+"', NULLIF('"+project_id+"','null'), NULLIF('"+sub_projectid+"','null'), NULLIF('"+div_id+"','null'), NULLIF('"+dept_id+"','null'), 'A',\n" +
+						"            '"+UserInfo.EmployeeCode+"', '"+dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL()))+"', '"+liq_row+"'\n" + 
+						"            );\n" + 
+						"" ;
 		System.out.printf("SQL #1: %s", strsql);
-		
+
 		pgUpdate db = new pgUpdate();
 		db.executeUpdate(strsql, false);
 		db.commit();
 	}
-	
+
 	private Integer getLiqRow(Integer rplf_line_no, String liq_no) {
-		
+
 		Integer liq_row = 0;
-		
+
 		String sql = "select liq_row from rf_liq_detail where rplf_line_no = "+rplf_line_no+" and liq_no = '"+liq_no+"' and status_id = 'A'";
-		
+
 		System.out.printf("SQL FOR LIQ ROW: %s\n", sql);
 		pgSelect db = new pgSelect();
 		db.select(sql);
-		
+
 		if(db.isNotNull()) {
 			System.out.print("DUMAAN DITO 11111111");
 			liq_row = (Integer)db.getResult()[0][0];
@@ -3899,7 +3932,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			System.out.print("DUMAAN DITO 222222222");
 			liq_row = 0;
 		}
-		
+
 		return liq_row;
 	}
 
@@ -3934,118 +3967,118 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		date_edited	= null;				
 
 		String sqlDetail = 
-			"INSERT into rf_jv_header values (" +
-			"'"+co_id+"',  \n" +  		//1
-			"'"+co_id+"',  \n" +  		//2			
-			"'"+jv_no+"',  \n" +  		//3
-			"'"+dateFormat.format(dteLiqui.getDate())+"',  \n" +	//5 jv_date
-			""+fiscal_yr_4digit+",  \n" +  	//5
-			"'"+period_id+"',  \n" +  	//6
-			"'"+tran_id+"',  \n" +  	//7
-			"'"+posted_by+"',  \n" +  	//8
-			""+posted_date+",  \n" +  	//9
-			"'"+doc_id+"',  \n" +  		//10
-			""+proc_id+",  \n" +  		//11
-			""+is_for_rev+",  \n" +  	//12
-			""+rev_date+",  \n" +  		//13
-			"'"+jv_rmrks.replace("'","''")+"',  \n" +  //14
-			"'"+status_id+"',  \n" +  	//15
-			"'"+created_by+"',  \n" +  	//16
-			"now(),  \n" +				//17 date_created			
-			"'"+edited_by+"',  \n" + 	//18
-			""+date_edited+"  \n" + 	//19
-			")   " ;
+				"INSERT into rf_jv_header values (" +
+						"'"+co_id+"',  \n" +  		//1
+						"'"+co_id+"',  \n" +  		//2			
+						"'"+jv_no+"',  \n" +  		//3
+						"'"+dateFormat.format(dteLiqui.getDate())+"',  \n" +	//5 jv_date
+						""+fiscal_yr_4digit+",  \n" +  	//5
+						"'"+period_id+"',  \n" +  	//6
+						"'"+tran_id+"',  \n" +  	//7
+						"'"+posted_by+"',  \n" +  	//8
+						""+posted_date+",  \n" +  	//9
+						"'"+doc_id+"',  \n" +  		//10
+						""+proc_id+",  \n" +  		//11
+						""+is_for_rev+",  \n" +  	//12
+						""+rev_date+",  \n" +  		//13
+						"'"+jv_rmrks.replace("'","''")+"',  \n" +  //14
+						"'"+status_id+"',  \n" +  	//15
+						"'"+created_by+"',  \n" +  	//16
+						"now(),  \n" +				//17 date_created			
+						"'"+edited_by+"',  \n" + 	//18
+						""+date_edited+"  \n" + 	//19
+						")   " ;
 
 		System.out.printf("SQL #1: %s", sqlDetail);
 		pgUpdate db = new pgUpdate();
 		db.executeUpdate(sqlDetail, false);	
 		db.commit();
 	}
-	
-//	private void insertJV_detail(pgUpdate db, String rec_no){//used
-//
-//		int x  = 0;	
-//		int y  = 1;
-//		int rw = tblLiq_part.getModel().getRowCount();	
-//
-//		while(x < rw ) {	
-//			
-//			String div_id  		= "";
-//			String dept_id  		= "";
-//
-//			String account_id 	= modelLiq_part.getValueAt(x,2).toString();
-//			double trans_amt	= 0.00;
-//			if(txtJV_no.getText().trim().equals("")) // meaning - new liquidation is being created
-//			{trans_amt	= Double.parseDouble(modelLiq_part.getValueAt(x,27).toString());}
-//			else // meaning - liquidation is for editing
-//			{Integer line = Integer.parseInt(modelLiq_part.getValueAt(x,0).toString());
-//			trans_amt = Double.parseDouble(getOrigTransAmount(line));}
-//			Double exp_amt 		= Double.parseDouble(modelLiq_part.getValueAt(x,26).toString());
-//			Double vat_amt 		= Double.parseDouble(modelLiq_part.getValueAt(x,25).toString());	
-//			Double tax_amt 		= Double.parseDouble(modelLiq_part.getValueAt(x,24).toString());
-//			Double return_amt 	= Double.parseDouble(modelLiq_part.getValueAt(x,10).toString());
-//			Double refund_amt 	= Double.parseDouble(modelLiq_part.getValueAt(x,11).toString());			
-//			Double ca_amt 		= Double.parseDouble(modelLiq_part.getValueAt(x,27).toString());			
-//
-//			Double amount [] = {return_amt,exp_amt,vat_amt,tax_amt,ca_amt,refund_amt};			
-//			String acct_id [] = {"01-02-99-003",account_id,"01-99-03-000","03-01-06-002","01-02-04-000","03-01-09-000" };			
-//			String bal_side [] = {"D","D","D","C","C","C" };
-//
-//			try { div_id		= modelLiq_part.getValueAt(x,3).toString().trim(); } 	catch (NullPointerException e) { div_id = "" ; }
-//			try { dept_id		= modelLiq_part.getValueAt(x,4).toString().trim(); } 	catch (NullPointerException e) { dept_id = "" ; }
-//			//String sect_id		= modelLiq_part.getValueAt(x,5).toString().trim();
-//			String project_id	= modelLiq_part.getValueAt(x,6).toString().trim();
-//			String sub_projectid= modelLiq_part.getValueAt(x,7).toString().trim();
-//
-//			int num = 0;
-//			while (num <= 5) {
-//
-//				if (amount[num] == 0.00) {		
-//
-//				}
-//				else
-//				{	
-//					String sqlDetail = 
-//						"INSERT into rf_jv_detail values (" +
-//						"'"+co_id+"',  \n" +  		//1
-//						"'"+co_id+"',  \n" +  		//2
-//						"'"+jv_no+"',  \n" +  		//3			
-//						"1,  \n" +  				//4
-//						""+y+",  \n" +  			//5			
-//						"'"+acct_id [num]+"',  \n" +//6
-//						""+amount[num]+",  \n" +  	//7
-//						"'"+bal_side[num]+"',  \n" +//8
-//						"'"+rec_no+"',  \n" +		//9
-//						"'"+project_id+"',  \n" +  	//10
-//						"'"+sub_projectid+"',  \n" +//11		
-//						"'"+div_id+"',  \n" +		//12	
-//						"'"+dept_id+"',  \n" +		//13		
-//						"'',  \n" +		//14		
-//						"null,  \n" +  				//15
-//						"null,  \n" +  				//16	
-//						"null,  \n" +  				//17	
-//						"null,  \n" +  				//18 entity_id
-//						"null,  \n" +  				//19 pbl_id
-//						"null,  \n" +  				//20 seq_no				
-//						"'A', " +					//21
-//						"'"+UserInfo.EmployeeCode+"',  \n" +  	//22 created_by
-//						"now(),  \n" +				//23 date_created			
-//						"'',  \n" + 				//24 edited_by
-//						"null  \n" + 				//25 date_edited			
-//						")   " ;
-//
-//					System.out.printf("SQL #1: %s", sqlDetail);
-//					db.executeUpdate(sqlDetail, false);					
-//					y++;
-//				}
-//
-//				num++;
-//			}
-//
-//			x++;
-//		}
-//	}
-	
+
+	//	private void insertJV_detail(pgUpdate db, String rec_no){//used
+	//
+	//		int x  = 0;	
+	//		int y  = 1;
+	//		int rw = tblLiq_part.getModel().getRowCount();	
+	//
+	//		while(x < rw ) {	
+	//			
+	//			String div_id  		= "";
+	//			String dept_id  		= "";
+	//
+	//			String account_id 	= modelLiq_part.getValueAt(x,2).toString();
+	//			double trans_amt	= 0.00;
+	//			if(txtJV_no.getText().trim().equals("")) // meaning - new liquidation is being created
+	//			{trans_amt	= Double.parseDouble(modelLiq_part.getValueAt(x,27).toString());}
+	//			else // meaning - liquidation is for editing
+	//			{Integer line = Integer.parseInt(modelLiq_part.getValueAt(x,0).toString());
+	//			trans_amt = Double.parseDouble(getOrigTransAmount(line));}
+	//			Double exp_amt 		= Double.parseDouble(modelLiq_part.getValueAt(x,26).toString());
+	//			Double vat_amt 		= Double.parseDouble(modelLiq_part.getValueAt(x,25).toString());	
+	//			Double tax_amt 		= Double.parseDouble(modelLiq_part.getValueAt(x,24).toString());
+	//			Double return_amt 	= Double.parseDouble(modelLiq_part.getValueAt(x,10).toString());
+	//			Double refund_amt 	= Double.parseDouble(modelLiq_part.getValueAt(x,11).toString());			
+	//			Double ca_amt 		= Double.parseDouble(modelLiq_part.getValueAt(x,27).toString());			
+	//
+	//			Double amount [] = {return_amt,exp_amt,vat_amt,tax_amt,ca_amt,refund_amt};			
+	//			String acct_id [] = {"01-02-99-003",account_id,"01-99-03-000","03-01-06-002","01-02-04-000","03-01-09-000" };			
+	//			String bal_side [] = {"D","D","D","C","C","C" };
+	//
+	//			try { div_id		= modelLiq_part.getValueAt(x,3).toString().trim(); } 	catch (NullPointerException e) { div_id = "" ; }
+	//			try { dept_id		= modelLiq_part.getValueAt(x,4).toString().trim(); } 	catch (NullPointerException e) { dept_id = "" ; }
+	//			//String sect_id		= modelLiq_part.getValueAt(x,5).toString().trim();
+	//			String project_id	= modelLiq_part.getValueAt(x,6).toString().trim();
+	//			String sub_projectid= modelLiq_part.getValueAt(x,7).toString().trim();
+	//
+	//			int num = 0;
+	//			while (num <= 5) {
+	//
+	//				if (amount[num] == 0.00) {		
+	//
+	//				}
+	//				else
+	//				{	
+	//					String sqlDetail = 
+	//						"INSERT into rf_jv_detail values (" +
+	//						"'"+co_id+"',  \n" +  		//1
+	//						"'"+co_id+"',  \n" +  		//2
+	//						"'"+jv_no+"',  \n" +  		//3			
+	//						"1,  \n" +  				//4
+	//						""+y+",  \n" +  			//5			
+	//						"'"+acct_id [num]+"',  \n" +//6
+	//						""+amount[num]+",  \n" +  	//7
+	//						"'"+bal_side[num]+"',  \n" +//8
+	//						"'"+rec_no+"',  \n" +		//9
+	//						"'"+project_id+"',  \n" +  	//10
+	//						"'"+sub_projectid+"',  \n" +//11		
+	//						"'"+div_id+"',  \n" +		//12	
+	//						"'"+dept_id+"',  \n" +		//13		
+	//						"'',  \n" +		//14		
+	//						"null,  \n" +  				//15
+	//						"null,  \n" +  				//16	
+	//						"null,  \n" +  				//17	
+	//						"null,  \n" +  				//18 entity_id
+	//						"null,  \n" +  				//19 pbl_id
+	//						"null,  \n" +  				//20 seq_no				
+	//						"'A', " +					//21
+	//						"'"+UserInfo.EmployeeCode+"',  \n" +  	//22 created_by
+	//						"now(),  \n" +				//23 date_created			
+	//						"'',  \n" + 				//24 edited_by
+	//						"null  \n" + 				//25 date_edited			
+	//						")   " ;
+	//
+	//					System.out.printf("SQL #1: %s", sqlDetail);
+	//					db.executeUpdate(sqlDetail, false);					
+	//					y++;
+	//				}
+	//
+	//				num++;
+	//			}
+	//
+	//			x++;
+	//		}
+	//	}
+
 	private void insertJV_detail(/*pgUpdate db,*/ String rec_no){//used
 
 		int x  = 0;	
@@ -4054,7 +4087,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		pgUpdate db = new pgUpdate();
 
 		while(x < rw ) {	
-			
+
 			String div_id  		= "";
 			String dept_id  		= "";
 
@@ -4091,37 +4124,37 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				else
 				{	
 					String sqlDetail = 
-						"INSERT into rf_jv_detail values (" +
-						"'"+co_id+"',  \n" +  		//1
-						"'"+co_id+"',  \n" +  		//2
-						"'"+jv_no+"',  \n" +  		//3			
-						"1,  \n" +  				//4
-						""+y+",  \n" +  			//5			
-						"'"+acct_id [num]+"',  \n" +//6
-						""+amount[num]+",  \n" +  	//7
-						"'"+bal_side[num]+"',  \n" +//8
-						"'"+rec_no+"',  \n" +		//9
-						"'"+project_id+"',  \n" +  	//10
-						"'"+sub_projectid+"',  \n" +//11		
-						"'"+div_id+"',  \n" +		//12	
-						"'"+dept_id+"',  \n" +		//13		
-						"'',  \n" +		//14		
-						"null,  \n" +  				//15
-						"null,  \n" +  				//16	
-						"null,  \n" +  				//17	
-						"null,  \n" +  				//18 entity_id
-						"null,  \n" +  				//19 pbl_id
-						"null,  \n" +  				//20 seq_no				
-						"'A', " +					//21
-						"'"+UserInfo.EmployeeCode+"',  \n" +  	//22 created_by
-						"now(),  \n" +				//23 date_created			
-						"'',  \n" + 				//24 edited_by
-						"null  \n" + 				//25 date_edited			
-						")   " ;
+							"INSERT into rf_jv_detail values (" +
+									"'"+co_id+"',  \n" +  		//1
+									"'"+co_id+"',  \n" +  		//2
+									"'"+jv_no+"',  \n" +  		//3			
+									"1,  \n" +  				//4
+									""+y+",  \n" +  			//5			
+									"'"+acct_id [num]+"',  \n" +//6
+									""+amount[num]+",  \n" +  	//7
+									"'"+bal_side[num]+"',  \n" +//8
+									"'"+rec_no+"',  \n" +		//9
+									"'"+project_id+"',  \n" +  	//10
+									"'"+sub_projectid+"',  \n" +//11		
+									"'"+div_id+"',  \n" +		//12	
+									"'"+dept_id+"',  \n" +		//13		
+									"'',  \n" +		//14		
+									"null,  \n" +  				//15
+									"null,  \n" +  				//16	
+									"null,  \n" +  				//17	
+									"null,  \n" +  				//18 entity_id
+									"null,  \n" +  				//19 pbl_id
+									"null,  \n" +  				//20 seq_no				
+									"'A', " +					//21
+									"'"+UserInfo.EmployeeCode+"',  \n" +  	//22 created_by
+									"now(),  \n" +				//23 date_created			
+									"'',  \n" + 				//24 edited_by
+									"null  \n" + 				//25 date_edited			
+									")   " ;
 
 					System.out.printf("SQL #1: %s", sqlDetail);
 					db.executeUpdate(sqlDetail, false);				
-					
+
 					y++;
 				}
 				num++;
@@ -4139,7 +4172,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		NumberFormat formatter = new DecimalFormat("#0.00");   
 
 		while(x < rw ) {	
-			
+
 			String div_id  		= "";
 			String dept_id  		= "";
 
@@ -4177,33 +4210,33 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				else
 				{	
 					String sqlDetail = 
-						"INSERT into tmp_jv_detail values (" +
-						"'"+co_id+"',  \n" +  		//1
-						"'"+co_id+"',  \n" +  		//2
-						"'"+jv_no+"',  \n" +  		//3			
-						"1,  \n" +  				//4
-						""+y+",  \n" +  			//5			
-						"'"+acct_id [num]+"',  \n" +//6
-						""+amount[num]+",  \n" +  	//7
-						"'"+bal_side[num]+"',  \n" +//8
-						"'"+rec_no+"',  \n" +		//9
-						"'"+project_id+"',  \n" +  	//10
-						"'"+sub_projectid+"',  \n" +//11		
-						"'"+div_id+"',  \n" +		//12	
-						"'"+dept_id+"',  \n" +		//13		
-						"'',  \n" +		//14		
-						"null,  \n" +  				//15
-						"null,  \n" +  				//16	
-						"null,  \n" +  				//17	
-						"null,  \n" +  				//18 entity_id
-						"null,  \n" +  				//19 pbl_id
-						"null,  \n" +  				//20 seq_no				
-						"'A', " +					//21
-						"'"+UserInfo.EmployeeCode+"',  \n" +  	//22 created_by
-						"now(),  \n" +				//23 date_created			
-						"'',  \n" + 				//24 edited_by
-						"null  \n" + 				//25 date_edited			
-						")   " ;
+							"INSERT into tmp_jv_detail values (" +
+									"'"+co_id+"',  \n" +  		//1
+									"'"+co_id+"',  \n" +  		//2
+									"'"+jv_no+"',  \n" +  		//3			
+									"1,  \n" +  				//4
+									""+y+",  \n" +  			//5			
+									"'"+acct_id [num]+"',  \n" +//6
+									""+amount[num]+",  \n" +  	//7
+									"'"+bal_side[num]+"',  \n" +//8
+									"'"+rec_no+"',  \n" +		//9
+									"'"+project_id+"',  \n" +  	//10
+									"'"+sub_projectid+"',  \n" +//11		
+									"'"+div_id+"',  \n" +		//12	
+									"'"+dept_id+"',  \n" +		//13		
+									"'',  \n" +		//14		
+									"null,  \n" +  				//15
+									"null,  \n" +  				//16	
+									"null,  \n" +  				//17	
+									"null,  \n" +  				//18 entity_id
+									"null,  \n" +  				//19 pbl_id
+									"null,  \n" +  				//20 seq_no				
+									"'A', " +					//21
+									"'"+UserInfo.EmployeeCode+"',  \n" +  	//22 created_by
+									"now(),  \n" +				//23 date_created			
+									"'',  \n" + 				//24 edited_by
+									"null  \n" + 				//25 date_edited			
+									")   " ;
 
 					System.out.printf("SQL #1: %s", sqlDetail);
 					pgUpdate db = new pgUpdate();
@@ -4218,45 +4251,45 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			x++;
 		}
 	}
-	
+
 	private void updateJVTempTable(String emp_code, String co_id, String jv_no) {
-		
+
 		String sql = "update tmp_jv_detail set status_id = 'I' where jv_no = '"+jv_no+"' and co_id = '"+co_id+"' and status_id = 'A' and created_by = '"+emp_code+"'";
-		
+
 		FncSystem.out("Update temp table", sql);
 		pgUpdate db = new pgUpdate();
 		db.executeUpdate(sql, false);
 		db.commit();
-		
+
 	}
-//	
-//	private void insertAudit_trail(String activity, String remarks, pgUpdate db){
-//
-//		String user_code	= UserInfo.EmployeeCode;	
-//
-//		String sqlDetail = 
-//				"INSERT INTO mf_audit_trail(\n" + 
-//				"	              system_id, activity, user_code, date_upd, entity_id, \n" + 
-//				"	              client_seqno, projcode, pbl_id, doc_id, doc_no, remarks)\n" + 
-//				"	      VALUES ('CA', '"+activity+"', '"+user_code+"', NOW(), NULL, \n" + 
-//				"	              NULL, NULL, NULL, NULL, NULL, '"+remarks+"');" ;
-//
-//		System.out.printf("SQL #1: %s", sqlDetail);
-//		db.executeUpdate(sqlDetail, false);		
-//
-//
-//	}
-	
+	//	
+	//	private void insertAudit_trail(String activity, String remarks, pgUpdate db){
+	//
+	//		String user_code	= UserInfo.EmployeeCode;	
+	//
+	//		String sqlDetail = 
+	//				"INSERT INTO mf_audit_trail(\n" + 
+	//				"	              system_id, activity, user_code, date_upd, entity_id, \n" + 
+	//				"	              client_seqno, projcode, pbl_id, doc_id, doc_no, remarks)\n" + 
+	//				"	      VALUES ('CA', '"+activity+"', '"+user_code+"', NOW(), NULL, \n" + 
+	//				"	              NULL, NULL, NULL, NULL, NULL, '"+remarks+"');" ;
+	//
+	//		System.out.printf("SQL #1: %s", sqlDetail);
+	//		db.executeUpdate(sqlDetail, false);		
+	//
+	//
+	//	}
+
 	private void insertAudit_trail(String activity, String remarks/*, pgUpdate db*/){
 
 		String user_code	= UserInfo.EmployeeCode;	
 
 		String sqlDetail = 
 				"INSERT INTO mf_audit_trail(\n" + 
-				"	              system_id, activity, user_code, date_upd, entity_id, \n" + 
-				"	              client_seqno, projcode, pbl_id, doc_id, doc_no, remarks)\n" + 
-				"	      VALUES ('CA', '"+activity+"', '"+user_code+"', NOW(), NULL, \n" + 
-				"	              NULL, NULL, NULL, NULL, NULL, '"+remarks+"');" ;
+						"	              system_id, activity, user_code, date_upd, entity_id, \n" + 
+						"	              client_seqno, projcode, pbl_id, doc_id, doc_no, remarks)\n" + 
+						"	      VALUES ('CA', '"+activity+"', '"+user_code+"', NOW(), NULL, \n" + 
+						"	              NULL, NULL, NULL, NULL, NULL, '"+remarks+"');" ;
 
 		System.out.printf("SQL #1: %s", sqlDetail);
 		pgUpdate db = new pgUpdate();
@@ -4266,28 +4299,28 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 	}
 
-//	private void updateLiq_header(String rec_no, pgUpdate db){//used
-//
-//		String remarks		= "";	
-//		String edited_by	= "";	
-//
-//		remarks		= txtDV_particular.getText().trim().replace("'", "''");	
-//		edited_by	= UserInfo.EmployeeCode;			
-//
-//		String sqlDetail = 
-//			"update rf_liq_header set " +
-//			"co_id = '"+co_id+"',  \n" +  		//1
-//			"busunit_id = '"+co_id+"',  \n" +	//2		
-//			"liq_date = '"+dateFormat.format(dteLiqui.getDate())+"',  \n" +	//4
-//			"remarks = '"+remarks+"' , \n" +		//9
-//			"edited_by = '"+edited_by+"' , \n" +	//10
-//			"date_edited = now() \n" +		//11				
-//			"where liq_no = '"+rec_no+"' and co_id = '"+co_id+"'   " ;
-//
-//		System.out.printf("SQL #1: %s", sqlDetail);
-//		db.executeUpdate(sqlDetail, false);		
-//	}
-	
+	//	private void updateLiq_header(String rec_no, pgUpdate db){//used
+	//
+	//		String remarks		= "";	
+	//		String edited_by	= "";	
+	//
+	//		remarks		= txtDV_particular.getText().trim().replace("'", "''");	
+	//		edited_by	= UserInfo.EmployeeCode;			
+	//
+	//		String sqlDetail = 
+	//			"update rf_liq_header set " +
+	//			"co_id = '"+co_id+"',  \n" +  		//1
+	//			"busunit_id = '"+co_id+"',  \n" +	//2		
+	//			"liq_date = '"+dateFormat.format(dteLiqui.getDate())+"',  \n" +	//4
+	//			"remarks = '"+remarks+"' , \n" +		//9
+	//			"edited_by = '"+edited_by+"' , \n" +	//10
+	//			"date_edited = now() \n" +		//11				
+	//			"where liq_no = '"+rec_no+"' and co_id = '"+co_id+"'   " ;
+	//
+	//		System.out.printf("SQL #1: %s", sqlDetail);
+	//		db.executeUpdate(sqlDetail, false);		
+	//	}
+
 	private void updateLiq_header(String rec_no, String remarks){//used
 
 		//String remarks		= "";/*COMMENTED BY JED : FOR AUTO RPLF IF THE LIQ NO IS EDITED*/	
@@ -4297,80 +4330,80 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		edited_by	= UserInfo.EmployeeCode;			
 
 		String sqlDetail = 
-			"update rf_liq_header set " +
-			"co_id = '"+co_id+"',  \n" +  		//1
-			"busunit_id = '"+co_id+"',  \n" +	//2		
-			"liq_date = '"+dateFormat.format(dteLiqui.getDate())+"',  \n" +	//4
-			"remarks = '"+remarks+"' , \n" +		//9
-			"edited_by = '"+edited_by+"' , \n" +	//10
-			"date_edited = now() \n" +		//11				
-			"where liq_no = '"+rec_no+"' and co_id = '"+co_id+"'   " ;
+				"update rf_liq_header set " +
+						"co_id = '"+co_id+"',  \n" +  		//1
+						"busunit_id = '"+co_id+"',  \n" +	//2		
+						"liq_date = '"+dateFormat.format(dteLiqui.getDate())+"',  \n" +	//4
+						"remarks = '"+remarks+"' , \n" +		//9
+						"edited_by = '"+edited_by+"' , \n" +	//10
+						"date_edited = now() \n" +		//11				
+						"where liq_no = '"+rec_no+"' and co_id = '"+co_id+"'   " ;
 
 		System.out.printf("SQL #1: %s", sqlDetail);
 		pgUpdate db = new pgUpdate();
 		db.executeUpdate(sqlDetail, false);	
 		db.commit();
 	}
-	
-//	private void updateLiq_header(String rec_no){
-//
-//		String edited_by	= UserInfo.EmployeeCode;			
-//
-//		String sqlDetail = 
-//			"update rf_liq_header set " +
-//			"status_id = 'I', \n" +
-//			"edited_by = '"+edited_by+"' , \n" +	//10
-//			"date_edited = now() \n" +		//11				
-//			"where liq_no = '"+rec_no+"' and co_id = '"+co_id+"'   " ;
-//
-//		System.out.printf("SQL #1: %s", sqlDetail);
-//		pgUpdate db = new pgUpdate();
-//		db.executeUpdate(sqlDetail, false);	
-//		db.commit();
-//	}
-	
+
+	//	private void updateLiq_header(String rec_no){
+	//
+	//		String edited_by	= UserInfo.EmployeeCode;			
+	//
+	//		String sqlDetail = 
+	//			"update rf_liq_header set " +
+	//			"status_id = 'I', \n" +
+	//			"edited_by = '"+edited_by+"' , \n" +	//10
+	//			"date_edited = now() \n" +		//11				
+	//			"where liq_no = '"+rec_no+"' and co_id = '"+co_id+"'   " ;
+	//
+	//		System.out.printf("SQL #1: %s", sqlDetail);
+	//		pgUpdate db = new pgUpdate();
+	//		db.executeUpdate(sqlDetail, false);	
+	//		db.commit();
+	//	}
+
 	private void updateJVHeader(String jv_no, String remarks) {
-		
+
 		String year = lookupGL_year.getText();
 		String period = lookupPeriod.getText();
-		
+
 		String sqlDetail = "UPDATE rf_jv_header\n" + 
 				"SET co_id='"+co_id+"', busunit_id='"+co_id+"', jv_date='"+dateFormat.format(dteLiqui.getDate())+"', fiscal_yr='"+year+"', period_id='"+period+"', remarks='"+ remarks+"'\n" +
 				"WHERE jv_no = '"+jv_no+"' and co_id = '"+co_id+"' and status_id = 'A'";
-		
+
 		System.out.printf("SQL #1: %s", sqlDetail);
 		pgUpdate db = new pgUpdate();
 		db.executeUpdate(sqlDetail, false);
 		db.commit();
-		
-	}
-	
-//	private void updateJVHeader(String jv_no) {
-//
-//		String sqlDetail = "UPDATE rf_jv_header\n" + 
-//				"SET status_id = 'I'\n" +
-//				"WHERE jv_no = '"+jv_no+"' and co_id = '"+co_id+"' and status_id = 'A'";
-//		
-//		System.out.printf("SQL #1: %s", sqlDetail);
-//		pgUpdate db = new pgUpdate();
-//		db.executeUpdate(sqlDetail, false);
-//		db.commit();
-//		
-//	}
 
-//	private void updateLiq_detail(String rec_no, pgUpdate db) {//used
-//
-//		String sqlDetail = 
-//			"update rf_liq_detail set status_id = 'I' where trim(liq_no) = '"+rec_no+"' and co_id = '"+co_id+"'   " ;
-//
-//		System.out.printf("SQL #1: %s", sqlDetail);
-//		db.executeUpdate(sqlDetail, false);	
-//	}
-	
+	}
+
+	//	private void updateJVHeader(String jv_no) {
+	//
+	//		String sqlDetail = "UPDATE rf_jv_header\n" + 
+	//				"SET status_id = 'I'\n" +
+	//				"WHERE jv_no = '"+jv_no+"' and co_id = '"+co_id+"' and status_id = 'A'";
+	//		
+	//		System.out.printf("SQL #1: %s", sqlDetail);
+	//		pgUpdate db = new pgUpdate();
+	//		db.executeUpdate(sqlDetail, false);
+	//		db.commit();
+	//		
+	//	}
+
+	//	private void updateLiq_detail(String rec_no, pgUpdate db) {//used
+	//
+	//		String sqlDetail = 
+	//			"update rf_liq_detail set status_id = 'I' where trim(liq_no) = '"+rec_no+"' and co_id = '"+co_id+"'   " ;
+	//
+	//		System.out.printf("SQL #1: %s", sqlDetail);
+	//		db.executeUpdate(sqlDetail, false);	
+	//	}
+
 	private void updateLiq_detail(String rec_no) {//used
 
 		String sqlDetail = 
-			"update rf_liq_detail set status_id = 'I' where trim(liq_no) = '"+rec_no+"' and co_id = '"+co_id+"'   " ;
+				"update rf_liq_detail set status_id = 'I' where trim(liq_no) = '"+rec_no+"' and co_id = '"+co_id+"'   " ;
 
 		System.out.printf("SQL #1: %s", sqlDetail);
 		pgUpdate db = new pgUpdate();
@@ -4378,32 +4411,32 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		db.commit();
 	}
 
-//	private void updateJV_detail(String rec_no, pgUpdate db) {//used
-//
-//		String sqlDetail = 
-//			"update rf_jv_detail set status_id = 'I' " +
-//			"where trim(jv_no) = '"+rec_no+"' and trim(co_id) = '"+co_id+"' " +
-//			"and status_id = 'A' " ;
-//
-//		db.executeUpdate(sqlDetail, false);	
-//		//Added by Erick 2019-05-23 DCRF 997 
-//		String strsql = 
-//				"update rf_subsidiary_ledger set status_id = 'I' " +
-//						"where trim(jv_no) = '"+jv_no+"' " +
-//						"and status_id = 'A' " ;
-//
-//			db.executeUpdate(strsql, false);
-//
-//	}
-	
+	//	private void updateJV_detail(String rec_no, pgUpdate db) {//used
+	//
+	//		String sqlDetail = 
+	//			"update rf_jv_detail set status_id = 'I' " +
+	//			"where trim(jv_no) = '"+rec_no+"' and trim(co_id) = '"+co_id+"' " +
+	//			"and status_id = 'A' " ;
+	//
+	//		db.executeUpdate(sqlDetail, false);	
+	//		//Added by Erick 2019-05-23 DCRF 997 
+	//		String strsql = 
+	//				"update rf_subsidiary_ledger set status_id = 'I' " +
+	//						"where trim(jv_no) = '"+jv_no+"' " +
+	//						"and status_id = 'A' " ;
+	//
+	//			db.executeUpdate(strsql, false);
+	//
+	//	}
+
 	private void updateJV_detail(String rec_no) {//used
-		
+
 		pgUpdate db = new pgUpdate();
 
 		String sqlDetail = 
-			"update rf_jv_detail set status_id = 'I' " +
-			"where trim(jv_no) = '"+rec_no+"' and trim(co_id) = '"+co_id+"' " +
-			"and status_id = 'A' " ;
+				"update rf_jv_detail set status_id = 'I' " +
+						"where trim(jv_no) = '"+rec_no+"' and trim(co_id) = '"+co_id+"' " +
+						"and status_id = 'A' " ;
 
 		db.executeUpdate(sqlDetail, false);	
 		//Added by Erick 2019-05-23 DCRF 997 
@@ -4412,8 +4445,8 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 						"where trim(jv_no) = '"+jv_no+"' and TRIM(co_id) = '"+co_id+"' " +
 						"and status_id = 'A' " ;
 
-			db.executeUpdate(strsql, false);
-			
+		db.executeUpdate(strsql, false);
+
 		db.commit();
 
 	}
@@ -4431,7 +4464,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			if (modelLiq_part.getValueAt(x,16)==null)  {} else {ref_doc_date= modelLiq_part.getValueAt(x,16).toString().trim();}
 
 			String sqlDetail = 
-				"update rf_liq_detail set status_id = 'A', " ;
+					"update rf_liq_detail set status_id = 'A', " ;
 
 			if (modelLiq_part.getValueAt(x,12)==null||modelLiq_part.getValueAt(x,12).equals(""))
 			{sqlDetail = sqlDetail + "entity_id = '',  "; } //entity_id
@@ -4453,9 +4486,9 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			else {sqlDetail = sqlDetail + "ref_doc_date = '"+ref_doc_date+"'  \n"  ; } 	
 
 			sqlDetail = sqlDetail +				
-			"where liq_no = '"+rec_no+"' \n" +
-			"and rplf_line_no = "+line_no+" \n" +
-			"and status_id = 'A'  " ;
+					"where liq_no = '"+rec_no+"' \n" +
+					"and rplf_line_no = "+line_no+" \n" +
+					"and status_id = 'A'  " ;
 
 			System.out.printf("SQL #1: %s", sqlDetail);
 
@@ -4470,11 +4503,11 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		String tagged_by	= UserInfo.EmployeeCode;			
 
 		String sqlDetail = 
-			"update rf_liq_header set " +
-			"status_id = 'G',  \n" +  		//1		
-			"tagged_by = '"+tagged_by+"' , \n" +	//10
-			"date_tagged = now() \n" +		//11				
-			"where liq_no = '"+lookupLiqNo.getText().trim()+"' and co_id = '"+co_id+"'   " ;
+				"update rf_liq_header set " +
+						"status_id = 'G',  \n" +  		//1		
+						"tagged_by = '"+tagged_by+"' , \n" +	//10
+						"date_tagged = now() \n" +		//11				
+						"where liq_no = '"+lookupLiqNo.getText().trim()+"' and co_id = '"+co_id+"'   " ;
 
 		System.out.printf("SQL #1: %s", sqlDetail);
 		db.executeUpdate(sqlDetail, false);	
@@ -4485,28 +4518,28 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		String tagged_by	= UserInfo.EmployeeCode;			
 
 		String sqlDetail = 
-			"update rf_liq_header set " +
-			"status_id = 'D',  \n" +  		//1		
-			"deleted_by = '"+tagged_by+"' , \n" +	//10
-			"deleted_date = now() \n" +		//11				
-			"where liq_no = '"+liq_no+"' and co_id = '"+co_id+"'   " ;
+				"update rf_liq_header set " +
+						"status_id = 'D',  \n" +  		//1		
+						"deleted_by = '"+tagged_by+"' , \n" +	//10
+						"deleted_date = now() \n" +		//11				
+						"where liq_no = '"+liq_no+"' and co_id = '"+co_id+"'   " ;
 
 		System.out.printf("SQL #1: %s", sqlDetail);
 		db.executeUpdate(sqlDetail, false);	
 
 		String sqlDetail2 = 
-			"update rf_jv_header set " +
-			"status_id = 'D'  \n" +  		//1		
-			//"deleted_by = '"+tagged_by+"' , \n" +	//10
-			//"date_deleted = '"+Calendar.getInstance().getTime()+"' \n" +		//11				
-			"where jv_no = '"+jv_no+"' and co_id = '"+co_id+"'   " ;
+				"update rf_jv_header set " +
+						"status_id = 'D'  \n" +  		//1		
+						//"deleted_by = '"+tagged_by+"' , \n" +	//10
+						//"date_deleted = '"+Calendar.getInstance().getTime()+"' \n" +		//11				
+						"where jv_no = '"+jv_no+"' and co_id = '"+co_id+"'   " ;
 
 		System.out.printf("SQL #1: %s", sqlDetail2);
 		db.executeUpdate(sqlDetail2, false);	
 	}
-	
+
 	private void updateRPLF_header(String rplf_no, Double refund_amt) {
-	
+
 		String entity_id1	= "";
 		String ent_type_id 	= "";	
 		String remarks		= "";	
@@ -4517,9 +4550,9 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		ent_type_id = "02"; //02-Employee
 		if (refund_amt>2000) {pay_type	= "B";} else {pay_type	= "A";}				
 		remarks		= //"Auto-reimbursement from liquidation. \n" + "Liquidation No. : " + next_liq_no + "\n" +
-						"JV No. : " + jv_no + "\n" + getRequestParticular().replace("'", "''");		
+				"JV No. : " + jv_no + "\n" + getRequestParticular().replace("'", "''");		
 		edited_by	= UserInfo.EmployeeCode;	
-		
+
 		String sql = "UPDATE public.rf_request_header\n" + 
 				"	SET co_id = '"+co_id+"', \n" + 
 				"	busunit_id = '"+co_id+"', \n" + 
@@ -4533,21 +4566,21 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				"	date_edited = now(), \n" +
 				"	pay_type_id = '"+pay_type+"' \n" +	
 				"WHERE rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"'";
-		
+
 		FncSystem.out("Update rf_request_header", sql);
 		pgUpdate db = new pgUpdate();
 		db.executeUpdate(sql, false);
 		db.commit();
 
 	}
-	
+
 	private void updateRPLF_detail(String rplf_no, Double refund_amt) {
-		
+
 		int rw = tblLiq_part.getModel().getRowCount();
 		int x = 0;
-		
+
 		while (x < rw) {
-			
+
 			String entity_id = "";
 			String entity_type_id = "";
 			String proj_id		= "";
@@ -4556,10 +4589,10 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			String dept_id		= "";
 			String wtax_id		= "";
 			String edited_by = "";
-			
+
 			Double exp_amount	= 0.00;	
 			Double pv_amount	= 0.00;	
-			
+
 			try { entity_id	= getRequestAvailerID(); } catch (NullPointerException e) { entity_id	= ""; }
 			try { entity_type_id = "02"; } catch (NullPointerException e) { entity_type_id	= ""; }
 			try { proj_id	= modelLiq_part.getValueAt(x,6).toString().trim();} catch (NullPointerException e) { proj_id	= ""; }
@@ -4570,9 +4603,9 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			try { wtax_id	= modelLiq_part.getValueAt(x,22).toString().trim();	} catch (NullPointerException e) { wtax_id	= ""; }	
 			try { exp_amount	= Double.parseDouble(modelLiq_part.getValueAt(x,11).toString()); } catch (NullPointerException e) { exp_amount	= 0.00; }	
 			try { pv_amount		= Double.parseDouble(modelLiq_part.getValueAt(x,11).toString()); } catch (NullPointerException e) { pv_amount	= 0.00; }	
-			
+
 			edited_by	= UserInfo.EmployeeCode;
-			
+
 			String sql = "UPDATE public.rf_request_detail\n" + 
 					"	SET co_id = '"+co_id+"', \n" + 
 					"	busunit_id = '"+co_id+"', \n" +  
@@ -4589,12 +4622,12 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 					"	edited_by = '"+edited_by+"', \n" + 
 					"	date_edited = now() \n" +
 					"WHERE rplf_no = '"+rplf_no+"' and status_id = 'A' and co_id = '"+co_id+"'";
-			
+
 			FncSystem.out("Update rf_request_detail", sql);
 			pgUpdate db = new pgUpdate();
 			db.executeUpdate(sql, false);
 			db.commit();
-			
+
 			x++;
 		}
 
@@ -4631,37 +4664,37 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		branch_id	= null;	
 		justif		= "";
 		remarks		= //"Auto-reimbursement from liquidation. \n" + "Liquidation No. : " + next_liq_no + "\n" +
-						"JV No. : " + jv_no + "\n" + getRequestParticular().replace("'", "''");	
+				"JV No. : " + jv_no + "\n" + getRequestParticular().replace("'", "''");	
 		status_id	= "A";	
 		created_by	= UserInfo.EmployeeCode;	
 		edited_by	= "";	
 		edited_date	= null;		
 
 		String sqlDetail = 
-			"INSERT into rf_request_header values (" +
-			"'"+co_id+"',  \n" +  		//1
-			"'"+co_id+"',  \n" +		//2
-			"'"+rplf_no+"',  \n" +		//3
-			"now(),  \n" +	//4
-			"'"+dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL()))+"',  \n" +  //5
-			""+date_liq_ext+",  \n" + 	//6
-			"'"+rplf_type_id+"' , \n" +	//7
-			"'"+entity_id1+"',  \n" +	//8
-			"'"+entity_id1+"',  \n" +	//9
-			"'"+ent_type_id+"',  \n" +	//10
-			""+sd_no+",  \n" +			//11
-			"'"+doc_id+"' , \n" +		//12
-			""+proc_id+",  \n" +		//13
-			""+branch_id+" , \n" +		//14
-			"'"+justif+"',  \n" +			//15
-			"'"+remarks+"' , \n" +		//16
-			"'"+status_id+"' , \n" +	//17
-			"'"+created_by+"',  \n" +	//18
-			"now(),  \n" +				//19
-			"'"+edited_by+"' , \n" +	//20
-			""+edited_date+",  \n" +	//21	
-			"'"+pay_type+"'  \n" +		//22
-			")   " ;
+				"INSERT into rf_request_header values (" +
+						"'"+co_id+"',  \n" +  		//1
+						"'"+co_id+"',  \n" +		//2
+						"'"+rplf_no+"',  \n" +		//3
+						"now(),  \n" +	//4
+						"'"+dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL()))+"',  \n" +  //5
+						""+date_liq_ext+",  \n" + 	//6
+						"'"+rplf_type_id+"' , \n" +	//7
+						"'"+entity_id1+"',  \n" +	//8
+						"'"+entity_id1+"',  \n" +	//9
+						"'"+ent_type_id+"',  \n" +	//10
+						""+sd_no+",  \n" +			//11
+						"'"+doc_id+"' , \n" +		//12
+						""+proc_id+",  \n" +		//13
+						""+branch_id+" , \n" +		//14
+						"'"+justif+"',  \n" +			//15
+						"'"+remarks+"' , \n" +		//16
+						"'"+status_id+"' , \n" +	//17
+						"'"+created_by+"',  \n" +	//18
+						"now(),  \n" +				//19
+						"'"+edited_by+"' , \n" +	//20
+						""+edited_date+",  \n" +	//21	
+						"'"+pay_type+"'  \n" +		//22
+						")   " ;
 
 		System.out.printf("SQL #1: %s", sqlDetail);
 		pgUpdate db = new pgUpdate();
@@ -4670,7 +4703,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 
 	}
-	
+
 	private void insertRPLF_detail(/*pgUpdate db*/ String rplf_no, String liq_no){		
 
 		int rw = tblLiq_part.getModel().getRowCount();	
@@ -4742,56 +4775,56 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				Double vat_amount	= 0.00;	
 				Double exp_amount	= 0.00;	
 				Double pv_amount	= 0.00;	
-			
+
 				try { exp_amount	= Double.parseDouble(modelLiq_part.getValueAt(x,11).toString()); } catch (NullPointerException e) { exp_amount	= 0.00; }	
 				try { pv_amount		= Double.parseDouble(modelLiq_part.getValueAt(x,11).toString()); } catch (NullPointerException e) { pv_amount	= 0.00; }		
-				
+
 
 				String sqlDetail = 
-					"INSERT into rf_request_detail values (" +
-					"'"+co_id+"',  \n" +  		//1
-					"'"+co_id+"',  \n" +		//2
-					"'"+rplf_no+"',  \n" +		//3
-					""+y+",  \n" +				//4
-					"'"+ref_doc_id+"',  \n" + 	//5					
-					"'"+ref_doc_no+"',  \n" ; 	//6				
+						"INSERT into rf_request_detail values (" +
+								"'"+co_id+"',  \n" +  		//1
+								"'"+co_id+"',  \n" +		//2
+								"'"+rplf_no+"',  \n" +		//3
+								""+y+",  \n" +				//4
+								"'"+ref_doc_id+"',  \n" + 	//5					
+								"'"+ref_doc_no+"',  \n" ; 	//6				
 				if (modelLiq_part.getValueAt(x,16)==null) {sqlDetail = sqlDetail + "null,";} else {sqlDetail = sqlDetail + "'"+ref_doc_date+"',  \n"  ; } //7					
 				sqlDetail = sqlDetail +					
-				""+with_budget+" , \n" +	//8
-				"'"+part_desc+"',  \n" +	//9
-				"'"+acct_id+"',  \n" +		//10
-				"'"+remarks+"',  \n" +		//11	
-				""+amount+",  \n" +			//12
-				"'"+entity_id+"',  \n" +	//13			
-				"'"+entity_type_id+"' , \n" +	//14	
-				"'"+proj_id+"',  \n" +		//15			
-				"'"+subproj_id+"',  \n" +	//16
-				"'"+div_id+"',  \n" +		//17
-				"'"+dept_id+"' , \n" +		//18
-				"'',  \n" +		//19	
-				"'"+inter_bus_id+"' , \n" +	//20
-				"'"+inter_co_id+"' , \n" +	//21
-				""+isprojVatable+" , \n" +	//22
-				""+entityVatable+" , \n" +	//23
-				""+istaxPaidbyco+" , \n" +	//24
-				"false, \n" +				//25
-				"'"+wtax_id+"' , \n" +		//26
-				""+wtax_rate+", \n" +		//27
-				""+wtax_amount+", \n" +		//28
-				"null, \n" +				//29
-				""+vat_rate+", \n" +		//30
-				""+vat_amount+", \n" +		//31
-				""+exp_amount+", \n" +		//32		
-				""+pv_amount+", \n" +		//33
-				""+sd_no+", \n" +			//34	
-				"'', \n" +					//35
-				""+asset_no+", \n" +		//36
-				""+old_acct_id+"," +		//37	
-				"'A',   \n"  +				//38
-				"'"+UserInfo.EmployeeCode+"',  \n" +	//39
-				"'"+dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL()))+"',  \n" +	//40
-				"'' , \n" +					//41
-				"null  \n" +				//42	
+						""+with_budget+" , \n" +	//8
+						"'"+part_desc+"',  \n" +	//9
+						"'"+acct_id+"',  \n" +		//10
+						"'"+remarks+"',  \n" +		//11	
+						""+amount+",  \n" +			//12
+						"'"+entity_id+"',  \n" +	//13			
+						"'"+entity_type_id+"' , \n" +	//14	
+						"'"+proj_id+"',  \n" +		//15			
+						"'"+subproj_id+"',  \n" +	//16
+						"'"+div_id+"',  \n" +		//17
+						"'"+dept_id+"' , \n" +		//18
+						"'',  \n" +		//19	
+						"'"+inter_bus_id+"' , \n" +	//20
+						"'"+inter_co_id+"' , \n" +	//21
+						""+isprojVatable+" , \n" +	//22
+						""+entityVatable+" , \n" +	//23
+						""+istaxPaidbyco+" , \n" +	//24
+						"false, \n" +				//25
+						"'"+wtax_id+"' , \n" +		//26
+						""+wtax_rate+", \n" +		//27
+						""+wtax_amount+", \n" +		//28
+						"null, \n" +				//29
+						""+vat_rate+", \n" +		//30
+						""+vat_amount+", \n" +		//31
+						""+exp_amount+", \n" +		//32		
+						""+pv_amount+", \n" +		//33
+						""+sd_no+", \n" +			//34	
+						"'', \n" +					//35
+						""+asset_no+", \n" +		//36
+						""+old_acct_id+"," +		//37	
+						"'A',   \n"  +				//38
+						"'"+UserInfo.EmployeeCode+"',  \n" +	//39
+						"'"+dateFormat.format(FncGlobal.dateFormat(FncGlobal.getDateSQL()))+"',  \n" +	//40
+						"'' , \n" +					//41
+						"null  \n" +				//42	
 
 				")   " ;
 
@@ -4807,45 +4840,45 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		}
 
 	}
-	
+
 	private String getParticular_n_ReceiptNos(){
-		
+
 		/*EDITED BY JED 2021-03-22 : AVOID DOUBLE REMARKS IN JV*/
-		
+
 		/*String particular = "";
 		String rec_type = "";
 		String rec_no = "";	
 		String remarks = "";	
 		Integer r = tblLiq_part.getRowCount();
 		Integer s = 0;
-		
+
 		while (s<r)
 		{
 			try { particular = modelLiq_part.getValueAt(s,1).toString().trim(); } catch (NullPointerException e) { particular = ""; }
 			try { rec_type = modelLiq_part.getValueAt(s,14).toString().trim(); } catch (NullPointerException e) { rec_type = ""; }
 			try { rec_no = modelLiq_part.getValueAt(s,15).toString().trim(); } catch (NullPointerException e) { rec_no = ""; }
-			
+
 			if (rec_type.equals("")){}
 			else 
 			{
 				remarks = remarks + " " + particular + "-" + getReceiptTypeAlias(rec_type) + ": " + rec_no + "; " + "\n "  ;
 			}
-			
+
 			s++;
 		}
-		
+
 		remarks = remarks + "\n " + getPV_remarks();*/
-		
+
 		String remarks = getPV_remarks();
-		
+
 		return remarks;
 	}
-	
-	
-	
+
+
+
 	//others
 	private Object [] getMonthYear() {//used		
-		
+
 		//String liq_no = lookupLiqNo.getValue();
 
 		DateFormat df 	 = new SimpleDateFormat("yyyy-dd-MM");					
@@ -4881,7 +4914,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		/*next_seqno  = sql_getNextJV_seqno();
 		Integer last_seq_no = sql_getLastJV_seqno();*/
 		Integer next_srlno	= sql_getNextJV_srlno(fiscal_yr_full, period_id );  
-		
+
 		/*COMMENTED BY JED VICEDO 2021-05-24 : CHANGE GENERATION OF JV NUMBER INSIDE FUNCTION*/
 		//jv_no = getJVno(fiscal_yr,period_id,next_srlno);
 		jv_no = getJVno_v2(fiscal_yr_full, co_id, Integer.parseInt(period_id));
@@ -4892,15 +4925,15 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 		Integer next_no = 0;
 		String SQL = 
-			"select coalesce(max(jv_no),0) + 1 from \r\n" + 
-			"(" +
-			"select substring(jv_no, 5)::int as jv_no \r\n" + 
-			"  from rf_jv_header \r\n" + 
-			"  where fiscal_yr = "+jv_fiscal_yr+" \r\n" + 
-			"  and co_id = '"+co_id+"'	\r\n" + 
-			"  and (select right(left(jv_no, 4), 2)) = '"+period_id+"' \r\n" + 
-			"  order by substring(jv_no, 5)::int desc  ) a";	
-		
+				"select coalesce(max(jv_no),0) + 1 from \r\n" + 
+						"(" +
+						"select substring(jv_no, 5)::int as jv_no \r\n" + 
+						"  from rf_jv_header \r\n" + 
+						"  where fiscal_yr = "+jv_fiscal_yr+" \r\n" + 
+						"  and co_id = '"+co_id+"'	\r\n" + 
+						"  and (select right(left(jv_no, 4), 2)) = '"+period_id+"' \r\n" + 
+						"  order by substring(jv_no, 5)::int desc  ) a";	
+
 		//select trim(to_char(max(coalesce(rplf_no::int,0))+1,'000000000')) from rf_request_header where co_id = '"+co_id+"' " ;
 
 		pgSelect db = new pgSelect();
@@ -4953,11 +4986,11 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 
 	}
-	
+
 	private String getJVno_v2(Integer fiscal_yr, String co_id, Integer period_id){//used
 		String SQL = 
 				"select  fn_get_jv_no("+fiscal_yr+", '"+co_id+"', "+period_id+") as next_jvno" ;
-		
+
 		FncSystem.out("Get JV No", SQL);
 		pgSelect db = new pgSelect();
 		db.select(SQL);
@@ -4994,7 +5027,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 	}
 
-		
+
 	@SuppressWarnings("static-access")
 	private void openDRF(){
 
@@ -5039,7 +5072,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			}
 		}		
 	}
-	
+
 	@SuppressWarnings("static-access")
 	private void openPV(){
 
@@ -5086,14 +5119,14 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				String part_desc;
 				String particulars = "";
 				//COMMENTED BY LESTER 2023-05-25 FOR REPEAT DISPLAY OF REMARKS
-				
-//				while (w<=line_count){	
-//					part_desc = PayableVoucher.getDRF_particulars(w, pv_no).toString().trim();
-//					particulars = ""+particulars+"  "+part_desc+"  \n" ;
-//
-//					w++; 
-//				}
-//				PayableVoucher.txtDRFRemark.setText(particulars);	
+
+				//				while (w<=line_count){	
+				//					part_desc = PayableVoucher.getDRF_particulars(w, pv_no).toString().trim();
+				//					particulars = ""+particulars+"  "+part_desc+"  \n" ;
+				//
+				//					w++; 
+				//				}
+				//				PayableVoucher.txtDRFRemark.setText(particulars);	
 
 				if (PayableVoucher.getPV_status(pv_no).equals("P")&&PayableVoucher.lookupPV_no.isEnabled()) 
 				{
@@ -5180,7 +5213,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		}
 
 	}
-	
+
 	@SuppressWarnings("static-access")
 	private static void openJV(){
 
@@ -5222,13 +5255,13 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				JournalVoucher.setJV_header(jv_no);
 				JournalVoucher.displayJV_details(JournalVoucher.modelJV_account, JournalVoucher.rowHeaderJV_account, JournalVoucher.modelJV_accounttotal, jv_no );								
 				JournalVoucher.displayJV_subsidiaryledgers(JournalVoucher.modelJV_SL, JournalVoucher.rowHeaderJV_SL, JournalVoucher.modelJV_SL_total, jv_no );
-				
+
 				JournalVoucher.mnidelete.setEnabled(false);
 				JournalVoucher.mniaddrow.setEnabled(false);
 
-			
+
 			}
-/*			else {
+			/*			else {
 
 				JournalVoucher.refresh_fields();							
 
@@ -5273,7 +5306,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 		}		
 	}
-	
+
 	@SuppressWarnings("static-access")
 	private void open2307(){
 
@@ -5308,9 +5341,9 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			EWT_Remittance.cmbYear.setEnabled(true);
 			EWT_Remittance.cmbPeriod.setEnabled(true);
 			EWT_Remittance.cmbMonth.setEnabled(true);
-					
+
 			/*String entity_id = modelLiq_part.getValueAt(0,12).toString().trim();
-			
+
 			EWT_2307.lookupPayee.setText(entity_id);
 			EWT_2307.tagPayee.setTag(sql_getPayeeName(entity_id));*/
 			EWT_Remittance.cmbYear.setEnabled(false);
@@ -5321,7 +5354,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 	}
 
-	
+
 	//key listener
 	@Override
 	public void keyPressed(KeyEvent arg0) { }
@@ -5356,44 +5389,44 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	}
 	public static String getEntityList(){//**EDITED BY JED 2022-01-26 DCRF NO. 1930 : INCLUDE TIN NO. IN LOOKUP FOR REPORTING PURPOSES**//
 
-//		String sql = 
-//				"select " +
-//						"trim(entity_id) as \"Entity ID\",  \n" +
-//						"trim(entity_name) as \"Name\",  \n" +
-//						"entity_kind as \"Kind\",  \n" +
-//						"vat_registered as \"VAT\"  \n" +
-//						"from rf_entity where status_id = 'A' \n" +
-//						//"(select entity_id, entity_name, entity_kind, vat_registered from rf_entity where vat_registered = true )) a \n" +
-//						"order by entity_name  ";		
-//		return sql;
-		
+		//		String sql = 
+		//				"select " +
+		//						"trim(entity_id) as \"Entity ID\",  \n" +
+		//						"trim(entity_name) as \"Name\",  \n" +
+		//						"entity_kind as \"Kind\",  \n" +
+		//						"vat_registered as \"VAT\"  \n" +
+		//						"from rf_entity where status_id = 'A' \n" +
+		//						//"(select entity_id, entity_name, entity_kind, vat_registered from rf_entity where vat_registered = true )) a \n" +
+		//						"order by entity_name  ";		
+		//		return sql;
+
 		String sql =
 				"select\n" + 
-				"trim(a.entity_id) as \"Entity ID\",\n" + 
-				"trim(\n" + 
-				"	case\n" + 
-				"			when b.tin_no = '' or b.tin_no is null then ''\n" + 
-				"			else\n" + 
-				"					(\n" + 
-				"						concat (		\n" + 
-				"									substr(trim(replace(b.tin_no,'-','')), 1, 3), '-',\n" + 
-				"									substr(trim(replace(b.tin_no,'-','')), 4, 3), '-',\n" + 
-				"									substr(trim(replace(b.tin_no,'-','')), 7, 3), '-',\n" + 
-				"									substr(trim(replace(b.tin_no,'-','')), 10, 3),\n" + 
-				"									(case \n" + 
-				"										when substr(trim(replace(b.tin_no,'-','')), 10, 3) = '' or substr(trim(replace(b.tin_no,'-','')), 10, 3) is null  then '000' else '' end)\n" + 
-				"								)\n" + 
-				"					) end\n" + 
-				")as \"TIN\",\n" + 
-				"trim(a.entity_name) as \"Name\",\n" + 
-				"a.entity_kind as \"Kind\",\n" + 
-				"a.vat_registered as \"VAT\"\n" + 
-				"from rf_entity a\n" + 
-				"left join rf_entity_id_no b on a.entity_id = b.entity_id\n" + 
-				"where a.status_id = 'A'\n" + 
-				"--(select entity_id, entity_name, entity_kind, vat_registered from rf_entity where vat_registered = true )) a \n" + 
-				"order by entity_name";
-		
+						"trim(a.entity_id) as \"Entity ID\",\n" + 
+						"trim(\n" + 
+						"	case\n" + 
+						"			when b.tin_no = '' or b.tin_no is null then ''\n" + 
+						"			else\n" + 
+						"					(\n" + 
+						"						concat (		\n" + 
+						"									substr(trim(replace(b.tin_no,'-','')), 1, 3), '-',\n" + 
+						"									substr(trim(replace(b.tin_no,'-','')), 4, 3), '-',\n" + 
+						"									substr(trim(replace(b.tin_no,'-','')), 7, 3), '-',\n" + 
+						"									substr(trim(replace(b.tin_no,'-','')), 10, 3),\n" + 
+						"									(case \n" + 
+						"										when substr(trim(replace(b.tin_no,'-','')), 10, 3) = '' or substr(trim(replace(b.tin_no,'-','')), 10, 3) is null  then '000' else '' end)\n" + 
+						"								)\n" + 
+						"					) end\n" + 
+						")as \"TIN\",\n" + 
+						"trim(a.entity_name) as \"Name\",\n" + 
+						"a.entity_kind as \"Kind\",\n" + 
+						"a.vat_registered as \"VAT\"\n" + 
+						"from rf_entity a\n" + 
+						"left join rf_entity_id_no b on a.entity_id = b.entity_id\n" + 
+						"where a.status_id = 'A'\n" + 
+						"--(select entity_id, entity_name, entity_kind, vat_registered from rf_entity where vat_registered = true )) a \n" + 
+						"order by entity_name";
+
 		return sql;
 
 	}
@@ -5408,13 +5441,13 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		return sql;*/
 		String sql =
 				"select \n" + 
-				"				c.wtax_id as \"WTax ID\",\n" + 
-				"				trim(wtax_desc) as \"Description\",\n" + 
-				"				c.wtax_rate as \"Rate (%)\",\n" + 
-				"				c.wtax_bir_code as \"Code\"\n" + 
-				"				from (select * from rf_entity_assigned_type where trim(entity_id) =  '"+entity_id+"' and status_id = 'A' ) a\n" + 
-				"				left join mf_entity_type b on a.entity_type_id = b.entity_type_id\n" + 
-				"				left join rf_withholding_tax c on b.wtax_id = c.wtax_id   "  ;
+						"				c.wtax_id as \"WTax ID\",\n" + 
+						"				trim(wtax_desc) as \"Description\",\n" + 
+						"				c.wtax_rate as \"Rate (%)\",\n" + 
+						"				c.wtax_bir_code as \"Code\"\n" + 
+						"				from (select * from rf_entity_assigned_type where trim(entity_id) =  '"+entity_id+"' and status_id = 'A' ) a\n" + 
+						"				left join mf_entity_type b on a.entity_type_id = b.entity_type_id\n" + 
+						"				left join rf_withholding_tax c on b.wtax_id = c.wtax_id   "  ;
 		return sql;
 
 	}
@@ -5433,19 +5466,19 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 			listCode[2] = listSelectedDivision.toString().replaceAll("\\[|\\]", "").replace(", ", "-");
 			tagDetail.setText(String.format("[Div: %s - Dep: %s - Proj: %s - Availer: %s]", listCode));
 		} else {*/
-			//listCode[2] = null;
-			Object[] newListCode = new Object[5];
-			newListCode[0] = listCode[0];
-			newListCode[1] = listCode[1];
-			newListCode[2] = listCode[2];
-			newListCode[3] = listCode[3];
-			newListCode[4] = listCode[4];
+		//listCode[2] = null;
+		Object[] newListCode = new Object[5];
+		newListCode[0] = listCode[0];
+		newListCode[1] = listCode[1];
+		newListCode[2] = listCode[2];
+		newListCode[3] = listCode[3];
+		newListCode[4] = listCode[4];
 
-			tagDetail.setText(String.format("[ Div: %s - Dep: %s - Proj: %s - Sub: %s - Availer: %s ]", newListCode));
+		tagDetail.setText(String.format("[ Div: %s - Dep: %s - Proj: %s - Sub: %s - Availer: %s ]", newListCode));
 		//}
 	}
 	private void generateDetail(Integer lineno) {
-		
+
 		System.out.println("Dumaan dito sa generateDetail");
 		Object[] listCode = new Object[5];
 		int row = tblLiq_part.convertRowIndexToModel(tblLiq_part.getSelectedRow());
@@ -5463,19 +5496,19 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		newListCode[3] = listCode[3];
 		newListCode[4] = listCode[4];
 
-			tagDetail.setText(String.format("[ Div: %s - Dep: %s - Proj: %s - Sub: %s - Availer: %s ]", newListCode));
+		tagDetail.setText(String.format("[ Div: %s - Dep: %s - Proj: %s - Sub: %s - Availer: %s ]", newListCode));
 	}
 	private static Boolean isYearMonthOpen(String year, String month){
 
 		Boolean isOpen = false;		
 
 		String SQL = 
-			"select\r\n" + 
-			"\r\n" + 
-			"(case when status_id = 'A' then true else false end) as open \r\n" + 
-			"from mf_acctg_period\r\n" + 
-			"where period_year = '"+year+"'  " +
-			"and month_code = '"+month+"' " ;
+				"select\r\n" + 
+						"\r\n" + 
+						"(case when status_id = 'A' then true else false end) as open \r\n" + 
+						"from mf_acctg_period\r\n" + 
+						"where period_year = '"+year+"'  " +
+						"and month_code = '"+month+"' " ;
 
 		System.out.printf("SQL #1: %s", SQL);
 		pgSelect db = new pgSelect();
@@ -5508,22 +5541,22 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 	}
 	private static String getPeriod(){//Used
 		return 
-		"select '01' as \"ID\", 'JANUARY' as \"Period Name\" union all "  +
-		"select '02' as \"ID\", 'FEBRUARY' as \"Period Name\" union all "  +
-		"select '03' as \"ID\", 'MARCH' as \"Period Name\" union all "  +
-		"select '04' as \"ID\", 'APRIL' as \"Period Name\" union all "  +
-		"select '05' as \"ID\", 'MAY' as \"Period Name\" union all "  +
-		"select '06' as \"ID\", 'JUNE' as \"Period Name\" union all "  +
-		"select '07' as \"ID\", 'JULY' as \"Period Name\" union all "  +
-		"select '08' as \"ID\", 'AUGUST' as \"Period Name\" union all "  +
-		"select '09' as \"ID\", 'SEPTEMBER' as \"Period Name\" union all "  +
-		"select '10' as \"ID\", 'OCTOBER' as \"Period Name\" union all "  +
-		"select '11' as \"ID\", 'NOVEMBER' as \"Period Name\" union all "  +
-		"select '12' as \"ID\", 'DECEMBER' as \"Period Name\" union all "  +
-		"select '13' as \"ID\", '13TH MONTH' as \"Period Name\" union all "  +
-		"select '14' as \"ID\", '14TH MONTH' as \"Period Name\" union all "  +
-		"select '15' as \"ID\", '15TH MONTH' as \"Period Name\" union all "  +
-		"select '99' as \"ID\", 'CLOSING PERIOD' as \"Period Name\"  "  ;
+				"select '01' as \"ID\", 'JANUARY' as \"Period Name\" union all "  +
+				"select '02' as \"ID\", 'FEBRUARY' as \"Period Name\" union all "  +
+				"select '03' as \"ID\", 'MARCH' as \"Period Name\" union all "  +
+				"select '04' as \"ID\", 'APRIL' as \"Period Name\" union all "  +
+				"select '05' as \"ID\", 'MAY' as \"Period Name\" union all "  +
+				"select '06' as \"ID\", 'JUNE' as \"Period Name\" union all "  +
+				"select '07' as \"ID\", 'JULY' as \"Period Name\" union all "  +
+				"select '08' as \"ID\", 'AUGUST' as \"Period Name\" union all "  +
+				"select '09' as \"ID\", 'SEPTEMBER' as \"Period Name\" union all "  +
+				"select '10' as \"ID\", 'OCTOBER' as \"Period Name\" union all "  +
+				"select '11' as \"ID\", 'NOVEMBER' as \"Period Name\" union all "  +
+				"select '12' as \"ID\", 'DECEMBER' as \"Period Name\" union all "  +
+				"select '13' as \"ID\", '13TH MONTH' as \"Period Name\" union all "  +
+				"select '14' as \"ID\", '14TH MONTH' as \"Period Name\" union all "  +
+				"select '15' as \"ID\", '15TH MONTH' as \"Period Name\" union all "  +
+				"select '99' as \"ID\", 'CLOSING PERIOD' as \"Period Name\"  "  ;
 
 	}
 }

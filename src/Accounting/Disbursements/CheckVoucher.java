@@ -577,7 +577,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 						pnlDVDtl_1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
 						{
-							pnlDVDtl_1a = new JPanel(new GridLayout(5, 1, 0, 5));
+							pnlDVDtl_1a = new JPanel(new GridLayout(4, 1, 0, 5));
 							pnlDVDtl_1.add(pnlDVDtl_1a, BorderLayout.WEST);
 							pnlDVDtl_1a.setPreferredSize(new java.awt.Dimension(110, 116));
 							pnlDVDtl_1a.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));

@@ -694,7 +694,7 @@ public class DocumentTransmittalOptions extends _JInternalFrame implements Actio
 			FncSystem.out("Doc Status", lookupDescription.getValue()); 
 
 			if (UserInfo.Department.equals("04") || UserInfo.Department.equals("98") || UserInfo.Department.equals("95")) {
-				mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
+				//mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
 				FncReport.generateReport("/Reports/rptTCT_Stat.jasper", "Transmittal Form", mapParameters);
 			} else {
 				if (lookupDescription.getValue().equals("185")) {
@@ -729,7 +729,7 @@ public class DocumentTransmittalOptions extends _JInternalFrame implements Actio
 				FncReport.generateReport("/Reports/rptTCT_Stat_228_229.jasper", "Transmittal Form", mapParameters);	
 				}
 					else {
-				mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
+				//mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
 				FncReport.generateReport("/Reports/rptTCT.jasper", "Transmittal Form", mapParameters);
 				}
 			}

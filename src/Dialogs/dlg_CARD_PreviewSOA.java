@@ -37,6 +37,7 @@ import javax.swing.event.ChangeListener;
 import org.jdesktop.swingx.JXFormattedTextField;
 
 import Buyers.ClientServicing._CARD;
+import Database.pgSelect;
 import FormattedTextField._JXFormattedTextField;
 import Functions.FncReport;
 import Functions.UserInfo;
@@ -470,7 +471,12 @@ public class dlg_CARD_PreviewSOA extends JDialog implements ActionListener, _GUI
 			this.setFocusableWindowState(false);
 			
 			if (SOA_BOI_Accnts) {
-				FncReport.generateReport("/Reports/rptStatementOfAccount_boi.jasper", "Statement of Account", mapSOA);
+				if(isITSREAL_SOA(entity_id, proj_id, pbl_id, seq_no)) {
+					FncReport.generateReport("/Reports/rptStatementOfAccount_itsreal_boi.jasper", "Statement of Account", mapSOA);
+				}else {
+					FncReport.generateReport("/Reports/rptStatementOfAccount_boi.jasper", "Statement of Account", mapSOA);
+				}
+				
 			} else {
 				FncReport.generateReport("/Reports/rptStatementOfAccount.jasper", "Statement of Account", mapSOA);
 			}
@@ -496,6 +502,15 @@ public class dlg_CARD_PreviewSOA extends JDialog implements ActionListener, _GUI
 				}
 			}*/
 		}
+	}
+	
+	private boolean isITSREAL_SOA(String entity_id, String proj_id, String pbl_id, Integer seq_no) {
+		pgSelect db = new pgSelect();
+		String SQL = "SELECT EXISTS (SELECT * FROM rf_itsreal_bir_soa where entity_id = '"+entity_id+"' and proj_id = '"+proj_id+"' and pbl_id = '"+pbl_id+"' and seq_no = "+seq_no+" and status_id = 'A')";
+		db.select(SQL);
+		
+		return (boolean) db.getResult()[0][0];
+	
 	}
 
 }

@@ -269,7 +269,7 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 	public void add(){
 		
 		System.out.println("Welcome");
-		lookupCode.setEnabled(true);
+		lookupCode.setEnabled(false);
 		cmbStatusType.setEnabled(true);
 		txtStatusDesc.setEditable(true);
 		txtStatusAlias.setEditable(true);
@@ -282,8 +282,24 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 		cmbStatusType.setEnabled(true);
 		txtStatusDesc.setEditable(true);
 		txtStatusAlias.setEditable(true);
+		lookupCode.setEnabled(false);
 	    btnState(false, false, true, true);
 	    
+	}
+	
+	private void cancel() {
+		
+		btnState(true, false, false, false);
+		cmbStatusType.setSelectedItem("");
+		txtStatusDesc.setText("");
+		txtStatusAlias.setText("");	
+		lookupCode.setValue("");
+		cmbStatusType.setEnabled(false);
+		txtStatusDesc.setEditable(false);
+		txtStatusAlias.setEditable(false);
+		lookupCode.setEnabled(true);
+		grpNewEdit.clearSelection();
+		toDo = "";
 	}
 	
 	private void saving(){
@@ -349,7 +365,7 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 			db.executeUpdate(query, true);
 			System.out.println("UPDATE SQL: "+query);
 		}
-		JOptionPane.showMessageDialog(getContentPane(),"New TCT Status/Location was updated.","Information",JOptionPane.INFORMATION_MESSAGE);
+
 		db.commit();
 	}
 
@@ -364,6 +380,7 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 		if(actionCommand.equals("Add")){
 			grpNewEdit.setSelectedButton(e);
 			add();
+			toDo = "add";
 		}
 		
 		if(actionCommand.equals("Edit")){
@@ -388,32 +405,15 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 			if(toDo.equals("edit")){
 				
 				update();
-				btnSave.setEnabled(false);
-				btnCancel.setEnabled(false);
-				btnAdd.setEnabled(true);
-				cmbStatusType.setSelectedItem("");
-				txtStatusDesc.setText("");
-				txtStatusAlias.setText("");	
-				cmbStatusType.setEnabled(false);
-				txtStatusDesc.setEditable(false);
-				txtStatusAlias.setEditable(false);	
-				grpNewEdit.clearSelection();
+				JOptionPane.showMessageDialog(getContentPane(),"New TCT Status/Location was updated.","Information",JOptionPane.INFORMATION_MESSAGE);
+				cancel();
 			}
 			
 			else {
 				
 				saving();
 				JOptionPane.showMessageDialog(getContentPane(),"New TCT Status/Location was added.","Information",JOptionPane.INFORMATION_MESSAGE);
-				btnSave.setEnabled(false);
-				btnCancel.setEnabled(false);
-				btnAdd.setEnabled(true);
-				cmbStatusType.setSelectedItem("");
-				txtStatusDesc.setText("");
-				txtStatusAlias.setText("");		
-				cmbStatusType.setEnabled(false);
-				txtStatusDesc.setEditable(false);
-				txtStatusAlias.setEditable(false);	
-				grpNewEdit.clearSelection();
+				cancel();
 				
 			}	
 		}
@@ -421,19 +421,8 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 		
 		if(actionCommand.equals("Cancel")){
 			if (JOptionPane.showConfirmDialog(this.getTopLevelAncestor(), "Are you sure to cancel?", actionCommand, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
-//				clearROP();
-//				loadComponents();
-				cmbStatusType.setSelectedItem(null);
-				txtStatusDesc.setText("");
-				txtStatusAlias.setText("");
-				
-				btnSave.setEnabled(false);
-				btnAdd.setEnabled(true);
-				btnCancel.setEnabled(false);
-				cmbStatusType.setEnabled(false);
-				txtStatusDesc.setEditable(false);
-				txtStatusAlias.setEditable(false);
-				grpNewEdit.clearSelection();
+				cancel();
+
 			}
 		}
 	

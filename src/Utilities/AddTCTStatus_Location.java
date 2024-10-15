@@ -1,5 +1,9 @@
 package Utilities;
 
+/**
+ * @author Allei Anne Beltran
+ */
+
 import interfaces._GUI;
 
 import java.awt.BorderLayout;
@@ -287,7 +291,7 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 		pgUpdate db = new pgUpdate();
 		
 		//String code = (String) lookupCode.getValue();
-		String description = (String) txtStatusDesc.getText();
+		String description = (String) txtStatusDesc.getText().replace("'", "''");
 		String alias = (String) txtStatusAlias.getText();
 		String status_type = "";
 		if(cmbStatusType.getSelectedIndex()==0) {
@@ -327,7 +331,7 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 		pgUpdate db = new pgUpdate();
 
 		String code = (String) lookupCode.getValue();
-		String description = (String) txtStatusDesc.getText();
+		String description = (String) txtStatusDesc.getText().replace("'", "''");
 		String alias = (String) txtStatusAlias.getText();
 		String status_type = "";
 		if(cmbStatusType.getSelectedIndex()==0) {
@@ -372,6 +376,14 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 		
 		if(actionCommand.equals("Save")) {
 			
+			if(txtStatusDesc.getText().equals("")){
+				JOptionPane.showMessageDialog(getContentPane(), "Error,Please input Status Description","Error",JOptionPane.ERROR_MESSAGE);
+			}
+			
+			else if(JOptionPane.showConfirmDialog(getContentPane(),"Are you sure you want to save it?", "Save", 
+					JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION) {
+					
+			
 			
 			if(toDo.equals("edit")){
 				
@@ -381,7 +393,11 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 				btnAdd.setEnabled(true);
 				cmbStatusType.setSelectedItem("");
 				txtStatusDesc.setText("");
-				txtStatusAlias.setText("");		
+				txtStatusAlias.setText("");	
+				cmbStatusType.setEnabled(false);
+				txtStatusDesc.setEditable(false);
+				txtStatusAlias.setEditable(false);	
+				grpNewEdit.clearSelection();
 			}
 			
 			else {
@@ -394,10 +410,13 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 				cmbStatusType.setSelectedItem("");
 				txtStatusDesc.setText("");
 				txtStatusAlias.setText("");		
-				cmbStatusType.setEditable(false);
+				cmbStatusType.setEnabled(false);
 				txtStatusDesc.setEditable(false);
 				txtStatusAlias.setEditable(false);	
+				grpNewEdit.clearSelection();
+				
 			}	
+		}
 	}
 		
 		if(actionCommand.equals("Cancel")){
@@ -411,7 +430,10 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 				btnSave.setEnabled(false);
 				btnAdd.setEnabled(true);
 				btnCancel.setEnabled(false);
-				
+				cmbStatusType.setEnabled(false);
+				txtStatusDesc.setEditable(false);
+				txtStatusAlias.setEditable(false);
+				grpNewEdit.clearSelection();
 			}
 		}
 	

@@ -171,6 +171,7 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 									displayStatusData(status_code);
 									btnEdit.setEnabled(true);
 									btnAdd.setEnabled(false);
+									btnCancel.setEnabled(true);
 									txtStatusDesc.setEditable(false);
 									txtStatusAlias.setEditable(false);	
 						
@@ -445,7 +446,7 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 		
 		String status_type = "";
 	
-		String SQL = "SELECT status_desc, status_alias, status_type FROM mf_tct_taxdec_status where status_code = ('"+status_code+"')";
+		String SQL = "SELECT status_desc, status_alias, status_type FROM mf_tct_taxdec_status where TRIM(status_code) = ('"+status_code+"') and status_id = 'A'" ;
 		db.select(SQL);
 		
 		FncSystem.out("Display Status Code", SQL);

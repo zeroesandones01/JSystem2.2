@@ -4,52 +4,26 @@ import interfaces._GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.KeyboardFocusManager;
-import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.OverlayLayout;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
-import org.jdesktop.swingx.JXTextField;
 
-import Buyers.ClientServicing._RefundofPayment;
 import Database.pgSelect;
 import Database.pgUpdate;
-import DateChooser._JDateChooser;
-import Functions.FncFocusTraversalPolicy;
-import Functions.FncGlobal;
-import Functions.FncReport;
 import Functions.FncSystem;
-import Functions.FncTables;
 import Functions.UserInfo;
 import Lookup.LookupEvent;
 import Lookup.LookupListener;
@@ -68,68 +42,39 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 	Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
 	private JXPanel pnlMain;
-
-	private JXLabel lblStatusType;
-	private JTextField txtCompany;
-	
 	private JXPanel pnlSouth;
-	
 	private JXPanel pnlNorth;
-
 	private JXPanel pnlNorthWest;
-
 	private JComboBox cmbStatusType;
-
 	private JPanel pnlNWLabel;
 
 	private JXPanel pnlNorthCenter;
 	private JXPanel pnlNWCenter;
 
 	private JPanel pnlNorthEast;
-
 	private JPanel pnlNELabel;
-
 	private JPanel pnlNECenter;
-
-	private _JXTextField txtStatID;
-
 	private JXPanel pnlCenter;
-
-
 	private JPanel pnlNCLabel;
-
 	private JXLabel lblStatusAlias;
-
-	private JXLabel lblStatusName;
-
 	private JPanel pnlNCenter;
-
-	private _JXTextField txtStatusName;
 	private _JXTextField txtStatusAlias;
 
-	
-	
 	private _ButtonGroup grpNewEdit = new _ButtonGroup();
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnSave;
 	private JButton btnCancel;
-
-	private JPanel pnlNELookup;
-
-	private _JLookup lookupID;
 	
-	String to_do 	= "";
+	private String toDo = "";
+	
+	private _JLookup lookupCode;
+	private JXLabel lblStatusDesc;
+	private _JXTextField txtStatusDesc;
+	private String status_code;
+
 
 	
-
-	
-
-
-
-
-
-
 	public AddTCTStatus_Location() {
 		super(title, false, true, true, true);
 		initGUI();
@@ -189,60 +134,47 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 					pnlNorthEast = new JPanel(new BorderLayout(5, 5));
 					pnlNorth.add(pnlNorthEast);
 					{
-						
-						pnlNELookup = new JPanel(new GridLayout(1, 1, 3, 3));
-						pnlNorthEast.add(pnlNELookup, BorderLayout.WEST);
+						pnlNELabel = new JPanel(new GridLayout(1, 1, 3, 3));
+						pnlNorthEast.add(pnlNELabel, BorderLayout.WEST);
 						{
-							lookupID = new _JLookup(null, "Status ID");
-							pnlNELookup.add(lookupID, BorderLayout.WEST);
-							//lookupID.setPreferredSize(new Dimension(200, 20));
-							lookupID.setReturnColumn(1);
-							lookupID.setFilterName(true);
-							lookupID.addActionListener(this);
-							lookupID.setEnabled(false);
-							lookupID.addLookupListener(new LookupListener() {
-								public void lookupPerformed(LookupEvent event) {
-									Object[] data = ((_JLookup) event.getSource()).getDataSet();
-									
-										if (data != null) {
-										
-										rec_id = (Integer) data[13];
-										
-										txtDescription.setText(String.format("%s", data[2]));
-										txtAlias.setText(String.format("%s", data[3]));
-										txtAmt.setValue(data[4]);
-										cmbClass.setSelectedItem(String.format("%s", data[6]));
-										lookupAcctID.setValue(String.format("%s", data[5]));
-										lookupRefundAcct.setValue(String.format("%s", data[14]));
-										lookupPayee.setValue(String.format("%s", data[7]));
-										lookupPayeeType.setValue(String.format("%s", data[8]));
-										cmbRefundable.setSelectedItem(String.format("%s", data[9]));
-										if (data[11] != null){
-											txtRemarks.setText(String.format("%s", data[10]));
-										} else {
-											txtRemarks.setText(" ");
-										}
-										cmbStatus.setSelectedItem(String.format("%s", data[0]));
-										lblPayee.setText(String.format("[ %s ]", data[11]));
-										lblPayeeType.setText(String.format("[ %s ]", data[12]));
-										
-										btnEdit.setEnabled(true);
-								
-										KEYBOARD_MANAGER.focusNextComponent();
-									}
-								}
-							});
-						}
-					}
-					{
-						pnlNECenter = new JPanel(new GridLayout(1, 1, 3, 3));
-						pnlNorthEast.add(pnlNECenter, BorderLayout.CENTER);
-						{
-							txtStatID = new _JXTextField("Status ID");
-							pnlNECenter.add(txtStatID);
+							JLabel lblStatusId = new JLabel("Status Code");
+							pnlNELabel.add(lblStatusId);
 						}
 					}
 				}
+				{
+						pnlNECenter = new JXPanel(new GridLayout(1, 1, 3, 3));
+						pnlNorthEast.add(pnlNECenter, BorderLayout.CENTER);
+						{
+							lookupCode = new _JLookup(null, "Status Code");
+							pnlNECenter.add(lookupCode);
+							lookupCode.setReturnColumn(0);
+							lookupCode.setFilterName(true);
+							lookupCode.setEnabled(true);
+							lookupCode.setLookupSQL(getStatusCode()); 
+							lookupCode.addLookupListener(new LookupListener() {
+								
+								@Override
+								public void lookupPerformed(LookupEvent event) {
+									Object [] data = ((_JLookup) event.getSource()).getDataSet(); 
+									
+									if(data != null) {
+									
+									status_code = (String) data[0];
+									
+									}
+									
+									displayStatusData(status_code);
+									btnEdit.setEnabled(true);
+									btnAdd.setEnabled(false);
+									txtStatusDesc.setEditable(false);
+									txtStatusAlias.setEditable(false);	
+						
+								}
+							});
+				
+						}
+					}
 			}
 			{
 				 pnlCenter = new JXPanel(new BorderLayout(5, 5));
@@ -255,8 +187,8 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 						pnlNCLabel = new JPanel(new GridLayout(2, 2, 3, 3));
 						pnlNorthCenter.add(pnlNCLabel, BorderLayout.WEST);
 						{
-							lblStatusName = new JXLabel("Status Name");
-							pnlNCLabel.add(lblStatusName);
+							lblStatusDesc = new JXLabel("Status Description");
+							pnlNCLabel.add(lblStatusDesc);
 						}
 						{
 						    lblStatusAlias = new JXLabel("Status Alias");
@@ -268,8 +200,8 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 					pnlNCenter = new JPanel(new GridLayout(2, 2, 3, 3));
 					pnlNorthCenter.add(pnlNCenter, BorderLayout.CENTER);
 					{
-							txtStatusName = new _JXTextField("Status Name");
-							pnlNCenter.add(txtStatusName);
+							txtStatusDesc = new _JXTextField("Status Description");
+							pnlNCenter.add(txtStatusDesc);
 					}
 					{
 							txtStatusAlias = new _JXTextField("Status Alias");
@@ -300,6 +232,8 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 					btnEdit.setMnemonic(KeyEvent.VK_E);
 					btnEdit.addActionListener(this);
 					grpNewEdit.add(btnEdit);
+					
+					
 				}
 				{
 					btnSave = new JButton("Save");
@@ -331,55 +265,98 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 	public void add(){
 		
 		System.out.println("Welcome");
+		lookupCode.setEnabled(true);
 		cmbStatusType.setEnabled(true);
-		txtStatusName.setEditable(true);
+		txtStatusDesc.setEditable(true);
 		txtStatusAlias.setEditable(true);
 		btnState(false, false, true, true);
 	}
 	
 	private void edit(){
 		
+		
 		cmbStatusType.setEnabled(true);
-		txtStatusName.setEditable(true);
+		txtStatusDesc.setEditable(true);
 		txtStatusAlias.setEditable(true);
-		btnState(false, false, true, true);
-
-	private void save() {
-
-		if (JOptionPane.showConfirmDialog(getContentPane(), "Are all entries correct?", "Confirmation", 
-			JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-
-			pgUpdate db = new pgUpdate();	
-
-			if (to_do.equals("Add")) 
-			{
-				saving();
-				JOptionPane.showMessageDialog(getContentPane(),"New TCT Status/Location was added.","Information",JOptionPane.INFORMATION_MESSAGE);
-				cancel();
-
-			} 
-
-			else if (to_do.equals("edit"))
-			{				
-				//updatePCost(db); 
-				updatePCost();
-				//db.commit();				
-				JOptionPane.showMessageDialog(getContentPane(),"PCost/TCost ID was successfully updated.","Information",JOptionPane.INFORMATION_MESSAGE);
-				cancel();
-				}			
-			}
-
-			else {}	
-
-
-
+	    btnState(false, false, true, true);
+	    
+	}
+	
+	private void saving(){
+		
+		pgUpdate db = new pgUpdate();
+		
+		//String code = (String) lookupCode.getValue();
+		String description = (String) txtStatusDesc.getText();
+		String alias = (String) txtStatusAlias.getText();
+		String status_type = "";
+		if(cmbStatusType.getSelectedIndex()==0) {
+			status_type = "S";
+		}
+		else 
+		{ 
+			status_type = "L";
+		}
+		{
+			String query = "INSERT INTO public.mf_tct_taxdec_status (status_code, status_desc, status_alias, status_id, created_by, date_created,status_type)"+
+			"VALUES ((Select max(getinteger(status_code))+1 from mf_tct_taxdec_status where status_id = 'A'),"+
+			 "'"+description+"','"+alias+"','A','"+UserInfo.EmployeeCode+"',now(),'"+status_type+"')";
+			
+			db.executeUpdate(query, true);
+		}
+		db.commit();
 		
 	}
+			
+//		{
+////			String query = "INSERT INTO mf_holidays (rec_id,holidays,holiday_desc,holiday_type,halfday,created_by,holiday_otcode,date_created) "+
+////					"VALUES ((SELECT COALESCE(max(rec_id), 0)+1 from mf_holidays),"+  
+////					"'"+dateVal+"','"+textVal+"', '"+comboVal+"','"+checkVal+"','"+UserInfo.EmployeeCode+"','00','"+FncGlobal.getDateToday()+"')";
+////			db.executeUpdate(query, true);
+//			
+//			String SQL = "SELECT sp_save_holiday( '"+dateVal+"','"+textVal+"', '"+comboVal+"', "+checkVal+", '"+UserInfo.EmployeeCode+"')";
+//			db.select(SQL, "Save", true);
+//
+//		}
+//	}
+	
+	
+	
+	private void update(){
+
+		pgUpdate db = new pgUpdate();
+
+		String code = (String) lookupCode.getValue();
+		String description = (String) txtStatusDesc.getText();
+		String alias = (String) txtStatusAlias.getText();
+		String status_type = "";
+		if(cmbStatusType.getSelectedIndex()==0) {
+			status_type = "S";
+		}
+		else 
+		{ 
+			status_type = "L";
+		}
+		{
+			String query = "UPDATE public.mf_tct_taxdec_status \n"+
+					"SET status_desc= '"+description+"', status_alias= '"+alias+"', edited_by= '"+UserInfo.EmployeeCode+"', date_edited= now(), status_type= '"+status_type+"' \n"+
+					"WHERE status_code= '"+code+"';";
+
+			db.executeUpdate(query, true);
+			System.out.println("UPDATE SQL: "+query);
+		}
+		JOptionPane.showMessageDialog(getContentPane(),"New TCT Status/Location was updated.","Information",JOptionPane.INFORMATION_MESSAGE);
+		db.commit();
+	}
+
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
-		System.out.println("Welcome");
+		
+		System.out.println("ACTION COMMAND");
+
+	
 		if(actionCommand.equals("Add")){
 			grpNewEdit.setSelectedButton(e);
 			add();
@@ -388,25 +365,95 @@ public class AddTCTStatus_Location extends _JInternalFrame implements _GUI, Acti
 		if(actionCommand.equals("Edit")){
 			grpNewEdit.setSelectedButton(e);
 			edit();
+			toDo = "edit";
 		}
+		
+		System.out.println("Eto Value ng ToDo: "+toDo);
+		
+		if(actionCommand.equals("Save")) {
+			
+			
+			if(toDo.equals("edit")){
+				
+				update();
+				btnSave.setEnabled(false);
+				btnCancel.setEnabled(false);
+				btnAdd.setEnabled(true);
+				cmbStatusType.setSelectedItem("");
+				txtStatusDesc.setText("");
+				txtStatusAlias.setText("");		
+			}
+			
+			else {
+				
+				saving();
+				JOptionPane.showMessageDialog(getContentPane(),"New TCT Status/Location was added.","Information",JOptionPane.INFORMATION_MESSAGE);
+				btnSave.setEnabled(false);
+				btnCancel.setEnabled(false);
+				btnAdd.setEnabled(true);
+				cmbStatusType.setSelectedItem("");
+				txtStatusDesc.setText("");
+				txtStatusAlias.setText("");		
+				cmbStatusType.setEditable(false);
+				txtStatusDesc.setEditable(false);
+				txtStatusAlias.setEditable(false);	
+			}	
+	}
+		
+		if(actionCommand.equals("Cancel")){
+			if (JOptionPane.showConfirmDialog(this.getTopLevelAncestor(), "Are you sure to cancel?", actionCommand, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+//				clearROP();
+//				loadComponents();
+				cmbStatusType.setSelectedItem(null);
+				txtStatusDesc.setText("");
+				txtStatusAlias.setText("");
+				
+				btnSave.setEnabled(false);
+				btnAdd.setEnabled(true);
+				btnCancel.setEnabled(false);
+				
+			}
+		}
+	
 	}
 	
-	private void saving(){
+	public static String getStatusCode() { //XXX TODO
+		String SQL = "SELECT distinct ON(getinteger(status_code)) TRIM(status_code) as \"ID\"\n"
+				+ ", TRIM(status_desc) as \"Description\", \n"
+				+ "TRIM(status_alias)::VARCHAR as \"Alias\"\n"
+				+ "FROM mf_tct_taxdec_status \n"
+				+ "WHERE status_id = 'A' \n"
+				+ "order by getinteger(status_code) ";
 		
-		String status_type = (String) cmbStatusType.getSelectedItem();
-		String id = (String) lookupID.getValue();
-		String description = (String) txtStatusName.getText();
-		String alias = (String) txtStatusAlias.getText();
+		return SQL; 
 		
 	}
-}
+	
+	public void displayStatusData(String status_code){
+		pgSelect db = new pgSelect();
+		
+		String status_type = "";
+	
+		String SQL = "SELECT status_desc, status_alias, status_type FROM mf_tct_taxdec_status where status_code = ('"+status_code+"')";
+		db.select(SQL);
+		
+		FncSystem.out("Display Status Code", SQL);
+		
+		if(db.isNotNull()){
+		txtStatusDesc.setText((String) db.getResult()[0][0]);
+		txtStatusAlias.setText((String) db.getResult()[0][1]);
+		status_type = (String) db.getResult()[0][2]; 
+		}
+		
+		if(status_type.equals("S")) {
+			cmbStatusType.setSelectedIndex(0);
+		} else {
+			cmbStatusType.setSelectedIndex(1);
+		}
+		
+	}
 
-				
-				
-				
-					
-				
-				
+}
 				
 				
 				

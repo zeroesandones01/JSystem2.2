@@ -497,6 +497,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 							generateDetail();
 							displayLiq_particulars(modelLiq_part, rowHeaderLiq_part, modelLiq_part_total, liq_no );
 							tagDetail.setText(null);
+							lookupCompany.setEnabled(false);
 
 							String status = txtStatus.getText().trim();
 
@@ -1766,6 +1767,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 				enableButtons(true, false, false, false, false, false, false, false, false );
 				modelLiq_part.setEditable(false, false);
 			}}
+		lookupCompany.setEnabled(true);
 		tagDetail.setText(null);
 	}
 
@@ -1833,6 +1835,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 
 		JOptionPane.showMessageDialog(getContentPane(),"Data refreshed.","Information",JOptionPane.INFORMATION_MESSAGE);
 
+		lookupCompany.setEnabled(true);
 		tagDetail.setText(null);
 
 

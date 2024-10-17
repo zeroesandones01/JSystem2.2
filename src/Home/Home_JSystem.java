@@ -487,6 +487,7 @@ import Utilities.FAD_process_admin;
 import Utilities.Generate_Water_Disconnection;
 import Utilities.ImportHouseAccomplishments_V2;
 import Utilities.InactivateAssets;
+import Utilities.ItsReal_SOA_BIR;
 import Utilities.LoanReleasedDetails;
 import Utilities.LoanReleasedFirstRemittance;
 import Utilities.Meeting_Place;
@@ -6698,6 +6699,18 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									}
 								});
 							}
+
+							JMenuItem menuItsReal_SOA_BIR = new JMenuItem("Its Real SOA BIR");
+							menuUtilitiesClientServicing.add(menuItsReal_SOA_BIR);
+							menuItsReal_SOA_BIR.addActionListener(new ActionListener() {
+								public void actionPerformed(ActionEvent e) {
+									if (isNotExisting("ItsReal_SOA_BIR")) {
+										ItsReal_SOA_BIR sb = new ItsReal_SOA_BIR();
+										addWindow(sb, e);
+									}
+								}
+							});
+						
 						}
 						{
 							JMenu menuUtilitieLoansAndReceivable = new JMenu("Loans And Receivable");

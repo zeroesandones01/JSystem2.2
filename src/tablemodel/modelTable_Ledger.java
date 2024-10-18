@@ -51,47 +51,38 @@ package tablemodel;
 		}
 
 		String[] COLUMNS = new String[] {
-				"Actual Date", // 0
-				"Trans. Date", // 1
-				"Sched Date", // 1
-				"Amt. Paid", // 2
-				"UPICO", // 3
-				"Proc. Fee", // 4
-				"RPT", //
-				"RES",
-				"DP",
+				"Actual Pmt Date", // 0
+				"Payment Due Date", // 1
+				"Receipt No.", // 2
+				"Amt. Paid", // 3
+				"Other Fees", // 4
+				"Reservation",
+				"Downpayment",
 				"MRI",
 				"FIRE",
 				"VAT",
 				"SOI",
 				"SOP",
-				"Penalty", 
-				"CBP",
-				"Adjustment",
+				"Res DP/Penalty", 
 				"Int.",
 				"PRIN",
 				"Bal",
 		};
 
 		Class[] CLASS_TYPES = new Class[] {
-				Timestamp.class, // Actual Date
-				Timestamp.class, // Trans. Date
-				Timestamp.class, // Sched Date
+				Timestamp.class, // Actual Pmt Date
+				Timestamp.class, // Payment Due Date
+				String.class, // Receipt No.
 				BigDecimal.class, // Amount Paid
-				BigDecimal.class, // UPICO
 				BigDecimal.class, // Proc. Fee
-				BigDecimal.class, //RPT
 				BigDecimal.class, // RES
 				BigDecimal.class, // DP
 				BigDecimal.class, // MRI
 				BigDecimal.class, // FIRE
-				//BigDecimal.class, // MAF
 				BigDecimal.class, // VAT
 				BigDecimal.class, // SOI
 				BigDecimal.class, // SOP
 				BigDecimal.class, //Penalty
-				BigDecimal.class, // CBP
-				BigDecimal.class, // Adjustment
 				BigDecimal.class, // Interest
 				BigDecimal.class, // Principal
 				BigDecimal.class, // Balance

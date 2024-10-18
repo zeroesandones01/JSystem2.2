@@ -291,8 +291,6 @@ package Utilities;
 					}
 				}
 			}
-
-
 		}
 
 		private void displayValueLedger(DefaultTableModel model,String entity_id,String proj_id,String pbl_id,Integer seq_no) {
@@ -301,10 +299,8 @@ package Utilities;
 			DefaultListModel listModel = new DefaultListModel();
 			rowLedger.setModel(listModel);
 
-			if(lookupClient.getValue().equals("5810522222")) {
 				String sql = "SELECT * \n" +
-						"FROM view_card_ledger_v2('"+ entity_id+"', '"+ proj_id +"', '"+ pbl_id +"', "+ seq_no +", false) \n" +
-						"ORDER BY c_trans_date, c_sched_date,  (case when c_penalty is not null then 1 else 2 end);";
+						"FROM view_itsRealSoaBir_ledger('"+ entity_id+"', '"+ proj_id +"', '"+ pbl_id +"', "+ seq_no +")"; 
 
 				FncSystem.out("Display description", sql);
 				pgSelect db = new pgSelect();
@@ -318,27 +314,6 @@ package Utilities;
 					}
 				}
 				tblLedger.packAll();
-			}else {
-
-				String sql = "SELECT * \n" + 
-						"FROM view_card_ledger_with_moratorium('"+entity_id+"', '"+proj_id+"', '"+pbl_id+"', "+seq_no+", false) \n" + 
-						"ORDER BY COALESCE(c_percent_paid, 0), c_pay_rec_id, c_trans_date, \n" + 
-						"(case when c_due_type = 'M' then 0 when c_due_type = 'W' then 1 else 2 end), \n" + 
-						"c_sched_date, (case when c_penalty is not null then 1 else 2 end); ";
-
-				FncSystem.out("Display description", sql);
-				pgSelect db = new pgSelect();
-				db.select(sql);
-
-				if(db.isNotNull()){ 
-					for(int x=0; x < db.getRowCount(); x++){
-						modelTblLedger.addRow(db.getResult()[x]);
-						listModel.addElement(modelTblLedger.getRowCount());
-
-					}
-				}
-				tblLedger.packAll();
-			}
 		}
 
 	}

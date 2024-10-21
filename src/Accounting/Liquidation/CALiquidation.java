@@ -4371,7 +4371,7 @@ public class CALiquidation extends _JInternalFrame implements _GUI, ActionListen
 		String period = lookupPeriod.getText();
 
 		String sqlDetail = "UPDATE rf_jv_header\n" + 
-				"SET co_id='"+co_id+"', busunit_id='"+co_id+"', jv_date='"+dateFormat.format(dteLiqui.getDate())+"', fiscal_yr='"+year+"', period_id='"+period+"', remarks='"+ remarks+"'\n" +
+				"SET co_id='"+co_id+"', busunit_id='"+co_id+"', jv_date='"+dateFormat.format(dteLiqui.getDate())+"', fiscal_yr='"+year+"', period_id='"+period+"', remarks='"+ remarks.replace("'", "''")+"'\n" +
 				"WHERE jv_no = '"+jv_no+"' and co_id = '"+co_id+"' and status_id = 'A'";
 
 		System.out.printf("SQL #1: %s", sqlDetail);

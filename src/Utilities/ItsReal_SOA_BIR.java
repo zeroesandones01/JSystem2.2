@@ -5,37 +5,61 @@ package Utilities;
 	import java.awt.GridLayout;
 	import java.awt.event.ActionEvent;
 	import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 
-
-	import javax.swing.DefaultListModel;
+import javax.swing.Action;
+import javax.swing.DefaultListModel;
 	import javax.swing.JButton;
-	import javax.swing.JLabel;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 	import javax.swing.JList;
-	import javax.swing.JPanel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 	import javax.swing.JScrollPane;
 	import javax.swing.JTabbedPane;
-	import javax.swing.JTextField;
-	import javax.swing.border.EmptyBorder;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 	import javax.swing.event.ChangeEvent;
 	import javax.swing.event.ChangeListener;
 
 	import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
+import org.jdom.Attribute;
+import org.jopendocument.dom.spreadsheet.Column;
+import org.jopendocument.dom.spreadsheet.Sheet;
+import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
-	import Buyers.ClientServicing._CARD;
+import Buyers.ClientServicing._CARD;
 	import Database.pgSelect;
-	import Functions.FncSystem;
+import Functions.CheckBoxHeader;
+import Functions.FncODSFileFilter;
+import Functions.FncSystem;
 	import Functions.FncTables;
 	import Lookup.LookupEvent;
 	import Lookup.LookupListener;
 	import Lookup._JLookup;
-	import components._JInternalFrame;
+import Lookup._JLookupTable.RolloverMouseAdapter;
+import Renderer.DateRenderer;
+import Renderer.NumberRenderer;
+import Renderer.TextRenderer;
+import components._JInternalFrame;
 	import components._JTableMain;
-	import interfaces._GUI;
+import components._JXTextField;
+import interfaces._GUI;
 	import tablemodel.modelTable_Ledger;
 
 
-	public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI,ActionListener  {
+	public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionListener  {
 
 
 		static String title = "ItsReal SOA BIR";
@@ -48,11 +72,15 @@ package Utilities;
 		private JLabel lblClient,lblProj,lblUnit,lblClient2,lblProj2,lblUnit2;
 		private JList rowLedger;
 		private static  JTabbedPane tabDesc;
-		private modelTable_Ledger modelTblLedger;
+		private DefaultTableModel modelTblLedger;
 		private JScrollPane scrollLedger;
 		private JTextField txtProj,txtUnit;
+		private _JXTextField txtFile;
+		private JButton btnBrowse;
 		private String pbl_id;
 		private Integer seq_no;
+		
+		private JFileChooser fileChooser;
 
 
 
@@ -86,21 +114,29 @@ package Utilities;
 					{
 						JPanel pnlNorth = new JPanel(new BorderLayout(5,5));
 						pnlMainNorth.add(pnlNorth,BorderLayout.NORTH);
-						pnlNorth.setPreferredSize(new Dimension(0,80));
+						pnlNorth.setPreferredSize(new Dimension(0,120));
 						{
-							JPanel pnlNorthWest = new JPanel(new GridLayout(3,1,3,3));
+							JPanel pnlNorthWest = new JPanel(new GridLayout(4,1,3,3));
 							pnlNorth.add(pnlNorthWest,BorderLayout.WEST);
 							{
 								lblClient = new JLabel("Client:");
 								pnlNorthWest.add(lblClient);
+							}
+							{
 								lblProj = new JLabel("Project:");
 								pnlNorthWest.add(lblProj);
+							}
+							{
 								lblUnit = new JLabel("Unit/Seq:");
 								pnlNorthWest.add(lblUnit);
 							}
+							{
+								JLabel lblFile = new JLabel("Select file");
+								pnlNorthWest.add(lblFile);
+							}
 						}
 						{
-							JPanel pnlNorthCenter = new JPanel(new GridLayout(3,1,3,3));
+							JPanel pnlNorthCenter = new JPanel(new GridLayout(4,1,3,3));
 							pnlNorth.add(pnlNorthCenter,BorderLayout.CENTER);
 							{
 								JPanel pnlCleint = new JPanel(new BorderLayout(5,5));
@@ -134,7 +170,7 @@ package Utilities;
 													pbl_id = (String) data[4];
 													seq_no = (Integer) data[5];
 													btnCancel.setEnabled(true);	
-													displayValueLedger(modelTblLedger, lookupClient.getValue(), txtProj.getText(), pbl_id, seq_no);
+													//displayValueLedger(modelTblLedger, lookupClient.getValue(), txtProj.getText(), pbl_id, seq_no);
 												
 
 												}
@@ -203,6 +239,21 @@ package Utilities;
 								}
 
 							}
+							{
+								JPanel pnlFile = new JPanel(new BorderLayout(5, 5));
+								pnlNorthCenter.add(pnlFile);
+								{
+									txtFile = new _JXTextField();
+									pnlFile.add(txtFile, BorderLayout.CENTER);
+								}
+								{
+									btnBrowse = new JButton("Browse");
+									pnlFile.add(btnBrowse, BorderLayout.EAST);
+									btnBrowse.setPreferredSize(new Dimension(100, 0));
+									btnBrowse.setActionCommand(btnBrowse.getText());
+									btnBrowse.addActionListener(this);
+								}
+							}
 						}
 					}
 
@@ -214,41 +265,10 @@ package Utilities;
 						tabDesc = new JTabbedPane();
 						pnlMainCenter.add(tabDesc);
 
-
-						{
-							scrollLedger = new JScrollPane();
-							tabDesc.addTab("Ledger", scrollLedger);
-							scrollLedger.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED );
-							scrollLedger.setBorder(new EmptyBorder(5,5,5,5));
-
-						}
-						{
-							modelTblLedger = new modelTable_Ledger();
-							tblLedger = new _JTableMain(modelTblLedger);
-							scrollLedger.setViewportView(tblLedger);
-							tblLedger.setSortable(false);
-							tblLedger.setEnabled(false);
-
-						}
-						{
-							rowLedger = tblLedger.getRowHeader();
-							rowLedger.setModel(new DefaultListModel());
-							scrollLedger.setRowHeaderView(rowLedger );
-							scrollLedger.setCorner(JScrollPane.UPPER_LEFT_CORNER, FncTables.getRowHeader_Header());
-						}
+						tabDesc.addTab("Ledger", null, new JScrollPane(tblLedger), null);
 						
-						tabDesc.addChangeListener(new ChangeListener() {
-
-							@Override
-							public void stateChanged(ChangeEvent arg0) {
-								if(tabDesc.getSelectedIndex()==2) {
-										btnSave.setEnabled(true);	
-								}
-								else {
-									btnSave.setEnabled(false);
-								}
-							}
-						});
+						
+						
 					}
 				}
 				{
@@ -282,7 +302,6 @@ package Utilities;
 								txtUnit.setText("");
 								lblUnit2.setText("[]");
 								rowLedger.setModel(new DefaultListModel());
-								modelTblLedger.clear();
 								btnCancel.setEnabled(false);
 								btnSave.setEnabled(false);
 							}
@@ -291,6 +310,197 @@ package Utilities;
 					}
 				}
 			}
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			String actionCommand = e.getActionCommand();
+			
+			if(actionCommand.equals("Browse")) {
+				if (fileChooser == null) {
+					fileChooser = new JFileChooser();
+					fileChooser.setAcceptAllFileFilterUsed(false);
+					fileChooser.addChoosableFileFilter(new FncODSFileFilter(new String[] { "ods", "xlsx" },
+							"Spreadsheets (*.ods, *.odc, *.ots, *.xlsx)"));
+
+					Action details = fileChooser.getActionMap().get("viewTypeDetails");
+					details.actionPerformed(null);
+				}
+
+				fileChooser.setSelectedFile(new File(""));
+				int status = fileChooser.showOpenDialog(this.getTopLevelAncestor());
+				if (status == JFileChooser.APPROVE_OPTION) {
+					if (fileChooser.getSelectedFile().equals(null)) {
+						JOptionPane.showMessageDialog(getParent(), "No Selected Document");
+						return;
+					}
+
+					System.out.printf("Selected File: %s%n", fileChooser.getSelectedFile().toString());
+					String selectedFile = fileChooser.getSelectedFile().toString();
+					txtFile.setText(selectedFile);
+				}
+				
+
+				String selectedFile = fileChooser.getSelectedFile().toString();
+				File fileSelected = new File(selectedFile);
+				System.out.printf("Display selected file: %s%n", selectedFile);
+				
+				tabDesc.removeAll();
+
+				try {
+					int sheetCount = SpreadSheet.createFromFile(fileSelected).getSheetCount();
+					System.out.printf("Display Sheet Count: %s%n", sheetCount);
+					for (int x = 0; x < sheetCount; x++) {
+						System.out.printf("Display loop value: %s%n", x);
+
+						Sheet sheet = SpreadSheet.createFromFile(fileSelected).getSheet(x);
+
+						String sheetName = sheet.getName().toString();
+						System.out.printf("Sheet Name: %s%n", sheetName);
+
+						streamSheet(sheet);
+
+						//System.out.println("Returned Rows: " + tblLedger.getRowCount());
+						tabDesc.addTab("Ledger", null, new JScrollPane(tblLedger), null);
+						tabDesc.setSelectedIndex(0);
+
+					}
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+			
+		}
+		
+		protected JTable streamSheet(Sheet sheet) {
+			int colCount = sheet.getColumnCount();
+			int rowCount = sheet.getRowCount();
+
+			ArrayList<Integer> deleteColumn = new ArrayList<Integer>();
+			ArrayList<Integer> deleteRow = new ArrayList<Integer>();
+
+			Object[] columnNames = null;
+			Object[][] rowValue = null;
+
+			rowValue = new Object[rowCount][colCount + 1];
+
+			int colnameRow = 0;
+			for (int r = 0; r < rowCount; r++) {
+				for (int c = 0; c < colCount; c++) {
+					if (sheet.getValueAt(c, r).toString().trim().toUpperCase().equals("Pmt Due Date")) {
+						colnameRow = r;
+						System.out.println("Dumaan dito sa 1");
+					}
+				}
+			}
+			ArrayList<Integer> listHiddenColumns = new ArrayList<Integer>();
+			for (int x = 0; x < colCount; x++) {
+				Column<SpreadSheet> col = sheet.getColumn(x);
+
+				for (Object obj : col.getElement().getAttributes()) {
+					Attribute att = (Attribute) obj;
+				}
+			}
+
+			// TO DELETE EMPTY COLUMNS
+			//deleteColumn.clear();
+			for (int c = 0; c < colCount; c++) {
+				if (sheet.getValueAt(c, colnameRow).toString().equals("") || sheet.getValueAt(c, colnameRow) == null
+						|| sheet.getValueAt(c, colnameRow).toString().isEmpty()) {
+					deleteColumn.add((c + 1));
+				} else
+					deleteColumn.clear();
+			}
+			colCount = (deleteColumn.get(0) - 1);
+			columnNames = new Object[colCount + 1];
+
+			for (int c = 0; c < colCount; c++) {
+
+				columnNames[c + 1] = sheet.getValueAt(c, colnameRow).toString().trim();
+				
+			}
+			for (int r = (colnameRow + 1); r < rowCount; r++) {
+				for (int c = 0; c < colCount; c++) {
+					rowValue[0][0] = false;
+					rowValue[r][0] = true;
+					// filter row that have no OR NO
+					if (!sheet.getValueAt(0, r).equals("")) {
+						rowValue[r][c + 1] = sheet.getValueAt(c, r);
+					}
+				}
+			}
+
+			modelTblLedger = new DefaultTableModel(rowValue, columnNames) {
+				private static final long serialVersionUID = 3174178548239382080L;
+
+				public boolean isCellEditable(int rowIndex, int columnIndex) {
+					Boolean to = null;
+					if (columnIndex == 0)
+						to = false;
+					else
+						to = false;
+					return to;
+
+					/*
+					 * Boolean to = null; if(columnIndex==0) to = true; else to = false; return to;
+					 */
+				}
+			};
+
+			tblLedger = new _JTableMain(modelTblLedger);
+			tblLedger.getColumnModel().getColumn(0).setCellEditor(tblLedger.getDefaultEditor(Boolean.class));
+			tblLedger.getColumnModel().getColumn(0).setCellRenderer(tblLedger.getDefaultRenderer(Boolean.class));
+			tblLedger.getColumnModel().getColumn(0).setWidth(35);
+			tblLedger.getColumnModel().getColumn(0).setMinWidth(35);
+			tblLedger.getColumnModel().getColumn(0).setMaxWidth(35);
+
+			tblLedger.setDefaultRenderer(Date.class, DateRenderer.getDateRenderer());
+			tblLedger.setDefaultRenderer(Time.class, DateRenderer.getTimeRenderer());
+			tblLedger.setDefaultRenderer(Timestamp.class, DateRenderer.getDateRenderer());
+			tblLedger.setDefaultRenderer(String.class, TextRenderer.getTextRenderer(SwingConstants.CENTER));
+			tblLedger.setDefaultRenderer(Integer.class, NumberRenderer.getIntegerRenderer(SwingConstants.CENTER));
+			tblLedger.setDefaultRenderer(BigDecimal.class, NumberRenderer.getMoneyRenderer());
+			tblLedger.setDefaultRenderer(_JLookup.class, TextRenderer.getTextRenderer(SwingConstants.CENTER));
+
+			RolloverMouseAdapter rolloverAdapter = new RolloverMouseAdapter(tblLedger);
+
+			CheckBoxHeader.RolloverAdapter ma = new CheckBoxHeader.RolloverAdapter(tblLedger);
+			tblLedger.getTableHeader().addMouseListener(ma);
+			tblLedger.getTableHeader().addMouseMotionListener(ma);
+
+			tblLedger.getColumnModel().getColumn(0).setHeaderRenderer(new CheckBoxHeader(tblLedger, ma));
+			tblLedger.getColumnModel().getColumn(0).setMaxWidth(35);
+			tblLedger.getColumnModel().getColumn(0).setMinWidth(35);
+			tblLedger.getColumnModel().getColumn(0).setPreferredWidth(35);
+
+			tblLedger.addMouseListener(rolloverAdapter);
+			tblLedger.addMouseMotionListener(rolloverAdapter);
+
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tblLedger.getModel());
+			tblLedger.setRowSorter(sorter);
+			sorter.setSortable(0, false);
+
+			for (int x = (modelTblLedger.getRowCount() - 1); x >= 0; x--) {
+				Object value = modelTblLedger.getValueAt(x, 1);
+				if (value == null) {
+					modelTblLedger.removeRow(x);
+				}
+			}
+
+			// Remove hidden columns
+			for (int x = tblLedger.getRowCount() - 1; x >= 0; x--) {
+				if (listHiddenColumns.contains(x)) {
+					tblLedger.removeColumn(tblLedger.getColumn(x + 1));
+				}
+			}
+
+			for (int x = 0; x < tblLedger.getColumnCount(); x++) {
+
+			}
+
+			tblLedger.packAll();
+
+			return tblLedger;
+
 		}
 
 		private void displayValueLedger(DefaultTableModel model,String entity_id,String proj_id,String pbl_id,Integer seq_no) {

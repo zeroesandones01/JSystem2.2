@@ -97,13 +97,19 @@ import components._JTableMain;
 import components._JTagLabel;
 import components._JXTextField;
 
+/**
+ * Represents a Pricelist object that extends the _JInternalFrame class and
+ * implements the _GUI and ActionListener interfaces.
+ * This class is responsible for managing the GUI components and functionality
+ * related to the Pricelist feature.
+ */
 public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 9032673356061487100L;
-	static String title = "Pricelist";	
+	static String title = "Pricelist";
 
 	private JPanel pnlMain;
 	private JPanel pnlPricelist;
@@ -131,15 +137,15 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 	private JPanel pnlSchemeNorthCommRate_b;
 	private JPanel pnlSouthEast;
 	private JPanel pnlMonitoringLabels_int;
-	private JPanel pnlMonitoringLookups_int;	
+	private JPanel pnlMonitoringLookups_int;
 	private JPanel pnlMonitoringLabels_ext;
-	private JPanel pnlMonitoringLookups_ext;	
+	private JPanel pnlMonitoringLookups_ext;
 	private JPanel pnlMainSouth;
-	private JPanel pnlMainSouth_a;	
+	private JPanel pnlMainSouth_a;
 	private JPanel pnlSchemeSouth;
-	private JPanel pnlSchemeSouth_a;	
+	private JPanel pnlSchemeSouth_a;
 	private JPanel pnlSchemeSouth_b;
-	private JPanel pnlAddNewPmtScheme;	
+	private JPanel pnlAddNewPmtScheme;
 	private JPanel pnlAddNewPmtScheme_a;
 	private JPanel pnlAddNewPmtScheme_a1;
 	private JPanel pnlAddNewPmtScheme_a2;
@@ -196,22 +202,22 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 	private JXTextField txtPmtSchName;
 	private _JXTextField txtStatus;
 	private _JXTextField txtUploadedBy;
-	private _JXTextField txtApprovedBy;	
+	private _JXTextField txtApprovedBy;
 
-	private JComboBox cmbSelectSheet;	
+	private JComboBox cmbSelectSheet;
 
 	private _JXFormattedTextField txtCommissionRate;
 	private _JXFormattedTextField txtLowCostInt;
 	private _JXFormattedTextField txtSocializedInt;
 	private _JXFormattedTextField txtLowCostExt;
-	private _JXFormattedTextField txtSocializedExt;	
+	private _JXFormattedTextField txtSocializedExt;
 
 	private JFileChooser fileChooser;
 
 	private JScrollPane scrollMonitoringUnits;
 	private JScrollPane scrollScheme;
 
-	private _JTableMain tblMonitoringUnits;	
+	private _JTableMain tblMonitoringUnits;
 	private _JTableMain tblScheme;
 
 	private modelPricelist_complete modelMonitoringUnits;
@@ -223,13 +229,13 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 	private _JDateChooser dteUploaded;
 	private _JDateChooser dteApproved;
 
-	private JPopupMenu menu;	
+	private JPopupMenu menu;
 	private JPopupMenu menu2;
 
 	private JMenuItem mnidelete;
 
-	private String co_id = "";	
-	private String co_name = "";	
+	private String co_id = "";
+	private String co_name = "";
 	private String proj_id = "";
 	private String proj_name = "";
 	private String sub_proj_id = "";
@@ -239,13 +245,13 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 	private String version = "";
 	private String status_name = "";
 	private String version_status = "";
-	public static String company_logo;	
+	public static String company_logo;
 	int current_version_no = 0;
 	private String buyer_type = "";
 
 	protected Boolean pressedShift = false;
 	Border lineBorder = BorderFactory.createLineBorder(Color.GRAY);
-	Border LINE_BORDER  = BorderFactory.createLineBorder(Color.GRAY);
+	Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY);
 	SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
 	private JMenuItem mnideleteUnit;
@@ -275,14 +281,13 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 	public void initGUI() {
 		this.setLayout(new BorderLayout(5, 5));
 
-
 		{
 			menu = new JPopupMenu("Popup");
 			mnidelete = new JMenuItem("Remove Payment Scheme");
 			menu.add(mnidelete);
-			mnidelete.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent evt){
-					removePmtScheme();				
+			mnidelete.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					removePmtScheme();
 				}
 			});
 		}
@@ -290,15 +295,12 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 			menu2 = new JPopupMenu("Popup");
 			mnideleteUnit = new JMenuItem("Remove Unit");
 			menu2.add(mnideleteUnit);
-			mnideleteUnit.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent evt){
-					removeUnit();				
+			mnideleteUnit.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					removeUnit();
 				}
 			});
 		}
-
-
-
 
 		pnlMain = new JPanel();
 		getContentPane().add(pnlMain, BorderLayout.CENTER);
@@ -359,8 +361,8 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 								lookupCompany.setLookupSQL(SQL_COMPANY());
 								lookupCompany.addLookupListener(new LookupListener() {
 									public void lookupPerformed(LookupEvent event) {
-										Object[] data = ((_JLookup)event.getSource()).getDataSet();
-										if(data != null){
+										Object[] data = ((_JLookup) event.getSource()).getDataSet();
+										if (data != null) {
 											co_id = (String) data[0];
 											co_name = (String) data[1];
 											tagCompany.setTag(co_name);
@@ -368,7 +370,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 											lblProject.setEnabled(true);
 											lookupProject.setEnabled(true);
-											tagProject.setEnabled(true);											
+											tagProject.setEnabled(true);
 
 											lookupProject.setValue("");
 											tagProject.setTag("");
@@ -383,11 +385,11 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 											lblPhase.setEnabled(false);
 											lookupPhase.setEnabled(false);
-											tagPhase.setEnabled(false);	
+											tagPhase.setEnabled(false);
 
 											lblStatus.setEnabled(false);
 											txtStatus.setEnabled(false);
-											tagStatus.setEnabled(false);												
+											tagStatus.setEnabled(false);
 
 											proj_id = "";
 
@@ -403,8 +405,8 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 								lookupProject.setEnabled(false);
 								lookupProject.addLookupListener(new LookupListener() {
 									public void lookupPerformed(LookupEvent event) {
-										Object[] data = ((_JLookup)event.getSource()).getDataSet();
-										if(data != null){
+										Object[] data = ((_JLookup) event.getSource()).getDataSet();
+										if (data != null) {
 
 											refresh_mainFields();
 
@@ -415,11 +417,11 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 											lblPhase.setEnabled(true);
 											lookupPhase.setEnabled(true);
-											tagPhase.setEnabled(true);												
+											tagPhase.setEnabled(true);
 
 											lblStatus.setEnabled(false);
 											txtStatus.setEnabled(false);
-											tagStatus.setEnabled(false);	
+											tagStatus.setEnabled(false);
 
 											lookupPhase.setLookupSQL(sql_phase(proj_id));
 											KEYBOARD_MANAGER.focusNextComponent();
@@ -439,8 +441,8 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 								lookupPhase.setEnabled(false);
 								lookupPhase.addLookupListener(new LookupListener() {
 									public void lookupPerformed(LookupEvent event) {
-										Object[] data = ((_JLookup)event.getSource()).getDataSet();
-										if(data != null){
+										Object[] data = ((_JLookup) event.getSource()).getDataSet();
+										if (data != null) {
 											phase = data[0].toString();
 											sub_proj_id = (String) data[3];
 											String description = (String) data[1];
@@ -453,16 +455,16 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 											lblStatus.setEnabled(true);
 											txtStatus.setEnabled(true);
-											tagStatus.setEnabled(true);												
+											tagStatus.setEnabled(true);
 
-											if(status_id.equals("A")) {
+											if (status_id.equals("A")) {
 												enableFieldsForEditing(true);
-												//btnUploadNewVersion.setEnabled(false);
-											}else{
+												// btnUploadNewVersion.setEnabled(false);
+											} else {
 												enableFieldsForEditing(false);
-												//btnUploadNewVersion.setEnabled(true);
+												// btnUploadNewVersion.setEnabled(true);
 											}
-											
+
 											btnMonitoringAddPmtSchme.setEnabled(true);
 
 											displayPmtSchemeList(modelScheme, rowheaderScheme);
@@ -470,35 +472,30 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 											tabCenter.removeAll();
 											btnSelectFile.setEnabled(true);
 
-											if (tblScheme.getRowCount()==0&&status_id.equals("A"))
-											{
+											if (tblScheme.getRowCount() == 0 && status_id.equals("A")) {
 												txtLowCostInt.setEnabled(true);
 												txtSocializedInt.setEnabled(true);
 												txtLowCostExt.setEnabled(true);
 												txtSocializedExt.setEnabled(true);
-												btnMonitoringAddPmtSchme.setEnabled(true);	
+												btnMonitoringAddPmtSchme.setEnabled(true);
 												btnSchemeSave.setEnabled(true);
 												btnSelectFile.setEnabled(true);
 												btnUploadNewVersion.setEnabled(true);
-											}
-											else if (tblScheme.getRowCount()!=0&&status_id.equals("A"))
-											{
+											} else if (tblScheme.getRowCount() != 0 && status_id.equals("A")) {
 												txtLowCostInt.setEnabled(false);
 												txtSocializedInt.setEnabled(false);
 												txtLowCostExt.setEnabled(false);
 												txtSocializedExt.setEnabled(false);
-												btnMonitoringAddPmtSchme.setEnabled(true);	
+												btnMonitoringAddPmtSchme.setEnabled(true);
 												btnSchemeSave.setEnabled(false);
 												btnSelectFile.setEnabled(true);
 												btnUploadNewVersion.setEnabled(true);
-											}
-											else if (status_id.equals("P"))
-											{
+											} else if (status_id.equals("P")) {
 												txtLowCostInt.setEnabled(false);
 												txtSocializedInt.setEnabled(false);
 												txtLowCostExt.setEnabled(false);
 												txtSocializedExt.setEnabled(false);
-												btnMonitoringAddPmtSchme.setEnabled(false);	
+												btnMonitoringAddPmtSchme.setEnabled(false);
 												btnSchemeSave.setEnabled(false);
 												btnSelectFile.setEnabled(false);
 												btnUploadNewVersion.setEnabled(true);
@@ -549,7 +546,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 								}
 							}
 						}
-					}						
+					}
 				}
 
 				{
@@ -577,7 +574,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 							pnlNorth_b1.add(lblApprovedBy);
 						}
 						{
-							lblApprovedDate= new JLabel("Approved Date");
+							lblApprovedDate = new JLabel("Approved Date");
 							pnlNorth_b1.add(lblApprovedDate);
 						}
 					}
@@ -599,7 +596,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 							dteUploaded.setDate(null);
 							dteUploaded.setEnabled(false);
 							dteUploaded.setDateFormatString("yyyy-MM-dd");
-							((JTextFieldDateEditor)dteUploaded.getDateEditor()).setEditable(false);
+							((JTextFieldDateEditor) dteUploaded.getDateEditor()).setEditable(false);
 						}
 						{
 							txtApprovedBy = new _JXTextField("");
@@ -614,7 +611,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 							dteApproved.setDate(null);
 							dteApproved.setEnabled(false);
 							dteApproved.setDateFormatString("yyyy-MM-dd");
-							((JTextFieldDateEditor)dteUploaded.getDateEditor()).setEditable(false);
+							((JTextFieldDateEditor) dteUploaded.getDateEditor()).setEditable(false);
 						}
 					}
 					{
@@ -657,7 +654,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 				{
 					pnlNorth = new JPanel(new BorderLayout(0, 0));
 					pnlPricelist.add(pnlNorth, BorderLayout.NORTH);
-					pnlNorth.setPreferredSize(new java.awt.Dimension(982, 69));				
+					pnlNorth.setPreferredSize(new java.awt.Dimension(982, 69));
 
 					{
 						JPanel pnlFile = new JPanel(new BorderLayout(5, 0));
@@ -690,16 +687,18 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 									btnSelectFile.setEnabled(false);
 								}
 							}
-							/*{
-								JPanel pnlCommissionRate = new JPanel(new BorderLayout(3, 0));
-								pnlFileCenter.add(pnlCommissionRate);
-								{
-									txtCommissionRate = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
-									pnlCommissionRate.add(txtCommissionRate, BorderLayout.WEST);
-									txtCommissionRate.setFormatterFactory(_JXFormattedTextField.DECIMAL);
-									txtCommissionRate.setPreferredSize(new Dimension(157, 23));
-								}
-							}*/
+							/*
+							 * {
+							 * JPanel pnlCommissionRate = new JPanel(new BorderLayout(3, 0));
+							 * pnlFileCenter.add(pnlCommissionRate);
+							 * {
+							 * txtCommissionRate = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+							 * pnlCommissionRate.add(txtCommissionRate, BorderLayout.WEST);
+							 * txtCommissionRate.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+							 * txtCommissionRate.setPreferredSize(new Dimension(157, 23));
+							 * }
+							 * }
+							 */
 						}
 					}
 				}
@@ -708,12 +707,14 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 					pnlPricelist.add(tabCenter, BorderLayout.CENTER);
 					tabCenter.addChangeListener(new ChangeListener() {
 						public void stateChanged(ChangeEvent arg0) {
-							JTabbedPane tab = ((JTabbedPane)arg0.getSource());
+							JTabbedPane tab = ((JTabbedPane) arg0.getSource());
 
 							try {
-								_JTableMain table = (_JTableMain) ((JScrollPane)tab.getSelectedComponent()).getViewport().getView();
+								_JTableMain table = (_JTableMain) ((JScrollPane) tab.getSelectedComponent())
+										.getViewport().getView();
 								lblTotalUnits.setText(String.format("Table Unit(s): %s", table.getRowCount()));
-							} catch (NullPointerException e) { }
+							} catch (NullPointerException e) {
+							}
 						}
 					});
 				}
@@ -736,7 +737,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 							btnUploadSave.addActionListener(this);
 							btnUploadSave.setEnabled(false);
 							btnUploadSave.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent e) {	
+								public void actionPerformed(ActionEvent e) {
 									savePricelist();
 								}
 							});
@@ -747,10 +748,10 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 							btnUploadNewVersion.addActionListener(this);
 							btnUploadNewVersion.setEnabled(false);
 							btnUploadNewVersion.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent e) {	
+								public void actionPerformed(ActionEvent e) {
 									btnSelectFile.setEnabled(true);
 									btnUploadNewVersion.setEnabled(false);
-									//savePricelist();
+									// savePricelist();
 								}
 							});
 						}
@@ -770,31 +771,37 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 					{
 						modelMonitoringUnits = new modelPricelist_complete();
 
-						tblMonitoringUnits = new _JTableMain(modelMonitoringUnits);						
+						tblMonitoringUnits = new _JTableMain(modelMonitoringUnits);
 						scrollMonitoringUnits.setViewportView(tblMonitoringUnits);
 						tblMonitoringUnits.addMouseListener(new PopupTriggerListener_panel2());
 						tblMonitoringUnits.setSortable(false);
 						tblMonitoringUnits.addKeyListener(new KeyAdapter() {
-							public void keyReleased(KeyEvent evt) {btnMonitoringSave.setEnabled(true);}							
-							public void keyPressed(KeyEvent e) {btnMonitoringSave.setEnabled(true);}	
+							public void keyReleased(KeyEvent evt) {
+								btnMonitoringSave.setEnabled(true);
+							}
 
-						}); 
+							public void keyPressed(KeyEvent e) {
+								btnMonitoringSave.setEnabled(true);
+							}
+
+						});
 						tblMonitoringUnits.addMouseListener(new MouseAdapter() {
 							public void mousePressed(MouseEvent e) {
 								if ((e.getClickCount() >= 1)) {
 									btnMonitoringSave.setEnabled(true);
 								}
 								if ((e.getClickCount() >= 2)) {
-									//clickTableColumn2();
+									// clickTableColumn2();
 								}
 
 							}
+
 							public void mouseReleased(MouseEvent e) {
 								if ((e.getClickCount() >= 1)) {
 									btnMonitoringSave.setEnabled(true);
 								}
 								if ((e.getClickCount() >= 2)) {
-									//clickTableColumn2();
+									// clickTableColumn2();
 								}
 							}
 						});
@@ -802,7 +809,8 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 					{
 						rowheaderMonitoringUnits = tblMonitoringUnits.getRowHeader();
 						scrollMonitoringUnits.setRowHeaderView(rowheaderMonitoringUnits);
-						scrollMonitoringUnits.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, FncTables.getRowHeader_Header());
+						scrollMonitoringUnits.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER,
+								FncTables.getRowHeader_Header());
 					}
 				}
 				{
@@ -820,12 +828,14 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 							btnMonitoringSave.setEnabled(false);
 							btnMonitoringSave.setVisible(false);
 							btnMonitoringSave.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent e) {	
+								public void actionPerformed(ActionEvent e) {
 
-									if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Update unit info.?", "Confirmation", 
-											JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+									if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(),
+											"Update unit info.?", "Confirmation",
+											JOptionPane.YES_NO_CANCEL_OPTION,
+											JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 
-										pgUpdate db = new pgUpdate();	
+										pgUpdate db = new pgUpdate();
 										updateUnitInfoDetails(db);
 									}
 								}
@@ -837,15 +847,18 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 							btnMonitoringPreview.addActionListener(this);
 							btnMonitoringPreview.setEnabled(false);
 							btnMonitoringPreview.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent e) {	
+								public void actionPerformed(ActionEvent e) {
 
-									int scanOption = JOptionPane.showOptionDialog(Pricelist.this.getTopLevelAncestor(), pnlDate, "Version",
-											JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null, new Object[] {}, null);		
+									int scanOption = JOptionPane.showOptionDialog(Pricelist.this.getTopLevelAncestor(),
+											pnlDate, "Version",
+											JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null, new Object[] {},
+											null);
 
-									if ( scanOption == JOptionPane.CLOSED_OPTION ) {
-										try {	
+									if (scanOption == JOptionPane.CLOSED_OPTION) {
+										try {
 
-										} catch ( java.lang.ArrayIndexOutOfBoundsException ev ) {}				
+										} catch (java.lang.ArrayIndexOutOfBoundsException ev) {
+										}
 									} // CLOSED_OPTION
 
 								}
@@ -872,7 +885,8 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 					{
 						pnlSchemeNorthCommRate_a = new JPanel(new BorderLayout(5, 5));
 						pnlSchemeNorthCommRate.add(pnlSchemeNorthCommRate_a, BorderLayout.WEST);
-						pnlSchemeNorthCommRate_a.setBorder(components.JTBorderFactory.createTitleBorder("Commission Rate (In-House)"));
+						pnlSchemeNorthCommRate_a
+								.setBorder(components.JTBorderFactory.createTitleBorder("Commission Rate (In-House)"));
 						pnlSchemeNorthCommRate_a.setPreferredSize(new java.awt.Dimension(222, 69));
 
 						{
@@ -901,10 +915,10 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 								txtLowCostInt.setEnabled(false);
 								txtLowCostInt.setBounds(120, 0, 72, 22);
 								txtLowCostInt.addKeyListener(new KeyAdapter() {
-									public void keyReleased(KeyEvent e) {				
+									public void keyReleased(KeyEvent e) {
 										btnSchemeSave.setEnabled(true);
-									}				 
-								});		
+									}
+								});
 							}
 							{
 								txtSocializedInt = new _JXFormattedTextField(JXFormattedTextField.CENTER);
@@ -912,19 +926,20 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 								txtSocializedInt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
 								txtSocializedInt.setText("6.00");
 								txtSocializedInt.setEnabled(false);
-								txtSocializedInt.setBounds(120, 0, 72, 22);	
+								txtSocializedInt.setBounds(120, 0, 72, 22);
 								txtSocializedInt.addKeyListener(new KeyAdapter() {
-									public void keyReleased(KeyEvent e) {				
+									public void keyReleased(KeyEvent e) {
 										btnSchemeSave.setEnabled(true);
-									}				 
-								});	
+									}
+								});
 							}
-						}		
+						}
 					}
 					{
 						pnlSchemeNorthCommRate_b = new JPanel(new BorderLayout(5, 5));
 						pnlSchemeNorthCommRate.add(pnlSchemeNorthCommRate_b, BorderLayout.CENTER);
-						pnlSchemeNorthCommRate_b.setBorder(components.JTBorderFactory.createTitleBorder("Commission Rate (External)"));
+						pnlSchemeNorthCommRate_b
+								.setBorder(components.JTBorderFactory.createTitleBorder("Commission Rate (External)"));
 						pnlSchemeNorthCommRate_b.setPreferredSize(new java.awt.Dimension(392, 69));
 						{
 							pnlMonitoringLabels_ext = new JPanel(new GridLayout(2, 1, 3, 3));
@@ -951,12 +966,12 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 								txtLowCostExt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
 								txtLowCostExt.setText("6.00");
 								txtLowCostExt.setEnabled(false);
-								txtLowCostExt.setBounds(120, 0, 72, 22);	
+								txtLowCostExt.setBounds(120, 0, 72, 22);
 								txtLowCostExt.addKeyListener(new KeyAdapter() {
-									public void keyReleased(KeyEvent e) {				
+									public void keyReleased(KeyEvent e) {
 										btnSchemeSave.setEnabled(true);
-									}				 
-								});	
+									}
+								});
 							}
 							{
 								txtSocializedExt = new _JXFormattedTextField(JXFormattedTextField.CENTER);
@@ -964,14 +979,14 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 								txtSocializedExt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
 								txtSocializedExt.setText("7.00");
 								txtSocializedExt.setEnabled(false);
-								txtSocializedExt.setBounds(120, 0, 72, 22);	
+								txtSocializedExt.setBounds(120, 0, 72, 22);
 								txtSocializedExt.addKeyListener(new KeyAdapter() {
-									public void keyReleased(KeyEvent e) {				
+									public void keyReleased(KeyEvent e) {
 										btnSchemeSave.setEnabled(true);
-									}				 
-								});	
+									}
+								});
 							}
-						}		
+						}
 					}
 
 					{
@@ -998,6 +1013,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 									clickTableColumn();
 								}
 							}
+
 							public void mouseReleased(MouseEvent e) {
 								if ((e.getClickCount() >= 2)) {
 									clickTableColumn();
@@ -1029,20 +1045,25 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 							btnMonitoringAddPmtSchme.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent e) {
 
-									lookupPmtScheme.setLookupSQL(sql_paymentScheme());									
+									lookupPmtScheme.setLookupSQL(sql_paymentScheme());
 
-									int scanOption = JOptionPane.showOptionDialog(Pricelist.this.getTopLevelAncestor(), pnlAddNewPmtScheme, "Add Payment Scheme",
-											JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null, new Object[] {}, null);		
+									int scanOption = JOptionPane.showOptionDialog(Pricelist.this.getTopLevelAncestor(),
+											pnlAddNewPmtScheme, "Add Payment Scheme",
+											JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE, null, new Object[] {},
+											null);
 
-									if ( scanOption == JOptionPane.CLOSED_OPTION ) {
-										try {		
-											buyer_type = ""; //to refresh the buyer_type so that when user edit on the payment scheme table, it will get the buyer type of the selected row
+									if (scanOption == JOptionPane.CLOSED_OPTION) {
+										try {
+											buyer_type = ""; // to refresh the buyer_type so that when user edit on the
+																// payment scheme table, it will get the buyer type of
+																// the selected row
 											lookupPmtScheme.setValue("");
 											txtPmtSchName.setText("");
 											lookupCommSchemeInt.setValue("");
 											lookupCommSchemeExt.setValue("");
 
-										} catch ( java.lang.ArrayIndexOutOfBoundsException ev ) {}				
+										} catch (java.lang.ArrayIndexOutOfBoundsException ev) {
+										}
 									} // CLOSED_OPTION
 								}
 							});
@@ -1062,7 +1083,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 								public void actionPerformed(ActionEvent e) {
 									pgUpdate db = new pgUpdate();
 									updateCommissionRate(db);
-									updatePaymentSchemeDetails(db);	
+									updatePaymentSchemeDetails(db);
 									db.commit();
 									setPricelist_mainDtls();
 									displayPmtSchemeList(modelScheme, rowheaderScheme);
@@ -1079,9 +1100,9 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 								public void actionPerformed(ActionEvent e) {
 									preview_scheme();
 								}
-							});						
+							});
 						}
-					}					
+					}
 				}
 			}
 		}
@@ -1099,7 +1120,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 					btnApprove.addActionListener(this);
 					btnApprove.setEnabled(false);
 					btnApprove.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {							
+						public void actionPerformed(ActionEvent e) {
 							approveMarketingScheme();
 						}
 					});
@@ -1109,13 +1130,14 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 					pnlMainSouth_a.add(btnRefresh);
 					btnRefresh.setEnabled(false);
 					btnRefresh.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {	
+						public void actionPerformed(ActionEvent e) {
 							refresh_tables();
 							refreshFields();
 							setPricelist_mainDtls();
 							displayUnits();
 							tabMain.setSelectedIndex(1);
-							JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Data refreshed.", "Refresh", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Data refreshed.",
+									"Refresh", JOptionPane.INFORMATION_MESSAGE);
 						}
 					});
 				}
@@ -1127,15 +1149,16 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 					btnCancel.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 
-							if(btnUploadSave.isEnabled()==true||btnMonitoringSave.isEnabled()==true||btnSchemeSave.isEnabled()==true)  
-							{if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Cancel unsaved data?", "Cancel", 
-									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-								refresh_mainFields();
-								disableMainFields();
-							}
-							}
-							else
-							{
+							if (btnUploadSave.isEnabled() == true || btnMonitoringSave.isEnabled() == true
+									|| btnSchemeSave.isEnabled() == true) {
+								if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(),
+										"Cancel unsaved data?", "Cancel",
+										JOptionPane.YES_NO_CANCEL_OPTION,
+										JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+									refresh_mainFields();
+									disableMainFields();
+								}
+							} else {
 								refresh_mainFields();
 								disableMainFields();
 							}
@@ -1147,50 +1170,50 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 		{
 			pnlAddNewPmtScheme = new JPanel();
 			pnlAddNewPmtScheme.setLayout(new BorderLayout(5, 5));
-			pnlAddNewPmtScheme.setBorder(lineBorder);		
-			pnlAddNewPmtScheme.setPreferredSize(new java.awt.Dimension(500, 200));		
+			pnlAddNewPmtScheme.setBorder(lineBorder);
+			pnlAddNewPmtScheme.setPreferredSize(new java.awt.Dimension(500, 200));
 
-			{		
+			{
 				pnlAddNewPmtScheme_a = new JPanel(new BorderLayout(5, 5));
-				pnlAddNewPmtScheme.add(pnlAddNewPmtScheme_a, BorderLayout.NORTH);	
+				pnlAddNewPmtScheme.add(pnlAddNewPmtScheme_a, BorderLayout.NORTH);
 				pnlAddNewPmtScheme_a.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
-				pnlAddNewPmtScheme_a.setPreferredSize(new java.awt.Dimension(380, 140));		
+				pnlAddNewPmtScheme_a.setPreferredSize(new java.awt.Dimension(380, 140));
 
 				{
 					pnlAddNewPmtScheme_a1 = new JPanel(new GridLayout(4, 5, 5, 5));
-					pnlAddNewPmtScheme_a.add(pnlAddNewPmtScheme_a1, BorderLayout.WEST);				
+					pnlAddNewPmtScheme_a.add(pnlAddNewPmtScheme_a1, BorderLayout.WEST);
 					pnlAddNewPmtScheme_a1.setPreferredSize(new java.awt.Dimension(921, 41));
 					pnlAddNewPmtScheme_a1.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-					pnlAddNewPmtScheme_a1.setPreferredSize(new java.awt.Dimension(140, 120));		
+					pnlAddNewPmtScheme_a1.setPreferredSize(new java.awt.Dimension(140, 120));
 
 					{
 						lblPmtScheme = new JLabel("Pmt. Scheme", JLabel.TRAILING);
 						pnlAddNewPmtScheme_a1.add(lblPmtScheme);
-						lblPmtScheme.setEnabled(true);	
+						lblPmtScheme.setEnabled(true);
 						lblPmtScheme.setPreferredSize(new java.awt.Dimension(136, 24));
-					}	
+					}
 					{
 						lblPmtSchemeName = new JLabel("Pmt. Scheme Name", JLabel.TRAILING);
 						pnlAddNewPmtScheme_a1.add(lblPmtSchemeName);
-						lblPmtSchemeName.setEnabled(true);	
+						lblPmtSchemeName.setEnabled(true);
 						lblPmtSchemeName.setPreferredSize(new java.awt.Dimension(136, 24));
-					}	
+					}
 					{
 						lblCommSchInt = new JLabel("Comm. Rate (Inhouse)", JLabel.TRAILING);
 						pnlAddNewPmtScheme_a1.add(lblCommSchInt);
-						lblCommSchInt.setEnabled(true);	
+						lblCommSchInt.setEnabled(true);
 						lblCommSchInt.setPreferredSize(new java.awt.Dimension(136, 24));
-					}	
+					}
 					{
 						lblCommSchExt = new JLabel("Comm. Rate (External)", JLabel.TRAILING);
 						pnlAddNewPmtScheme_a1.add(lblCommSchExt);
-						lblCommSchExt.setEnabled(true);	
+						lblCommSchExt.setEnabled(true);
 						lblCommSchExt.setPreferredSize(new java.awt.Dimension(136, 24));
-					}	
-				}	
+					}
+				}
 				{
-					pnlAddNewPmtScheme_a2 = new JPanel(new GridLayout(4,5,5, 5));
-					pnlAddNewPmtScheme_a.add(pnlAddNewPmtScheme_a2, BorderLayout.CENTER);	
+					pnlAddNewPmtScheme_a2 = new JPanel(new GridLayout(4, 5, 5, 5));
+					pnlAddNewPmtScheme_a.add(pnlAddNewPmtScheme_a2, BorderLayout.CENTER);
 					pnlAddNewPmtScheme_a2.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 					pnlAddNewPmtScheme_a2.setPreferredSize(new java.awt.Dimension(200, 150));
 
@@ -1199,12 +1222,12 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 						pnlAddNewPmtScheme_a2.add(lookupPmtScheme);
 						lookupPmtScheme.setBounds(20, 27, 20, 25);
 						lookupPmtScheme.setReturnColumn(0);
-						lookupPmtScheme.setEnabled(true);	
+						lookupPmtScheme.setEnabled(true);
 						lookupPmtScheme.setPreferredSize(new java.awt.Dimension(157, 22));
 						lookupPmtScheme.addLookupListener(new LookupListener() {
 							public void lookupPerformed(LookupEvent event) {
-								Object[] data = ((_JLookup)event.getSource()).getDataSet();
-								if(data != null){
+								Object[] data = ((_JLookup) event.getSource()).getDataSet();
+								if (data != null) {
 
 									String pmt_scheme_name = (String) data[1];
 									txtPmtSchName.setText(pmt_scheme_name);
@@ -1217,54 +1240,54 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 									lookupCommSchemeExt.setValue("");
 								}
 							}
-						});	
-					}	
+						});
+					}
 					{
 						txtPmtSchName = new JXTextField("");
 						pnlAddNewPmtScheme_a2.add(txtPmtSchName);
-						txtPmtSchName.setEnabled(true);	
+						txtPmtSchName.setEnabled(true);
 						txtPmtSchName.setEditable(true);
-						txtPmtSchName.setBounds(120, 25, 300, 22);	
+						txtPmtSchName.setBounds(120, 25, 300, 22);
 						txtPmtSchName.setHorizontalAlignment(JTextField.CENTER);
-						txtPmtSchName.setFont(new java.awt.Font("Segoe UI",Font.PLAIN,11));
-					}	
+						txtPmtSchName.setFont(new java.awt.Font("Segoe UI", Font.PLAIN, 11));
+					}
 					{
 						lookupCommSchemeInt = new _JLookup(null, "Comm. Scheme (Internal)", 2, 2);
 						pnlAddNewPmtScheme_a2.add(lookupCommSchemeInt);
-						lookupCommSchemeInt.setBounds(20, 27, 20, 25);						
-						lookupCommSchemeInt.setEnabled(true);	
+						lookupCommSchemeInt.setBounds(20, 27, 20, 25);
+						lookupCommSchemeInt.setEnabled(true);
 						lookupCommSchemeInt.setReturnColumn(0);
 						lookupCommSchemeInt.setPreferredSize(new java.awt.Dimension(157, 22));
 						lookupCommSchemeInt.addLookupListener(new LookupListener() {
 							public void lookupPerformed(LookupEvent event) {
-								Object[] data = ((_JLookup)event.getSource()).getDataSet();
-								if(data != null){
+								Object[] data = ((_JLookup) event.getSource()).getDataSet();
+								if (data != null) {
 								}
 							}
-						});	
-					}			
+						});
+					}
 					{
 						lookupCommSchemeExt = new _JLookup(null, "Comm. Scheme (External)", 2, 2);
 						pnlAddNewPmtScheme_a2.add(lookupCommSchemeExt);
 						lookupCommSchemeExt.setBounds(20, 27, 20, 25);
 						lookupCommSchemeExt.setReturnColumn(0);
-						lookupCommSchemeExt.setEnabled(true);	
+						lookupCommSchemeExt.setEnabled(true);
 						lookupCommSchemeExt.setPreferredSize(new java.awt.Dimension(157, 22));
 						lookupCommSchemeExt.addLookupListener(new LookupListener() {
 							public void lookupPerformed(LookupEvent event) {
-								Object[] data = ((_JLookup)event.getSource()).getDataSet();
-								if(data != null){
+								Object[] data = ((_JLookup) event.getSource()).getDataSet();
+								if (data != null) {
 
 								}
 							}
-						});	
-					}			
+						});
+					}
 				}
 
 				pnlAddNewPmtScheme_c = new JPanel(new BorderLayout(5, 5));
-				pnlAddNewPmtScheme.add(pnlAddNewPmtScheme_c, BorderLayout.SOUTH);	
+				pnlAddNewPmtScheme.add(pnlAddNewPmtScheme_c, BorderLayout.SOUTH);
 				pnlAddNewPmtScheme_c.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
-				pnlAddNewPmtScheme_c.setPreferredSize(new java.awt.Dimension(500, 40));	
+				pnlAddNewPmtScheme_c.setPreferredSize(new java.awt.Dimension(500, 40));
 
 				{
 					btnAddPmtScheme = new JButton("Add Payment Scheme");
@@ -1275,18 +1298,14 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 					btnAddPmtScheme.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 
-							if (incompleteDetails()==true)
-							{								
-								JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(),"Incomplete details","Error",JOptionPane.ERROR_MESSAGE);
-							}
-							else
-							{
-								if (schemeHasDuplicate()==true) 
-								{
-									JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(),"Scheme already exists.","Error",JOptionPane.ERROR_MESSAGE);
-								}
-								else
-								{		
+							if (incompleteDetails() == true) {
+								JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(),
+										"Incomplete details", "Error", JOptionPane.ERROR_MESSAGE);
+							} else {
+								if (schemeHasDuplicate() == true) {
+									JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(),
+											"Scheme already exists.", "Error", JOptionPane.ERROR_MESSAGE);
+								} else {
 									insertPaymentSchemeDetails();
 									displayPmtSchemeList(modelScheme, rowheaderScheme);
 									tblScheme.packAll();
@@ -1299,7 +1318,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 			}
 		}
 		{
-			pnlDate= new JPanel();
+			pnlDate = new JPanel();
 			pnlDate.setLayout(null);
 			pnlDate.setPreferredSize(new java.awt.Dimension(267, 89));
 			{
@@ -1311,14 +1330,14 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 			{
 				lookupVersion = new _JLookup(null, "Version No.", 0);
 				pnlDate.add(lookupVersion);
-				lookupVersion.setBounds(95, 16, 160, 25);				
+				lookupVersion.setBounds(95, 16, 160, 25);
 				lookupVersion.addLookupListener(new LookupListener() {
 					public void lookupPerformed(LookupEvent event) {
-						Object[] data = ((_JLookup)event.getSource()).getDataSet();
-						if(data != null){							
+						Object[] data = ((_JLookup) event.getSource()).getDataSet();
+						if (data != null) {
 
-							version = data[0].toString();								
-							version_status = data[3].toString();		
+							version = data[0].toString();
+							version_status = data[3].toString();
 							lookupVersion.setValue(version);
 
 						}
@@ -1346,84 +1365,86 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 			}
 		}
 
-		this.setFocusTraversalPolicy(new FncFocusTraversalPolicy(lookupCompany, lookupProject, lookupPhase, btnSelectFile, tagSelectFile, cmbSelectSheet, txtCommissionRate, btnUploadSave, btnCancel));
+		this.setFocusTraversalPolicy(new FncFocusTraversalPolicy(lookupCompany, lookupProject, lookupPhase,
+				btnSelectFile, tagSelectFile, cmbSelectSheet, txtCommissionRate, btnUploadSave, btnCancel));
 		this.setPreferredSize(new java.awt.Dimension(1009, 550));
 		this.setBounds(0, 0, 1009, 550);
 
-		//added 01/26/2016 - purpose - set CENQHOMES as default company
+		// added 01/26/2016 - purpose - set CENQHOMES as default company
 		initialize_comp();
 	}
 
-
-	//display
+	// display
 	private void displayUnits() {
 		_Pricelist.displayMonitoringUnits(modelMonitoringUnits, rowheaderMonitoringUnits, proj_id, phase);
-		scrollMonitoringUnits.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer(Integer.toString(tblMonitoringUnits.getRowCount())));
+		scrollMonitoringUnits.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER,
+				FncTables.getRowHeader_Footer(Integer.toString(tblMonitoringUnits.getRowCount())));
 		tblMonitoringUnits.packAll();
 	}
 
-	public static void creatPmtSchemetable(DefaultTableModel modelMain, JList rowHeader) {//used
+	public static void creatPmtSchemetable(DefaultTableModel modelMain, JList rowHeader) {// used
 
-		FncTables.clearTable(modelMain);//Code to clear modelMain.		
-		DefaultListModel listModel = new DefaultListModel();//Creating DefaultListModel for rowHeader.
-		rowHeader.setModel(listModel);//Setting of DefaultListModel into rowHeader.
+		FncTables.clearTable(modelMain);// Code to clear modelMain.
+		DefaultListModel listModel = new DefaultListModel();// Creating DefaultListModel for rowHeader.
+		rowHeader.setModel(listModel);// Setting of DefaultListModel into rowHeader.
 
-		String sql = "select '', '', '', '', '', '' \r\n" ;
+		String sql = "select '', '', '', '', '', '' \r\n";
 
 		pgSelect db = new pgSelect();
 		db.select(sql);
-		if(db.isNotNull()){
-			for(int x=0; x < db.getRowCount(); x++){
+		if (db.isNotNull()) {
+			for (int x = 0; x < db.getRowCount(); x++) {
 				// Adding of row in table
 				modelMain.addRow(db.getResult()[x]);
-				listModel.addElement(modelMain.getRowCount());				
-			}	
-		}		
+				listModel.addElement(modelMain.getRowCount());
+			}
+		}
 	}
 
 	public void displayPmtSchemeList(DefaultTableModel modelMain, JList rowHeader) {
-		FncTables.clearTable(modelMain);//Code to clear modelMain.
-		DefaultListModel listModel = new DefaultListModel();//Creating DefaultListModel for rowHeader.
-		rowHeader.setModel(listModel);//Setting of DefaultListModel into rowHeader.
+		FncTables.clearTable(modelMain);// Code to clear modelMain.
+		DefaultListModel listModel = new DefaultListModel();// Creating DefaultListModel for rowHeader.
+		rowHeader.setModel(listModel);// Setting of DefaultListModel into rowHeader.
 
-		String sql = 				
-			"select\r\n" + 
-			"\r\n" + 
-			"a.pmt_scheme_id,\r\n" + 
-			"b.pmt_scheme_desc,\r\n" + 
-			"a.cm_scheme_id_internal,\r\n" + 
-			"a.cm_scheme_id_external,\r\n" + 
-			"(case when a.edited_by is null then a.created_by else a.edited_by end),\r\n" + 
-			"(case when a.date_edited is null then a.date_created else a.date_edited end)\r\n" + 
-			"\r\n" + 
-			"from rf_marketing_scheme_detail a\r\n" + 
-			"left join mf_payment_scheme b on a.pmt_scheme_id = b.pmt_scheme_id\r\n" + 
-			"\r\n" ;
+		String sql = "select\r\n" +
+				"\r\n" +
+				"a.pmt_scheme_id,\r\n" +
+				"b.pmt_scheme_desc,\r\n" +
+				"a.cm_scheme_id_internal,\r\n" +
+				"a.cm_scheme_id_external,\r\n" +
+				"(case when a.edited_by is null then a.created_by else a.edited_by end),\r\n" +
+				"(case when a.date_edited is null then a.date_created else a.date_edited end)\r\n" +
+				"\r\n" +
+				"from rf_marketing_scheme_detail a\r\n" +
+				"left join mf_payment_scheme b on a.pmt_scheme_id = b.pmt_scheme_id\r\n" +
+				"\r\n";
 
-		if (rec_id==null) {sql = sql + "where a.rec_id = null ";}
-		else {sql = sql + "where a.rec_id = '"+rec_id+"' ";}
+		if (rec_id == null) {
+			sql = sql + "where a.rec_id = null ";
+		} else {
+			sql = sql + "where a.rec_id = '" + rec_id + "' ";
+		}
 
 		sql = sql +
 
-		"and a.status_id = 'A' " +
-		"order by a.pmt_scheme_id";
+				"and a.status_id = 'A' " +
+				"order by a.pmt_scheme_id";
 
 		System.out.printf("SQL #1: %s", sql);
 		pgSelect db = new pgSelect();
 		db.select(sql);
-		if(db.isNotNull()){
-			for(int x=0; x < db.getRowCount(); x++){
+		if (db.isNotNull()) {
+			for (int x = 0; x < db.getRowCount(); x++) {
 				// Adding of row in table
 				modelMain.addRow(db.getResult()[x]);
 				listModel.addElement(modelMain.getRowCount());
-			}			
-		}	
-		tblScheme.packAll();	
-	}	
-
+			}
+		}
+		tblScheme.packAll();
+	}
 
 	//
-	protected JTable streamSheet(Sheet sheet) {//XXX streamSheet
+	protected JTable streamSheet(Sheet sheet) {// XXX streamSheet
 
 		int colCount = sheet.getColumnCount();
 		int rowCount = sheet.getRowCount();
@@ -1435,106 +1456,118 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 		rowValue = new Object[rowCount][colCount + 1];
 
-		//System.out.printf("     Column: %s%n", colCount);
-		//System.out.printf("     Row: %s%n", rowCount);
+		// System.out.printf(" Column: %s%n", colCount);
+		// System.out.printf(" Row: %s%n", rowCount);
 
-		//kukunin kung anong row ung table header gamit ung word na PHASE
+		// kukunin kung anong row ung table header gamit ung word na PHASE
 		int colnameRow = 0;
-		for(int r=0;r<rowCount;r++){
+		for (int r = 0; r < rowCount; r++) {
 			Boolean isBreak = false;
-			for(int c=0;c<colCount;c++){
-				if(sheet.getValueAt(c, r).toString().trim().toUpperCase().equals("PHASE")) {
+			for (int c = 0; c < colCount; c++) {
+				if (sheet.getValueAt(c, r).toString().trim().toUpperCase().equals("PHASE")) {
 					colnameRow = r;
 					isBreak = true;
 				}
 			}
-			if(isBreak){
+			if (isBreak) {
 				break;
 			}
 		}
-		//System.out.printf("Column Name Row: %s%n", colnameRow);
+		// System.out.printf("Column Name Row: %s%n", colnameRow);
 
 		ArrayList<Integer> listHiddenColumns = new ArrayList<Integer>();
-		for(int x=0; x < colCount; x++){
+		for (int x = 0; x < colCount; x++) {
 			Column<SpreadSheet> col = sheet.getColumn(x);
 
-			//System.out.printf("%nColumn #%s: %s%n", x, col.getElement().getAttributes());
-			for(Object obj : col.getElement().getAttributes()){
+			// System.out.printf("%nColumn #%s: %s%n", x, col.getElement().getAttributes());
+			for (Object obj : col.getElement().getAttributes()) {
 				Attribute att = (Attribute) obj;
 
-				if(att.getName().equals("visibility")){
-					//System.out.printf("Row #%s %s: %s%n", x, att.getName(), att.getValue());
+				if (att.getName().equals("visibility")) {
+					// System.out.printf("Row #%s %s: %s%n", x, att.getName(), att.getValue());
 					listHiddenColumns.add(x);
 				}
 			}
 
-			/*for(Object obj : col.getPrivateStyle().getElement().getAttributes()){
-				Attribute att = (Attribute) obj;
-				System.out.printf("Row #%s %s: %s%n", x, att.getName(), att.getValue());
-			}*/
+			/*
+			 * for(Object obj : col.getPrivateStyle().getElement().getAttributes()){
+			 * Attribute att = (Attribute) obj;
+			 * System.out.printf("Row #%s %s: %s%n", x, att.getName(), att.getValue());
+			 * }
+			 */
 		}
 
-		//buburahin ung may mga walang laman na column
+		// buburahin ung may mga walang laman na column
 		deleteColumn.clear();
-		for(int c=0;c<colCount;c++){
-			if(sheet.getValueAt(c, colnameRow).toString().equals("") || sheet.getValueAt(c, colnameRow)==null){
-				deleteColumn.add((c+1));
-				//System.out.println("Col: "+(c+1)+" Value: "+columnNames[c+1]);
-			}else deleteColumn.clear();
+		for (int c = 0; c < colCount; c++) {
+			if (sheet.getValueAt(c, colnameRow).toString().equals("") || sheet.getValueAt(c, colnameRow) == null) {
+				deleteColumn.add((c + 1));
+				// System.out.println("Col: "+(c+1)+" Value: "+columnNames[c+1]);
+			} else
+				deleteColumn.clear();
 		}
 		colCount = (deleteColumn.get(0) - 1);
 		columnNames = new Object[colCount + 1];
 
-		//String addMRI = " per year", addFIRE = " per year";
-		//ihfDP = 0;
-		//hdmfDP = 0;
+		// String addMRI = " per year", addFIRE = " per year";
+		// ihfDP = 0;
+		// hdmfDP = 0;
 
-		for(int c=0;c<colCount;c++){
-			/*if(sheet.getValueAt(c, colnameRow).equals("MRI") && sheet.getName().equals("HDMF")){
-				columnNames[c+1] = sheet.getValueAt(c, colnameRow).toString().trim()+addMRI;
-				addMRI = "";
-			}else if(sheet.getValueAt(c, colnameRow).equals("FI") && sheet.getName().equals("HDMF")){
-				columnNames[c+1] = sheet.getValueAt(c, colnameRow).toString().trim()+addFIRE;
-				addFIRE = "";
-			}else{
-				columnNames[c+1] = sheet.getValueAt(c, colnameRow).toString().trim();
-				sheet.getColumn(c).getWidth();
+		for (int c = 0; c < colCount; c++) {
+			/*
+			 * if(sheet.getValueAt(c, colnameRow).equals("MRI") &&
+			 * sheet.getName().equals("HDMF")){
+			 * columnNames[c+1] = sheet.getValueAt(c, colnameRow).toString().trim()+addMRI;
+			 * addMRI = "";
+			 * }else if(sheet.getValueAt(c, colnameRow).equals("FI") &&
+			 * sheet.getName().equals("HDMF")){
+			 * columnNames[c+1] = sheet.getValueAt(c, colnameRow).toString().trim()+addFIRE;
+			 * addFIRE = "";
+			 * }else{
+			 * columnNames[c+1] = sheet.getValueAt(c, colnameRow).toString().trim();
+			 * sheet.getColumn(c).getWidth();
+			 * 
+			 * if(!((String)columnNames[c+1]).equals("")){
+			 * //System.out.printf("%s (%s)%n", sheet.getValueAt(c,
+			 * colnameRow).toString().trim(), sheet.getValueAt(c, colnameRow).getClass());
+			 * }
+			 * }
+			 */
 
-				if(!((String)columnNames[c+1]).equals("")){
-					//System.out.printf("%s (%s)%n", sheet.getValueAt(c, colnameRow).toString().trim(), sheet.getValueAt(c, colnameRow).getClass());
-				}
-			}*/
+			columnNames[c + 1] = sheet.getValueAt(c, colnameRow).toString().trim();
+			// sheet.getColumn(c).getWidth();
 
-			columnNames[c+1] = sheet.getValueAt(c, colnameRow).toString().trim();
-			//sheet.getColumn(c).getWidth();
-
-			if(!((String)columnNames[c+1]).equals("")){
-				//System.out.printf("%s (%s)%n", sheet.getValueAt(c, colnameRow).toString().trim(), sheet.getValueAt(c, colnameRow).getClass());
+			if (!((String) columnNames[c + 1]).equals("")) {
+				// System.out.printf("%s (%s)%n", sheet.getValueAt(c,
+				// colnameRow).toString().trim(), sheet.getValueAt(c, colnameRow).getClass());
 			}
 			getIHF(sheet.getValueAt(c, colnameRow).toString());
 			getHDMF(sheet.getValueAt(c, colnameRow).toString());
-			//System.out.println("IHF: "+ihfDP+" - HDMF: "+hdmfDP);
+			// System.out.println("IHF: "+ihfDP+" - HDMF: "+hdmfDP);
 		}
-		//System.out.println("Total: "+deleteColumn.size());
+		// System.out.println("Total: "+deleteColumn.size());
 
-		for(int r=0;r<rowCount;r++){
+		for (int r = 0; r < rowCount; r++) {
 			Object phase = sheet.getValueAt(1, r);
 
-			if(lookupPhase.getValue().equals(phase.toString())){
-				for(int c=0;c<colCount;c++){
+			if (lookupPhase.getValue().equals(phase.toString())) {
+				for (int c = 0; c < colCount; c++) {
 					rowValue[0][0] = false;
 					rowValue[r][0] = false;
-					rowValue[r][c+1] = sheet.getValueAt(c, r);
+					rowValue[r][c + 1] = sheet.getValueAt(c, r);
 				}
 			}
 		}
 
-		DefaultTableModel modelAddUnit = new DefaultTableModel(rowValue, columnNames){
+		DefaultTableModel modelAddUnit = new DefaultTableModel(rowValue, columnNames) {
 			private static final long serialVersionUID = 3174178548239382080L;
-			public boolean isCellEditable(int rowIndex, int columnIndex) { 
+
+			public boolean isCellEditable(int rowIndex, int columnIndex) {
 				Boolean to = null;
-				if(columnIndex==0) to = true;
-				else to = false;
+				if (columnIndex == 0)
+					to = true;
+				else
+					to = false;
 				return to;
 			}
 		};
@@ -1555,7 +1588,8 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 		tblAddUnit.setDefaultRenderer(_JLookup.class, TextRenderer.getTextRenderer(SwingConstants.CENTER));
 
 		RolloverMouseAdapter rolloverAdapter = new RolloverMouseAdapter(tblAddUnit);
-		//RolloverBooleanRenderer renderer = new RolloverBooleanRenderer(rolloverAdapter);
+		// RolloverBooleanRenderer renderer = new
+		// RolloverBooleanRenderer(rolloverAdapter);
 
 		CheckBoxHeader.RolloverAdapter ma = new CheckBoxHeader.RolloverAdapter(tblAddUnit);
 		tblAddUnit.getTableHeader().addMouseListener(ma);
@@ -1569,40 +1603,42 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 		tblAddUnit.addMouseListener(rolloverAdapter);
 		tblAddUnit.addMouseMotionListener(rolloverAdapter);
 
-		//this.getColumnModel().getColumn(0).setCellRenderer(renderer);
+		// this.getColumnModel().getColumn(0).setCellRenderer(renderer);
 
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tblAddUnit.getModel());
 		tblAddUnit.setRowSorter(sorter);
 		sorter.setSortable(0, false);
 
-		//modelAddUnit.removeRow(colnameRow);
-		for(int x = (modelAddUnit.getRowCount() -1); x >= 0; x--){
+		// modelAddUnit.removeRow(colnameRow);
+		for (int x = (modelAddUnit.getRowCount() - 1); x >= 0; x--) {
 			Object value = modelAddUnit.getValueAt(x, 1);
-			if(value == null){
+			if (value == null) {
 				modelAddUnit.removeRow(x);
 			}
 		}
 
-		tblAddUnit.addKeyListener(new KeyAdapter(){
+		tblAddUnit.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent arg0) {
-				if(arg0.getKeyCode() == 16){
+				if (arg0.getKeyCode() == 16) {
 					pressedShift = true;
 				}
 			}
+
 			public void keyReleased(KeyEvent arg0) {
 				pressedShift = false;
 			}
 		});
 
-		tblAddUnit.addMouseListener(new MouseAdapter(){
+		tblAddUnit.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
 				tblAddUnit.requestFocus();
-				for(int x=0;x<(tblAddUnit.getSelectedRows().length);x++){
-					if(pressedShift){
+				for (int x = 0; x < (tblAddUnit.getSelectedRows().length); x++) {
+					if (pressedShift) {
 						tblAddUnit.setValueAt(true, tblAddUnit.getSelectedRows()[x], 0);
-					}	
+					}
 				}
 			}
+
 			public void mouseReleased(MouseEvent arg0) {
 				tblAddUnit.requestFocus();
 			}
@@ -1610,55 +1646,58 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 		tblAddUnit.packColumns(5, "");
 
-		//Remove hidden columns
-		for(int x = tblAddUnit.getRowCount() -1; x >= 0 ; x--){
-			if(listHiddenColumns.contains(x)){
+		// Remove hidden columns
+		for (int x = tblAddUnit.getRowCount() - 1; x >= 0; x--) {
+			if (listHiddenColumns.contains(x)) {
 				tblAddUnit.removeColumn(tblAddUnit.getColumn(x + 1));
 			}
 		}
 
-		for(int x=0; x < tblAddUnit.getColumnCount(); x++){
-			//System.out.printf("Column #%s: %s%n", x, tblAddUnit.getColumnClass(x));
+		for (int x = 0; x < tblAddUnit.getColumnCount(); x++) {
+			// System.out.printf("Column #%s: %s%n", x, tblAddUnit.getColumnClass(x));
 		}
-		//evaluate();
+		// evaluate();
 
 		return tblAddUnit;
 	}
 
-	protected boolean getIHF(String string){
+	protected boolean getIHF(String string) {
 		char[] c = string.toCharArray();
-		for(int i=0; i < string.length(); i++){
-			if ( !Character.isDigit(c[i])){
+		for (int i = 0; i < string.length(); i++) {
+			if (!Character.isDigit(c[i])) {
 				return false;
-			}else{
-				if(string.trim().substring(i+1).trim().equals("down Payment Zero Interest")){
-					//ihfDP = Integer.parseInt(Character.toString(c[i]));
-					//System.out.println("IHF DP: "+c[i]);
-					//System.out.println("Particular: "+string.trim().substring(i+1).trim());
-				}else if(string.trim().substring(i+1).trim().equals("years Monthly Amortization @ 18% per anum fix for 5 yrs.")){
-					//ihfMA = (c[i-1]+c[i] * 12);
-					//System.out.println("IHF MA: "+c[i-1]+c[i]);
-					//System.out.println("Particular: "+string.trim().substring(i+1).trim());
+			} else {
+				if (string.trim().substring(i + 1).trim().equals("down Payment Zero Interest")) {
+					// ihfDP = Integer.parseInt(Character.toString(c[i]));
+					// System.out.println("IHF DP: "+c[i]);
+					// System.out.println("Particular: "+string.trim().substring(i+1).trim());
+				} else if (string.trim().substring(i + 1).trim()
+						.equals("years Monthly Amortization @ 18% per anum fix for 5 yrs.")) {
+					// ihfMA = (c[i-1]+c[i] * 12);
+					// System.out.println("IHF MA: "+c[i-1]+c[i]);
+					// System.out.println("Particular: "+string.trim().substring(i+1).trim());
 				}
 			}
 		}
 		return true;
 	}
 
-	protected boolean getHDMF(String string){
+	protected boolean getHDMF(String string) {
 		char[] c = string.toCharArray();
-		for(int i=0; i < string.length(); i++){
-			if ( !Character.isDigit(c[i])){
+		for (int i = 0; i < string.length(); i++) {
+			if (!Character.isDigit(c[i])) {
 				return false;
-			}else{
-				if(string.trim().substring(i+1).trim().equals("Months Cash Outlay")){
-					//hdmfDP = Integer.parseInt(Character.toString(c[i-1])+Character.toString(c[i]));
-					//System.out.println("HDMF DP: "+hdmfDP);
-					//System.out.println("Particular: "+string.trim().substring(i+1).trim());
-				}else if(string.trim().substring(i+1).trim().equals("yrs to pay @ 7% interest per annum Paid Within Due Date")){
-					//hdmfMA = (c[i-1]+c[i] * 12);
-					//System.out.println("HDMF MA: "+c[i-1]+c[i]);
-					//System.out.println("Particular: "+string.trim().substring(i+1).trim());
+			} else {
+				if (string.trim().substring(i + 1).trim().equals("Months Cash Outlay")) {
+					// hdmfDP =
+					// Integer.parseInt(Character.toString(c[i-1])+Character.toString(c[i]));
+					// System.out.println("HDMF DP: "+hdmfDP);
+					// System.out.println("Particular: "+string.trim().substring(i+1).trim());
+				} else if (string.trim().substring(i + 1).trim()
+						.equals("yrs to pay @ 7% interest per annum Paid Within Due Date")) {
+					// hdmfMA = (c[i-1]+c[i] * 12);
+					// System.out.println("HDMF MA: "+c[i-1]+c[i]);
+					// System.out.println("Particular: "+string.trim().substring(i+1).trim());
 				}
 			}
 		}
@@ -1666,10 +1705,10 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 	}
 
 	protected boolean hasSelectedUnit() {
-		_JTableMain table = (_JTableMain) ((JScrollPane)tabCenter.getSelectedComponent()).getViewport().getView();
+		_JTableMain table = (_JTableMain) ((JScrollPane) tabCenter.getSelectedComponent()).getViewport().getView();
 
 		ArrayList<Boolean> listSelectedUnits = new ArrayList<Boolean>();
-		for(int x=0; x < table.getRowCount(); x++){
+		for (int x = 0; x < table.getRowCount(); x++) {
 			listSelectedUnits.add((Boolean) table.getValueAt(x, 0));
 		}
 		return listSelectedUnits.contains(true);
@@ -1679,11 +1718,12 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
 
-		if(actionCommand.equals("Select")){
-			if(fileChooser == null){
+		if (actionCommand.equals("Select")) {
+			if (fileChooser == null) {
 				fileChooser = new JFileChooser();
 				fileChooser.setAcceptAllFileFilterUsed(false);
-				fileChooser.addChoosableFileFilter(new FncODSFileFilter(new String[] { "ods" }, "Spreadsheets (*.ods, *.odc, *.ots)"));
+				fileChooser.addChoosableFileFilter(
+						new FncODSFileFilter(new String[] { "ods" }, "Spreadsheets (*.ods, *.odc, *.ots)"));
 
 				Action details = fileChooser.getActionMap().get("viewTypeDetails");
 				details.actionPerformed(null);
@@ -1691,12 +1731,13 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 			fileChooser.setSelectedFile(new File(""));
 			int status = fileChooser.showOpenDialog(Pricelist.this.getTopLevelAncestor());
 			if (status == JFileChooser.APPROVE_OPTION) {
-				if(fileChooser.getSelectedFile().equals(null)){
+				if (fileChooser.getSelectedFile().equals(null)) {
 					JOptionPane.showMessageDialog(getParent(), "No Selected Document");
 					return;
 				}
 
-				//System.out.printf("Selected File: %s%n", fileChooser.getSelectedFile().toString());
+				// System.out.printf("Selected File: %s%n",
+				// fileChooser.getSelectedFile().toString());
 				String selectedFile = fileChooser.getSelectedFile().toString();
 				File fileSelected = new File(selectedFile);
 				tagSelectFile.setText(selectedFile);
@@ -1704,11 +1745,11 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 				tabCenter.removeAll();
 				try {
 					int sheetCount = SpreadSheet.createFromFile(fileSelected).getSheetCount();
-					for(int x=0; x < sheetCount; x++){
+					for (int x = 0; x < sheetCount; x++) {
 						Sheet sheet = SpreadSheet.createFromFile(fileSelected).getSheet(x);
 
 						String sheetName = sheet.getName().toString();
-						//System.out.printf("Sheet Name: %s%n", sheetName);
+						// System.out.printf("Sheet Name: %s%n", sheetName);
 
 						JTable table = streamSheet(sheet);
 						tabCenter.addTab(sheetName, null, new JScrollPane(table), null);
@@ -1716,7 +1757,8 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 						hasNSPexceed3M(table);
 					}
 
-					_JTableMain table = (_JTableMain) ((JScrollPane)tabCenter.getSelectedComponent()).getViewport().getView();
+					_JTableMain table = (_JTableMain) ((JScrollPane) tabCenter.getSelectedComponent()).getViewport()
+							.getView();
 					lblTotalUnits.setText(String.format("Table Unit(s): %s", table.getRowCount()));
 					cmbPriceListType.setEnabled(true);
 				} catch (IOException e1) {
@@ -1725,12 +1767,12 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 			}
 		}
 
-		if(actionCommand.equals("MonitoringEdit")){
+		if (actionCommand.equals("MonitoringEdit")) {
 			modelMonitoringUnits.setEditable(true);
 		}
 	}
 
-	public void evaluate(){
+	public void evaluate() {
 		try {
 			FileInputStream fis = new FileInputStream("/home/PC-115l/EAST MERIDIAN FOR MAM RHEA.ods");
 			Workbook wb = new HSSFWorkbook(fis);
@@ -1738,30 +1780,30 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 			FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
 			// suppose your formula is in B3
-			CellReference cellReference = new CellReference("B3"); 
+			CellReference cellReference = new CellReference("B3");
 			Row row = (Row) sheet.getRow(cellReference.getRow());
-			Cell cell = row.getCell(cellReference.getCol()); 
+			Cell cell = row.getCell(cellReference.getCol());
 
-			if (cell!=null) {
+			if (cell != null) {
 				switch (evaluator.evaluateFormulaCell(cell)) {
-				case Cell.CELL_TYPE_BOOLEAN:
-					System.out.println(cell.getBooleanCellValue());
-					break;
-				case Cell.CELL_TYPE_NUMERIC:
-					System.out.println(cell.getNumericCellValue());
-					break;
-				case Cell.CELL_TYPE_STRING:
-					System.out.println(cell.getStringCellValue());
-					break;
-				case Cell.CELL_TYPE_BLANK:
-					break;
-				case Cell.CELL_TYPE_ERROR:
-					System.out.println(cell.getErrorCellValue());
-					break;
+					case Cell.CELL_TYPE_BOOLEAN:
+						System.out.println(cell.getBooleanCellValue());
+						break;
+					case Cell.CELL_TYPE_NUMERIC:
+						System.out.println(cell.getNumericCellValue());
+						break;
+					case Cell.CELL_TYPE_STRING:
+						System.out.println(cell.getStringCellValue());
+						break;
+					case Cell.CELL_TYPE_BLANK:
+						break;
+					case Cell.CELL_TYPE_ERROR:
+						System.out.println(cell.getErrorCellValue());
+						break;
 
 					// CELL_TYPE_FORMULA will never occur
-				case Cell.CELL_TYPE_FORMULA: 
-					break;
+					case Cell.CELL_TYPE_FORMULA:
+						break;
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -1773,12 +1815,13 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 	class PopupTriggerListener_panel extends MouseAdapter {
 		public void mousePressed(MouseEvent ev) {
-			if (ev.isPopupTrigger()&&tblScheme.isEnabled()==true) {
+			if (ev.isPopupTrigger() && tblScheme.isEnabled() == true) {
 				menu.show(ev.getComponent(), ev.getX(), ev.getY());
 			}
 		}
+
 		public void mouseReleased(MouseEvent ev) {
-			if (ev.isPopupTrigger()&&tblScheme.isEnabled()==true) {
+			if (ev.isPopupTrigger() && tblScheme.isEnabled() == true) {
 				menu.show(ev.getComponent(), ev.getX(), ev.getY());
 			}
 		}
@@ -1786,157 +1829,220 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 	class PopupTriggerListener_panel2 extends MouseAdapter {
 		public void mousePressed(MouseEvent ev) {
-			if (ev.isPopupTrigger()&&tblMonitoringUnits.isEnabled()==true) {
+			if (ev.isPopupTrigger() && tblMonitoringUnits.isEnabled() == true) {
 				menu2.show(ev.getComponent(), ev.getX(), ev.getY());
 			}
 		}
+
 		public void mouseReleased(MouseEvent ev) {
-			if (ev.isPopupTrigger()&&tblMonitoringUnits.isEnabled()==true) {
+			if (ev.isPopupTrigger() && tblMonitoringUnits.isEnabled() == true) {
 				menu2.show(ev.getComponent(), ev.getX(), ev.getY());
 			}
 		}
 	}
 
-	private void savePricelist(){
+	private void savePricelist() {
 
-		_JTableMain table = (_JTableMain) ((JScrollPane)tabCenter.getSelectedComponent()).getViewport().getView();		
+		_JTableMain table = (_JTableMain) ((JScrollPane) tabCenter.getSelectedComponent()).getViewport().getView();
 
-			if(table == null){
-				JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Please select file.", "Save", JOptionPane.WARNING_MESSAGE);
+		if (table == null) {
+			JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Please select file.", "Save",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if (!hasSelectedUnit()) {
+			JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Please select unit(s) to save.",
+					"Save", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if (!_Pricelist.hasFileHasCorrectColumns(table)) {
+			return;
+		}
+
+		Boolean hasCurrentVersion = sql_getCurrentVersion() > 0;
+		if (hasCurrentVersion) {// XXX SAVE
+			if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(),
+					"An existing version already exists?\nWould you like to overwrite?", "Confirmation",
+					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
 				return;
 			}
+		}
 
-			if(!hasSelectedUnit()){
-				JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Please select unit(s) to save.", "Save", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-
-			if(!_Pricelist.hasFileHasCorrectColumns(table)){
-				return;
-			}
-
-			Boolean hasCurrentVersion = sql_getCurrentVersion() > 0;
-			if (hasCurrentVersion) {//XXX SAVE
-				if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "An existing version already exists?\nWould you like to overwrite?", "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
-					return;
-				}
-			}
-
-			if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Are all entries correct?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-				System.out.println("Dumaan dito before saving");
-				if (_Pricelist.saveUnits_TV(table, lookupCompany.getValue(), lookupProject.getValue(), cmbPriceListType.getSelectedItem().toString() ,hasCurrentVersion))
-				{
-					JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Unit(s) has been saved.", "Save", JOptionPane.INFORMATION_MESSAGE);
-					displayUnits();
-					
-					txtLowCostInt.setEnabled(true);
-					txtSocializedInt.setEnabled(true);
-					txtLowCostExt.setEnabled(true);
-					txtSocializedExt.setEnabled(true);
-					btnMonitoringAddPmtSchme.setEnabled(true);
-					btnSchemeSave.setEnabled(true);
-					modelScheme.setEditable(true);
-					displayPmtSchemeList(modelScheme, rowheaderScheme);
-					rec_id = sql_getRecID().toString();
-					if(!hasCurrentVersion){
-						txtStatus.setText("A");
-						tagStatus.setTag("ACTIVE");
-					}
-				}
-			}
-		//}
-
-		/*if (sql_getCurrentVersion()==0) {// commented by Alvin Gonzales (2015-07-28)
-			if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Are all entries correct?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-
-				_Pricelist.saveUnits(table, lookupCompany.getValue(), lookupProject.getValue(), false);
-
-				pgUpdate db = new pgUpdate();	
-				_Pricelist.savePricelist(table, lookupProject.getValue(), db);
-				if (mktgSchmeExists()==true){
-
-				} else {
-					insertMktgSchemeMain();
-				}
-
-				JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Unit(s) has been saved.", "Save", JOptionPane.INFORMATION_MESSAGE);
-				db.commit();
+		if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Are all entries correct?", "Save",
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+			System.out.println("Dumaan dito before saving");
+			if (_Pricelist.saveUnits_TV(table, lookupCompany.getValue(), lookupProject.getValue(),
+					cmbPriceListType.getSelectedItem().toString(), hasCurrentVersion)) {
+				JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Unit(s) has been saved.", "Save",
+						JOptionPane.INFORMATION_MESSAGE);
 				displayUnits();
-				txtStatus.setText("A");
-				tagStatus.setTag("ACTIVE");
-			}
-		} else {
-			if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "An existing version already exists?\nWould you like to overwrite?", "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-				if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Are all entries correct?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 
-					_Pricelist.saveUnits(table, lookupCompany.getValue(), lookupProject.getValue(), true);
-
-					pgUpdate db = new pgUpdate();	
-					setPreviousVersionInactive(db);
-					_Pricelist.savePricelist(table, lookupProject.getValue(), db);
-					if (mktgSchmeExists()==true){} else {insertMktgSchemeMain();}
-
-					JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Unit(s) has been saved.", "Save", JOptionPane.INFORMATION_MESSAGE);					
-					db.commit();
-					displayUnits();
+				txtLowCostInt.setEnabled(true);
+				txtSocializedInt.setEnabled(true);
+				txtLowCostExt.setEnabled(true);
+				txtSocializedExt.setEnabled(true);
+				btnMonitoringAddPmtSchme.setEnabled(true);
+				btnSchemeSave.setEnabled(true);
+				modelScheme.setEditable(true);
+				displayPmtSchemeList(modelScheme, rowheaderScheme);
+				rec_id = sql_getRecID().toString();
+				if (!hasCurrentVersion) {
+					txtStatus.setText("A");
+					tagStatus.setTag("ACTIVE");
 				}
 			}
-		}*/
+		}
+		// }
+
+		/*
+		 * if (sql_getCurrentVersion()==0) {// commented by Alvin Gonzales (2015-07-28)
+		 * if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(),
+		 * "Are all entries correct?", "Save", JOptionPane.YES_NO_CANCEL_OPTION,
+		 * JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+		 * 
+		 * _Pricelist.saveUnits(table, lookupCompany.getValue(),
+		 * lookupProject.getValue(), false);
+		 * 
+		 * pgUpdate db = new pgUpdate();
+		 * _Pricelist.savePricelist(table, lookupProject.getValue(), db);
+		 * if (mktgSchmeExists()==true){
+		 * 
+		 * } else {
+		 * insertMktgSchemeMain();
+		 * }
+		 * 
+		 * JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(),
+		 * "Unit(s) has been saved.", "Save", JOptionPane.INFORMATION_MESSAGE);
+		 * db.commit();
+		 * displayUnits();
+		 * txtStatus.setText("A");
+		 * tagStatus.setTag("ACTIVE");
+		 * }
+		 * } else {
+		 * if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(),
+		 * "An existing version already exists?\nWould you like to overwrite?",
+		 * "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION,
+		 * JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+		 * if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(),
+		 * "Are all entries correct?", "Save", JOptionPane.YES_NO_CANCEL_OPTION,
+		 * JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+		 * 
+		 * _Pricelist.saveUnits(table, lookupCompany.getValue(),
+		 * lookupProject.getValue(), true);
+		 * 
+		 * pgUpdate db = new pgUpdate();
+		 * setPreviousVersionInactive(db);
+		 * _Pricelist.savePricelist(table, lookupProject.getValue(), db);
+		 * if (mktgSchmeExists()==true){} else {insertMktgSchemeMain();}
+		 * 
+		 * JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(),
+		 * "Unit(s) has been saved.", "Save", JOptionPane.INFORMATION_MESSAGE);
+		 * db.commit();
+		 * displayUnits();
+		 * }
+		 * }
+		 * }
+		 */
 	}
 
+	// display
+	public void setPricelist_mainDtls() {
 
-	//display
-	public void setPricelist_mainDtls(){
+		Object[] pricelist_dtl = getPricelistMainDtls();
 
-		Object[] pricelist_dtl = getPricelistMainDtls();		
+		status_name = "";
+		String created_by = "";
+		Date created_date = null;
+		String posted_by = "";
+		Date posted_date = null;
+		String created_by_id = "";
+		String posted_by_id = "";
+		rec_id = "";
 
-		status_name 	= "";
-		String created_by 	= "";
-		Date created_date  	= null;
-		String posted_by	= "";
-		Date posted_date  	= null;		
-		String created_by_id 	= "";
-		String posted_by_id 	= "";
-		rec_id 				= "";
+		// Removed temporarily (02-03-2016); in the future when commission rate per
+		// project/phase varies, then I may have to bring this back
+		/*
+		 * String comm_rate_lowcost_internal = "";
+		 * String comm_rate_socialized_internal = "";
+		 * String comm_rate_lowcost_external = "";
+		 * String comm_rate_socialized_external = "";
+		 */
 
-		//Removed temporarily (02-03-2016); in the future when commission rate per project/phase varies, then I may have to bring this back
-		/*String comm_rate_lowcost_internal = "";
-		String comm_rate_socialized_internal = "";
-		String comm_rate_lowcost_external = "";
-		String comm_rate_socialized_external = "";*/
+		try {
+			status_id = pricelist_dtl[0].toString();
+		} catch (NullPointerException e) {
+			status_id = "";
+		}
+		try {
+			status_name = pricelist_dtl[1].toString();
+		} catch (NullPointerException e) {
+			status_name = "";
+		}
+		try {
+			created_by = pricelist_dtl[2].toString();
+		} catch (NullPointerException e) {
+			created_by = "";
+		}
+		try {
+			posted_by = pricelist_dtl[4].toString();
+		} catch (NullPointerException e) {
+			posted_by = "";
+		}
+		/*
+		 * try { comm_rate_lowcost_internal = pricelist_dtl[6].toString();} catch
+		 * (NullPointerException e) { comm_rate_lowcost_internal = "0.00" ; }
+		 * try { comm_rate_socialized_internal = pricelist_dtl[7].toString();} catch
+		 * (NullPointerException e) { comm_rate_socialized_internal = "0.00" ; }
+		 * try { comm_rate_lowcost_external = pricelist_dtl[8].toString();} catch
+		 * (NullPointerException e) { comm_rate_lowcost_external = "0.00" ; }
+		 * try { comm_rate_socialized_external = pricelist_dtl[9].toString();} catch
+		 * (NullPointerException e) { comm_rate_socialized_external = "0.00"; }
+		 */
+		try {
+			created_date = (Date) pricelist_dtl[3];
+		} catch (NullPointerException e) {
+			created_date = null;
+		}
+		try {
+			posted_date = (Date) pricelist_dtl[5];
+		} catch (NullPointerException e) {
+			posted_date = null;
+		}
+		try {
+			created_by_id = pricelist_dtl[10].toString();
+		} catch (NullPointerException e) {
+			created_by_id = "";
+		}
+		try {
+			posted_by_id = pricelist_dtl[11].toString();
+		} catch (NullPointerException e) {
+			posted_by_id = "";
+		}
+		try {
+			rec_id = pricelist_dtl[12].toString();
+		} catch (NullPointerException e) {
+			rec_id = null;
+		}
 
-		try { status_id = pricelist_dtl[0].toString();} 	catch (NullPointerException e) { status_id = "" ; }
-		try { status_name = pricelist_dtl[1].toString();} 	catch (NullPointerException e) { status_name = "" ; }		
-		try { created_by = pricelist_dtl[2].toString();} 	catch (NullPointerException e) { created_by = "" ; }
-		try { posted_by = pricelist_dtl[4].toString();} 	catch (NullPointerException e) { posted_by = "" ; }
-		/*try { comm_rate_lowcost_internal = pricelist_dtl[6].toString();} 		catch (NullPointerException e) { comm_rate_lowcost_internal = "0.00" ; }
-		try { comm_rate_socialized_internal = pricelist_dtl[7].toString();} 	catch (NullPointerException e) { comm_rate_socialized_internal = "0.00" ; }
-		try { comm_rate_lowcost_external = pricelist_dtl[8].toString();} 		catch (NullPointerException e) { comm_rate_lowcost_external = "0.00" ; }
-		try { comm_rate_socialized_external = pricelist_dtl[9].toString();} 		catch (NullPointerException e) { comm_rate_socialized_external = "0.00"; }*/
-		try { created_date = (Date) pricelist_dtl[3];} 		catch (NullPointerException e) { created_date = null; }
-		try { posted_date = (Date) pricelist_dtl[5];} 		catch (NullPointerException e) { posted_date = null; }
-		try { created_by_id = pricelist_dtl[10].toString();} 	catch (NullPointerException e) { created_by_id = "" ; }
-		try { posted_by_id = pricelist_dtl[11].toString();} 	catch (NullPointerException e) { posted_by_id = "" ; }
-		try { rec_id = pricelist_dtl[12].toString();} 	catch (NullPointerException e) { rec_id = null ; }
-
-		txtStatus.setText(status_id);	
+		txtStatus.setText(status_id);
 		tagStatus.setTag(status_name);
-		tagUploaded.setTag(created_by);	
-		tagApproved.setTag(posted_by);				
+		tagUploaded.setTag(created_by);
+		tagApproved.setTag(posted_by);
 		dteUploaded.setDate(created_date);
 		dteApproved.setDate(posted_date);
-		//txtLowCostInt.setText(comm_rate_lowcost_internal);
-		//txtSocializedInt.setText(comm_rate_socialized_internal);
-		//txtLowCostExt.setText(comm_rate_lowcost_external);
-		//txtSocializedExt.setText(comm_rate_socialized_external);
-		txtUploadedBy.setText(created_by_id);	
-		txtApprovedBy.setText(posted_by_id);	
+		// txtLowCostInt.setText(comm_rate_lowcost_internal);
+		// txtSocializedInt.setText(comm_rate_socialized_internal);
+		// txtLowCostExt.setText(comm_rate_lowcost_external);
+		// txtSocializedExt.setText(comm_rate_socialized_external);
+		txtUploadedBy.setText(created_by_id);
+		txtApprovedBy.setText(posted_by_id);
 
 	}
 
-
-	//enable-disable
-	private void enableFieldsForEditing(Boolean x){
+	// enable-disable
+	private void enableFieldsForEditing(Boolean x) {
 
 		btnUploadSave.setEnabled(false);
 		btnApprove.setEnabled(x);
@@ -1956,29 +2062,29 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 		txtSocializedExt.setEnabled(x);
 	}
 
-	private void refreshFields(){
+	private void refreshFields() {
 
-		//txtLowCostInt.setText("0.00");
-		//txtSocializedInt.setText("0.00");
-		//txtLowCostExt.setText("0.00");
-		//txtSocializedExt.setText("0.00");
+		// txtLowCostInt.setText("0.00");
+		// txtSocializedInt.setText("0.00");
+		// txtLowCostExt.setText("0.00");
+		// txtSocializedExt.setText("0.00");
 		txtUploadedBy.setText("");
 		tagUploaded.setTag("");
 		txtApprovedBy.setText("");
 		tagApproved.setTag("");
-		tagSelectFile.setText("");		
+		tagSelectFile.setText("");
 
 	}
 
-	public void refresh_tables(){
+	public void refresh_tables() {
 
-		//reset table 1
-		FncTables.clearTable(modelMonitoringUnits);	
+		// reset table 1
+		FncTables.clearTable(modelMonitoringUnits);
 		rowheaderMonitoringUnits = tblMonitoringUnits.getRowHeader();
 		scrollMonitoringUnits.setRowHeaderView(rowheaderMonitoringUnits);
 
-		//reset table 2
-		FncTables.clearTable(modelScheme);	
+		// reset table 2
+		FncTables.clearTable(modelScheme);
 		rowheaderScheme = tblScheme.getRowHeader();
 		scrollScheme.setRowHeaderView(rowheaderScheme);
 
@@ -1986,7 +2092,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 	}
 
-	public void refresh_mainFields(){
+	public void refresh_mainFields() {
 
 		refreshFields();
 		refresh_tables();
@@ -2015,28 +2121,28 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 	}
 
-	public void disableMainFields(){
+	public void disableMainFields() {
 
 		lblPhase.setEnabled(false);
 		lookupPhase.setEnabled(false);
-		tagPhase.setEnabled(false);	
+		tagPhase.setEnabled(false);
 
 		lblStatus.setEnabled(false);
 		txtStatus.setEnabled(false);
-		tagStatus.setEnabled(false);	
+		tagStatus.setEnabled(false);
 
 	}
 
-	public void initialize_comp(){		
+	public void initialize_comp() {
 
-		co_id 		= "02";	
-		co_name		= "CENQHOMES DEVELOPMENT CORPORATION";			
+		co_id = "02";
+		co_name = "CENQHOMES DEVELOPMENT CORPORATION";
 		tagCompany.setTag(co_name);
-		company_logo = RequestForPayment.sql_getCompanyLogo();	
+		company_logo = RequestForPayment.sql_getCompanyLogo();
 
 		lblProject.setEnabled(true);
 		lookupProject.setEnabled(true);
-		tagProject.setEnabled(true);											
+		tagProject.setEnabled(true);
 
 		lookupProject.setValue("");
 		tagProject.setTag("");
@@ -2051,11 +2157,11 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 		lblPhase.setEnabled(false);
 		lookupPhase.setEnabled(false);
-		tagPhase.setEnabled(false);	
+		tagPhase.setEnabled(false);
 
 		lblStatus.setEnabled(false);
 		txtStatus.setEnabled(false);
-		tagStatus.setEnabled(false);												
+		tagStatus.setEnabled(false);
 
 		proj_id = "";
 
@@ -2065,178 +2171,182 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 		lookupCompany.setValue(co_id);
 	}
 
-
-	//lookup / SQL
-	public String sql_phase(String proj_id) {//XXX Phase
+	// lookup / SQL
+	public String sql_phase(String proj_id) {// XXX Phase
 		String SQL = "select\n" +
-		//"getinteger(a.phase) as \"Phase\",\n" +
-		"trim(a.phase) as \"Phase\",\n" +
-		//"'Phase ' || trim(array_to_string(array_agg(trim(a.phase)), ' & ')) as \"Description\",\n" +
-		"a.sub_proj_name as \"Description\",\n" +
-		"b.proj_alias || getinteger(a.phase) as \"Alias\"," +
-		"a.sub_proj_id as \"SubProj ID\" \n" +
-		"from mf_sub_project a\n" +
-		"left join mf_project b on a.proj_id = b.proj_id\n" +
-		"where a.proj_id = '"+ proj_id +"'\n" +
-		"and a.status_id = 'A'\n" +
-		//"group by getinteger(a.phase), b.proj_alias, a.sub_proj_id, a.sub_proj_name \n" +
-		"order by getinteger(a.phase);";
+		// "getinteger(a.phase) as \"Phase\",\n" +
+				"trim(a.phase) as \"Phase\",\n" +
+				// "'Phase ' || trim(array_to_string(array_agg(trim(a.phase)), ' & ')) as
+				// \"Description\",\n" +
+				"a.sub_proj_name as \"Description\",\n" +
+				"b.proj_alias || getinteger(a.phase) as \"Alias\"," +
+				"a.sub_proj_id as \"SubProj ID\" \n" +
+				"from mf_sub_project a\n" +
+				"left join mf_project b on a.proj_id = b.proj_id\n" +
+				"where a.proj_id = '" + proj_id + "'\n" +
+				"and a.status_id = 'A'\n" +
+				// "group by getinteger(a.phase), b.proj_alias, a.sub_proj_id, a.sub_proj_name
+				// \n" +
+				"order by getinteger(a.phase);";
 		return SQL;
 	}
 
-	public Object [] getPricelistMainDtls() {
+	public Object[] getPricelistMainDtls() {
 
-		String strSQL = 
-			"select \r\n" + 
-			"a.status_id,\r\n" + 								//0
-			"upper(trim(b.status_desc)) as status_desc,\r\n" + 
-			"upper(trim(d.entity_name)) as created_by,\r\n" + 
-			"a.date_created,\r\n" + 
-			"upper(trim(f.entity_name)) as posted_by,\r\n" + 
-			"a.date_posted,\r\n" + 								//5
-			"a.comm_rate_lowcost_internal,\r\n" + 
-			"a.comm_rate_socialized_internal,\r\n" + 
-			"a.comm_rate_lowcost_external,\r\n" + 
-			"a.comm_rate_socialized_external," +
-			"a.created_by ," +		//10				
-			"a.posted_by," +
-			"a.rec_id  " +
-			"\r\n" + 
-			"from (select distinct on (proj_id, sub_proj_id) * from rf_marketing_scheme_main " +
-			"	order by proj_id, sub_proj_id, version_no desc, date_created desc) a\r\n" + 
-			"left join mf_record_status b on a.status_id = b.status_id\r\n" + 
-			"left join em_employee c on a.created_by = c.emp_code \r\n" + 
-			"left join rf_entity d on c.entity_id = d.entity_id\r\n" + 
-			"left join em_employee e on a.posted_by = e.emp_code \r\n" + 
-			"left join rf_entity f on e.entity_id = f.entity_id\r\n" + 
-			"where a.co_id = '"+co_id+"' \r\n" + 
-			"and a.proj_id = '"+proj_id+"' \r\n" + 
-			"and a.sub_proj_id = '"+sub_proj_id+"'" ;
+		String strSQL = "select \r\n" +
+				"a.status_id,\r\n" + // 0
+				"upper(trim(b.status_desc)) as status_desc,\r\n" +
+				"upper(trim(d.entity_name)) as created_by,\r\n" +
+				"a.date_created,\r\n" +
+				"upper(trim(f.entity_name)) as posted_by,\r\n" +
+				"a.date_posted,\r\n" + // 5
+				"a.comm_rate_lowcost_internal,\r\n" +
+				"a.comm_rate_socialized_internal,\r\n" +
+				"a.comm_rate_lowcost_external,\r\n" +
+				"a.comm_rate_socialized_external," +
+				"a.created_by ," + // 10
+				"a.posted_by," +
+				"a.rec_id  " +
+				"\r\n" +
+				"from (select distinct on (proj_id, sub_proj_id) * from rf_marketing_scheme_main " +
+				"	order by proj_id, sub_proj_id, version_no desc, date_created desc) a\r\n" +
+				"left join mf_record_status b on a.status_id = b.status_id\r\n" +
+				"left join em_employee c on a.created_by = c.emp_code \r\n" +
+				"left join rf_entity d on c.entity_id = d.entity_id\r\n" +
+				"left join em_employee e on a.posted_by = e.emp_code \r\n" +
+				"left join rf_entity f on e.entity_id = f.entity_id\r\n" +
+				"where a.co_id = '" + co_id + "' \r\n" +
+				"and a.proj_id = '" + proj_id + "' \r\n" +
+				"and a.sub_proj_id = '" + sub_proj_id + "'";
 
 		System.out.printf("SQL #1 getPricelistMainDtls: %s", strSQL);
 		pgSelect db = new pgSelect();
-		db.select(strSQL);		
+		db.select(strSQL);
 
-		if(db.isNotNull()){
+		if (db.isNotNull()) {
 			return db.getResult()[0];
-		}else{
+		} else {
 			return null;
 		}
 	}
 
-	public String sql_paymentScheme() {//XXX Phase
+	public String sql_paymentScheme() {// XXX Phase
 
 		String scheme_list = "'0'";
 		int row = tblScheme.getRowCount();
 		int x = 0;
 
-		while (x<row){
-			String scheme_id = tblScheme.getValueAt(x,0).toString().trim();	
-			scheme_list = scheme_list + ",'"+scheme_id+"'" ;
+		while (x < row) {
+			String scheme_id = tblScheme.getValueAt(x, 0).toString().trim();
+			scheme_list = scheme_list + ",'" + scheme_id + "'";
 
 			x++;
-		}		
+		}
 
-		String SQL = 
-			"select pmt_scheme_id as \"Scheme ID\", " +
-			"pmt_scheme_desc as \"Scheme Desc\"," +
-			"unnest(type_id) as \"Type ID\" " +
-			"from mf_payment_scheme " +
-			"where status_id = 'A' " +
-			"and pmt_scheme_id not in ("+scheme_list+")  \n"  +
-			"order by pmt_scheme_id\r\n" + 
-			"";
+		String SQL = "select pmt_scheme_id as \"Scheme ID\", " +
+				"pmt_scheme_desc as \"Scheme Desc\"," +
+				"unnest(type_id) as \"Type ID\" " +
+				"from mf_payment_scheme " +
+				"where status_id = 'A' " +
+				"and pmt_scheme_id not in (" + scheme_list + ")  \n" +
+				"order by pmt_scheme_id\r\n" +
+				"";
 
 		System.out.printf("SQL (List of Pmt. Scheme): " + SQL);
 		return SQL;
 	}
 
-	public String sql_houseModel() {//XXX Phase
-		String SQL = 
-			"select model_id as \"Model ID\", " +
-			"trim(model_desc) as \"Model Desc\" " +
-			"from mf_product_model " +
-			"where status_id = 'A' " +
-			"order by model_id \r\n" + 
-			"";
+	public String sql_houseModel() {// XXX Phase
+		String SQL = "select model_id as \"Model ID\", " +
+				"trim(model_desc) as \"Model Desc\" " +
+				"from mf_product_model " +
+				"where status_id = 'A' " +
+				"order by model_id \r\n" +
+				"";
 		return SQL;
 	}
 
-	public String sql_commSchemeInt() {//XXX Phase
+	public String sql_commSchemeInt() {// XXX Phase
 
-		if (lookupPmtScheme.getText().equals("")){
+		if (lookupPmtScheme.getText().equals("")) {
 			Integer row = tblScheme.getSelectedRow();
-			String pmt_scheme = "";	
-			try { pmt_scheme = tblScheme.getValueAt(row,0).toString().trim();} catch (NullPointerException e) { pmt_scheme 	= ""; }
-			sql_getBuyerType(pmt_scheme);		
+			String pmt_scheme = "";
+			try {
+				pmt_scheme = tblScheme.getValueAt(row, 0).toString().trim();
+			} catch (NullPointerException e) {
+				pmt_scheme = "";
+			}
+			sql_getBuyerType(pmt_scheme);
 		}
 
-		String SQL = 
-			"select scheme_id as \"Comm Scheme ID\", " +
-			"scheme_desc as \"Comm Scheme Desc.\"" +
-			"from cm_scheme_hd a  " +
-			"where status_id = 'A' " +
-			"and agent_type = '001' " +
-			"and buyer_type = '"+buyer_type+"'  \n"+
-			"order by scheme_id\r\n" + 
-			"";
+		String SQL = "select scheme_id as \"Comm Scheme ID\", " +
+				"scheme_desc as \"Comm Scheme Desc.\"" +
+				"from cm_scheme_hd a  " +
+				"where status_id = 'A' " +
+				"and agent_type = '001' " +
+				"and buyer_type = '" + buyer_type + "'  \n" +
+				"order by scheme_id\r\n" +
+				"";
 		return SQL;
 	}
 
-	public String sql_commSchemeExt() {//XXX Phase
+	public String sql_commSchemeExt() {// XXX Phase
 
-		if (lookupPmtScheme.getText().equals("")){
+		if (lookupPmtScheme.getText().equals("")) {
 			Integer row = tblScheme.getSelectedRow();
-			String pmt_scheme = "";	
-			try { pmt_scheme = tblScheme.getValueAt(row,0).toString().trim();} catch (NullPointerException e) { pmt_scheme 	= ""; }
-			sql_getBuyerType(pmt_scheme);		
+			String pmt_scheme = "";
+			try {
+				pmt_scheme = tblScheme.getValueAt(row, 0).toString().trim();
+			} catch (NullPointerException e) {
+				pmt_scheme = "";
+			}
+			sql_getBuyerType(pmt_scheme);
 		}
 
-		String SQL = 
-			"select scheme_id as \"Comm Scheme ID\", " +
-			"scheme_desc as \"Comm Scheme Desc.\"" +
-			"from cm_scheme_hd " +
-			"where status_id = 'A' " +
-			"and agent_type = '002' " +
-			"and buyer_type = '"+buyer_type+"'  \n"+
-			"order by scheme_id \r\n" + 
-			"";
+		String SQL = "select scheme_id as \"Comm Scheme ID\", " +
+				"scheme_desc as \"Comm Scheme Desc.\"" +
+				"from cm_scheme_hd " +
+				"where status_id = 'A' " +
+				"and agent_type = '002' " +
+				"and buyer_type = '" + buyer_type + "'  \n" +
+				"order by scheme_id \r\n" +
+				"";
 		return SQL;
 	}
 
-	public Boolean pmtSchmeExists(String pmt_scheme_id) {//ok	
+	public Boolean pmtSchmeExists(String pmt_scheme_id) {// ok
 
 		Boolean exists = false;
 
-		String SQL = 
-			"select rec_id from rf_marketing_scheme_detail " +
-			"where rec_id = "+rec_id+" " +
-			"and pmt_scheme_id = '"+pmt_scheme_id+"'  " ;
+		String SQL = "select rec_id from rf_marketing_scheme_detail " +
+				"where rec_id = " + rec_id + " " +
+				"and pmt_scheme_id = '" + pmt_scheme_id + "'  ";
 
 		pgSelect db = new pgSelect();
 		db.select(SQL);
 
-		if(db.isNotNull()){
+		if (db.isNotNull()) {
 			exists = true;
-		}else{			
+		} else {
 		}
 
 		return exists;
 	}
 
-	public Boolean mktgSchmeExists() {//ok	
+	public Boolean mktgSchmeExists() {// ok
 
 		Boolean exists = false;
 
-		String SQL = 
-			"select rec_id from rf_marketing_scheme_detail " +
-			"where rec_id = "+rec_id+" " ;
+		String SQL = "select rec_id from rf_marketing_scheme_detail " +
+				"where rec_id = " + rec_id + " ";
 
 		pgSelect db = new pgSelect();
 		db.select(SQL);
 
-		if(db.isNotNull()){exists = true;} 
-		else{}
+		if (db.isNotNull()) {
+			exists = true;
+		} else {
+		}
 
 		return exists;
 	}
@@ -2266,45 +2376,48 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 
 		String model_id = "";
 
-		String SQL = 
-			"select trim(model_id) from mf_product_model where trim(model_desc) = '"+model_desc.trim()+"' " ;
+		String SQL = "select trim(model_id) from mf_product_model where trim(model_desc) = '" + model_desc.trim()
+				+ "' ";
 
 		pgSelect db = new pgSelect();
 		db.select(SQL);
 
-		if(db.isNotNull()){
-			if((String) db.getResult()[0][0]==null||db.getResult()[0][0].equals("null")) {model_id = "";}
-			else {model_id = (String) db.getResult()[0][0]; }
+		if (db.isNotNull()) {
+			if ((String) db.getResult()[0][0] == null || db.getResult()[0][0].equals("null")) {
+				model_id = "";
+			} else {
+				model_id = (String) db.getResult()[0][0];
+			}
 
-		}else{
+		} else {
 			model_id = "";
 		}
 
 		return model_id;
 	}
 
-	public String sql_version() {//XXX Phase
-		String SQL = 
-			"select distinct on (a.version_no) " +
-			"a.version_no as \"Version No.\", \r\n" + 
-			"to_char(a.date_created,'MM-dd-yyyy') as \"Date Created\", \r\n" + 
-			"upper(trim(c.entity_name)) as \"Created by\",\r\n" + 
-			"(case when a.status_id = 'I' then 'INACTIVE' else'ACTIVE' end) as \"Status\"   \r\n" + 
-			"\r\n" + 
-			"from rf_marketing_scheme_pricelist a\r\n" + 
-			"left join em_employee b on a.created_by = b.emp_code\r\n" + 
-			"left join rf_entity c on b.entity_id = c.entity_id \r\n" + 
-			"\r\n" + 
-			"where a.proj_id = '"+proj_id+"' and a.phase = '"+phase+"'";
+	public String sql_version() {// XXX Phase
+		String SQL = "select distinct on (a.version_no) " +
+				"a.version_no as \"Version No.\", \r\n" +
+				"to_char(a.date_created,'MM-dd-yyyy') as \"Date Created\", \r\n" +
+				"upper(trim(c.entity_name)) as \"Created by\",\r\n" +
+				"(case when a.status_id = 'I' then 'INACTIVE' else'ACTIVE' end) as \"Status\"   \r\n" +
+				"\r\n" +
+				"from rf_marketing_scheme_pricelist a\r\n" +
+				"left join em_employee b on a.created_by = b.emp_code\r\n" +
+				"left join rf_entity c on b.entity_id = c.entity_id \r\n" +
+				"\r\n" +
+				"where a.proj_id = '" + proj_id + "' and a.phase = '" + phase + "'";
 
-		System.out.printf("sql_version :"+ SQL);
+		System.out.printf("sql_version :" + SQL);
 		return SQL;
 	}
 
-	public Integer sql_getCurrentVersion() {		
-		String SQL = "SELECT MAX(COALESCE(version_no,0)) FROM rf_marketing_scheme_pricelist WHERE proj_id = '"+proj_id+"' AND phase = '"+phase+"';";
+	public Integer sql_getCurrentVersion() {
+		String SQL = "SELECT MAX(COALESCE(version_no,0)) FROM rf_marketing_scheme_pricelist WHERE proj_id = '" + proj_id
+				+ "' AND phase = '" + phase + "';";
 
-		//System.out.printf("sql_getCurrentVersion :"+ SQL);
+		// System.out.printf("sql_getCurrentVersion :"+ SQL);
 		pgSelect db = new pgSelect();
 		db.select(SQL);
 
@@ -2343,243 +2456,247 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 		return x;
 	}
 
-
-	//checking
-	private Boolean schemeHasDuplicate(){
+	// checking
+	private Boolean schemeHasDuplicate() {
 
 		Boolean w = false;
 
-		if (modelScheme.getRowCount()>0)
-		{
+		if (modelScheme.getRowCount() > 0) {
 			int x = modelScheme.getRowCount();
 			int y = 0;
 
-			while (y<x)
-			{				
-				String schm_id = modelScheme.getValueAt(y,0).toString().trim();					
-				if (schm_id.equals(lookupPmtScheme.getText().trim()))
-				{
+			while (y < x) {
+				String schm_id = modelScheme.getValueAt(y, 0).toString().trim();
+				if (schm_id.equals(lookupPmtScheme.getText().trim())) {
 					w = true;
+				} else {
 				}
-				else
-				{}
 				y++;
 			}
+		} else {
 		}
-		else {}		
-		return w;		
+		return w;
 	}
 
-	private Boolean incompleteDetails(){
+	private Boolean incompleteDetails() {
 
-		boolean x = false;		
+		boolean x = false;
 
 		String scheme_id, comm_scheme_id_int, comm_scheme_id_ext;
 
-		try { scheme_id = lookupPmtScheme.getText().toString();} catch (NullPointerException e) { scheme_id 	= ""; }
-		try { comm_scheme_id_int = lookupCommSchemeInt.getText().toString();} catch (NullPointerException e) { comm_scheme_id_int	= ""; }
-		try { comm_scheme_id_ext = lookupCommSchemeExt.getText().toString();} catch (NullPointerException e) { comm_scheme_id_ext	= ""; }
+		try {
+			scheme_id = lookupPmtScheme.getText().toString();
+		} catch (NullPointerException e) {
+			scheme_id = "";
+		}
+		try {
+			comm_scheme_id_int = lookupCommSchemeInt.getText().toString();
+		} catch (NullPointerException e) {
+			comm_scheme_id_int = "";
+		}
+		try {
+			comm_scheme_id_ext = lookupCommSchemeExt.getText().toString();
+		} catch (NullPointerException e) {
+			comm_scheme_id_ext = "";
+		}
 
-		if (scheme_id.equals("") || comm_scheme_id_int.equals("")||comm_scheme_id_ext.equals("")) {x=true;} 
-		else {}		
+		if (scheme_id.equals("") || comm_scheme_id_int.equals("") || comm_scheme_id_ext.equals("")) {
+			x = true;
+		} else {
+		}
 
 		return x;
 	}
 
-	public String sql_getBuyerType(String pmt_scheme) {//XXX Phase
+	public String sql_getBuyerType(String pmt_scheme) {// XXX Phase
 
 		buyer_type = "";
 
-		String SQL = 
-			"select unnest (type_id) from mf_payment_scheme where pmt_scheme_id = '"+pmt_scheme+"' ";
+		String SQL = "select unnest (type_id) from mf_payment_scheme where pmt_scheme_id = '" + pmt_scheme + "' ";
 
-		System.out.printf("sql_getBuyerType :"+ SQL + "\n");
+		System.out.printf("sql_getBuyerType :" + SQL + "\n");
 
 		pgSelect db = new pgSelect();
 		db.select(SQL);
 
 		if (db.isNotNull()) {
-			if (db.getResult()[0][0] == null || db.getResult()[0][0].equals("null")) {buyer_type = "";} 
-			else {buyer_type = db.getResult()[0][0].toString();}
-		} else {}
+			if (db.getResult()[0][0] == null || db.getResult()[0][0].equals("null")) {
+				buyer_type = "";
+			} else {
+				buyer_type = db.getResult()[0][0].toString();
+			}
+		} else {
+		}
 
 		return buyer_type;
 	}
 
-
-
-	//save
+	// save
 	@SuppressWarnings("unused")
-	private void insertMktgSchemeMain(){	
-		if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Add marketing scheme?", "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-			pgUpdate db = new pgUpdate();	
-
-			String sqlDetail = 
-				"INSERT into rf_marketing_scheme_main values (" +			
-				""+sql_getNextRecID()+",  \n" + //0
-				"'"+co_id+"',  \n" + //1
-				"'"+proj_id+"',  \n" + //1
-				"'"+sub_proj_id+"',  \n" + //1
-				"0.00,  \n" + //1
-				"0.00,  \n" + //1
-				"0.00,  \n" + //1
-				"0.00,  \n" + //1
-				"'A', " + 				//4
-				"'"+UserInfo.EmployeeCode+"', \n" +				//5
-				"'"+Calendar.getInstance().getTime()+"',  \n" + //6
-				"null, \n" +									//7
-				"null," +
-				"null," +
-				"null \n" +			
-				")   " ;
-
-			System.out.printf("SQL #1: %s", sqlDetail);
-			db.executeUpdate(sqlDetail, false);	
-			db.commit();
-		}				
-	}
-		
-	private void insertPaymentSchemeDetails(){	
-
-		if (JOptionPane.showConfirmDialog(pnlAddNewPmtScheme, "Add payment scheme?", "Confirmation", 
+	private void insertMktgSchemeMain() {
+		if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Add marketing scheme?", "Confirmation",
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+			pgUpdate db = new pgUpdate();
 
-			pgUpdate db = new pgUpdate();	
-
-			//insert into rf_marketing_scheme_detail
-			String scheme_id = lookupPmtScheme.getText().trim();	
-			String comm_scheme_int = lookupCommSchemeInt.getText().trim();	
-			String comm_scheme_ext = lookupCommSchemeExt.getText().trim();	
-
-			String sqlDetail = 
-				"INSERT into rf_marketing_scheme_detail values (" +			
-				""+rec_id+",  \n" + 	 //0
-				"'"+scheme_id+"',  \n" + //1
-				"'"+comm_scheme_int+"',  \n" + 	//2
-				"'"+comm_scheme_ext+"',  \n" +  //3
-				"'A', " + 				//4
-				"'"+UserInfo.EmployeeCode+"', \n" +				//5
-				"'"+Calendar.getInstance().getTime()+"',  \n" + //6
-				"null, \n" +									//7
-				"null \n" +			
-				")   " ;
+			String sqlDetail = "INSERT into rf_marketing_scheme_main values (" +
+					"" + sql_getNextRecID() + ",  \n" + // 0
+					"'" + co_id + "',  \n" + // 1
+					"'" + proj_id + "',  \n" + // 1
+					"'" + sub_proj_id + "',  \n" + // 1
+					"0.00,  \n" + // 1
+					"0.00,  \n" + // 1
+					"0.00,  \n" + // 1
+					"0.00,  \n" + // 1
+					"'A', " + // 4
+					"'" + UserInfo.EmployeeCode + "', \n" + // 5
+					"'" + Calendar.getInstance().getTime() + "',  \n" + // 6
+					"null, \n" + // 7
+					"null," +
+					"null," +
+					"null \n" +
+					")   ";
 
 			System.out.printf("SQL #1: %s", sqlDetail);
-			db.executeUpdate(sqlDetail, false);	
-
-			//update payment scheme
-			String sqlDetail2 = 
-				"update mf_payment_scheme set phase = array_append(phase,'"+sub_proj_id+"')  " +
-				"where trim(pmt_scheme_id) = '"+scheme_id+"' " ;
-
-			System.out.printf("SQL #2: %s", sqlDetail2);
-			db.executeUpdate(sqlDetail2, false);	
-
+			db.executeUpdate(sqlDetail, false);
 			db.commit();
-
-			JOptionPane.showMessageDialog(pnlAddNewPmtScheme,"Payment scheme saved.","Information",JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
-	private void updatePaymentSchemeDetails(pgUpdate db){
+	private void insertPaymentSchemeDetails() {
 
-		if(modelScheme.getRowCount()>=0)
-		{		
-			if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Are all entries correct?", "Confirmation", 
+		if (JOptionPane.showConfirmDialog(pnlAddNewPmtScheme, "Add payment scheme?", "Confirmation",
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+
+			pgUpdate db = new pgUpdate();
+
+			// insert into rf_marketing_scheme_detail
+			String scheme_id = lookupPmtScheme.getText().trim();
+			String comm_scheme_int = lookupCommSchemeInt.getText().trim();
+			String comm_scheme_ext = lookupCommSchemeExt.getText().trim();
+
+			String sqlDetail = "INSERT into rf_marketing_scheme_detail values (" +
+					"" + rec_id + ",  \n" + // 0
+					"'" + scheme_id + "',  \n" + // 1
+					"'" + comm_scheme_int + "',  \n" + // 2
+					"'" + comm_scheme_ext + "',  \n" + // 3
+					"'A', " + // 4
+					"'" + UserInfo.EmployeeCode + "', \n" + // 5
+					"'" + Calendar.getInstance().getTime() + "',  \n" + // 6
+					"null, \n" + // 7
+					"null \n" +
+					")   ";
+
+			System.out.printf("SQL #1: %s", sqlDetail);
+			db.executeUpdate(sqlDetail, false);
+
+			// update payment scheme
+			String sqlDetail2 = "update mf_payment_scheme set phase = array_append(phase,'" + sub_proj_id + "')  " +
+					"where trim(pmt_scheme_id) = '" + scheme_id + "' ";
+
+			System.out.printf("SQL #2: %s", sqlDetail2);
+			db.executeUpdate(sqlDetail2, false);
+
+			db.commit();
+
+			JOptionPane.showMessageDialog(pnlAddNewPmtScheme, "Payment scheme saved.", "Information",
+					JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	private void updatePaymentSchemeDetails(pgUpdate db) {
+
+		if (modelScheme.getRowCount() >= 0) {
+			if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Are all entries correct?",
+					"Confirmation",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 
 				int x = modelScheme.getRowCount();
 				int y = 0;
 
-				while (y<x)
-				{				
+				while (y < x) {
 
-					String scheme_id = modelScheme.getValueAt(y,0).toString().trim();	
-					String comm_scheme_int = modelScheme.getValueAt(y,2).toString().trim();	
-					String comm_scheme_ext = modelScheme.getValueAt(y,3).toString().trim();	
+					String scheme_id = modelScheme.getValueAt(y, 0).toString().trim();
+					String comm_scheme_int = modelScheme.getValueAt(y, 2).toString().trim();
+					String comm_scheme_ext = modelScheme.getValueAt(y, 3).toString().trim();
 
-					String sqlDetail = 
-						"update rf_marketing_scheme_detail set " +						
-						"pmt_scheme_id = '"+scheme_id+"',  \n" + //1
-						"cm_scheme_id_internal = '"+comm_scheme_int+"',  \n" + 	//2
-						"cm_scheme_id_external = '"+comm_scheme_ext+"',  \n" +  //3
-						"edited_by = '"+UserInfo.EmployeeCode+"', \n" +			//4
-						"date_edited = '"+Calendar.getInstance().getTime()+"'  \n" + //5
-						"where rec_id = "+rec_id+" " +
-						"and pmt_scheme_id = '"+scheme_id+"'   " ;
+					String sqlDetail = "update rf_marketing_scheme_detail set " +
+							"pmt_scheme_id = '" + scheme_id + "',  \n" + // 1
+							"cm_scheme_id_internal = '" + comm_scheme_int + "',  \n" + // 2
+							"cm_scheme_id_external = '" + comm_scheme_ext + "',  \n" + // 3
+							"edited_by = '" + UserInfo.EmployeeCode + "', \n" + // 4
+							"date_edited = '" + Calendar.getInstance().getTime() + "'  \n" + // 5
+							"where rec_id = " + rec_id + " " +
+							"and pmt_scheme_id = '" + scheme_id + "'   ";
 
 					System.out.printf("SQL #1: %s", sqlDetail);
-					db.executeUpdate(sqlDetail, false);					
+					db.executeUpdate(sqlDetail, false);
 
 					y++;
 				}
 			}
 		}
 
-
-		JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(),"Payment scheme updated.","Information",JOptionPane.INFORMATION_MESSAGE);				
+		JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Payment scheme updated.", "Information",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	private void updatePaymentSchemeStatus(String scheme_id){
+	private void updatePaymentSchemeStatus(String scheme_id) {
 
-		pgUpdate db = new pgUpdate();	
+		pgUpdate db = new pgUpdate();
 
-		String sqlDetail = 
-			"update rf_marketing_scheme_detail set " +						
-			"status_id = 'I'  \n" + 
-			"where rec_id = "+rec_id+" " +
-			"and pmt_scheme_id = '"+scheme_id+"'   " ;
+		String sqlDetail = "update rf_marketing_scheme_detail set " +
+				"status_id = 'I'  \n" +
+				"where rec_id = " + rec_id + " " +
+				"and pmt_scheme_id = '" + scheme_id + "'   ";
 
 		System.out.printf("SQL #1: %s", sqlDetail);
-		db.executeUpdate(sqlDetail, false);	
+		db.executeUpdate(sqlDetail, false);
 
-
-		//update payment scheme
-		String sqlDetail2 = 
-			"update mf_payment_scheme set phase = array_remove(phase,'"+sub_proj_id+"')  " +
-			"where trim(pmt_scheme_id) = '"+scheme_id+"' " ;
+		// update payment scheme
+		String sqlDetail2 = "update mf_payment_scheme set phase = array_remove(phase,'" + sub_proj_id + "')  " +
+				"where trim(pmt_scheme_id) = '" + scheme_id + "' ";
 
 		System.out.printf("SQL #2: %s", sqlDetail2);
-		db.executeUpdate(sqlDetail2, false);	
+		db.executeUpdate(sqlDetail2, false);
 
-
-		db.commit();	
-		JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(),"Payment scheme removed.","Information",JOptionPane.INFORMATION_MESSAGE);
+		db.commit();
+		JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Payment scheme removed.", "Information",
+				JOptionPane.INFORMATION_MESSAGE);
 
 	}
 
-	private void updateCommissionRate(pgUpdate db){
+	private void updateCommissionRate(pgUpdate db) {
 
-		String sqlDetail = 
-			"update rf_marketing_scheme_main set " +						
-			"comm_rate_lowcost_internal = "+txtLowCostInt.getText().replace(",","")+",  \n" + 
-			"comm_rate_socialized_internal = "+txtSocializedInt.getText().replace(",","")+",  \n" + 
-			"comm_rate_lowcost_external = "+txtLowCostExt.getText().replace(",","")+",  \n" + 
-			"comm_rate_socialized_external = "+txtSocializedExt.getText().replace(",","")+"  \n" + 
-			"where rec_id = "+rec_id+" " ;
+		String sqlDetail = "update rf_marketing_scheme_main set " +
+				"comm_rate_lowcost_internal = " + txtLowCostInt.getText().replace(",", "") + ",  \n" +
+				"comm_rate_socialized_internal = " + txtSocializedInt.getText().replace(",", "") + ",  \n" +
+				"comm_rate_lowcost_external = " + txtLowCostExt.getText().replace(",", "") + ",  \n" +
+				"comm_rate_socialized_external = " + txtSocializedExt.getText().replace(",", "") + "  \n" +
+				"where rec_id = " + rec_id + " ";
 
 		System.out.printf("SQL #1: %s", sqlDetail);
-		db.executeUpdate(sqlDetail, false);	
+		db.executeUpdate(sqlDetail, false);
 
 	}
 
-	private void approveMarketingScheme(){		
+	private void approveMarketingScheme() {
 
-		if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Are you sure you want to approve this marketing scheme?", "Confirmation", 
+		if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(),
+				"Are you sure you want to approve this marketing scheme?", "Confirmation",
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 
-			pgUpdate db = new pgUpdate();	
-			String sqlDetail = 
-				"update rf_marketing_scheme_main set " +						
-				"status_id = 'P',  \n" + 
-				"posted_by = '"+UserInfo.EmployeeCode+"', \n" +				//5
-				"date_posted = '"+Calendar.getInstance().getTime()+"'  \n" + //6
-				"where rec_id = "+rec_id+" "  ;
+			pgUpdate db = new pgUpdate();
+			String sqlDetail = "update rf_marketing_scheme_main set " +
+					"status_id = 'P',  \n" +
+					"posted_by = '" + UserInfo.EmployeeCode + "', \n" + // 5
+					"date_posted = '" + Calendar.getInstance().getTime() + "'  \n" + // 6
+					"where rec_id = " + rec_id + " ";
 
 			System.out.printf("SQL #1: %s", sqlDetail);
-			db.executeUpdate(sqlDetail, false);	
-			db.commit();	
-			JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(),"Marketing scheme approved.","Information",JOptionPane.INFORMATION_MESSAGE);
+			db.executeUpdate(sqlDetail, false);
+			db.commit();
+			JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Marketing scheme approved.",
+					"Information", JOptionPane.INFORMATION_MESSAGE);
 			refreshFields();
 			setPricelist_mainDtls();
 			displayUnits();
@@ -2589,191 +2706,361 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 		}
 	}
 
-	private void deleteUnit(String unit_id){		
+	private void deleteUnit(String unit_id) {
 
-		if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Are you sure you want to remove this unit?", "Confirmation", 
+		if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(),
+				"Are you sure you want to remove this unit?", "Confirmation",
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 
-			pgUpdate db = new pgUpdate();	
-			String sqlDetail = 
-				"update mf_unit_info set " +						
-				"status_id = 'D',  \n" + 
-				"edited_by = '"+UserInfo.EmployeeCode+"', \n" +				//5
-				"date_edited = '"+Calendar.getInstance().getTime()+"'  \n" + //6
-				"where trim(unit_id) = '"+unit_id.trim()+"' "  ;
+			pgUpdate db = new pgUpdate();
+			String sqlDetail = "update mf_unit_info set " +
+					"status_id = 'D',  \n" +
+					"edited_by = '" + UserInfo.EmployeeCode + "', \n" + // 5
+					"date_edited = '" + Calendar.getInstance().getTime() + "'  \n" + // 6
+					"where trim(unit_id) = '" + unit_id.trim() + "' ";
 
 			System.out.printf("SQL #1: %s", sqlDetail);
-			db.executeUpdate(sqlDetail, false);	
-			db.commit();	
-			JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(),"Unit removed.","Information",JOptionPane.INFORMATION_MESSAGE);
+			db.executeUpdate(sqlDetail, false);
+			db.commit();
+			JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Unit removed.", "Information",
+					JOptionPane.INFORMATION_MESSAGE);
 			displayUnits();
 		}
 
 	}
 
-	private void updateUnitInfoDetails(pgUpdate db){
+	private void updateUnitInfoDetails(pgUpdate db) {
 
-		if(modelMonitoringUnits.getRowCount()>=0)
-		{		
-			if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Are all entries correct?", "Confirmation", 
+		if (modelMonitoringUnits.getRowCount() >= 0) {
+			if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Are all entries correct?",
+					"Confirmation",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 
 				int x = modelMonitoringUnits.getRowCount();
 				int y = 0;
 
-				while (y<x)
-				{								
-					String phase 	= modelMonitoringUnits.getValueAt(y,0).toString().trim();		
-					String block 	= modelMonitoringUnits.getValueAt(y,1).toString().trim();		
-					String lot 		= modelMonitoringUnits.getValueAt(y,2).toString().trim();		
-					String model_alias = modelMonitoringUnits.getValueAt(y,4).toString().trim();	
+				while (y < x) {
+					String phase = modelMonitoringUnits.getValueAt(y, 0).toString().trim();
+					String block = modelMonitoringUnits.getValueAt(y, 1).toString().trim();
+					String lot = modelMonitoringUnits.getValueAt(y, 2).toString().trim();
+					String model_alias = modelMonitoringUnits.getValueAt(y, 4).toString().trim();
 
-					Double lot_area = 0.00;	
-					Double total_factor = 0.00;	
-					Double house_apv = 0.00;	
-					Double appraise_value_apv = 0.00;	
-					Double lot_apv = 0.00;	
-					Double total_apv = 0.00;		
-					Double house_sp = 0.00;	
-					Double lot_sp = 0.00;	
-					Double other_factor = 0.00;		
-					Double TCP = 0.00;	
-					Double disc = 0.00;		
-					Double tcp_discounted = 0.00;		
-					Double tcp_discounted_roundoff = 0.00;	
-					Double loanable_amt_90 = 0.00;	
-					Double loanable_amt_final = 0.00;		
-					Double perc_LA_to_APV = 0.00;		
-					Double perc_LA_to_TCP = 0.00;	
-					Double equity = 0.00;	
-					Double mri = 0.00;	
-					Double fi = 0.00;	
-					Double filing_fee_release = 0.00;	
-					Double docs_stamps = 0.00;		
-					Double inspection_fee = 0.00;		
-					Double commit_fee = 0.00;	
-					Double addl_hdmf_retention = 0.00;		
-					Double filing_fee_filing = 0.00;		
-					Double int_on_cts =0.00;		
-					Double upico = 0.00;		
-					Double misc_fees = 0.00;	
-					Double tot_cash_outlay = 0.00;	
-					Double months_cash_outlay_11mos = 0.00;	
-					Double monthly_int_6pt5 = 0.00;	
-					Double monthly_mri_6pt5 = 0.00;	
-					Double monthly_fi_6pt5 = 0.00;	
-					Double monthly_addl_hdmf_premium_6pt5 = 0.00;		
-					Double monthly_total_6pt5 = 0.00;	
-					Double required_monthly_net_income_6pt5 = 0.00;	
-					Double monthly_int_7pt9 = 0.00;	
-					Double monthly_mri_7pt9 = 0.00;	
-					Double monthly_fi_7pt9 = 0.00;	
-					Double monthly_addl_hdmf_premium_7pt9 = 0.00;		
-					Double monthly_total_7pt9 = 0.00;	
-					Double required_monthly_net_income_7pt9 = 0.00;		
+					Double lot_area = 0.00;
+					Double total_factor = 0.00;
+					Double house_apv = 0.00;
+					Double appraise_value_apv = 0.00;
+					Double lot_apv = 0.00;
+					Double total_apv = 0.00;
+					Double house_sp = 0.00;
+					Double lot_sp = 0.00;
+					Double other_factor = 0.00;
+					Double TCP = 0.00;
+					Double disc = 0.00;
+					Double tcp_discounted = 0.00;
+					Double tcp_discounted_roundoff = 0.00;
+					Double loanable_amt_90 = 0.00;
+					Double loanable_amt_final = 0.00;
+					Double perc_LA_to_APV = 0.00;
+					Double perc_LA_to_TCP = 0.00;
+					Double equity = 0.00;
+					Double mri = 0.00;
+					Double fi = 0.00;
+					Double filing_fee_release = 0.00;
+					Double docs_stamps = 0.00;
+					Double inspection_fee = 0.00;
+					Double commit_fee = 0.00;
+					Double addl_hdmf_retention = 0.00;
+					Double filing_fee_filing = 0.00;
+					Double int_on_cts = 0.00;
+					Double upico = 0.00;
+					Double misc_fees = 0.00;
+					Double tot_cash_outlay = 0.00;
+					Double months_cash_outlay_11mos = 0.00;
+					Double monthly_int_6pt5 = 0.00;
+					Double monthly_mri_6pt5 = 0.00;
+					Double monthly_fi_6pt5 = 0.00;
+					Double monthly_addl_hdmf_premium_6pt5 = 0.00;
+					Double monthly_total_6pt5 = 0.00;
+					Double required_monthly_net_income_6pt5 = 0.00;
+					Double monthly_int_7pt9 = 0.00;
+					Double monthly_mri_7pt9 = 0.00;
+					Double monthly_fi_7pt9 = 0.00;
+					Double monthly_addl_hdmf_premium_7pt9 = 0.00;
+					Double monthly_total_7pt9 = 0.00;
+					Double required_monthly_net_income_7pt9 = 0.00;
 
-					try { lot_area = Double.parseDouble( modelMonitoringUnits.getValueAt(y,3).toString().trim().replace(",","")); } catch (NullPointerException e) { }
-					try { total_factor = Double.parseDouble( modelMonitoringUnits.getValueAt(y,5).toString().trim().replace(",","")); } catch (NullPointerException e) { }
-					try { house_apv = Double.parseDouble( modelMonitoringUnits.getValueAt(y,6).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { appraise_value_apv = Double.parseDouble( modelMonitoringUnits.getValueAt(y,7).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { lot_apv = Double.parseDouble( modelMonitoringUnits.getValueAt(y,8).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { total_apv = Double.parseDouble( modelMonitoringUnits.getValueAt(y,9).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { house_sp = Double.parseDouble( modelMonitoringUnits.getValueAt(y,10).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { lot_sp = Double.parseDouble( modelMonitoringUnits.getValueAt(y,11).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { other_factor = Double.parseDouble( modelMonitoringUnits.getValueAt(y,12).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { TCP = Double.parseDouble( modelMonitoringUnits.getValueAt(y,13).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { disc = Double.parseDouble( modelMonitoringUnits.getValueAt(y,14).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { tcp_discounted = Double.parseDouble( modelMonitoringUnits.getValueAt(y,15).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { tcp_discounted_roundoff = Double.parseDouble( modelMonitoringUnits.getValueAt(y,17).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { loanable_amt_90 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,16).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { loanable_amt_final = Double.parseDouble( modelMonitoringUnits.getValueAt(y,18).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { perc_LA_to_APV = Double.parseDouble( modelMonitoringUnits.getValueAt(y,19).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { perc_LA_to_TCP = Double.parseDouble( modelMonitoringUnits.getValueAt(y,20).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { equity = Double.parseDouble( modelMonitoringUnits.getValueAt(y,21).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { mri = Double.parseDouble( modelMonitoringUnits.getValueAt(y,22).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { fi = Double.parseDouble( modelMonitoringUnits.getValueAt(y,23).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { filing_fee_release = Double.parseDouble( modelMonitoringUnits.getValueAt(y,24).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { docs_stamps = Double.parseDouble( modelMonitoringUnits.getValueAt(y,25).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { inspection_fee = Double.parseDouble( modelMonitoringUnits.getValueAt(y,26).toString().trim().replace(",",""));} catch (NullPointerException e) { }					
-					try { commit_fee = Double.parseDouble( modelMonitoringUnits.getValueAt(y,27).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { addl_hdmf_retention = Double.parseDouble( modelMonitoringUnits.getValueAt(y,28).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { filing_fee_filing = Double.parseDouble( modelMonitoringUnits.getValueAt(y,29).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { int_on_cts = Double.parseDouble( modelMonitoringUnits.getValueAt(y,30).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { upico = Double.parseDouble( modelMonitoringUnits.getValueAt(y,31).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { misc_fees = Double.parseDouble( modelMonitoringUnits.getValueAt(y,32).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { tot_cash_outlay = Double.parseDouble( modelMonitoringUnits.getValueAt(y,34).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { months_cash_outlay_11mos = Double.parseDouble( modelMonitoringUnits.getValueAt(y,35).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { monthly_int_6pt5 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,36).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { monthly_mri_6pt5 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,37).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { monthly_fi_6pt5 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,38).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { monthly_addl_hdmf_premium_6pt5 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,39).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { monthly_total_6pt5 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,40).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { required_monthly_net_income_6pt5 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,41).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { monthly_int_7pt9 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,42).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { monthly_mri_7pt9 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,43).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { monthly_fi_7pt9 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,44).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { monthly_addl_hdmf_premium_7pt9 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,45).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { monthly_total_7pt9 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,46).toString().trim().replace(",",""));} catch (NullPointerException e) { }
-					try { required_monthly_net_income_7pt9 = Double.parseDouble( modelMonitoringUnits.getValueAt(y,47).toString().trim().replace(",",""));} catch (NullPointerException e) { }
+					try {
+						lot_area = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 3).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						total_factor = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 5).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						house_apv = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 6).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						appraise_value_apv = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 7).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						lot_apv = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 8).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						total_apv = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 9).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						house_sp = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 10).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						lot_sp = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 11).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						other_factor = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 12).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						TCP = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 13).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						disc = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 14).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						tcp_discounted = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 15).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						tcp_discounted_roundoff = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 17).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						loanable_amt_90 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 16).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						loanable_amt_final = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 18).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						perc_LA_to_APV = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 19).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						perc_LA_to_TCP = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 20).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						equity = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 21).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						mri = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 22).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						fi = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 23).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						filing_fee_release = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 24).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						docs_stamps = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 25).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						inspection_fee = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 26).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						commit_fee = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 27).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						addl_hdmf_retention = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 28).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						filing_fee_filing = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 29).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						int_on_cts = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 30).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						upico = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 31).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						misc_fees = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 32).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						tot_cash_outlay = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 34).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						months_cash_outlay_11mos = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 35).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						monthly_int_6pt5 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 36).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						monthly_mri_6pt5 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 37).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						monthly_fi_6pt5 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 38).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						monthly_addl_hdmf_premium_6pt5 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 39).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						monthly_total_6pt5 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 40).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						required_monthly_net_income_6pt5 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 41).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						monthly_int_7pt9 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 42).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						monthly_mri_7pt9 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 43).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						monthly_fi_7pt9 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 44).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						monthly_addl_hdmf_premium_7pt9 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 45).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						monthly_total_7pt9 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 46).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
+					try {
+						required_monthly_net_income_7pt9 = Double
+								.parseDouble(modelMonitoringUnits.getValueAt(y, 47).toString().trim().replace(",", ""));
+					} catch (NullPointerException e) {
+					}
 
-					String SQL = 
-						"update rf_marketing_scheme_pricelist set \n" +
-						"lotarea = "+lot_area+", \n" +		//lot_area		
-						"model_alias = '"+model_alias+"', \n" +	//model_alias					
-						"total_factor = "+total_factor+", \n" +	//total_factor
-						"house_apv = "+house_apv+", \n" +		//house_apv
-						"appraise_value_apv = "+appraise_value_apv+", \n" +	//appraise_value_apv
-						"lot_apv = "+lot_apv+", \n" +			//lot_apv
-						"total_apv = "+total_apv+", \n" +		//total_apv	
-						"house_sp = "+house_sp+", \n" +			//house_sp
-						"lot_sp = "+lot_sp+", \n" +				//lot_sp
-						"other_factor = "+other_factor+", \n" +	//other_factor
-						"TCP = "+TCP+", \n" +					//tcp
-						"disc = "+disc+", \n" +					//disc 
-						"tcp_discounted = "+tcp_discounted+", \n" +	//tcp_discounted
-						"tcp_discounted_roundoff = "+tcp_discounted_roundoff+", \n" +		//tcp_discounted_roundoff
-						"loanable_amt_90 = "+loanable_amt_90+", \n" +				//loanable_amt_90
-						"loanable_amt_final = "+loanable_amt_final+", \n" +			//loanable_amt_final
-						"perc_LA_to_APV = "+perc_LA_to_APV+", \n" +//perc_la_to_apv
-						"perc_LA_to_TCP = "+perc_LA_to_TCP+", \n" +				//perc_la_to_tcp
-						"equity = "+equity+", \n" +			//equity					
-						"mri = "+mri+", \n" +				//mri
-						"fi = "+fi+", \n" +					//fi
-						"filing_fee_release = "+filing_fee_release+", \n" +			//filing_fee_release
-						"docs_stamps = "+docs_stamps+", \n" +		//docs_stamps
-						"inspection_fee = "+inspection_fee+", \n" +	//inspection_fee
-						"commit_fee = "+commit_fee+", \n" +	//commit_fee
-						"addl_hdmf_retention = "+addl_hdmf_retention+", \n" +		//addl_hdmf_retention					
-						"filing_fee_filing = "+filing_fee_filing+", \n" +			//filing_fee_filing
-						"int_on_cts = "+int_on_cts+", \n" +	//int_on_cts
-						"upico = "+upico+", \n" +			//upico					
-						"misc_fees = "+misc_fees+", \n" +	//misc_fees
-						"tot_cash_outlay = "+tot_cash_outlay+", \n" +			//tot_cash_outlay
-						"months_cash_outlay_11mos = "+months_cash_outlay_11mos+", \n" +	//months_cash_outlay_11mos
-						"monthly_int_6pt5 = "+monthly_int_6pt5+", \n" +			//monthly_int_6pt5
-						"monthly_mri_6pt5 = "+monthly_mri_6pt5+", \n" +			//monthly_mri_6pt5
-						"monthly_fi_6pt5 = "+monthly_fi_6pt5+", \n" +			//monthly_fi_6pt5
-						"monthly_addl_hdmf_premium_6pt5 ="+monthly_addl_hdmf_premium_6pt5+", \n" +		//monthly_addl_hdmf_premium_6pt5
-						"monthly_total_6pt5 = "+monthly_total_6pt5+", \n" +		//monthly_total_6pt5
-						"required_monthly_net_income_6pt5 = "+required_monthly_net_income_6pt5+", \n" +	//required_monthly_net_income_6pt5
-						"monthly_int_7pt9 = "+monthly_int_7pt9+", \n" +			//monthly_int_7pt9					
-						"monthly_mri_7pt9 = "+monthly_mri_7pt9+", \n" +			//monthly_mri_7pt9
-						"monthly_fi_7pt9 = "+monthly_fi_7pt9+", \n" +			//monthly_fi_7pt9
-						"monthly_addl_hdmf_premium_7pt9 = "+monthly_addl_hdmf_premium_7pt9+", \n" +		 //monthly_addl_hdmf_premium_7pt9
-						"monthly_total_7pt9 = "+monthly_total_7pt9+", \n" +		//monthly_total_7pt9
-						"required_monthly_net_income_7pt9 = "+required_monthly_net_income_7pt9+", \n" +	//required_monthly_net_income_7pt9
-						"edited_by = '"+UserInfo.EmployeeCode+"', \n" +			//created_by
-						"date_edited = '"+Calendar.getInstance().getTime()+"' \n" +	//date_created
-						"where proj_id = '"+proj_id+"' \n" +		
-						"and phase = '"+phase+"' \n" +				
-						"and block = '"+block+"' \n" +		
-						"and lot = '"+lot+"' \n" +
-						"and version_no = "+sql_getCurrentVersion()+"  "+							
-						" \n";
-
+					String SQL = "update rf_marketing_scheme_pricelist set \n" +
+							"lotarea = " + lot_area + ", \n" + // lot_area
+							"model_alias = '" + model_alias + "', \n" + // model_alias
+							"total_factor = " + total_factor + ", \n" + // total_factor
+							"house_apv = " + house_apv + ", \n" + // house_apv
+							"appraise_value_apv = " + appraise_value_apv + ", \n" + // appraise_value_apv
+							"lot_apv = " + lot_apv + ", \n" + // lot_apv
+							"total_apv = " + total_apv + ", \n" + // total_apv
+							"house_sp = " + house_sp + ", \n" + // house_sp
+							"lot_sp = " + lot_sp + ", \n" + // lot_sp
+							"other_factor = " + other_factor + ", \n" + // other_factor
+							"TCP = " + TCP + ", \n" + // tcp
+							"disc = " + disc + ", \n" + // disc
+							"tcp_discounted = " + tcp_discounted + ", \n" + // tcp_discounted
+							"tcp_discounted_roundoff = " + tcp_discounted_roundoff + ", \n" + // tcp_discounted_roundoff
+							"loanable_amt_90 = " + loanable_amt_90 + ", \n" + // loanable_amt_90
+							"loanable_amt_final = " + loanable_amt_final + ", \n" + // loanable_amt_final
+							"perc_LA_to_APV = " + perc_LA_to_APV + ", \n" + // perc_la_to_apv
+							"perc_LA_to_TCP = " + perc_LA_to_TCP + ", \n" + // perc_la_to_tcp
+							"equity = " + equity + ", \n" + // equity
+							"mri = " + mri + ", \n" + // mri
+							"fi = " + fi + ", \n" + // fi
+							"filing_fee_release = " + filing_fee_release + ", \n" + // filing_fee_release
+							"docs_stamps = " + docs_stamps + ", \n" + // docs_stamps
+							"inspection_fee = " + inspection_fee + ", \n" + // inspection_fee
+							"commit_fee = " + commit_fee + ", \n" + // commit_fee
+							"addl_hdmf_retention = " + addl_hdmf_retention + ", \n" + // addl_hdmf_retention
+							"filing_fee_filing = " + filing_fee_filing + ", \n" + // filing_fee_filing
+							"int_on_cts = " + int_on_cts + ", \n" + // int_on_cts
+							"upico = " + upico + ", \n" + // upico
+							"misc_fees = " + misc_fees + ", \n" + // misc_fees
+							"tot_cash_outlay = " + tot_cash_outlay + ", \n" + // tot_cash_outlay
+							"months_cash_outlay_11mos = " + months_cash_outlay_11mos + ", \n" + // months_cash_outlay_11mos
+							"monthly_int_6pt5 = " + monthly_int_6pt5 + ", \n" + // monthly_int_6pt5
+							"monthly_mri_6pt5 = " + monthly_mri_6pt5 + ", \n" + // monthly_mri_6pt5
+							"monthly_fi_6pt5 = " + monthly_fi_6pt5 + ", \n" + // monthly_fi_6pt5
+							"monthly_addl_hdmf_premium_6pt5 =" + monthly_addl_hdmf_premium_6pt5 + ", \n" + // monthly_addl_hdmf_premium_6pt5
+							"monthly_total_6pt5 = " + monthly_total_6pt5 + ", \n" + // monthly_total_6pt5
+							"required_monthly_net_income_6pt5 = " + required_monthly_net_income_6pt5 + ", \n" + // required_monthly_net_income_6pt5
+							"monthly_int_7pt9 = " + monthly_int_7pt9 + ", \n" + // monthly_int_7pt9
+							"monthly_mri_7pt9 = " + monthly_mri_7pt9 + ", \n" + // monthly_mri_7pt9
+							"monthly_fi_7pt9 = " + monthly_fi_7pt9 + ", \n" + // monthly_fi_7pt9
+							"monthly_addl_hdmf_premium_7pt9 = " + monthly_addl_hdmf_premium_7pt9 + ", \n" + // monthly_addl_hdmf_premium_7pt9
+							"monthly_total_7pt9 = " + monthly_total_7pt9 + ", \n" + // monthly_total_7pt9
+							"required_monthly_net_income_7pt9 = " + required_monthly_net_income_7pt9 + ", \n" + // required_monthly_net_income_7pt9
+							"edited_by = '" + UserInfo.EmployeeCode + "', \n" + // created_by
+							"date_edited = '" + Calendar.getInstance().getTime() + "' \n" + // date_created
+							"where proj_id = '" + proj_id + "' \n" +
+							"and phase = '" + phase + "' \n" +
+							"and block = '" + block + "' \n" +
+							"and lot = '" + lot + "' \n" +
+							"and version_no = " + sql_getCurrentVersion() + "  " +
+							" \n";
 
 					System.out.printf("SQL #1: %s", SQL);
-					db.executeUpdate(SQL, false);					
+					db.executeUpdate(SQL, false);
 
 					y++;
 				}
@@ -2781,43 +3068,41 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 		}
 
 		db.commit();
-		JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(),"Unit pricelist updated.","Information",JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(Pricelist.this.getTopLevelAncestor(), "Unit pricelist updated.", "Information",
+				JOptionPane.INFORMATION_MESSAGE);
 		displayUnits();
 	}
 
 	@SuppressWarnings("unused")
-	private void setPreviousVersionInactive(pgUpdate db){	
-		String sqlDetail = 
-			"update rf_marketing_scheme_pricelist set \n" +
-			"status_id = 'I' \n" +	
-			"where proj_id = '"+proj_id+"' \n" +		
-			"and phase = '"+phase+"' " +
-			"and version_no =  "+current_version_no+"  \n" +					
-			" \n";
+	private void setPreviousVersionInactive(pgUpdate db) {
+		String sqlDetail = "update rf_marketing_scheme_pricelist set \n" +
+				"status_id = 'I' \n" +
+				"where proj_id = '" + proj_id + "' \n" +
+				"and phase = '" + phase + "' " +
+				"and version_no =  " + current_version_no + "  \n" +
+				" \n";
 
 		System.out.printf("SQL #1: %s", sqlDetail);
-		db.executeUpdate(sqlDetail, false);	
+		db.executeUpdate(sqlDetail, false);
 	}
 
-
-
-	//table
-	private void clickTableColumn(){
+	// table
+	private void clickTableColumn() {
 
 		int column = tblScheme.getSelectedColumn();
-		int row = tblScheme.getSelectedRow();		
+		int row = tblScheme.getSelectedRow();
 
-		Integer x[] = {0,1,2,3,4,5};
-		String sql[] = {sql_paymentScheme(),"",sql_commSchemeInt(),sql_commSchemeExt()};
-		String lookup_name[] = {"Payment Scheme","","Comm. Scheme Internal","Comm. Scheme External"};			
+		Integer x[] = { 0, 1, 2, 3, 4, 5 };
+		String sql[] = { sql_paymentScheme(), "", sql_commSchemeInt(), sql_commSchemeExt() };
+		String lookup_name[] = { "Payment Scheme", "", "Comm. Scheme Internal", "Comm. Scheme External" };
 
-		if (column == x[column] && modelScheme.isEditable() && sql[column]!="") {  
+		if (column == x[column] && modelScheme.isEditable() && sql[column] != "") {
 			_JLookupTable dlg = new _JLookupTable(FncGlobal.homeMDI, null, lookup_name[column], sql[column], false);
 			dlg.setLocationRelativeTo(FncGlobal.homeMDI);
 			dlg.setVisible(true);
 
 			Object[] data = dlg.getReturnDataSet();
-			if (data != null && column == 0) {	
+			if (data != null && column == 0) {
 				modelScheme.setValueAt(data[0], row, 0);
 				modelScheme.setValueAt(data[1], row, 1);
 				modelScheme.setValueAt("", row, 2);
@@ -2826,100 +3111,95 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 				modelScheme.setValueAt(null, row, 5);
 				btnSchemeSave.setEnabled(true);
 				buyer_type = data[2].toString();
-			}				
-			if (data != null && column == 2) {	
+			}
+			if (data != null && column == 2) {
 				modelScheme.setValueAt(data[0], row, 2);
 				btnSchemeSave.setEnabled(true);
 				buyer_type = "";
-			}				
-			if (data != null && column == 3) {	
+			}
+			if (data != null && column == 3) {
 				modelScheme.setValueAt(data[0], row, 3);
 				btnSchemeSave.setEnabled(true);
 				buyer_type = "";
-			}	
-		}		
+			}
+		}
 
-		else {}		
+		else {
+		}
 	}
 
-	private void removePmtScheme(){//used
+	private void removePmtScheme() {// used
 
-		int r  = tblScheme.getSelectedRow();		
-		String scheme_id = modelScheme.getValueAt(r,0).toString().trim();	
+		int r = tblScheme.getSelectedRow();
+		String scheme_id = modelScheme.getValueAt(r, 0).toString().trim();
 
-		if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Remove row?", "Confirmation", 
-				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {			
-			((DefaultTableModel) tblScheme.getModel()).removeRow(r);  
+		if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Remove row?", "Confirmation",
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+			((DefaultTableModel) tblScheme.getModel()).removeRow(r);
 			updatePaymentSchemeStatus(scheme_id);
 			displayPmtSchemeList(modelScheme, rowheaderScheme);
 		}
 
-
 	}
 
-	private void removeUnit(){//used
-		int r  = tblMonitoringUnits.getSelectedRow();		
-		String unit_id = tblMonitoringUnits.getValueAt(r,0).toString().trim();	
+	private void removeUnit() {// used
+		int r = tblMonitoringUnits.getSelectedRow();
+		String unit_id = tblMonitoringUnits.getValueAt(r, 0).toString().trim();
 
-		if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Remove unit?", "Confirmation", 
-				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {			
-			((DefaultTableModel) tblMonitoringUnits.getModel()).removeRow(r);  
+		if (JOptionPane.showConfirmDialog(Pricelist.this.getTopLevelAncestor(), "Remove unit?", "Confirmation",
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+			((DefaultTableModel) tblMonitoringUnits.getModel()).removeRow(r);
 			deleteUnit(unit_id);
 			displayUnits();
 		}
 	}
 
-	private Boolean NSPexceed3M(_JTableMain tblAddUnit){//used
+	private Boolean NSPexceed3M(_JTableMain tblAddUnit) {// used
 
 		Boolean x = false;
 
-		int r  = tblAddUnit.getRowCount();		
+		int r = tblAddUnit.getRowCount();
 		int w = 0;
 
-		while (w<r)
-		{			
-			Double nsp = Double.parseDouble((String) tblAddUnit.getValueAt(w, 27));	
+		while (w < r) {
+			Double nsp = Double.parseDouble((String) tblAddUnit.getValueAt(w, 27));
 
-			if (nsp> 3000000.00)
-			{x = true; break;}			
+			if (nsp > 3000000.00) {
+				x = true;
+				break;
+			}
 			w++;
 		}
 
 		return x;
 	}
-	
-	private void hasNSPexceed3M(JTable table){//used
 
-		int r  = table.getRowCount();		
+	private void hasNSPexceed3M(JTable table) {// used
+
+		int r = table.getRowCount();
 		int w = 0;
 
-		while (w<r)
-		{			
-			Double nsp = Double.parseDouble(table.getValueAt(w, 27).toString());	
+		while (w < r) {
+			Double nsp = Double.parseDouble(table.getValueAt(w, 27).toString());
 
-			if (nsp> 3000000.00)
-			{
+			if (nsp > 3000000.00) {
 				btnUploadSave.setEnabled(false);
-				JOptionPane.showMessageDialog(null,"NSP exceed 3M.","Warning",JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, "NSP exceed 3M.", "Warning", JOptionPane.WARNING_MESSAGE);
 				btnUploadSave.setEnabled(true);
 				break;
-			}	
-			else
-			{
+			} else {
 				btnUploadSave.setEnabled(true);
 				System.out.println("Upload Enabled");
 			}
 			w++;
 		}
-		
+
 	}
 
+	// preview
+	private void preview_unit() {// used
 
-
-	//preview
-	private void preview_unit(){//used
-		
-		String criteria = "Unit Pricelist Report(PagIBIG)";		
+		String criteria = "Unit Pricelist Report(PagIBIG)";
 		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
 		mapParameters.put("company", co_name);
@@ -2931,58 +3211,9 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 		mapParameters.put("phase_status", status_name);
 		mapParameters.put("version", version);
 		mapParameters.put("version_status", version_status);
-		FncReport.generateReport("/Reports/rptPricelist_PabIBIG_Units.jasper", reportTitle, co_name, mapParameters);  
-		
-		
-		String criteria2 = "Unit Pricelist Report(Spot Cash)";		
-		String reportTitle2 = String.format("%s (%s)", title.replace(" Report", ""), criteria2.toUpperCase());		
-		Map<String, Object> mapParameters2 = new HashMap<String, Object>();
-		mapParameters2.put("company", co_name);
-		mapParameters2.put("proj_id", proj_id);
-		mapParameters2.put("phase", phase);
-		mapParameters2.put("prepared_by", UserInfo.FullName);
-		mapParameters2.put("prepared_by_alias", UserInfo.Alias);
-		mapParameters2.put("proj_name", proj_name);
-		mapParameters2.put("phase_status", status_name);
-		mapParameters2.put("version", version);
-		mapParameters2.put("version_status", version_status);
-		FncReport.generateReport("/Reports/rptPricelist_SpotCash.jasper", reportTitle2, co_name, mapParameters2); 
-		
-		/*
-		String criteria3 = "Unit Pricelist Report(Bank Financing)";		
-		String reportTitle3 = String.format("%s (%s)", title.replace(" Report", ""), criteria3.toUpperCase());
-		Map<String, Object> mapParameters3 = new HashMap<String, Object>();
-		mapParameters3.put("company", co_name);
-		mapParameters3.put("proj_id", proj_id);
-		mapParameters3.put("phase", phase);
-		mapParameters3.put("prepared_by", UserInfo.FullName);
-		mapParameters3.put("prepared_by_alias", UserInfo.Alias);
-		mapParameters3.put("proj_name", proj_name);
-		mapParameters3.put("phase_status", status_name);
-		mapParameters3.put("version", version);
-		mapParameters3.put("version_status", version_status);
-		FncReport.generateReport("/Reports/rptPricelist_units_Bank_Fin_part1.jasper", reportTitle3, co_name, mapParameters3);
-		*/
-	}
+		FncReport.generateReport("/Reports/rptPricelist_PabIBIG_Units.jasper", reportTitle, co_name, mapParameters);
 
-	private void preview_unit_cont_1(){//used
-
-		String criteria = "Unit Pricelist Report (PagIBIG Part2)";		
-		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
-		Map<String, Object> mapParameters = new HashMap<String, Object>();
-		mapParameters.put("company", co_name);
-		mapParameters.put("proj_id", proj_id);
-		mapParameters.put("phase", phase);
-		mapParameters.put("prepared_by", UserInfo.FullName);
-		mapParameters.put("prepared_by_alias", UserInfo.Alias);
-		mapParameters.put("proj_name", proj_name);
-		mapParameters.put("phase_status", status_name);
-		mapParameters.put("version", version);
-		mapParameters.put("version_status", version_status);
-		FncReport.generateReport("/Reports/rptPricelist_PagIBIG_part2.jasper", reportTitle, co_name, mapParameters); 
-		
-		/*
-		String criteria2 = "Unit Pricelist Report (Bank Financing Part2)";		
+		String criteria2 = "Unit Pricelist Report(Spot Cash)";
 		String reportTitle2 = String.format("%s (%s)", title.replace(" Report", ""), criteria2.toUpperCase());
 		Map<String, Object> mapParameters2 = new HashMap<String, Object>();
 		mapParameters2.put("company", co_name);
@@ -2994,14 +3225,31 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 		mapParameters2.put("phase_status", status_name);
 		mapParameters2.put("version", version);
 		mapParameters2.put("version_status", version_status);
-		FncReport.generateReport("/Reports/rptPricelist_Bank_part2.jasper", reportTitle2, co_name, mapParameters2); 
-		*/
+		FncReport.generateReport("/Reports/rptPricelist_SpotCash.jasper", reportTitle2, co_name, mapParameters2);
+
+		/*
+		 * String criteria3 = "Unit Pricelist Report(Bank Financing)";
+		 * String reportTitle3 = String.format("%s (%s)", title.replace(" Report", ""),
+		 * criteria3.toUpperCase());
+		 * Map<String, Object> mapParameters3 = new HashMap<String, Object>();
+		 * mapParameters3.put("company", co_name);
+		 * mapParameters3.put("proj_id", proj_id);
+		 * mapParameters3.put("phase", phase);
+		 * mapParameters3.put("prepared_by", UserInfo.FullName);
+		 * mapParameters3.put("prepared_by_alias", UserInfo.Alias);
+		 * mapParameters3.put("proj_name", proj_name);
+		 * mapParameters3.put("phase_status", status_name);
+		 * mapParameters3.put("version", version);
+		 * mapParameters3.put("version_status", version_status);
+		 * FncReport.generateReport("/Reports/rptPricelist_units_Bank_Fin_part1.jasper",
+		 * reportTitle3, co_name, mapParameters3);
+		 */
 	}
 
-	private void preview_unit_cont_2(){//used
+	private void preview_unit_cont_1() {// used
 
-		String criteria = "Unit Pricelist Report (PagIBIG Part 3)";		
-		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());	
+		String criteria = "Unit Pricelist Report (PagIBIG Part2)";
+		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
 		mapParameters.put("company", co_name);
 		mapParameters.put("proj_id", proj_id);
@@ -3012,29 +3260,66 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 		mapParameters.put("phase_status", status_name);
 		mapParameters.put("version", version);
 		mapParameters.put("version_status", version_status);
-		FncReport.generateReport("/Reports/rptPricelist_PagIBIG_part3.jasper", reportTitle, co_name, mapParameters); 
-		
+		FncReport.generateReport("/Reports/rptPricelist_PagIBIG_part2.jasper", reportTitle, co_name, mapParameters);
+
 		/*
-		String criteria2 = "Unit Pricelist Report (Bank Financing Part3)";		
-		String reportTitle2 = String.format("%s (%s)", title.replace(" Report", ""), criteria2.toUpperCase());	
-		Map<String, Object> mapParameters2 = new HashMap<String, Object>();
-		mapParameters2.put("company", co_name);
-		mapParameters2.put("proj_id", proj_id);
-		mapParameters2.put("phase", phase);
-		mapParameters2.put("prepared_by", UserInfo.FullName);
-		mapParameters2.put("prepared_by_alias", UserInfo.Alias);
-		mapParameters2.put("proj_name", proj_name);
-		mapParameters2.put("phase_status", status_name);
-		mapParameters2.put("version", version);
-		mapParameters2.put("version_status", version_status);
-		FncReport.generateReport("/Reports/rptPricelist_BankFin_part3.jasper", reportTitle2, co_name, mapParameters2); 
-		*/
+		 * String criteria2 = "Unit Pricelist Report (Bank Financing Part2)";
+		 * String reportTitle2 = String.format("%s (%s)", title.replace(" Report", ""),
+		 * criteria2.toUpperCase());
+		 * Map<String, Object> mapParameters2 = new HashMap<String, Object>();
+		 * mapParameters2.put("company", co_name);
+		 * mapParameters2.put("proj_id", proj_id);
+		 * mapParameters2.put("phase", phase);
+		 * mapParameters2.put("prepared_by", UserInfo.FullName);
+		 * mapParameters2.put("prepared_by_alias", UserInfo.Alias);
+		 * mapParameters2.put("proj_name", proj_name);
+		 * mapParameters2.put("phase_status", status_name);
+		 * mapParameters2.put("version", version);
+		 * mapParameters2.put("version_status", version_status);
+		 * FncReport.generateReport("/Reports/rptPricelist_Bank_part2.jasper",
+		 * reportTitle2, co_name, mapParameters2);
+		 */
 	}
 
-	private void preview_scheme(){//used
+	private void preview_unit_cont_2() {// used
 
-		String criteria = "Marketing Scheme";		
-		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());			
+		String criteria = "Unit Pricelist Report (PagIBIG Part 3)";
+		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
+		Map<String, Object> mapParameters = new HashMap<String, Object>();
+		mapParameters.put("company", co_name);
+		mapParameters.put("proj_id", proj_id);
+		mapParameters.put("phase", phase);
+		mapParameters.put("prepared_by", UserInfo.FullName);
+		mapParameters.put("prepared_by_alias", UserInfo.Alias);
+		mapParameters.put("proj_name", proj_name);
+		mapParameters.put("phase_status", status_name);
+		mapParameters.put("version", version);
+		mapParameters.put("version_status", version_status);
+		FncReport.generateReport("/Reports/rptPricelist_PagIBIG_part3.jasper", reportTitle, co_name, mapParameters);
+
+		/*
+		 * String criteria2 = "Unit Pricelist Report (Bank Financing Part3)";
+		 * String reportTitle2 = String.format("%s (%s)", title.replace(" Report", ""),
+		 * criteria2.toUpperCase());
+		 * Map<String, Object> mapParameters2 = new HashMap<String, Object>();
+		 * mapParameters2.put("company", co_name);
+		 * mapParameters2.put("proj_id", proj_id);
+		 * mapParameters2.put("phase", phase);
+		 * mapParameters2.put("prepared_by", UserInfo.FullName);
+		 * mapParameters2.put("prepared_by_alias", UserInfo.Alias);
+		 * mapParameters2.put("proj_name", proj_name);
+		 * mapParameters2.put("phase_status", status_name);
+		 * mapParameters2.put("version", version);
+		 * mapParameters2.put("version_status", version_status);
+		 * FncReport.generateReport("/Reports/rptPricelist_BankFin_part3.jasper",
+		 * reportTitle2, co_name, mapParameters2);
+		 */
+	}
+
+	private void preview_scheme() {// used
+
+		String criteria = "Marketing Scheme";
+		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());
 
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
 		mapParameters.put("company", co_name);
@@ -3049,7 +3334,7 @@ public class Pricelist extends _JInternalFrame implements _GUI, ActionListener {
 		mapParameters.put("phase", phase);
 		mapParameters.put("status_name", status_name);
 
-		FncReport.generateReport("/Reports/rptPricelistPaymentScheme.jasper", reportTitle, co_name, mapParameters); 
+		FncReport.generateReport("/Reports/rptPricelistPaymentScheme.jasper", reportTitle, co_name, mapParameters);
 
 	}
 

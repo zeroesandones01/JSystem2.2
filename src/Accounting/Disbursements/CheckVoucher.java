@@ -1256,7 +1256,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				+ "( case when a.bal_side = 'C' then a.tran_amt else '0' end ) as credit, coalesce(a.corollary_entry, false) \n" + "\n" + "\n"
 				+ "from rf_cv_detail a\n" + "left join mf_boi_chart_of_accounts b on a.acct_id = b.acct_id\n" +
 				// "left join mf_bank_account c on a.acct_id = c.acct_id \n" +
-				"left join mf_bank_account c on a.acct_id = c.acct_id and c.status_id = 'A' \n" + // edited by
+				"left join mf_bank_account c on a.acct_id = c.acct_id and c.status_id = 'A' and c.acct_desc is not null\n" + // edited by
 				// Erick dated
 				// 05-22-20 to
 				// remove

@@ -12,6 +12,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.DefaultListModel;
@@ -41,6 +42,7 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 import Buyers.ClientServicing._CARD;
 	import Database.pgSelect;
+import Database.pgUpdate;
 import Functions.CheckBoxHeader;
 import Functions.FncODSFileFilter;
 import Functions.FncSystem;
@@ -72,7 +74,7 @@ import interfaces._GUI;
 		private JLabel lblClient,lblProj,lblUnit,lblClient2,lblProj2,lblUnit2;
 		private JList rowLedger;
 		private static  JTabbedPane tabDesc;
-		private DefaultTableModel modelTblLedger;
+		DefaultTableModel modelTblLedger;
 		private JScrollPane scrollLedger;
 		private JTextField txtProj,txtUnit;
 		private _JXTextField txtFile;
@@ -280,12 +282,8 @@ import interfaces._GUI;
 						btnSave = new JButton("Save");
 						pnlMainSouth.add(btnSave);
 						btnSave.setEnabled(false);
-						btnSave.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent arg0) {
-								
-							}
-
-						});
+						btnSave.setActionCommand(btnSave.getText());
+						btnSave.addActionListener(this);
 					} 
 
 					{
@@ -302,14 +300,48 @@ import interfaces._GUI;
 								txtUnit.setText("");
 								lblUnit2.setText("[]");
 								rowLedger.setModel(new DefaultListModel());
-								btnCancel.setEnabled(false);
-								btnSave.setEnabled(false);
+								
+								btnState(false, false, false);
 							}
-
 						});
 					}
 				}
 			}
+		}//XXX END OF INIT GUI
+		
+		private void save() {
+			String entity_id = lookupClient.getValue();
+			String proj_id = txtProj.getText();
+			String pbl_id = txtUnit.getText();
+			
+			String SQL = "";
+			pgUpdate db = new pgUpdate();
+			
+			for(int x= 0; x<modelTblLedger.getRowCount(); x++) {
+				Date actual_pmt_date = (Date) modelTblLedger.getValueAt(x, 1);
+				Date pmt_due_date = (Date) modelTblLedger.getValueAt(x, 2);
+				String receipt_no = (String) modelTblLedger.getValueAt(x, 3);
+				BigDecimal amt_paid = (BigDecimal) modelTblLedger.getValueAt(x, 4);
+				BigDecimal other_fees = (BigDecimal) modelTblLedger.getValueAt(x, 5);
+				BigDecimal res = (BigDecimal) modelTblLedger.getValueAt(x, 6);
+				BigDecimal dp = (BigDecimal) modelTblLedger.getValueAt(x, 7);
+				BigDecimal mri = (BigDecimal) modelTblLedger.getValueAt(x, 8);
+				BigDecimal fire = (BigDecimal) modelTblLedger.getValueAt(x, 9);
+				BigDecimal vat = (BigDecimal) modelTblLedger.getValueAt(x, 10);
+				BigDecimal soi = (BigDecimal) modelTblLedger.getValueAt(x, 11);
+				BigDecimal sop = (BigDecimal) modelTblLedger.getValueAt(x, 12);
+				BigDecimal resdp_pen = (BigDecimal) modelTblLedger.getValueAt(x, 13);
+				BigDecimal interest = (BigDecimal) modelTblLedger.getValueAt(x, 14);
+				BigDecimal principal = (BigDecimal) modelTblLedger.getValueAt(x, 15);
+				
+				SQL = "INSERT INTO public.rf_itsreal_bir_soa(\n"
+						+ "	 entity_id, proj_id, pbl_id, seq_no, actual_pmt_date, pmt_due_date, receipt_no, amt_paid, other_fees, reservation, dp, mri, fire, \n"
+						+ "	vat, soi, sop, resdp_penalty, interest, principal)\n"
+						+ "	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+				
+				db.executeUpdate(SQL, true);
+			}
+			db.commit();
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -337,38 +369,47 @@ import interfaces._GUI;
 					System.out.printf("Selected File: %s%n", fileChooser.getSelectedFile().toString());
 					String selectedFile = fileChooser.getSelectedFile().toString();
 					txtFile.setText(selectedFile);
-				}
-				
+					
+					File fileSelected = new File(selectedFile);
+					System.out.printf("Display selected file: %s%n", selectedFile);
+					
+					tabDesc.removeAll();
 
-				String selectedFile = fileChooser.getSelectedFile().toString();
-				File fileSelected = new File(selectedFile);
-				System.out.printf("Display selected file: %s%n", selectedFile);
-				
-				tabDesc.removeAll();
+					try {
+						int sheetCount = SpreadSheet.createFromFile(fileSelected).getSheetCount();
+						System.out.printf("Display Sheet Count: %s%n", sheetCount);
+						for (int x = 0; x < sheetCount; x++) {
+							System.out.printf("Display loop value: %s%n", x);
 
-				try {
-					int sheetCount = SpreadSheet.createFromFile(fileSelected).getSheetCount();
-					System.out.printf("Display Sheet Count: %s%n", sheetCount);
-					for (int x = 0; x < sheetCount; x++) {
-						System.out.printf("Display loop value: %s%n", x);
+							Sheet sheet = SpreadSheet.createFromFile(fileSelected).getSheet(x);
 
-						Sheet sheet = SpreadSheet.createFromFile(fileSelected).getSheet(x);
+							String sheetName = sheet.getName().toString();
+							System.out.printf("Sheet Name: %s%n", sheetName);
 
-						String sheetName = sheet.getName().toString();
-						System.out.printf("Sheet Name: %s%n", sheetName);
+							streamSheet(sheet);
 
-						streamSheet(sheet);
+							//System.out.println("Returned Rows: " + tblLedger.getRowCount());
+							tabDesc.addTab("Ledger", null, new JScrollPane(tblLedger), null);
+							//tabDesc.setSelectedIndex(0);
 
-						//System.out.println("Returned Rows: " + tblLedger.getRowCount());
-						tabDesc.addTab("Ledger", null, new JScrollPane(tblLedger), null);
-						tabDesc.setSelectedIndex(0);
-
+						}
+					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
-				} catch (IOException e1) {
-					e1.printStackTrace();
+					btnState(true, true, true);
 				}
 			}
 			
+			if(actionCommand.equals("Save")) {
+				save();
+				JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Upload Successful", "Upload", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+		
+		private void btnState(Boolean save, Boolean cancel, Boolean browse) {
+			btnSave.setEnabled(save);
+			btnCancel.setEnabled(cancel);
+			btnBrowse.setEnabled(browse);
 		}
 		
 		protected JTable streamSheet(Sheet sheet) {
@@ -381,15 +422,20 @@ import interfaces._GUI;
 			Object[] columnNames = null;
 			Object[][] rowValue = null;
 
-			rowValue = new Object[rowCount][colCount + 1];
+			rowValue = new Object[rowCount][colCount+1];
 
 			int colnameRow = 0;
 			for (int r = 0; r < rowCount; r++) {
+				Boolean isBreak = false;
 				for (int c = 0; c < colCount; c++) {
-					if (sheet.getValueAt(c, r).toString().trim().toUpperCase().equals("Pmt Due Date")) {
+					if (sheet.getValueAt(c, r).toString().trim().toUpperCase().equals("ACTUAL PMT DATE")) {
 						colnameRow = r;
+						isBreak = true;
 						System.out.println("Dumaan dito sa 1");
 					}
+				}
+				if (isBreak) {
+					break;
 				}
 			}
 			ArrayList<Integer> listHiddenColumns = new ArrayList<Integer>();
@@ -402,15 +448,15 @@ import interfaces._GUI;
 			}
 
 			// TO DELETE EMPTY COLUMNS
-			//deleteColumn.clear();
-			for (int c = 0; c < colCount; c++) {
-				if (sheet.getValueAt(c, colnameRow).toString().equals("") || sheet.getValueAt(c, colnameRow) == null
-						|| sheet.getValueAt(c, colnameRow).toString().isEmpty()) {
-					deleteColumn.add((c + 1));
-				} else
-					deleteColumn.clear();
-			}
-			colCount = (deleteColumn.get(0) - 1);
+			deleteColumn.clear();
+//			for (int c = 0; c < colCount; c++) {
+//				if (sheet.getValueAt(c, colnameRow).toString().equals("") || sheet.getValueAt(c, colnameRow) == null
+//						|| sheet.getValueAt(c, colnameRow).toString().isEmpty()) {
+//					deleteColumn.add((c + 1));
+//				} else
+//					deleteColumn.clear();
+//			}
+//			colCount = (deleteColumn.get(0) - 1);
 			columnNames = new Object[colCount + 1];
 
 			for (int c = 0; c < colCount; c++) {
@@ -502,29 +548,9 @@ import interfaces._GUI;
 			return tblLedger;
 
 		}
+		
 
-		private void displayValueLedger(DefaultTableModel model,String entity_id,String proj_id,String pbl_id,Integer seq_no) {
 
-			FncTables.clearTable(model);	
-			DefaultListModel listModel = new DefaultListModel();
-			rowLedger.setModel(listModel);
-
-				String sql = "SELECT * \n" +
-						"FROM view_itsRealSoaBir_ledger('"+ entity_id+"', '"+ proj_id +"', '"+ pbl_id +"', "+ seq_no +")"; 
-
-				FncSystem.out("Display description", sql);
-				pgSelect db = new pgSelect();
-				db.select(sql);
-
-				if(db.isNotNull()){ 
-					for(int x=0; x < db.getRowCount(); x++){
-						model.addRow(db.getResult()[x]);
-						listModel.addElement(model.getRowCount());
-
-					}
-				}
-				tblLedger.packAll();
-		}
-
+	
 	}
 

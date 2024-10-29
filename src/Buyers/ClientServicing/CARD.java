@@ -5407,6 +5407,9 @@ public class CARD extends _JInternalFrame implements _GUI, AncestorListener, Sea
 
 			txtModelID.setText((String) clientDetails[7]);
 			txtModelName.setText(generateTAG(clientDetails[8]));
+			String aub_ref_no = (String) clientDetails[75];
+			pnlNorth.setBorder(components.JTBorderFactory.createTitleBorder(aub_ref_no, FncLookAndFeel.systemFont_Bold.deriveFont(10f)));
+
 
 			//txtModelName.setText(String.format("[ %s ] [ %s ]", (String) clientDetails[8], (String) clientDetails[42]));
 

@@ -763,18 +763,14 @@ public class TransferCostTransactionEntry extends _JInternalFrame implements _GU
 															String emp_code = (String) UserInfo.EmployeeCode;
 															String emp_name = (String) UserInfo.FullName;
 															if (data != null) {
-																FncSystem.out("SQL for LookupCOde",
-																		lookupCode.getLookupSQL());
+																FncSystem.out("SQL for LookupCOde",lookupCode.getLookupSQL());
 																FncTables.clearTable(modelTCT);// added by erick 2757
 
-																lblCode.setText(String.format(
-																		"<html><font size = 2>[ %s ]</html>",
-																		(String) data[1]));
+																lblCode.setText(String.format("<html><font size = 2>[ %s ]</html>",(String) data[1]));
 																System.out.println("lblSetupAmount1" + data[2]);
 
 																lblSetupAmount1.setText(String.format("%s", data[2]));
-																lblBalanceAmount.setText(
-																		String.format("%s", lblSetupAmount1.getText()));
+																lblBalanceAmount.setText(String.format("%s", lblSetupAmount1.getText()));
 																txtRequestedBy.setText(emp_code);
 																// txtAmount.setEditable(true);
 																lblReqBy1.setText(String.format("[ %s ]", emp_name));
@@ -787,30 +783,21 @@ public class TransferCostTransactionEntry extends _JInternalFrame implements _GU
 																}
 
 																if (data != null) {
-																	BigDecimal amount = new BigDecimal(String.format(
-																			"%s", reg_amount2(entity, pbl, buyertype)));
+																	BigDecimal amount = new BigDecimal(String.format("%s", reg_amount2(entity, pbl, buyertype)));
 																	System.out.println("OTIDS1 dumaan");
-																	BigDecimal amount2 = new BigDecimal(String.format(
-																			"%s", reg_amount(entity, pbl, buyertype)));
+																	BigDecimal amount2 = new BigDecimal(String.format("%s", reg_amount(entity, pbl, buyertype)));
 																	System.out.println("OTIDS2 dumaan");
-																	BigDecimal amount3 = new BigDecimal(String.format(
-																			"%s", reg_amount3(entity, pbl, buyertype)));
+																	BigDecimal amount3 = new BigDecimal(String.format("%s", reg_amount3(entity, pbl, buyertype)));
 																	System.out.println("OTIDS3 dumaan");
-																	BigDecimal amount4 = new BigDecimal(
-																			String.format("100.00"));
+																	BigDecimal amount4 = new BigDecimal(String.format("100.00"));
 																	System.out.println("OTIDS4 dumaan");
 
-																	BigDecimal computed_tcost_amt = getTCost_Dtl_amt(
-																			lookupCode.getValue(), entity, projid,
-																			pbl_id, seq);
+																	BigDecimal computed_tcost_amt = getTCost_Dtl_amt(lookupCode.getValue(), entity, projid,pbl_id, seq);
 
-																	if (lookupCode.getValue().equals("008")
-																			|| lookupCode.getValue().equals("011")
-																			|| lookupCode.getValue().equals("012")
+																	if (lookupCode.getValue().equals("008")|| lookupCode.getValue().equals("011")|| lookupCode.getValue().equals("012")
 																			|| lookupCode.getValue().equals("021")
 																			|| lookupCode.getValue().equals("169")) {// **SALES**/
-																		addTCostEntries(entity, projid, pbl_id, seq,
-																				modelTCT);
+																		addTCostEntries(entity, projid, pbl_id, seq,modelTCT);
 																		// tblTCT.setEnabled(false);
 																	} else if (lookupCode.getValue().equals("123")) {// **ADDED
 																														// BY
@@ -825,65 +812,45 @@ public class TransferCostTransactionEntry extends _JInternalFrame implements _GU
 																														// DOCUMENTARY
 																														// STAMP
 																														// MORT**//
-																		BigDecimal doc_stamp_mort_amt = getDocStampMortgage(
-																				lookupCode.getValue(), entity, projid,
-																				pbl, seq);
-																		modelTCT.addRow(new Object[] { true, data[1],
-																				Calendar.getInstance().getTime(),
-																				doc_stamp_mort_amt, data[3], null });
+																		BigDecimal doc_stamp_mort_amt = getDocStampMortgage(lookupCode.getValue(), entity, projid,pbl, seq);
+																		modelTCT.addRow(new Object[] { true, data[1],Calendar.getInstance().getTime(),doc_stamp_mort_amt, data[3], null });
 																	}
 																	// **ADDED BY JED VICEDO 2019-07-03 : TRIGGER OTHER
 																	// PARTICULARS IF TAGGED 009, 013, 193, 012**//
-																	else if (lookupCode.getValue().equals("009")
-																			|| lookupCode.getValue().equals("013")
-																			|| lookupCode.getValue().equals("193")) {// **MORTGAGE**//
-																		addTCostEntries_v2(entity, projid, pbl_id, seq,
-																				modelTCT);
+																	else if (lookupCode.getValue().equals("009")|| lookupCode.getValue().equals("013")|| lookupCode.getValue().equals("193")) {// **MORTGAGE**//
+																		addTCostEntries_v2(entity, projid, pbl_id, seq,modelTCT);
 																		// tblTCT.setEnabled(false);
 																	} else {
 
 																		System.out.println("Dumaan sa else");
-																		System.out.println("computed_tcost_amt: "
-																				+ computed_tcost_amt);
-																		modelTCT.addRow(new Object[] { true, data[1],
-																				FncGlobal.getDateToday(),
-																				computed_tcost_amt, data[3], null });
+																		System.out.println("computed_tcost_amt: "+ computed_tcost_amt);
+																		modelTCT.addRow(new Object[] { true, data[1],FncGlobal.getDateToday(),computed_tcost_amt, data[3], null });
 																		// tblTCT.setEnabled(false);
 																	}
 
 																	rowHeaderTCT.setModel(new DefaultListModel());
 
 																	for (int y = 1; y <= modelTCT.getRowCount(); y++) {
-																		((DefaultListModel) rowHeaderTCT.getModel())
-																				.addElement(y);
+																		((DefaultListModel) rowHeaderTCT.getModel()).addElement(y);
 																	}
 
-																	scrollTCT.setCorner(
-																			ScrollPaneConstants.LOWER_LEFT_CORNER,
-																			FncTables.getRowHeader_Footer(Integer
-																					.toString(tblTCT.getRowCount())));
+																	scrollTCT.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER,FncTables.getRowHeader_Footer(Integer.toString(tblTCT.getRowCount())));
 																	tblTCT.packAll();
 
-																	if (tblTCT.getColumnModel().getColumn(1)
-																			.getPreferredWidth() >= 200) {
-																		tblTCT.getColumnModel().getColumn(1)
-																				.setPreferredWidth(200);
+																	if (tblTCT.getColumnModel().getColumn(1).getPreferredWidth() >= 200) {
+																		tblTCT.getColumnModel().getColumn(1).setPreferredWidth(200);
 																	}
 
 																	btnDRF.setEnabled(true);
 																	btnTSave.setEnabled(false);
 																	txtRemarks.setEditable(true);
 																	if (batch() == false) {
-																		lblBatch.setText(String.format(
-																				"<html><b>Batch No: %s</html>",
-																				generateBatchNo()));
+																		lblBatch.setText(String.format("<html><b>Batch No: %s</html>",generateBatchNo()));
 																	} else {
 																		// lblBatch.setText(String.format("<html><b>Batch
 																		// No: %s</html>", generateBatchNo()));
 																	}
-
 																}
-
 																// KEYBOARD_MANAGER.focusNextComponent();
 															}
 														}
@@ -2638,7 +2605,7 @@ public class TransferCostTransactionEntry extends _JInternalFrame implements _GU
 
 	private static String SQL_REQUESTTYPE() {
 		return "SELECT rplf_type_id as \"Type ID\", trim(rplf_type_desc) as \"Description\"  \n"
-				+ "FROM mf_rplf_type where status_id = 'A' and rplf_type_id in ('02','06','11','15') " + "ORDER BY rplf_type_id ";
+				+ "FROM mf_rplf_type where status_id = 'A' and rplf_type_id in ('02','06','11','15') " + "ORDER BY rplf_type_id ";//Edited by erick 2024-07-18 DCRF 3050-Added specific rplf_type
 	}
 
 	private static String ControlNoLookUpValue() {

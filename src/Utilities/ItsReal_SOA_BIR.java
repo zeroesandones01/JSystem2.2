@@ -47,7 +47,8 @@ import Functions.CheckBoxHeader;
 import Functions.FncODSFileFilter;
 import Functions.FncSystem;
 	import Functions.FncTables;
-	import Lookup.LookupEvent;
+import Functions.UserInfo;
+import Lookup.LookupEvent;
 	import Lookup.LookupListener;
 	import Lookup._JLookup;
 import Lookup._JLookupTable.RolloverMouseAdapter;
@@ -318,30 +319,44 @@ import interfaces._GUI;
 			pgUpdate db = new pgUpdate();
 			
 			for(int x= 0; x<modelTblLedger.getRowCount(); x++) {
+				
 				Date actual_pmt_date = (Date) modelTblLedger.getValueAt(x, 1);
 				Date pmt_due_date = (Date) modelTblLedger.getValueAt(x, 2);
 				String receipt_no = (String) modelTblLedger.getValueAt(x, 3);
-				BigDecimal amt_paid = (BigDecimal) modelTblLedger.getValueAt(x, 4);
-				BigDecimal other_fees = (BigDecimal) modelTblLedger.getValueAt(x, 5);
-				BigDecimal res = (BigDecimal) modelTblLedger.getValueAt(x, 6);
-				BigDecimal dp = (BigDecimal) modelTblLedger.getValueAt(x, 7);
-				BigDecimal mri = (BigDecimal) modelTblLedger.getValueAt(x, 8);
-				BigDecimal fire = (BigDecimal) modelTblLedger.getValueAt(x, 9);
-				BigDecimal vat = (BigDecimal) modelTblLedger.getValueAt(x, 10);
-				BigDecimal soi = (BigDecimal) modelTblLedger.getValueAt(x, 11);
-				BigDecimal sop = (BigDecimal) modelTblLedger.getValueAt(x, 12);
-				BigDecimal resdp_pen = (BigDecimal) modelTblLedger.getValueAt(x, 13);
-				BigDecimal interest = (BigDecimal) modelTblLedger.getValueAt(x, 14);
-				BigDecimal principal = (BigDecimal) modelTblLedger.getValueAt(x, 15);
+				BigDecimal amt_paid = getBigDecimalValue(modelTblLedger.getValueAt(x, 4));
+		        BigDecimal other_fees = getBigDecimalValue(modelTblLedger.getValueAt(x, 5));
+		        BigDecimal res = getBigDecimalValue(modelTblLedger.getValueAt(x, 6));
+		        BigDecimal dp = getBigDecimalValue(modelTblLedger.getValueAt(x, 7));
+		        BigDecimal mri = getBigDecimalValue(modelTblLedger.getValueAt(x, 8));
+		        BigDecimal fire = getBigDecimalValue(modelTblLedger.getValueAt(x, 9));
+		        BigDecimal vat = getBigDecimalValue(modelTblLedger.getValueAt(x, 10));
+		        BigDecimal soi = getBigDecimalValue(modelTblLedger.getValueAt(x, 11));
+		        BigDecimal sop = getBigDecimalValue(modelTblLedger.getValueAt(x, 12));
+		        BigDecimal resdp_pen = getBigDecimalValue(modelTblLedger.getValueAt(x, 13));
+		        BigDecimal interest = getBigDecimalValue(modelTblLedger.getValueAt(x, 14));
+		        BigDecimal principal = getBigDecimalValue(modelTblLedger.getValueAt(x, 15));
 				
 				SQL = "INSERT INTO public.rf_itsreal_bir_soa(\n"
-						+ "	 entity_id, proj_id, pbl_id, seq_no, actual_pmt_date, pmt_due_date, receipt_no, amt_paid, other_fees, reservation, dp, mri, fire, \n"
-						+ "	vat, soi, sop, resdp_penalty, interest, principal)\n"
-						+ "	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+						+ "	 entity_id, proj_id, pbl_id, seq_no, actual_pmt_date, pmt_due_date, receipt_no, amt_paid, \n"
+						+ "other_fees, reservation, dp, mri, fire, \n"
+						+ "	vat, soi, sop, resdp_penalty, interest, principal, status_id, created_by, date_created)\n"
+						+ "	VALUES ('"+entity_id+"', '"+proj_id+"', '"+pbl_id+"', "+seq_no+", '"+actual_pmt_date+"', "
+						+ "'"+pmt_due_date+"', '"+receipt_no+"', "+amt_paid+", "+other_fees+", "+res+", "+dp+", "
+						+ ""+mri+", "+fire+", "+vat+", "+soi+", "+sop+", "+resdp_pen+", "+interest+", "+principal+", 'A', '"+UserInfo.EmployeeCode+"', now());";
 				
 				db.executeUpdate(SQL, true);
 			}
 			db.commit();
+		}
+		
+		private BigDecimal getBigDecimalValue(Object value) {
+		    if (value instanceof String && ((String) value).isEmpty()) {
+		        return BigDecimal.ZERO;
+		    } else if (value instanceof BigDecimal) {
+		        return (BigDecimal) value;
+		    } else {
+		        return BigDecimal.ZERO; // Default value if the type is unexpected
+		    }
 		}
 		
 		public void actionPerformed(ActionEvent e) {

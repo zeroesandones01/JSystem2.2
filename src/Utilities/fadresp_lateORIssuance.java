@@ -747,10 +747,13 @@ public class fadresp_lateORIssuance extends _JInternalFrame implements _GUI, Act
 		rowPending.setModel(listModelPending);
 		
 		dbExec = new pgSelect(); 
+//		dbExec.select("select * \n" +
+//				"from view_spotcash_orissuance('"+txtCoID.getValue().toString()+"', '"+txtProID.getValue().toString()+"', '"+txtPhaseID.getValue().toString()+"', '"+dteFrom.getDate().toString()+"', '"+dteTo.getDate().toString()+"', '"+cboListParameters.getSelectedIndex()+"'::int, 0, false) x \n"+
+//				"where not exists(select * from rf_orlist y where x.c_name = y.name and x.c_unit = y.unit and y.date_issued::date is null AND status_id = 'A' and y.pay_rec_id = c_pay_rec_id) \n" +
+//				"order by x.c_type, x.c_or_date, x.c_or_no, x.c_name, x.c_unit");
+		
 		dbExec.select("select * \n" +
-				"from view_spotcash_orissuance('"+txtCoID.getValue().toString()+"', '"+txtProID.getValue().toString()+"', '"+txtPhaseID.getValue().toString()+"', '"+dteFrom.getDate().toString()+"', '"+dteTo.getDate().toString()+"', '"+cboListParameters.getSelectedIndex()+"'::int, 0, false) x \n"+
-				"where not exists(select * from rf_orlist y where x.c_name = y.name and x.c_unit = y.unit and y.date_issued::date is null AND status_id = 'A' and y.pay_rec_id = c_pay_rec_id) \n" +
-				"order by x.c_type, x.c_or_date, x.c_or_no, x.c_name, x.c_unit");
+				"from view_spotcash_orissuance_debug('"+txtCoID.getValue().toString()+"', '"+txtProID.getValue().toString()+"', '"+txtPhaseID.getValue().toString()+"', '"+dteFrom.getDate().toString()+"', '"+dteTo.getDate().toString()+"', '"+cboListParameters.getSelectedIndex()+"'::int, 0, false) x ");
 		
 		System.out.println(""); 
 		System.out.println("select * \n" +

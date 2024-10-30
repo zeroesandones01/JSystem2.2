@@ -433,12 +433,21 @@ public class IssueOR_toGoodChecks extends _JInternalFrame implements _GUI, Actio
 		String sql = "select * from view_lateor_checklist('"+lookupCompany.getValue()+"', "+rbtnA.isSelected()+", "+rbtnB.isSelected()+", "+rbtnC.isSelected()+", "+rbtnD.isSelected()+");";
 
 		// added by jari cruz asof may 9 2023 DCRF# 2581
+//		if (cmbIssuanceType.getSelectedItem().equals("Sales Invoice")) {
+//			if(rbtnB.isSelected()) {
+//				sql = "select * from view_lateor_checklist_si('"+lookupCompany.getValue()+"', "+rbtnA.isSelected()+", "+rbtnB.isSelected()+", "+rbtnC.isSelected()+", "+rbtnD.isSelected()+") order by entity_name, proj_alias, pbl_id;";
+//			}else {
+//				System.out.println("\ndisplayListOfChecks for SI Issuance");
+//				sql = "select * from view_lateor_checklist_si('"+lookupCompany.getValue()+"', "+rbtnA.isSelected()+", "+rbtnB.isSelected()+", "+rbtnC.isSelected()+", "+rbtnD.isSelected()+") ";
+//			}
+//		}
+		
 		if (cmbIssuanceType.getSelectedItem().equals("Sales Invoice")) {
 			if(rbtnB.isSelected()) {
-				sql = "select * from view_lateor_checklist_si('"+lookupCompany.getValue()+"', "+rbtnA.isSelected()+", "+rbtnB.isSelected()+", "+rbtnC.isSelected()+", "+rbtnD.isSelected()+") order by entity_name, proj_alias, pbl_id;";
+				sql = "select * from view_lateor_checklist_si_debug('"+lookupCompany.getValue()+"', "+rbtnA.isSelected()+", "+rbtnB.isSelected()+", "+rbtnC.isSelected()+", "+rbtnD.isSelected()+") order by entity_name, proj_alias, pbl_id;";
 			}else {
 				System.out.println("\ndisplayListOfChecks for SI Issuance");
-				sql = "select * from view_lateor_checklist_si('"+lookupCompany.getValue()+"', "+rbtnA.isSelected()+", "+rbtnB.isSelected()+", "+rbtnC.isSelected()+", "+rbtnD.isSelected()+") ";
+				sql = "select * from view_lateor_checklist_si_debug('"+lookupCompany.getValue()+"', "+rbtnA.isSelected()+", "+rbtnB.isSelected()+", "+rbtnC.isSelected()+", "+rbtnD.isSelected()+") ";
 			}
 		}
 		

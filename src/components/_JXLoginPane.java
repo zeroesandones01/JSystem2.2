@@ -566,7 +566,7 @@ public class _JXLoginPane extends JXPanel {
 		
 		JLabel nameLabel = new JLabel("Username"); //Original - UIManagerExt.getString(CLASS_NAME + ".nameString", getLocale())
 		nameLabel.setLabelFor(namePanel.getComponent());
-		nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
+//		nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
 
 		//create the server combo box if necessary
 		JLabel serverLabel = new JLabel(UIManagerExt.getString(CLASS_NAME + ".serverString", getLocale()));
@@ -706,7 +706,7 @@ public class _JXLoginPane extends JXPanel {
 	 */
 	private void initComponents() {//XXX initComponents
 		//create the default banner
-		banner.setImage(createLoginBanner());
+		//banner.setImage(createLoginBanner());
 
 		//create the default label
 		messageLabel = new JLabel(" ");

@@ -238,6 +238,8 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 
 	public static String tran_desc = "";
 	protected static DecimalFormat df = new DecimalFormat("#,##0.00");
+	
+	public static String req_type = "";
 
 	int seq_no = 1;
 	private Integer fiscalyear;
@@ -2810,9 +2812,11 @@ public class JournalVoucher extends _JInternalFrame implements _GUI, ActionListe
 		mapParameters.put("particulars", txtJV_Remark.getText().trim());
 		mapParameters.put("posted_by", posted_by);
 		mapParameters.put("transaction", tran_desc);
+		mapParameters.put("request_type", tagreqtype.getText().replace("[", "").replace("]", ""));
 		
 		System.out.printf("value of JV No: %s%n", lookupJV.getText().trim());
 		System.out.printf("value of co id: %s%n", co_id);
+		System.out.printf("value of req type: %s%n", tagreqtype.getText().replace("[", "").replace("]", ""));
 
 		if (entry() == true) {
 			System.out.println("Dumaan dito");

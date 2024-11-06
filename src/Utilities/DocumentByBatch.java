@@ -564,7 +564,12 @@ public class DocumentByBatch extends _JInternalFrame implements ActionListener, 
 				JOptionPane.showMessageDialog(getContentPane(), "Please select an employee.", "Error", JOptionPane.ERROR_MESSAGE);
 			} else {
 				executeSave();
-				cancel();
+				enableCenterFields(false);
+				enableNorthFields(true);
+				refreshFields();
+				initialize_comp();
+
+				scrollBatch.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, FncTables.getRowHeader_Footer(Integer.toString(tblBatch.getRowCount())));
 			}
 		}
 	}

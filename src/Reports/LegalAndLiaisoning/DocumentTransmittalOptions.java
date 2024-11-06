@@ -727,9 +727,10 @@ public class DocumentTransmittalOptions extends _JInternalFrame implements Actio
 					else if (lookupDescription.getValue().equals("228") || lookupDescription.getValue().equals("229")) { 
 				mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
 				FncReport.generateReport("/Reports/rptTCT_Stat_228_229.jasper", "Transmittal Form", mapParameters);	
-				}
-					else {
-				//mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
+				}else {
+					if(lookupDescription.getValue().equals("219")) {
+						mapParameters.put(JRParameter.SORT_FIELDS, sortBy(sort_by));
+					}	
 				FncReport.generateReport("/Reports/rptTCT.jasper", "Transmittal Form", mapParameters);
 				}
 			}

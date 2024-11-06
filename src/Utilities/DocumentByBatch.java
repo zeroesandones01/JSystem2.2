@@ -564,6 +564,7 @@ public class DocumentByBatch extends _JInternalFrame implements ActionListener, 
 				JOptionPane.showMessageDialog(getContentPane(), "Please select an employee.", "Error", JOptionPane.ERROR_MESSAGE);
 			} else {
 				executeSave();
+				cancel();
 			}
 		}
 	}

@@ -65,7 +65,7 @@ public class TCostComputation extends JPanel implements ActionListener {
 	private static String housemodel = "";
 	private static String selling_amt = "";
 	private static String lot_area = "";
-	private JCheckBox chkECAR;
+	public static JCheckBox chkECAR;
 
 	private static String strProject;
 	private static String entityid;

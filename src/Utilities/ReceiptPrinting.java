@@ -217,7 +217,7 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 				"LEFT JOIN mf_system_doc d ON d.doc_id = (CASE when a.or_doc_id is not null then a.or_doc_id when a.si_doc_id is not null then a.si_doc_id else a.pr_doc_id end) \n" +
 				"WHERE a.client_seqno is not null \n"+
 				"AND CASE WHEN a.entity_id IN ('3436559580') THEN TRIM(a.status_id) IN ('A', 'P') ELSE TRIM(a.status_id) = 'A' END\n"+
-				"AND CASE WHEN a.pay_rec_id::INT IN (524785, 524784, 476766, 220865, 256610, 520760, 520759, 521028, 520700, 520701, 495918,256433,220866,237629,256419,256420,256432,495929, 532873, 785817) THEN TRUE ELSE (CASE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND a.date_created::DATE = '"+dteTran+"'::DATE) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id = '01'  AND a.trans_date::DATE = '"+dteTran+"'::DATE) ELSE TRUE END) END\n" + //XXX ADDED BY LESTER FOR FILTER OF LOADING OF RECEIPTS
+				"AND CASE WHEN a.pay_rec_id::INT IN (524785, 524784, 476766, 220865, 256610, 520760, 520759, 521028, 520700, 520701, 495918,256433,220866,237629,256419,256420,256432,495929, 532873, 785817, 779385, 787030, 787036, 786150, 786146, 777119) THEN TRUE ELSE (CASE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND a.date_created::DATE = '"+dteTran+"'::DATE) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id = '01'  AND a.trans_date::DATE = '"+dteTran+"'::DATE) ELSE TRUE END) END\n" + //XXX ADDED BY LESTER FOR FILTER OF LOADING OF RECEIPTS
 				//" (CASE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND a.date_created::DATE = '"+dteTran+"') WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id = '01'  AND a.trans_date::DATE = '"+dteTran+"'::DATE) ELSE TRUE END)\n" + 
 				"AND case when a.pay_rec_id::INT IN (476766, 220865, 256610, 520760, 520759, 521028, 520700, 520701, 495918,256433,220866,237629,256419,256420,256432,495929, 532873, 785817) THEN TRUE ELSE (CASE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND CASE WHEN a.remarks ~*'(Direct Deposit|AUB Bills Payment)' THEN TRUE ELSE a.date_created::DATE = '"+dteTran+"'::DATE END) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id = '01' AND CASE WHEN a.remarks ~*'(Direct Deposit|AUB Bills Payment)' THEN TRUE ELSE a.date_created::DATE = '"+dteTran+"'::DATE END) ELSE TRUE END) END\n" + //XXX ADDED BY LESTER FOR FILTER OF LOADING OF RECEIPTS
 				
@@ -253,7 +253,7 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 				"LEFT JOIN mf_pay_particular c ON c.pay_part_id = a.pay_part_id\n" + 
 				"LEFT JOIN mf_system_doc d ON d.doc_id = (CASE when a.or_doc_id is not null then a.or_doc_id when a.si_doc_id is not null then a.si_doc_id else a.pr_doc_id end) \n" +
 				"WHERE a.client_seqno is not null AND TRIM(a.status_id) = 'A' AND a.remarks ~* 'LATE OR Issuance for Good Check' AND a.pymnt_type = 'B' \n"+
-				"AND CASE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND (a.or_date::DATE = '"+dteTran+"' OR a.si_date::DATE = '"+dteTran+"')) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id in ('01', '1') AND (a.or_date::DATE = '"+dteTran+"'::DATE OR a.si_date::DATE = '"+dteTran+"')) ELSE TRUE END \n" +  //SI DATE ADDED BY MONIQUE DTD 12-27-2022
+				"AND CASE WHEN a.pay_rec_id IN (777116) THEN TRUE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND (a.or_date::DATE = '"+dteTran+"' OR a.si_date::DATE = '"+dteTran+"')) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id in ('01', '1') AND (a.or_date::DATE = '"+dteTran+"'::DATE OR a.si_date::DATE = '"+dteTran+"')) ELSE TRUE END \n" +  //SI DATE ADDED BY MONIQUE DTD 12-27-2022
 				
 				"\n"+
 				"UNION ALL\n" +  //ADDED BY MONIQUE DTD 2023-04-24; TO REFLECT PAYMENTS OF LATE LTS/BOI
@@ -268,7 +268,7 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 				"LEFT JOIN mf_pay_particular c ON c.pay_part_id = a.pay_part_id\n" + 
 				"LEFT JOIN mf_system_doc d ON d.doc_id = (CASE when a.or_doc_id is not null then a.or_doc_id when a.si_doc_id is not null then a.si_doc_id else a.pr_doc_id end) \n" +
 				"WHERE a.client_seqno is not null AND TRIM(a.status_id) = 'A' AND a.remarks ~ 'Late LTS/BOI' \n"+
-				"AND CASE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND (a.or_date::DATE = '"+dteTran+"' OR a.si_date::DATE = '"+dteTran+"')) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id in ('01', '1') AND (a.or_date::DATE = '"+dteTran+"'::DATE OR a.si_date::DATE = '"+dteTran+"')) ELSE TRUE END \n" +  
+				"AND CASE WHEN a.pay_rec_id IN (779385, 787030, 787036, 786150, 786146) THEN TRUE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND (a.or_date::DATE = '"+dteTran+"' OR a.si_date::DATE = '"+dteTran+"')) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id in ('01', '1') AND (a.or_date::DATE = '"+dteTran+"'::DATE OR a.si_date::DATE = '"+dteTran+"')) ELSE TRUE END \n" +  
 				
 				"\n"+
 				"UNION ALL\n" + 

@@ -172,7 +172,7 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 
 		String dteTran = ""; 
 		SimpleDateFormat sdfTo = new SimpleDateFormat("MM-dd-yyyy");
-		
+
 		/*
 		if (UserInfo.Branch.equals("10")) {
 			int scanOption = JOptionPane.showOptionDialog(getContentPane(), panDate, "Transaction Date", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, new Object[] {}, null);
@@ -209,7 +209,7 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 				"  (CASE WHEN a.si_doc_id IS NOT NULL THEN a.si_no ELSE NULL END) as si_no, NULL as pfr_no,\n" +
 				"  d.doc_alias, a.trans_date, a.actual_date, a.entity_id, " +
 				"  (CASE WHEN a.proj_id = '015' and a.pbl_id = '2424' THEN 'SAMANTE, VANESSA ANNE TEODORO' /*WHEN  a.proj_id = '019' and a.pbl_id = '10661' THEN 'ESON, ROWELYN ANTARAN'*/ " + //MODIFIED BY MONIQUE DTD 2023-03-10; 
-			    "  ELSE get_client_name(a.entity_id) END) as client_name, " + 																											  // REFER TO DCRF #2500 -- Commented ESON w/ request of Change Civil Status 03-20-2024
+				"  ELSE get_client_name(a.entity_id) END) as client_name, " + 																											  // REFER TO DCRF #2500 -- Commented ESON w/ request of Change Civil Status 03-20-2024
 				"a.pbl_id, b.description, a.seq_no, a.client_seqno\n" + 
 				"FROM rf_payments a\n" + 
 				"LEFT JOIN mf_unit_info b ON b.proj_id = a.proj_id AND b.pbl_id = a.pbl_id\n" + 
@@ -217,10 +217,14 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 				"LEFT JOIN mf_system_doc d ON d.doc_id = (CASE when a.or_doc_id is not null then a.or_doc_id when a.si_doc_id is not null then a.si_doc_id else a.pr_doc_id end) \n" +
 				"WHERE a.client_seqno is not null \n"+
 				"AND CASE WHEN a.entity_id IN ('3436559580') THEN TRIM(a.status_id) IN ('A', 'P') ELSE TRIM(a.status_id) = 'A' END\n"+
-				"AND CASE WHEN a.pay_rec_id::INT IN (524785, 524784, 476766, 220865, 256610, 520760, 520759, 521028, 520700, 520701, 495918,256433,220866,237629,256419,256420,256432,495929, 532873, 785817, 779385, 787030, 787036, 786150, 786146, 777119) THEN TRUE ELSE (CASE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND a.date_created::DATE = '"+dteTran+"'::DATE) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id = '01'  AND a.trans_date::DATE = '"+dteTran+"'::DATE) ELSE TRUE END) END\n" + //XXX ADDED BY LESTER FOR FILTER OF LOADING OF RECEIPTS
+				"AND CASE WHEN a.pay_rec_id::INT IN (524785, 524784, 476766, 220865, 256610, 520760, 520759, 521028, 520700, 520701, 495918,256433,220866,237629,256419,256420,256432,495929, 532873, 785817, 779385, 787030, 787036, 786150, 786146, 777119, 787852) THEN TRUE \n"+
+				" 	  when exists (SELECT status_id from rf_itsreal_bir_soa where entity_id = a.entity_id and proj_id = a.proj_id and pbl_id = a.pbl_id and seq_no = a.seq_no and status_id = 'A') THEN TRUE \n"+
+				"ELSE (CASE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND a.date_created::DATE = '"+dteTran+"'::DATE) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id = '01'  AND a.trans_date::DATE = '"+dteTran+"'::DATE) ELSE TRUE END) END\n" + //XXX ADDED BY LESTER FOR FILTER OF LOADING OF RECEIPTS
 				//" (CASE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND a.date_created::DATE = '"+dteTran+"') WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id = '01'  AND a.trans_date::DATE = '"+dteTran+"'::DATE) ELSE TRUE END)\n" + 
-				"AND case when a.pay_rec_id::INT IN (476766, 220865, 256610, 520760, 520759, 521028, 520700, 520701, 495918,256433,220866,237629,256419,256420,256432,495929, 532873, 785817) THEN TRUE ELSE (CASE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND CASE WHEN a.remarks ~*'(Direct Deposit|AUB Bills Payment)' THEN TRUE ELSE a.date_created::DATE = '"+dteTran+"'::DATE END) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id = '01' AND CASE WHEN a.remarks ~*'(Direct Deposit|AUB Bills Payment)' THEN TRUE ELSE a.date_created::DATE = '"+dteTran+"'::DATE END) ELSE TRUE END) END\n" + //XXX ADDED BY LESTER FOR FILTER OF LOADING OF RECEIPTS
-				
+				"AND case when a.pay_rec_id::INT IN (476766, 220865, 256610, 520760, 520759, 521028, 520700, 520701, 495918,256433,220866,237629,256419,256420,256432,495929, 532873, 785817, 787852) THEN TRUE \n"+
+				"  when exists (SELECT status_id from rf_itsreal_bir_soa where entity_id = a.entity_id and proj_id = a.proj_id and pbl_id = a.pbl_id and seq_no = a.seq_no and status_id = 'A') THEN TRUE \n"+
+				"ELSE (CASE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND CASE WHEN a.remarks ~*'(Direct Deposit|AUB Bills Payment)' THEN TRUE ELSE a.date_created::DATE = '"+dteTran+"'::DATE END) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id = '01' AND CASE WHEN a.remarks ~*'(Direct Deposit|AUB Bills Payment)' THEN TRUE ELSE a.date_created::DATE = '"+dteTran+"'::DATE END) ELSE TRUE END) END\n" + //XXX ADDED BY LESTER FOR FILTER OF LOADING OF RECEIPTS
+
 				/*"\n" +
 				//added by jari sept 2 2022
 				"UNION ALL\n"
@@ -239,7 +243,7 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 				+ "AND case when a.pay_rec_id::INT IN (476766, 220865, 256610, 520760, 520759, 521028, 520700, 520701) THEN TRUE ELSE (CASE WHEN '01' = '10' THEN (a.branch_id = '10'  AND CASE WHEN a.remarks ~*'Direct Deposit' THEN TRUE ELSE a.trans_date::DATE = '"+dteTran+"' END) WHEN '01' = '01' THEN (a.branch_id = '01' AND CASE WHEN a.remarks ~*'Direct Deposit' THEN TRUE ELSE a.trans_date::DATE = '"+dteTran+"' END) ELSE TRUE END) END\n"
 				+ "AND a.pay_part_id = '268'\n"
 				//added by jari sept 2 20228*/
-				
+
 				"\n"+
 				"UNION ALL\n" +  //ADDED BY MONIQUE DTD 2022-09-22; TO REFLECT PAYMENTS OF LATE OR WITH GOOD CHECKS 
 				"\n" + 
@@ -254,7 +258,7 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 				"LEFT JOIN mf_system_doc d ON d.doc_id = (CASE when a.or_doc_id is not null then a.or_doc_id when a.si_doc_id is not null then a.si_doc_id else a.pr_doc_id end) \n" +
 				"WHERE a.client_seqno is not null AND TRIM(a.status_id) = 'A' AND a.remarks ~* 'LATE OR Issuance for Good Check' AND a.pymnt_type = 'B' \n"+
 				"AND CASE WHEN a.pay_rec_id IN (777116) THEN TRUE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND (a.or_date::DATE = '"+dteTran+"' OR a.si_date::DATE = '"+dteTran+"')) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id in ('01', '1') AND (a.or_date::DATE = '"+dteTran+"'::DATE OR a.si_date::DATE = '"+dteTran+"')) ELSE TRUE END \n" +  //SI DATE ADDED BY MONIQUE DTD 12-27-2022
-				
+
 				"\n"+
 				"UNION ALL\n" +  //ADDED BY MONIQUE DTD 2023-04-24; TO REFLECT PAYMENTS OF LATE LTS/BOI
 				"\n" + 
@@ -269,7 +273,7 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 				"LEFT JOIN mf_system_doc d ON d.doc_id = (CASE when a.or_doc_id is not null then a.or_doc_id when a.si_doc_id is not null then a.si_doc_id else a.pr_doc_id end) \n" +
 				"WHERE a.client_seqno is not null AND TRIM(a.status_id) = 'A' AND a.remarks ~ 'Late LTS/BOI' \n"+
 				"AND CASE WHEN a.pay_rec_id IN (779385, 787030, 787036, 786150, 786146) THEN TRUE WHEN '"+UserInfo.Branch+"' = '10' THEN (a.branch_id = '10'  AND (a.or_date::DATE = '"+dteTran+"' OR a.si_date::DATE = '"+dteTran+"')) WHEN '"+UserInfo.Branch+"' = '01' THEN (a.branch_id in ('01', '1') AND (a.or_date::DATE = '"+dteTran+"'::DATE OR a.si_date::DATE = '"+dteTran+"')) ELSE TRUE END \n" +  
-				
+
 				"\n"+
 				"UNION ALL\n" + 
 				"\n" + 
@@ -328,6 +332,20 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 		tblReceipts.packAll();
 	}
 
+	private boolean isITSREAL_SOA(String client_seqno) {
+		pgSelect db = new pgSelect();
+		String SQL = "SELECT * FROM rf_payments a where a.client_seqno = '"+client_seqno+"' and exists \n"
+				+ "(SELECT * FROM rf_itsreal_bir_soa where TRIM(entity_id) = TRIM(a.entity_id) and TRIM(proj_id) = TRIM(a.proj_id) and TRIM(pbl_id) = TRIM(a.pbl_id) \n"
+				+ "and seq_no = a.seq_no and TRIM(status_id) = 'A');";
+		db.select(SQL);
+		
+		if(db.isNotNull()){
+			return true;
+		}else {
+			return false;
+		}
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {//XXX actionCommand
 		String action = e.getActionCommand();
@@ -372,18 +390,25 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 
 						//FncReport.generateReport("/Reports/rptORReceipt_EDC.jasper", "Official Receipt", String.format("OR No.: %s", or_no), mapParameters);
 						//FncReport.generateReport("/Reports/rptSalesInvoice_VDC.jasper", "Official Receipt", String.format("OR No.: %s", or_no), mapParameters);
-						
-						if(UserInfo.Branch.equals("10")) {
-							FncReport.generateReport("/Reports/rptORReceipt_v2.jasper", "Official Receipt", String.format("OR No.: %s", or_no), mapParameters);		
+
+
+						if(isITSREAL_SOA(client_seqno)) {
+							mapParameters.put("credit_ar_no", "");
+							FncReport.generateReport("/Reports/rptORReceipt_ITSREAL.jasper", "Official Receipt ItsReal", String.format("OR No.: %s", or_no), mapParameters);
 						}else {
-							if(isRetFeeOnline(client_seqno)) {
-							//FncReport.generateReport("/Reports/rptOR_RetFeeOL.jasper", "Official Receipt", String.format("OR No.: %s", or_no), mapParameters);
-							//FncReport.generateReport("/Reports/rpt_RetFeeOL_CDC.jasper", "Sales Invoice", String.format("SI No.: %s", si_no), mapParameters);
-							}else if(co_id.equals("05")) {
-								FncReport.generateReport("/Reports/rptORReceipt_EDC.jasper", "Official Receipt", String.format("OR No.: %s", ar_no), mapParameters);
+
+							if(UserInfo.Branch.equals("10")) {
+								FncReport.generateReport("/Reports/rptORReceipt_v2.jasper", "Official Receipt", String.format("OR No.: %s", or_no), mapParameters);		
 							}else {
-								FncReport.generateReport("/Reports/rptORReceipt.jasper", "Official Receipt", String.format("OR No.: %s", or_no), mapParameters);
-								
+								if(isRetFeeOnline(client_seqno)) {
+									//FncReport.generateReport("/Reports/rptOR_RetFeeOL.jasper", "Official Receipt", String.format("OR No.: %s", or_no), mapParameters);
+									//FncReport.generateReport("/Reports/rpt_RetFeeOL_CDC.jasper", "Sales Invoice", String.format("SI No.: %s", si_no), mapParameters);
+								}else if(co_id.equals("05")) {
+									FncReport.generateReport("/Reports/rptORReceipt_EDC.jasper", "Official Receipt", String.format("OR No.: %s", ar_no), mapParameters);
+								}else {
+									FncReport.generateReport("/Reports/rptORReceipt.jasper", "Official Receipt", String.format("OR No.: %s", or_no), mapParameters);
+
+								}
 							}
 						}
 					}
@@ -406,7 +431,7 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 						mapParameters.put("credited_amount", credited_amount);
 						mapParameters.put("prepared_by", UserInfo.Alias.toUpperCase());
 						mapParameters.put("pymnt_type", pymnt_type);
-						
+
 						System.out.printf("recpt_type : " + recpt_type);
 						System.out.printf("credited_amount : " + credited_amount);
 						/*String co_id = FncGlobal.GetString("select b.co_id from rf_payments a \n" + 
@@ -414,15 +439,15 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 								"where a.client_seqno = '"+client_seqno+"'");*/
 						String co_id = FncGlobal.GetString("select co_id from rf_pay_header a \n" + 
 								"where client_seqno = '"+client_seqno+"'");
-						
-						
+
+
 						//FncReport.generateReport("/Reports/rptARReceipt_EDC.jasper", "Acknowledgement Receipt", String.format("AR No.: %s", ar_no), mapParameters);
-						
+
 						//FncReport.generateReport("/Reports/rptARReceipt_2.jasper", "Acknowledgement Receipt", String.format("AR No.: %s", ar_no), mapParameters);
 						//FncReport.generateReport("/Reports/rptARReceipt_VDC.jasper", "Acknowledgement Receipt", String.format("AR No.: %s", ar_no), mapParameters);
 						//Added by Erick for migration
-						
-						 if (isRetFeeOnlineMP(client_seqno)) {
+
+						if (isRetFeeOnlineMP(client_seqno)) {
 							FncReport.generateReport("/Reports/rptARRetFeeOL_CDC.jasper", "Acknowledgment Receipt", String.format("AR No.: %s", ar_no), mapParameters);
 						} else if(co_id.equals("01")) {
 							FncReport.generateReport("/Reports/rptARReceipt_VDC.jasper", "Acknowledgement Receipt", String.format("AR No.: %s", ar_no), mapParameters);
@@ -456,7 +481,7 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 						System.out.printf("credited_amount : " + credited_amount);
 						String co_id = FncGlobal.GetString("select co_id from rf_pay_header a \n" + 
 								"where client_seqno = '"+client_seqno+"'");
-						
+
 						if(isRetFeeOnline(client_seqno)) {
 							FncReport.generateReport("/Reports/rpt_RetFeeOL_CDC.jasper", "Sales Invoice", String.format("SI No.: %s", si_no), mapParameters);
 						} else if(co_id.equals("01") || co_id.equals("04") || co_id.equals("05")){
@@ -482,8 +507,8 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 
 				//System.out.printf("Client Seq. #: %s%n", client_seqno);
 
-				}
 			}
+		}
 
 		else if(e.getActionCommand().equals("Preview")&& FncAcounting.EmpCanPreview(UserInfo.EmployeeCode, "7")==false)
 		{JOptionPane.showMessageDialog(getContentPane(),"Sorry, you are not authorized to print receipt.","Warning",JOptionPane.WARNING_MESSAGE); }
@@ -584,7 +609,7 @@ public class ReceiptPrinting extends _JInternalFrame implements _GUI, ActionList
 			return false;
 		}
 	}
-	
+
 	private Boolean isRetFeeOnlineMP(String client_seqno) { //ADDED BY MONIQUE DTD 9-14-2022; FOR TAGGED ACCNTS ON RETFEEOL (MULTIPAYMENTS)
 		pgSelect db = new pgSelect();
 		String SQL = "SELECT EXISTS (SELECT * FROM rf_payments where client_seqno = '"+client_seqno+"' AND /*remarks ~*'Ret Fee Online'*/ pay_part_id in ('218', '246', '247') AND status_id = 'A' AND  pr_doc_id = '03')"; //DCRF #2193

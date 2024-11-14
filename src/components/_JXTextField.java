@@ -53,6 +53,12 @@ public class _JXTextField extends JXTextField implements _GUI{
 		super(promptText, promptForeground, promptBackground);
 		initGUI();
 	}
+	
+	
+	@Override
+	public String getText() {
+		return super.getText().trim().replace("'", "''");
+	}
 
 	@Override
 	public void initGUI() {

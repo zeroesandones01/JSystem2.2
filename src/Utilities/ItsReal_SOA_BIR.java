@@ -549,7 +549,7 @@ public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionList
 		}
 
 		if(actionCommand.equals("Save")) {
-			//save();
+			save();
 			
 			saveLumpPayment();
 			

@@ -36,14 +36,19 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.jdesktop.swingx.JXFormattedTextField;
 import org.jdom.Attribute;
 import org.jopendocument.dom.spreadsheet.Column;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
+import com.toedter.calendar.JDateChooser;
+
 import Buyers.ClientServicing._CARD;
 import Database.pgSelect;
 import Database.pgUpdate;
+import DateChooser._JDateChooser;
+import FormattedTextField._JXFormattedTextField;
 import Functions.CheckBoxHeader;
 import Functions.FncODSFileFilter;
 import Functions.FncSystem;
@@ -67,7 +72,7 @@ public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionList
 
 
 	static String title = "ItsReal SOA BIR";
-	Dimension frameSize = new Dimension(750, 500);
+	Dimension frameSize = new Dimension(750, 600);
 
 	private JPanel pnlMain; 
 	private _JLookup lookupClient;
@@ -83,10 +88,17 @@ public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionList
 	private JButton btnBrowse;
 	private String pbl_id;
 	private Integer seq_no;
-
+	private JLabel lblLumpAmt;
+	private _JXFormattedTextField txtLumpAmt;
+	private JLabel lblParticular;
+	private _JLookup lookupParticular;
+	private _JXTextField txtParticular;
+	private JLabel lblReceiptNo;
+	private JTextField txtReceiptNo;
+	private JLabel lblDateLump;
+	private JDateChooser dteLumpPmt;
+	
 	private JFileChooser fileChooser;
-
-
 
 	public ItsReal_SOA_BIR(){
 		super(title, true, true, true,true);
@@ -118,9 +130,9 @@ public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionList
 				{
 					JPanel pnlNorth = new JPanel(new BorderLayout(5,5));
 					pnlMainNorth.add(pnlNorth,BorderLayout.NORTH);
-					pnlNorth.setPreferredSize(new Dimension(0,120));
+					pnlNorth.setPreferredSize(new Dimension(0,150));
 					{
-						JPanel pnlNorthWest = new JPanel(new GridLayout(4,1,3,3));
+						JPanel pnlNorthWest = new JPanel(new GridLayout(7,1,3,3));
 						pnlNorth.add(pnlNorthWest,BorderLayout.WEST);
 						{
 							lblClient = new JLabel("Client:");
@@ -135,12 +147,24 @@ public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionList
 							pnlNorthWest.add(lblUnit);
 						}
 						{
+							lblReceiptNo = new JLabel("Receipt No");
+							pnlNorthWest.add(lblReceiptNo);
+						}
+						{
+							lblDateLump = new JLabel("Date Lumpsum");
+							pnlNorthWest.add(lblDateLump);
+						}
+						{
+							lblParticular = new JLabel("Particular");
+							pnlNorthWest.add(lblParticular);
+						}
+						{
 							JLabel lblFile = new JLabel("Select file");
 							pnlNorthWest.add(lblFile);
 						}
 					}
 					{
-						JPanel pnlNorthCenter = new JPanel(new GridLayout(4,1,3,3));
+						JPanel pnlNorthCenter = new JPanel(new GridLayout(7,1,3,3));
 						pnlNorth.add(pnlNorthCenter,BorderLayout.CENTER);
 						{
 							JPanel pnlCleint = new JPanel(new BorderLayout(5,5));
@@ -176,7 +200,12 @@ public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionList
 												btnCancel.setEnabled(true);	
 												//displayValueLedger(modelTblLedger, lookupClient.getValue(), txtProj.getText(), pbl_id, seq_no);
 
-
+												
+												txtReceiptNo.setEditable(true);
+												txtLumpAmt.setEditable(true);
+												dteLumpPmt.getCalendarButton().setEnabled(true);
+												dteLumpPmt.setEnabled(true);
+												lookupParticular.setEditable(true);
 											}
 										}
 
@@ -239,9 +268,75 @@ public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionList
 									lblUnit2 = new JLabel("[]");
 									pnlUnitCenter.add(lblUnit2);
 								}
-
 							}
-
+						}
+						{
+							JPanel pnlReceiptNo = new JPanel(new BorderLayout(3, 3));
+							pnlNorthCenter.add(pnlReceiptNo);
+							{
+								txtReceiptNo = new JTextField();
+								pnlReceiptNo.add(txtReceiptNo, BorderLayout.WEST);
+								txtReceiptNo.setPreferredSize(new Dimension(150, 0));
+								txtReceiptNo.setEditable(false);
+							}
+							{
+								JPanel pnlAmt = new JPanel(new BorderLayout(3, 3));
+								pnlReceiptNo.add(pnlAmt, BorderLayout.EAST);
+								pnlAmt.setPreferredSize(new Dimension(200, 0));
+								{
+									lblLumpAmt = new JLabel("Lumpsum Amt");
+									pnlAmt.add(lblLumpAmt, BorderLayout.WEST);
+								}
+								{
+									txtLumpAmt = new _JXFormattedTextField(JXFormattedTextField.RIGHT);
+									pnlAmt.add(txtLumpAmt, BorderLayout.CENTER);
+									txtLumpAmt.setFormatterFactory(_JXFormattedTextField.DECIMAL);
+									txtLumpAmt.setEditable(false);
+								}
+							}
+						}
+						
+						
+						{
+							JPanel pnlDateLump = new JPanel(new BorderLayout(3, 3));
+							pnlNorthCenter.add(pnlDateLump);
+							{
+								dteLumpPmt = new _JDateChooser("MM/dd/yyyy", "##/##/####", '_');
+								pnlDateLump.add(dteLumpPmt, BorderLayout.WEST);
+								dteLumpPmt.setPreferredSize(new Dimension(200, 0));
+								dteLumpPmt.getCalendarButton().setEnabled(false);
+								dteLumpPmt.setEnabled(false);
+							}
+						}
+						{
+							JPanel pnlParticular = new JPanel(new BorderLayout(3, 3));
+							pnlNorthCenter.add(pnlParticular);
+							{
+								lookupParticular = new _JLookup(null, "Particular", 0);
+								pnlParticular.add(lookupParticular, BorderLayout.WEST);
+								lookupParticular.setPrompt("Part. ID");
+								lookupParticular.setFilterName(true);
+								lookupParticular.setEditable(false);
+								lookupParticular.setLookupSQL(sqlParticular());
+								lookupParticular.setPreferredSize(new Dimension(80, 0));
+								lookupParticular.addLookupListener(new LookupListener() {
+									
+									@Override
+									public void lookupPerformed(LookupEvent event) {
+										Object[] data = ((_JLookup)event.getSource()).getDataSet();
+										
+										
+										if(data != null) {
+											String particular = (String) data[1];
+											txtParticular.setText(particular);
+										}
+									}
+								});
+							}
+							{
+								txtParticular = new _JXTextField();
+								pnlParticular.add(txtParticular);
+							}
 						}
 						{
 							JPanel pnlFile = new JPanel(new BorderLayout(5, 5));
@@ -301,7 +396,6 @@ public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionList
 							lblProj2.setText("[]");
 							txtUnit.setText("");
 							lblUnit2.setText("[]");
-							rowLedger.setModel(new DefaultListModel());
 
 							btnState(false, false, false);
 						}
@@ -310,6 +404,12 @@ public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionList
 			}
 		}
 	}//XXX END OF INIT GUI
+	
+	private String sqlParticular() {
+		String SQL = "select pay_part_id as \"Part ID\", partdesc as \"Particular\" from mf_pay_particular where apply_ledger and status_id = 'A';";
+		
+		return SQL;
+	}
 
 	private void save() {
 		String entity_id = lookupClient.getValue();
@@ -349,6 +449,25 @@ public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionList
 		}
 		db.commit();
 	}
+	
+	private void saveLumpPayment() {
+		
+		String entity_id = lookupClient.getValue();
+		String proj_id = txtProj.getText();
+		String pbl_id = txtUnit.getText();
+		String receipt_no = txtReceiptNo.getText().trim().replace("'", "''");
+		BigDecimal lump_amt = (BigDecimal) txtLumpAmt.getValued();
+		Date date_lump = dteLumpPmt.getDate();
+		String pay_part_id = lookupParticular.getValue();
+	
+		pgSelect db = new pgSelect();
+		
+		String SQL = "SELECT sp_save_lump_payment_itsreal_soa('"+entity_id+"', '"+proj_id+"', '"+pbl_id+"', "
+				+ "'"+seq_no+"', '"+receipt_no+"', "+lump_amt+", '"+date_lump+"', '"+pay_part_id+"', '"+UserInfo.EmployeeCode+"', "
+				+ "'"+UserInfo.Branch+"')";
+		db.select(SQL);
+		
+	}
 
 	private BigDecimal getBigDecimalValue(Object value) {
 		if (value instanceof String && ((String) value).isEmpty()) {
@@ -365,6 +484,12 @@ public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionList
 		InputStream jarPdf = getClass().getClassLoader().getResourceAsStream("File/ItsRealSOA_Upload_Template.ods");
 		
 		
+	}
+	
+	private boolean toSave() {
+		
+		
+		return true;
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -424,7 +549,22 @@ public class ItsReal_SOA_BIR extends _JInternalFrame implements _GUI, ActionList
 		}
 
 		if(actionCommand.equals("Save")) {
-			save();
+			//save();
+			
+			saveLumpPayment();
+			
+			txtReceiptNo.setText("");
+			txtLumpAmt.setValue(new BigDecimal("0.00"));
+			dteLumpPmt.setDate(null);
+			lookupParticular.setValue(null);
+			txtParticular.setText("");
+			
+			txtReceiptNo.setEditable(false);
+			txtLumpAmt.setEditable(false);
+			dteLumpPmt.getCalendarButton().setEnabled(false);
+			dteLumpPmt.setEnabled(false);
+			lookupParticular.setEditable(false);
+			
 			tabDesc.removeAll();
 			JOptionPane.showMessageDialog(this.getTopLevelAncestor(), "Upload Successful", "Upload", JOptionPane.INFORMATION_MESSAGE);
 		}

@@ -715,8 +715,8 @@ public class TaggingOfCashSurrenderValue extends _JInternalFrame implements _GUI
 				+ "	left join mf_project mfp on rfs.projcode = mfp.proj_id and mfp.status_id = 'A'\n"
 				+ "	left join mf_unit_info mfu on rfs.projcode = mfu.proj_id and rfs.pbl_id = mfu.pbl_id\n"
 				+ "	left join mf_product_model mfm on rfs.model_id = mfm.model_id and coalesce(rfs.server_id,'') = coalesce(mfm.server_id, '') and coalesce(rfs.proj_server,'') = coalesce(mfm.proj_server, '')\n"
-				+ "	where rfs.status_id = 'A'\n"
-				+ "	and rfs.currentstatus != '02'\n"
+				//+ "	where rfs.status_id = 'A'\n"
+				//+ "	and rfs.currentstatus != '02'\n"
 				+ ") client\n"
 				+ "order by client.\"Client Name\", client.\"Unit Description\"";
 

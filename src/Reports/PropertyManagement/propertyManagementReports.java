@@ -619,6 +619,7 @@ public class propertyManagementReports extends _JInternalFrame implements _GUI, 
 									cboSort = new JComboBox(items); 
 									panSort.add(cboSort, conSort);
 									cboSort.setFont(FncGlobal.sizeTextValue);
+									cboSort.setSelectedIndex(1);
 								}
 							}
 						}

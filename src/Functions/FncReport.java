@@ -252,7 +252,8 @@ public class FncReport {
 					e.printStackTrace();
 				} catch (JRException e) {
 					e.printStackTrace();
-				}/* catch (PropertyVetoException e) {
+				}
+				/* catch (PropertyVetoException e) {
 					e.printStackTrace();
 				}*/
 				FncGlobal.stopProgress();

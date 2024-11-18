@@ -1448,7 +1448,9 @@ public class CWTRemittance extends _JInternalFrame implements _GUI,
 
 		String SQL = null;
 		SQL = "SELECT * \n" +
-				 "FROM view_cwt_remittance_v2 ('"+ txtCoID.getText()+ "'::VARCHAR(2), '"+ txtProjectID.getText()+ "'::VARCHAR(3), '"+dteFrom.getDate().toString()+"'::VARCHAR(30), '"+dteTo.getDate().toString()+"'::VARCHAR(30), false, "+blnDP+", "+blnAsof+") \n" +
+				"FROM view_cwt_remittance_v2 ('" + txtCoID.getText() + "'::VARCHAR(2), '" + txtProjectID.getText()
+				+ "'::VARCHAR(3), '" + dteFrom.getDate().toString() + "'::VARCHAR(30), '" + dteTo.getDate().toString()
+				+ "'::VARCHAR(30), false, " + blnDP+", "+blnAsof+") \n" +
 				 "ORDER BY c_name";
 		if (jtpList.getTitleAt(jtpList.getSelectedIndex()).equals("Projected 25%")) {
 			SQL = "select * from view_cwt_remittance_25('"+txtCoID.getText()+"','"+txtProjectID.getText()+"','"+dteFrom.getDate().toString()+"','"+dteTo.getDate().toString()+"',false) ORDER BY c_name";

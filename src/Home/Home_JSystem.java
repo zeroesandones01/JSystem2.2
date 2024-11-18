@@ -405,6 +405,7 @@ import Reports.LegalAndLiaisoning.RPTComputationReport;
 import Reports.LegalAndLiaisoning.RevolvingFundsReports;
 import Reports.LegalAndLiaisoning.TCTTaxDecForLiquidation;
 import Reports.LegalAndLiaisoning.TransferTaxReceipt;
+import Reports.LegalAndLiaisoning.UDOAS_Monitoring;
 import Reports.LegalAndLiaisoning.batchWithoutRplf;
 import Reports.LegalAndLiaisoning.TransferTaxDecMonitoring;
 import Reports.LegalAndLiaisoning.claimstub;
@@ -5504,6 +5505,21 @@ public class Home_JSystem extends JXFrame implements ActionListener, WindowListe
 									}
 								});
 							}
+							{
+								JMenuItem menuitemUDOAS_Monitoring = new JMenuItem("UDOAS Monitoring");
+								menuReportLegalAndLiaisoning.add(menuitemUDOAS_Monitoring);
+								menuitemUDOAS_Monitoring.addActionListener(new ActionListener() {
+
+									@Override
+									public void actionPerformed(ActionEvent e) {
+										if (isNotExisting("UDOAS Monitoring")) {
+											UDOAS_Monitoring um = new UDOAS_Monitoring();
+											addWindow(um, e);
+										}
+									}
+								});
+							}
+
 							
 							// {
 							// JMenuItem menuitemTransferTaxDecMonitoring = new JMenuItem("Transfer Tax Dec

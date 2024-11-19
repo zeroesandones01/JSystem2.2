@@ -379,6 +379,7 @@ public class BankInformation extends _JInternalFrame implements _GUI, ActionList
 										clearBuybackInfo();
 										
 										displayInsuranceInfo(entity_id, proj_id, pbl_id, seq_no);
+										System.out.println("");
 									}
 								}
 							});
@@ -1369,7 +1370,7 @@ public class BankInformation extends _JInternalFrame implements _GUI, ActionList
 		txtBuyback_tran_type.setText("");
 		txtBuyback_rplf.setText("");
 		txtBuyback_remarks.setText("");
-		System.out.println("clearBuybackInfo: "+menuRightClick.getComponents());
+		//System.out.println("clearBuybackInfo: "+menuRightClick.getComponents());
 		//menuRightClick.remove(menuItemBuyback);
 	}
 	

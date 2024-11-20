@@ -229,6 +229,8 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 				// btnState(true, true, false, false, false);
 			}
 		}
+		
+		
 	}
 
 	public NoticeToProceed(String title) {
@@ -1690,6 +1692,12 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 
 		txtDesc.setText(
 				FncGlobal.GetString("select oth_description from co_ntp_header where ntp_no = '" + ntp_no + "'"));
+	
+		if(UserInfo.EmployeeCode.equals("901240")) {
+			btnState(false, false, false, false, false);
+			btnPreview.setEnabled(false);
+			btnTakeover.setEnabled(false);
+		}
 	}
 
 	private void btnState(Boolean sNew, Boolean sEdit, Boolean sDelete, Boolean sSave, Boolean sCancel) {

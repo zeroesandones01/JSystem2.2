@@ -1382,7 +1382,12 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 		FncTables.bindColumnTables(tblProgressBilling, tblProgressBillingTotal);
 
 		setComponentsEnabled(false);
-		btnState(true, false, false, false, false);
+		if(UserInfo.EmployeeCode.equals("901240")) {
+			btnState(false, false, false, false, false);
+		}else {
+			btnState(true, false, false, false, false);
+		}
+		
 
 		this.grabFocus();
 		// KEYBOARD_MANAGER.focusNextComponent(txtWithSuretyBond);

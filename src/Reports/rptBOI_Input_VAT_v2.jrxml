@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptBOI_Input_VAT_v2" pageWidth="936" pageHeight="612" orientation="Landscape" columnWidth="880" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28">
-	<property name="ireport.zoom" value="1.7715610000000055"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="142"/>
+	<property name="ireport.zoom" value="1.331000000000004"/>
+	<property name="ireport.x" value="538"/>
+	<property name="ireport.y" value="67"/>
 	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.1" value="columnHeader"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.2" value="pageHeader"/>
@@ -59,6 +59,8 @@ ORDER BY c_goods_services]]>
 	<field name="c_vat" class="java.math.BigDecimal"/>
 	<field name="c_goods_services" class="java.lang.String"/>
 	<field name="c_account_name" class="java.lang.String"/>
+	<field name="c_wtax_amt" class="java.math.BigDecimal"/>
+	<field name="c_input_vat_sub_group" class="java.lang.String"/>
 	<variable name="CURRENT_PAGE_NUMBER" class="java.lang.Integer" resetType="Page">
 		<variableExpression><![CDATA[$V{PAGE_NUMBER}]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
@@ -79,6 +81,15 @@ ORDER BY c_goods_services]]>
 		<variableExpression><![CDATA[$F{c_netamt}]]></variableExpression>
 	</variable>
 	<variable name="grand_vat" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_vat}]]></variableExpression>
+	</variable>
+	<variable name="subGrpTran" class="java.math.BigDecimal" resetType="Group" resetGroup="grpInputVat" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_tranamt}]]></variableExpression>
+	</variable>
+	<variable name="subGrpNet" class="java.math.BigDecimal" resetType="Group" resetGroup="grpInputVat" calculation="Sum">
+		<variableExpression><![CDATA[$F{c_netamt}]]></variableExpression>
+	</variable>
+	<variable name="subGrpVat" class="java.math.BigDecimal" resetType="Group" resetGroup="grpInputVat" calculation="Sum">
 		<variableExpression><![CDATA[$F{c_vat}]]></variableExpression>
 	</variable>
 	<group name="Month">
@@ -143,6 +154,61 @@ ORDER BY c_goods_services]]>
 						<font fontName="Tahoma" size="6" isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{grp_tran}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="grpInputVat">
+		<groupExpression><![CDATA[$F{c_input_vat_sub_group}]]></groupExpression>
+		<groupHeader>
+			<band height="23">
+				<textField>
+					<reportElement x="0" y="0" width="326" height="23"/>
+					<box leftPadding="5"/>
+					<textElement verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{c_input_vat_sub_group}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<textField>
+					<reportElement x="0" y="0" width="387" height="18"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="Tahoma" size="7" isBold="true" isItalic="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Subtotal ("+$F{c_input_vat_sub_group}+") : "]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="grpInputVat">
+					<reportElement x="694" y="0" width="66" height="18"/>
+					<box rightPadding="5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{subGrpTran}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="grpInputVat">
+					<reportElement x="760" y="0" width="66" height="18"/>
+					<box rightPadding="5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{subGrpNet}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="grpInputVat">
+					<reportElement x="826" y="0" width="54" height="18"/>
+					<box rightPadding="5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="6" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{subGrpVat}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -127,7 +128,13 @@ public class FncLoginService extends LoginService {
 			//System.out.printf("PAssword: %s%n", FncGlobal.connectionPassword);
 			Class.forName(FncGlobal.DRIVER);
 			FncGlobal.connection = DriverManager.getConnection(FncGlobal.mapURL.get(server), username, password);
+			  DatabaseMetaData metaData = FncGlobal.connection.getMetaData();
 
+	            // Retrieving and printing JDBC version
+	            int majorVersion = metaData.getJDBCMajorVersion();
+	            int minorVersion = metaData.getJDBCMinorVersion();
+	            System.out.println("JDBC Version: " + majorVersion + "." + minorVersion);
+			
 			pgSelect db = new pgSelect();
 			db.select("SELECT current_schema(), inet_server_addr();");
 			System.out.printf("Current Schema: %s%n", db.getResult()[0][0]);

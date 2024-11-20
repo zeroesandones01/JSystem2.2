@@ -1384,6 +1384,8 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 		setComponentsEnabled(false);
 		if(UserInfo.EmployeeCode.equals("901240")) {
 			btnState(false, false, false, false, false);
+			btnPreview.setEnabled(false);
+			btnTakeover.setEnabled(false);
 		}else {
 			btnState(true, false, false, false, false);
 		}

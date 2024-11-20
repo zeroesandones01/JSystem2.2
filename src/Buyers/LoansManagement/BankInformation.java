@@ -362,11 +362,11 @@ public class BankInformation extends _JInternalFrame implements _GUI, ActionList
 									
 									if(data != null){
 										
-										entity_id = (String) data[0];
-										proj_id = (String) data[6];
-										pbl_id = (String) data[3];
-										seq_no = (Integer) data[4];
-										unit_id = (String) data[7];
+										String entity_id = (String) data[0];
+										String proj_id = (String) data[6];
+										String pbl_id = (String) data[3];
+										Integer seq_no = (Integer) data[4];
+										String unit_id = (String) data[7];
 										
 										displayClientInfo(entity_id, proj_id, pbl_id, seq_no);
 										displayBankInfo(entity_id, proj_id, pbl_id, seq_no);

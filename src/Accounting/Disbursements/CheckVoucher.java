@@ -2425,7 +2425,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 						+ "		left join mf_bank d on c.bank_id = d.bank_id   \r\n";
 
 		if (rplf_type.equals("04") || rplf_type.equals("05")) {
-			sql = sql + "where b.is_comm_disb = true";
+			sql = sql + "where b.is_comm_disb = true ";
 		} // from 07 changed to 05 ; Del Gonzales : 03/15/2017
 		else {
 			sql = sql + "where b.is_comm_disb is null or b.is_comm_disb is false  ";
@@ -2532,7 +2532,7 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 				+ "	length((max(case when trim(last_no_used) = '' then 0 else   trim(last_no_used)::bigint end)+1)::text) ) || \r\n"
 				+ "	max(case when trim(last_no_used) = '' then 0 else   trim(last_no_used)::bigint end) +1 ) \r\n"
 				+ "end ) " + "from rf_check_book where rec_id = " + rec_id + " and trim(user_id) = '"
-				+ UserInfo.EmployeeCode + "' " + "and status_id = 'A' " + "group by last_no_used, from_check_no   \r\n";
+				+ UserInfo.EmployeeCode + "' " + " and status_id = 'A' " + "group by last_no_used, from_check_no   \r\n";
 
 		System.out.printf("SQL #1: %s", SQL);
 		pgSelect db = new pgSelect();

@@ -1075,7 +1075,7 @@ public class DocProcStatus extends JPanel implements ActionListener {
 	public static String Recipient() {
 		String sql = "select trim(entity_id) as \"ID\", trim(entity_name) as \"Name\", trim(entity_kind) as \"Kind\"\n" + 
 				"from rf_entity \n" + 
-				"where status_id = 'A' and server_id is null\n" + 
+				"where status_id = 'A' \n" + 
 				//"group by trim(a.entity_id), trim(b.entity_name), trim(b.entity_kind)\n" + 
 				"order by trim(entity_name);";
 		return sql;

@@ -37,12 +37,12 @@
 	</parameter>
 	<queryString>
 		<![CDATA[select row_number() over(order by (case when $P{09_sort} = 0 then c_name else '' end),
-(case when $P{09_sort} = 1 then replace(replace(c_phase, '-', ''), 'A', '')::int else 0 end),
+(case when $P{09_sort} = 1 then getinteger(replace(replace(c_phase, '-', ''), 'A', ''))::int else 0 end),
 (case when $P{09_sort} = 1 then c_block::int else 0 end),
 (case when $P{09_sort} = 1 then c_lot::int else 0 end))::int as row, *
 from view_pmd_ListOfTurnedOverUnits($P{01_coid}, $P{02_proj_id}, $P{03_phase}, $P{04_dteFrom}, $P{05_dteTo})
 order by (case when $P{09_sort} = 0 then c_name else '' end),
-(case when $P{09_sort} = 1 then replace(replace(c_phase, '-', ''), 'A', '')::int else 0 end),
+(case when $P{09_sort} = 1 then getinteger(replace(replace(c_phase, '-', ''), 'A', ''))::int else 0 end),
 (case when $P{09_sort} = 1 then c_block::int else 0 end),
 (case when $P{09_sort} = 1 then c_lot::int else 0 end)]]>
 	</queryString>

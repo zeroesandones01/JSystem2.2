@@ -229,6 +229,8 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 				// btnState(true, true, false, false, false);
 			}
 		}
+		
+		
 	}
 
 	public NoticeToProceed(String title) {
@@ -1382,7 +1384,14 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 		FncTables.bindColumnTables(tblProgressBilling, tblProgressBillingTotal);
 
 		setComponentsEnabled(false);
-		btnState(true, false, false, false, false);
+		if(UserInfo.EmployeeCode.equals("901240")) {
+			btnState(false, false, false, false, false);
+			btnPreview.setEnabled(false);
+			btnTakeover.setEnabled(false);
+		}else {
+			btnState(true, false, false, false, false);
+		}
+		
 
 		this.grabFocus();
 		// KEYBOARD_MANAGER.focusNextComponent(txtWithSuretyBond);
@@ -1683,6 +1692,12 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 
 		txtDesc.setText(
 				FncGlobal.GetString("select oth_description from co_ntp_header where ntp_no = '" + ntp_no + "'"));
+	
+		if(UserInfo.EmployeeCode.equals("901240")) {
+			btnState(false, false, false, false, false);
+			btnPreview.setEnabled(false);
+			btnTakeover.setEnabled(false);
+		}
 	}
 
 	private void btnState(Boolean sNew, Boolean sEdit, Boolean sDelete, Boolean sSave, Boolean sCancel) {

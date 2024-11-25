@@ -830,7 +830,8 @@ public class DocProcStatus extends JPanel implements ActionListener {
 						if(status_code.equals("177") || status_code.equals("184") || status_code.equals("188") || status_code.equals("189") || status_code.equals("190") || status_code.equals("191")
 								|| status_code.equals("195") || status_code.equals("196") || status_code.equals("197") || status_code.equals("198") || status_code.equals("201") || status_code.equals("202") || status_code.equals("203") 
 									|| status_code.equals("204") || status_code.equals("205") || status_code.equals("206") || status_code.equals("207") || status_code.equals("208") || status_code.equals("209") || status_code.equals("100")
-										|| status_code.equals("210")|| status_code.equals("215") || status_code.equals("216") || status_code.equals("217") || status_code.equals("194") || status_code.equals("218") || status_code.equals("227")){
+										|| status_code.equals("210")|| status_code.equals("215") || status_code.equals("216") || status_code.equals("217") || status_code.equals("194") || status_code.equals("218") || status_code.equals("227")
+										|| status_code.equals("234")){ //ADDED STATUS DCRF #3174 DTD 11-25-24; MONIQUE
 
 							if(tblProcStatus.getSelectedRows().length == 0) {
 
@@ -1075,7 +1076,7 @@ public class DocProcStatus extends JPanel implements ActionListener {
 	public static String Recipient() {
 		String sql = "select trim(entity_id) as \"ID\", trim(entity_name) as \"Name\", trim(entity_kind) as \"Kind\"\n" + 
 				"from rf_entity \n" + 
-				"where status_id = 'A' and server_id is null\n" + 
+				"where status_id = 'A' \n" + 
 				//"group by trim(a.entity_id), trim(b.entity_name), trim(b.entity_kind)\n" + 
 				"order by trim(entity_name);";
 		return sql;

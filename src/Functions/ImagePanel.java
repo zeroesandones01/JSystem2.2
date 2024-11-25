@@ -66,7 +66,7 @@ public class ImagePanel extends JPanel{
 				bt = Functions.FncSelectRecords.rs.getBytes(1);
 			}
 
-			if(database.equals("terraverde_beta_testing") && ip.equals("192.168.10.15/32")) {	
+			if(database.equals("terraverde_beta_testing") && ip.equals("192.168.10.17/32")) {	
 				if(UserInfo.EmployeeCode.equals("900796")) {
 					IMAGE_BG = Toolkit.getDefaultToolkit().createImage(this.getClass().getClassLoader().getResource("Images/5.png"));
 				} else {

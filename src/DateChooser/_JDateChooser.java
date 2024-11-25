@@ -183,6 +183,11 @@ public class _JDateChooser extends JDateChooser implements DateDispatcher {
 		return ((JTextField)getDateEditor()).getText();
 	}
 
+	public void setMaxSelectableDate(Date max) {
+	    jcalendar.setMaxSelectableDate(max);
+	    dateEditor.setMaxSelectableDate(max);
+	}
+	
 	public void setRequired(Boolean isRequired) {
 		if(isRequired){
 			label.setFont(new Font("DIALOG", Font.ITALIC, 12));

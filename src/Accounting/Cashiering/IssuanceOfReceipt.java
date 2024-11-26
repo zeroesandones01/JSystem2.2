@@ -1026,7 +1026,7 @@ public class IssuanceOfReceipt extends _JInternalFrame implements ActionListener
 			String SQL = "";
 			if (selectedTransaction.equals("CASH RETURN")) {
 				SQL = "SELECT TRIM(pay_part_id)::VARCHAR as \"ID\", TRIM(partdesc) as \"Name\", TRIM(particulars) as \"Alias\" "
-						+ "FROM mf_pay_particular WHERE (group_id = '06' OR pay_part_id IN ('179', '204', '214', '212', '197', '277', '278', '279', '280', '174')) AND status_id = 'A' ORDER BY partdesc;"; //ADDED PART ID 174; MONIQUE 01-08-24
+						+ "FROM mf_pay_particular WHERE (group_id = '06' OR pay_part_id IN ('179', '204', '214', '212', '197', '277', '278', '279', '280', '174', '283')) AND status_id = 'A' ORDER BY partdesc;"; //ADDED PART ID 174; MONIQUE 01-08-24
 			
 			} else {
 				if (entity_id == null) {

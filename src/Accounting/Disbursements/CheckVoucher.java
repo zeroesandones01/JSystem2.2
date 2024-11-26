@@ -1926,6 +1926,12 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 			String dv = lookupDV_no.getText().trim();
 
 			pgUpdate db = new pgUpdate();
+			if(to_do.equals("Untag")) {
+				untagCV(dv, db, status);
+			}else {
+				tagCV(dv, db, status);
+			}
+			
 			tagCV(dv, db, status);
 			insertAudit_trail("Tag-Check Voucher", "Tag cv", db);
 			db.commit();
@@ -3429,6 +3435,15 @@ public class CheckVoucher extends _JInternalFrame implements _GUI, ActionListene
 	public void tagCV(String rec_no, pgUpdate db, String status) {// ok
 
 		String sqlDetail = "update rf_cv_header set " + "status_id = '" + status + "', proc_id = 1, edited_by = '"
+				+ UserInfo.EmployeeCode + "', date_edited = now()" + "where trim(cv_no) = '" + rec_no
+				+ "' and co_id = '" + co_id + "'   ";
+
+		System.out.printf("SQL #1: %s", sqlDetail);
+		db.executeUpdate(sqlDetail, false);
+	}
+	
+	public void untagCV(String rec_no, pgUpdate db, String status) {
+		String sqlDetail = "update rf_cv_header set " + "status_id = '" + status + "', proc_id = 0, edited_by = '"
 				+ UserInfo.EmployeeCode + "', date_edited = now()" + "where trim(cv_no) = '" + rec_no
 				+ "' and co_id = '" + co_id + "'   ";
 

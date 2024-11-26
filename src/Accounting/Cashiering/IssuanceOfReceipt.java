@@ -1034,6 +1034,7 @@ public class IssuanceOfReceipt extends _JInternalFrame implements ActionListener
 							"Particular", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
+				
 
 				SQL = _OrderOfPayment.getParticulars(entity_id, proj_id, pbl_id, seq_no, false, "");
 			}

@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -299,11 +300,22 @@ public class TCostComputation extends JPanel implements ActionListener {
 				
 				if (SelectedItem) {
 					iftrue.add(modelTCost.getValueAt(i, 1).toString());
+					
+					String particular = (String) modelTCost.getValueAt(i, 1);
+					BigDecimal total_tcost = new BigDecimal("0.00");
+					
+					BigDecimal tcost = (BigDecimal) modelTCost.getValueAt(i, 2);
+					total_tcost = total_tcost.add(tcost);
+					
+					if(particular.trim().equals("MISCELLANEOUS")) {
+						total_tcost.subtract(tcost);
+					}
+					
 					SQL = (!SQL.isEmpty() ? SQL + "UNION\n" : "") +	
 							
 							"SELECT \n" +
 							"'"+modelTCost.getValueAt(i, 1)+"' AS particular,\n" + 
-							""+modelTCost.getValueAt(i, 2)+" AS amount \n";
+							" case when '"+particular+"' = 'MISCELLANEOUS' then ROUND(("+total_tcost+" * .03), 2) else "+modelTCost.getValueAt(i, 2)+" end AS amount \n";
 				}
 			}
 			

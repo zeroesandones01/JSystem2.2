@@ -9,6 +9,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -84,6 +86,7 @@ public class CheckSeries extends _JInternalFrame implements ActionListener, Ance
 	JComboBox cmbBank;
 	JComboBox cmbBankBranch;
 	JComboBox cmbBankAccount;
+	private _JLookup lookupBankAcct;
 	JComboBox cmbPayee;
 	JComboBox cmbStatus;
 	JComboBox cmbDocsType;
@@ -286,11 +289,45 @@ public class CheckSeries extends _JInternalFrame implements ActionListener, Ance
 					cmbBankBranch.setActionCommand("Bank Branch");
 					cmbBankBranch.addActionListener(this);
 				}
+//				{
+//					cmbBankAccount = new JComboBox(getBankAccount1());
+//					pnlNorthEast.add(cmbBankAccount, BorderLayout.EAST);
+//					cmbBankAccount.setActionCommand("Bank Account");
+//					cmbBankAccount.addActionListener(this);
+//				}
+				
 				{
-					cmbBankAccount = new JComboBox(getBankAccount1());
-					pnlNorthEast.add(cmbBankAccount, BorderLayout.EAST);
-					cmbBankAccount.setActionCommand("Bank Account");
-					cmbBankAccount.addActionListener(this);
+					lookupBankAcct = new _JLookup(null, "Bank Accounts", 0);
+					pnlNorthEast.add(lookupBankAcct, BorderLayout.EAST);
+					lookupBankAcct.addFocusListener(new FocusListener() {
+						
+						@Override
+						public void focusLost(FocusEvent e) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void focusGained(FocusEvent e) {
+							
+							String selected_bank_branch = (String) cmbBankBranch.getSelectedItem();
+							String bank_branch_id = selected_bank_branch.split("~")[0].trim();
+							lookupBankAcct.setLookupSQL(sqlBankAccounts(bank_branch_id));
+							
+						}
+					});
+					lookupBankAcct.addLookupListener(new LookupListener() {
+						
+						@Override
+						public void lookupPerformed(LookupEvent event) {
+							Object[] data = ((_JLookup)event.getSource()).getDataSet();
+							
+							if(data != null) {
+								String bank_acct = (String) data[0];
+								
+							}
+						}
+					});
 				}
 				{
 					pnlCenter_b = new JPanel(new GridLayout(1, 2, 3, 3));
@@ -396,19 +433,20 @@ public class CheckSeries extends _JInternalFrame implements ActionListener, Ance
 				cmbBankBranch.setModel(new DefaultComboBoxModel(new String[]{""}));
 			}
 		}
-		if(action.equals("Bank Branch")){
-			JComboBox combo = (JComboBox) e.getSource();
-			String item = (String) combo.getSelectedItem();
-			String bank_branch_id = item.split("~")[0].trim();
-
-			System.out.printf("BANK BRANCH ID: %s%n", bank_branch_id);
-
-			if(getBankAccount(bank_branch_id) != null){
-				cmbBankAccount.setModel(new DefaultComboBoxModel(getBankAccount(bank_branch_id)));
-			}else{
-				cmbBankAccount.setModel(new DefaultComboBoxModel(new String[]{""}));
-			}
-		}
+//		if(action.equals("Bank Branch")){
+//			JComboBox combo = (JComboBox) e.getSource();
+//			String item = (String) combo.getSelectedItem();
+//			String bank_branch_id = item.split("~")[0].trim();
+//
+//			System.out.printf("BANK BRANCH ID: %s%n", bank_branch_id);
+//
+//			if(getBankAccount(bank_branch_id) != null){
+//				cmbBankAccount.setModel(new DefaultComboBoxModel(getBankAccount(bank_branch_id)));
+//			}else{
+//				cmbBankAccount.setModel(new DefaultComboBoxModel(new String[]{""}));
+//				
+//			}
+//		}
 	}
 	
 	private void initialize_comp(){		
@@ -484,7 +522,7 @@ public class CheckSeries extends _JInternalFrame implements ActionListener, Ance
 		mapParameters.put("logo", this.getClass().getClassLoader().getResourceAsStream("Images/"+ company_logo));
 		mapParameters.put("printby", UserInfo.Alias);
 		mapParameters.put("bank", bank);
-		mapParameters.put("bank_account", cmbBankAccount.getSelectedItem());
+		mapParameters.put("bank_account", lookupBankAcct.getValue());
 		mapParameters.put("bank_branch", bankbranch);
 		mapParameters.put("date_from", dteDateFrom.getDate());
 		mapParameters.put("date_to", dateDateTo.getDate());
@@ -618,6 +656,15 @@ public class CheckSeries extends _JInternalFrame implements ActionListener, Ance
 		}else{
 			return null;
 		}
+	}
+	
+	private String sqlBankAccounts(String bank_branch_id) {
+		String SQL = "SELECT TRIM(bank_acct_no)\n" + 
+				"FROM mf_bank_account\n" +
+				"WHERE case when '"+bank_branch_id+"' = '' then true else bank_branch_id = '"+bank_branch_id+"' end\n" + 
+				"ORDER BY TRIM(bank_acct_no);";
+		
+		return SQL;
 	}
 	private static String[] getPayee() {
 		String SQL = "SELECT DISTINCT ON (get_client_name(entity_id)) get_client_name(entity_id)\n" + 

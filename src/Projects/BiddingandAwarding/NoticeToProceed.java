@@ -383,7 +383,7 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 																if (data != null) {
 																	txtCompany.setText((String) data[1]);
 																	lookupProject.setLookupSQL(
-																			SQL_PROJECT((String) data[0]));
+																			sqlProject((String) data[0]));
 
 																	lookupProject.setValue(null);
 																	txtProject.setText("");
@@ -1415,6 +1415,26 @@ implements ActionListener, MouseListener, KeyListener, AncestorListener {
 			JScrollPane scrDesc = new JScrollPane(txtDesc);
 			panDesc.add(scrDesc);
 		}
+	}
+	
+	private String sqlProject(String co_id) {//XXX Project(Company ID)
+		String SQL = "";
+		
+		if(co_id.equals("03")) {
+			SQL = "SELECT TRIM(proj_id)::VARCHAR as \"ID\", TRIM(proj_name) as \"Project Name\", TRIM(proj_alias)::VARCHAR as \"Alias\"\n" +
+					"FROM mf_project\n" +
+					//"WHERE status_id = 'A'" +
+					"order by proj_id;";
+		}else {
+			SQL = "SELECT TRIM(proj_id)::VARCHAR as \"ID\", TRIM(proj_name) as \"Project Name\", TRIM(proj_alias)::VARCHAR as \"Alias\"\n" +
+					"FROM mf_project\n" +
+					"WHERE co_id = '"+ co_id +"'\n" +
+					"AND proj_id NOT IN ('008', '021') \n"+
+					"AND status_id = 'A'" +
+					"order by proj_id;";
+		}
+		
+		return SQL;
 	}
 
 	private void generateContractNo() {

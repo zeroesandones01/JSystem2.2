@@ -481,7 +481,7 @@ public class Cashflow extends _JInternalFrame implements ActionListener, Ancesto
 		mapParameters.put("phase_no", phase_no);
 		mapParameters.put("co_id", co_id);
 
-		FncReport.generateReport("/Reports/rptCashflow_MonitoringDetails.jasper", reportTitle, company, mapParameters);		
+		FncReport.generateReport("/Reports/rptCashflow_MonitoringDetails_v2.jasper", reportTitle, company, mapParameters);		
 	}
 	
 	private void previewCheckStatusSummary(){

@@ -1884,7 +1884,7 @@ _GUI, ActionListener {
 				Date date_approved = (Date) modelApproveQualified.getValueAt(x, 22);
 				String policy_no = (String) modelApproveQualified.getValueAt(x, 21);
 				String reference_no = (String) modelApproveQualified.getValueAt(x, 19);
-				String invoice_no = (String) modelApproveQualified.getValueAt(x, 20);
+				String invoice_no = modelApproveQualified.getValueAt(x, 20) != null ? (String) modelApproveQualified.getValueAt(x, 20).toString() : "";
 				BigDecimal amt_insured = (BigDecimal) modelApproveQualified.getValueAt(x, 16);
 				BigDecimal premium = (BigDecimal) modelApproveQualified.getValueAt(x, 14);
 				String stage = (String) modelApproveQualified.getValueAt(x, 17);

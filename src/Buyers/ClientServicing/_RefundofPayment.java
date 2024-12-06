@@ -447,31 +447,61 @@ public class _RefundofPayment{
 			DefaultListModel listModel = new DefaultListModel(); 
 			rowHeader.setModel(listModel);
 
-			String sql = "select CASE WHEN "+search+" then true else false end, \n"+
-					"* from (select a.actual_date::DATE, a.pay_part_id, b.partdesc,\n" + 
-					"a.amount-get_amount_credited(a.pay_rec_id) - coalesce (a.applied_amt, 0) as applied_amt, a.pay_rec_id,\n" + 
-					"coalesce(nullif(trim(or_no), ''), '')||coalesce(nullif(trim(ar_no), ''),'')\n" + 
-					"from rf_payments a\n" + 
-					"left join mf_pay_particular b on b.pay_part_id = a.pay_part_id \n" + 
-					"where a.entity_id = '"+entity_id+"' \n" + 
-					"and a.pbl_id = getinteger('"+unit_id+"')::VARCHAR \n" + 
-					"and a.proj_id = '"+proj_id+"' \n" + 
-					"and a.seq_no = "+seq_no+" \n" + 
-					"and b.apply_ledger = false \n"+
-					//"and b.refundable \n"+
-					"and TRIM(a.status_id) = 'A' \n"+
-					//"and a.pay_part_id not in ('197', '268')\n"+ 
-					"AND case when "+search+" then EXISTS (SELECT *\n" + 
-					"	    FROM req_refund_dl\n" + 
-					"	    where request_no = '"+request_no+"'\n" + 
-					"	    AND amount = a.amount-get_amount_credited(a.pay_rec_id)\n" + 
-					"	    and pay_rec_id = a.pay_rec_id\n" + 
-					"	    AND pay_part_id = a.pay_part_id\n" + 
-					"	    AND receipt_no = TRIM(coalesce(a.or_no, '')||coalesce(a.ar_no,'')))\n" + 
-					"	    else true end \n"+
-					//"and a.reversed != true \n" + 
-					"order by a.actual_date) c \n" + 
-					"where c.applied_amt != 0;";
+			String sql = "";
+			if(search) {
+				sql = "select CASE WHEN "+search+" then true else false end, \n"+
+						"* from (select a.actual_date::DATE, a.pay_part_id, b.partdesc,\n" + 
+						"a.amount-get_amount_credited(a.pay_rec_id) as applied_amt, a.pay_rec_id,\n" + 
+						"coalesce(nullif(trim(or_no), ''), '')||coalesce(nullif(trim(ar_no), ''),'')\n" + 
+						"from rf_payments a\n" + 
+						"left join mf_pay_particular b on b.pay_part_id = a.pay_part_id \n" + 
+						"where a.entity_id = '"+entity_id+"' \n" + 
+						"and a.pbl_id = getinteger('"+unit_id+"')::VARCHAR \n" + 
+						"and a.proj_id = '"+proj_id+"' \n" + 
+						"and a.seq_no = "+seq_no+" \n" + 
+						"and b.apply_ledger = false \n"+
+						//"and b.refundable \n"+
+						"and TRIM(a.status_id) = 'A' \n"+
+						//"and a.pay_part_id not in ('197', '268')\n"+ 
+						"AND EXISTS (SELECT *\n" + 
+						"	    FROM req_refund_dl\n" + 
+						"	    where request_no = '"+request_no+"'\n" + 
+						"	    AND amount = a.amount-get_amount_credited(a.pay_rec_id)\n" + 
+						"	    and pay_rec_id = a.pay_rec_id\n" + 
+						"	    AND pay_part_id = a.pay_part_id\n" + 
+						"	    AND receipt_no = TRIM(coalesce(a.or_no, '')||coalesce(a.ar_no,'')) \n"+
+						"		AND status_id = 'A')\n" + 
+						//"and a.reversed != true \n" + 
+						"order by a.actual_date) c \n" + 
+						"where c.applied_amt != 0;";
+			}else {
+				sql = "select CASE WHEN "+search+" then true else false end, \n"+
+						"* from (select a.actual_date::DATE, a.pay_part_id, b.partdesc,\n" + 
+						"a.amount-get_amount_credited(a.pay_rec_id) - coalesce (a.applied_amt, 0) as applied_amt, a.pay_rec_id,\n" + 
+						"coalesce(nullif(trim(or_no), ''), '')||coalesce(nullif(trim(ar_no), ''),'')\n" + 
+						"from rf_payments a\n" + 
+						"left join mf_pay_particular b on b.pay_part_id = a.pay_part_id \n" + 
+						"where a.entity_id = '"+entity_id+"' \n" + 
+						"and a.pbl_id = getinteger('"+unit_id+"')::VARCHAR \n" + 
+						"and a.proj_id = '"+proj_id+"' \n" + 
+						"and a.seq_no = "+seq_no+" \n" + 
+						"and b.apply_ledger = false \n"+
+						//"and b.refundable \n"+
+						"and TRIM(a.status_id) = 'A' \n"+
+						//"and a.pay_part_id not in ('197', '268')\n"+ 
+						"AND case when "+search+" then EXISTS (SELECT *\n" + 
+						"	    FROM req_refund_dl\n" + 
+						"	    where request_no = '"+request_no+"'\n" + 
+						"	    AND amount = a.amount-get_amount_credited(a.pay_rec_id)\n" + 
+						"	    and pay_rec_id = a.pay_rec_id\n" + 
+						"	    AND pay_part_id = a.pay_part_id\n" + 
+						"	    AND receipt_no = TRIM(coalesce(a.or_no, '')||coalesce(a.ar_no,'')))\n" + 
+						"	    else true end \n"+
+						//"and a.reversed != true \n" + 
+						"order by a.actual_date) c \n" + 
+						"where c.applied_amt != 0;";
+			}
+			
 			
 			FncSystem.out("Display Other Payment", sql);
 			

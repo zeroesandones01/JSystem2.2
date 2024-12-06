@@ -449,7 +449,7 @@ public class _RefundofPayment{
 
 			String sql = "select CASE WHEN "+search+" then true else false end, \n"+
 					"* from (select a.actual_date::DATE, a.pay_part_id, b.partdesc,\n" + 
-					"a.amount-get_amount_credited(a.pay_rec_id) as applied_amt, a.pay_rec_id,\n" + 
+					"a.amount-get_amount_credited(a.pay_rec_id) - coalesce (a.applied_amt, 0) as applied_amt, a.pay_rec_id,\n" + 
 					"coalesce(nullif(trim(or_no), ''), '')||coalesce(nullif(trim(ar_no), ''),'')\n" + 
 					"from rf_payments a\n" + 
 					"left join mf_pay_particular b on b.pay_part_id = a.pay_part_id \n" + 

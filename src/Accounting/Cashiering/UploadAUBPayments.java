@@ -348,7 +348,6 @@ public class UploadAUBPayments extends _JInternalFrame implements _GUI, ActionLi
 				}
 			}
 		}
-
 	}
 
 	private void clearFields() {

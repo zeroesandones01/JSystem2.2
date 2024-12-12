@@ -510,6 +510,7 @@ public class UploadAUBPayments extends _JInternalFrame implements _GUI, ActionLi
 		pgSelect db = new pgSelect();
 
 		String batch_no = getNewBatchNo();
+		String co_id = lookupCompany.getValue();
 
 		for(int x= 0; x<tblAUBPayments.getRowCount(); x++) {
 			String pmt_date = (String) tblAUBPayments.getValueAt(x, 0);
@@ -523,7 +524,7 @@ public class UploadAUBPayments extends _JInternalFrame implements _GUI, ActionLi
 			System.out.printf("Value of pmt particular: %s%n", pmt_particular);
 			System.out.printf("value of amount: %s%n", amount);
 
-			String SQL = "select sp_create_pmt_sequence('"+batch_no+"','"+pmt_date+"'::DATE,'"+trans_no+"','"+reference_no+"','"+pmt_particular+"',"+amount+",'"+UserInfo.Branch+"','"+UserInfo.EmployeeCode+"') ";
+			String SQL = "select sp_create_aub_bills_pmt_sequence('"+co_id+"','"+batch_no+"','"+pmt_date+"'::DATE,'"+trans_no+"','"+reference_no+"','"+pmt_particular+"',"+amount+",'"+UserInfo.Branch+"','"+UserInfo.EmployeeCode+"') ";
 			db.select(SQL);
 		}
 

@@ -171,7 +171,7 @@ public class _RefundofPayment{
 						+ "LEFT JOIN mf_project c on c.proj_id = a.proj_id \n" 
 						+ "LEFT JOIN mf_unit_info d on d.proj_id = a.proj_id and d.pbl_id = a.pbl_id \n"
 						+ "WHERE b.apply_ledger = FALSE \n"
-						+ "AND a.pay_part_id in ('180', '247')\n" //--UNCOMMENT THIS FOR FAST GENERATION OF ACCOUNTS FOR REFUND OF CONSBOND
+						+ "AND a.pay_part_id in ('180', '247', '182')\n" //--UNCOMMENT THIS FOR FAST GENERATION OF ACCOUNTS FOR REFUND OF CONSBOND
 						//+ "AND a.co_id = '02' \n"
 						+ "AND trim(a.pay_part_id) NOT IN ('203', '168', '269') \n"
 						+ "AND NOT EXISTS(Select * from issued_garbage_fee where client_seqno = a.client_seqno) \n"

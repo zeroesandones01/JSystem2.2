@@ -136,7 +136,8 @@ public class TemporaryCheckVoucher extends _JInternalFrame implements _GUI, Acti
 
 							FncReport.generateReport("/Reports/rptCV_checkAUB_Temp.jasper", "Check Voucher", mapParameters);
 							
-							btnPreview.setEnabled(false); 
+							txtAmount.setEditable(true);
+							btnPreview.setEnabled(true); 
 						}
 					});
 				}

@@ -2040,7 +2040,12 @@ public class PropertyManagement extends JXPanel implements _GUI {
 		if(amt_paid.compareTo(amt_due) == -1 || amt_paid.compareTo(amt_due) == 0){
 			if((amt_paid.subtract(amt_due)).compareTo(FncBigDecimal.zeroValue())== -1) {
 				System.out.println("Dumaan dito sa if");
-				modelTotal.setValueAt(String.format("[OB] %s", amt_paid.subtract(amt_due)),0, 10); 
+				if(excess.compareTo(new BigDecimal("0.00")) == 0) {
+					modelTotal.setValueAt(String.format("[OB] %s", amt_paid.subtract(amt_due)),0, 10);
+				}else {
+					modelTotal.setValueAt(String.format("[OB] %s", amt_paid.subtract(amt_due.add(excess))),0, 10); 
+				}
+				
 				lblUtilityCARD.setText(String.format("<html><center><b>This account has not been<br>issued with Utility CARD.<br><br>Outstanding Balance:<br>%s</b></center></html>", amt_paid.subtract(amt_due.add(excess))));
 			}else {
 				modelTotal.setValueAt(String.format("[OB] %s", amt_paid.subtract(amt_due)),0, 10); 

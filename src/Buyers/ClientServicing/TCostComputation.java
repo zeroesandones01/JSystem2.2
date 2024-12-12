@@ -295,6 +295,8 @@ public class TCostComputation extends JPanel implements ActionListener {
 		if(actionCommand.equals("Preview")){
 			ArrayList<String> iftrue = new ArrayList<String>();
 			String SQL ="";
+			
+			BigDecimal total_tcost = new BigDecimal("0.00");
 			for (int i = 0; i < modelTCost.getRowCount(); i++) {
 				Boolean SelectedItem = (Boolean) modelTCost.getValueAt(i, 0);
 				
@@ -302,13 +304,13 @@ public class TCostComputation extends JPanel implements ActionListener {
 					iftrue.add(modelTCost.getValueAt(i, 1).toString());
 					
 					String particular = (String) modelTCost.getValueAt(i, 1);
-					BigDecimal total_tcost = new BigDecimal("0.00");
+					
 					
 					BigDecimal tcost = (BigDecimal) modelTCost.getValueAt(i, 2);
-					total_tcost = total_tcost.add(tcost);
 					
-					if(particular.trim().equals("MISCELLANEOUS")) {
-						total_tcost.subtract(tcost);
+					
+					if(particular.trim().equals("MISCELLANEOUS") == false) {
+						total_tcost = total_tcost.add(tcost);
 					}
 					
 					SQL = (!SQL.isEmpty() ? SQL + "UNION\n" : "") +	

@@ -94,7 +94,7 @@ public class FncGlobal {
 	//public static String connectionURL = "jdbc:postgresql://192.168.10.95:5432/terraverde_summit_052024?ApplicationName=JSystem2.2 Beta";
 	//public static String connectionURL = "jdbc:postgresql://localhost:5432/Daily_debug?ApplicationName=JSystem2.2";
 	//public static String connectionURL = "jdbc:postgresql://192.168.10.109:5432/terraverde_summit_lester_latest?ApplicationName=JSystem2.2";
-	//public static String connectionURL = "jdbc:postgresql://localhost:5432/terraverde_summit_local?ApplicationName=JSystem2.2";
+	//public static String connectionURL = "jdbc:postgresql://192.168.10.109:5432/terraverde_summit_lester?ApplicationName=JSystem2.2";
 	//public static String connectionURL = "jdbc:postgresql://192.168.10.19:5432/terraverde_summit?ApplicationName=JSystem2.2";
 	//public static String connectionURL = "jdbc:postgresql://177.177.180.28:5432/db_terraverde_local?ApplicationName=JSystem2.2";
 	//public static String connectionURL = "jdbc:postgresql://192.168.10.169:5432/terraverde_summit_lester?ApplicationName=JSystem2.2";
@@ -204,7 +204,7 @@ public class FncGlobal {
 		//mapURL.put("Summit - Offline", "jdbc:postgresql://localhost:5432/terraverde_summit_montalban?ApplicationName=JSystem2.2");
 		//mapURL.put("Summit - Beta Testing", "jdbc:postgresql://localhost:5432/Daily_debug?ApplicationName=JSystem2.2");
 		//mapURL.put("Summit - Terraverde Live", "jdbc:postgresql://192.168.10.109:5432/terraverde_summit_lester_latest?ApplicationName=JSystem2.2");
-		//mapURL.put("Summit - Terraverde Testing", "jdbc:postgresql://192.168.10.95:5432/terraverde_summit_052024?ApplicationName=JSystem2.2 Beta");
+		//mapURL.put("Summit - Terraverde Testing", "jdbc:postgresql://192.168.10.109:5432/terraverde_summit_lester?ApplicationName=JSystem2.2 Beta");
 		//mapURL.put("Summit - Terraverde Beta", "jdbc:postgresql://jsystemdb.cenqhomes.com:5432/terraverde_summit_latest?ApplicationName=JSystem2.2");
 		//mapURL.put("Summit - Terraverde Live", "jdbc:postgresql://192.168.10.73/local_terraverde_summit?ApplicationName=JSystem2.2");
 		//mapURL.put("Summit - Terraverde Live", "jdbc:postgresql://192.168.10.19:5432/terraverde_summit?ApplicationName=JSystem2.2");

@@ -2616,10 +2616,11 @@ public class ContractorsBilling extends _JInternalFrame implements _GUI, ActionL
 				|| ntp_no.equals("001827") //DCRF2940
 				|| ntp_no.equals("000272") //DCRF2940
 				|| ntp_no.equals("000261") //DCRF2940
-				|| ntp_no.equals("000263") //DCRF2940
+				|| ntp_no.equals("000263") //DCRF2940 
 				|| ntp_no.equals("000807") //DCRF2940
 				|| ntp_no.equals("000535") //DCRF2940
 				|| ntp_no.equals("000287") //DCRF2940
+				|| ntp_no.equals("002005") //DCRF3185
 		// || ntp_no.equals("000772")
 		) {// Edited by erick 2023/01/24 to manually select next billing type for
 			// migrated contracts from itsreal

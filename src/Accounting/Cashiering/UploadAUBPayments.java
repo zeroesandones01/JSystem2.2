@@ -75,12 +75,15 @@ public class UploadAUBPayments extends _JInternalFrame implements _GUI, ActionLi
 
 	private JPanel pnlForIssuance;
 
+
 	private _JTableMain tblAUBForIssuance;
 	private JScrollPane scrollAUBForIssuance;
+
 	private JList rowheaderAUBForIssuance;
 	private modelAUBForIssuance modelAUBForIssue;
 
 	private _JTableMain tblAUBPayments;
+
 
 
 
@@ -198,8 +201,10 @@ public class UploadAUBPayments extends _JInternalFrame implements _GUI, ActionLi
 										if (data != null) {
 											String batch_no = (String) data[0];
 
+											previewWithoutSequence();
 											displayForIssuanceBatch(batch_no);
 											previewForIssuance();
+											
 										}
 									}
 								});
@@ -410,6 +415,17 @@ public class UploadAUBPayments extends _JInternalFrame implements _GUI, ActionLi
 
 		FncReport.generateReport("/Reports/rptAUB_BillsPmt_ForIssuance.jasper", reportTitle, mapParameters);
 	}
+	
+	private void previewWithoutSequence() {
+		String criteria = "List of AUB Bills Payment for issuance";		
+		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());	
+
+		Map<String, Object> mapParameters = new HashMap<String, Object>();
+		mapParameters.put("batch_no", lookupBatchNo.getValue());
+	
+
+		FncReport.generateReport("/Reports/rptAUB_BillsPmt_Without_Sequence.jasper", reportTitle, mapParameters);
+	}
 
 	private void processForUpload() throws IOException{
 
@@ -504,7 +520,7 @@ public class UploadAUBPayments extends _JInternalFrame implements _GUI, ActionLi
 		rowheaderAUBForIssuance.setModel(listModel);
 		tblAUBForIssuance.packAll();
 	}
-
+	
 	private void uploadPayments() {
 
 		pgSelect db = new pgSelect();
@@ -516,6 +532,7 @@ public class UploadAUBPayments extends _JInternalFrame implements _GUI, ActionLi
 			String pmt_date = (String) tblAUBPayments.getValueAt(x, 0);
 			String trans_no = (String) tblAUBPayments.getValueAt(x, 1);
 			String reference_no = (String) tblAUBPayments.getValueAt(x, 2);
+			String client_name = (String) tblAUBPayments.getValueAt(x, 3);
 			String pmt_particular = (String) tblAUBPayments.getValueAt(x, 4);
 			String amount = (String) tblAUBPayments.getValueAt(x, 5);
 
@@ -524,7 +541,7 @@ public class UploadAUBPayments extends _JInternalFrame implements _GUI, ActionLi
 			System.out.printf("Value of pmt particular: %s%n", pmt_particular);
 			System.out.printf("value of amount: %s%n", amount);
 
-			String SQL = "select sp_create_aub_bills_pmt_sequence('"+co_id+"','"+batch_no+"','"+pmt_date+"'::DATE,'"+trans_no+"','"+reference_no+"','"+pmt_particular+"',"+amount+",'"+UserInfo.Branch+"','"+UserInfo.EmployeeCode+"') ";
+			String SQL = "select sp_create_aub_bills_pmt_sequence_v2('"+co_id+"','"+batch_no+"','"+pmt_date+"'::DATE,'"+trans_no+"','"+reference_no+"','"+pmt_particular+"',"+amount+",'"+UserInfo.Branch+"','"+client_name+"','"+UserInfo.EmployeeCode+"') ";
 			db.select(SQL);
 		}
 

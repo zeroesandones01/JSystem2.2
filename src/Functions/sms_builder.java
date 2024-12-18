@@ -284,7 +284,7 @@ public class sms_builder {
 
     	//URL url = new URL(strURL);
     	URL url = new URL(strURL+"?username="+itusername+"&password="+itpassword+"&phone="+strNumber+"&message="+strMessage+"");
-    	HttpURLConnection con = (HttpURLConnection) url.openConnection(proxy);
+    	HttpURLConnection con = (HttpURLConnection) url.openConnection();
     	con.setRequestMethod("POST");
     	con.setRequestProperty("Authorization", strToken);
     	con.setRequestProperty("Content-Type", "application/json");

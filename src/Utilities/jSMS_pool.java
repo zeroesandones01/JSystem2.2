@@ -208,6 +208,7 @@ public class jSMS_pool extends _JInternalFrame implements _GUI, ActionListener {
 									if (lblMode.getText().equals("USB Mode")) {
 										ExecuteUSB();
 									} else {
+										
 										Execute();
 									}
 									
@@ -389,6 +390,7 @@ public class jSMS_pool extends _JInternalFrame implements _GUI, ActionListener {
 		if (lblMode.getText().equals("USB Mode")) {
 			ExecuteUSB();
 		} else {
+			System.out.println("Execute()");
 			Execute();
 		}
 		
@@ -418,6 +420,7 @@ public class jSMS_pool extends _JInternalFrame implements _GUI, ActionListener {
 				"order by x.msg_id  \n" +
 				"limit 3000"; 
 		
+		System.out.println("LoadMessages: "+ strSQL);
 		db.select(strSQL);
 		
 		if (db.isNotNull()){
@@ -814,12 +817,17 @@ public class jSMS_pool extends _JInternalFrame implements _GUI, ActionListener {
 		Boolean blnSent = false;
 		String strMsgID = FncGlobal.GetString("select msg_id::varchar \n" +
 				"from rf_sms_pool \n" +
-				"where msg_status in ('P') \n" +
+				"where msg_status in ('P') and date_queued::date > '2024-01-01' \n" +
 				"order by msg_id DESC --pool_row_id");
 		
 		for (int x=0; x<modelSMS.getRowCount(); x++) {
+			
+//			System.out.println("Check strMsgID if equal = "+modelSMS.getValueAt(x, 1).toString());
+//			System.out.println(" strMsgID  = "+ strMsgID );
+			
 			if (modelSMS.getValueAt(x, 1).toString().equals(strMsgID)) {
 				blnInGrid = true;
+				
 				System.out.println("Status = "+modelSMS.getValueAt(x, 5).toString());
 				System.out.println("FetchNextMessage loop: "+sms_builder.msg_status);
 				
@@ -834,6 +842,7 @@ public class jSMS_pool extends _JInternalFrame implements _GUI, ActionListener {
 			StackMessage(FncGlobal.GetString("select message from rf_sms_batch where msg_id::int = '"+strMsgID+"'::int"));
 			
 			try {
+				System.out.println("Sending......");
 				blnSent = SendMessage(Integer.parseInt(strMsgID));
 			} catch (Exception e1) {
 				e1.printStackTrace();
@@ -951,7 +960,7 @@ public class jSMS_pool extends _JInternalFrame implements _GUI, ActionListener {
 
 			public void run() {
 				if (!togSMS.isSelected()) {
-					
+					System.out.println("Execute FetchNextMessage()");
 					FetchNextMessage();
 				} else {
 					addLog("Currently on sleep mode");
@@ -1144,23 +1153,28 @@ public class jSMS_pool extends _JInternalFrame implements _GUI, ActionListener {
 			for (int y=0; y<arr_mobile.length; y++) {
 				sms_builder.strNumber = arr_mobile[y]; 
 				
+				
 				try {
 					//strMsgID = sms_builder.SendMessageToNumber_withResponse();
 					strMsgID = sms_builder.SendMessageToNumber_v2();//v2 is method sending
 					//strResponse="sent"; // Comment by Erick 2023-03-16
+					System.out.println("strResponse : "+strMsgID);
 					strResponse = strMsgID;
 					blnSent = true; 
-					System.out.println("Test : "+strMsgID);
+					System.out.println("strResponse : "+strMsgID);
+					//System.out.println("Test : "+strMsgID);
 					
 				} catch (Exception e1) {
-					strResponse = "failed";
-					System.out.println("The response is "+strResponse);
-					addLog("Sending Msg " + intMsgID + " is failed...");
-					JOptionPane.showMessageDialog(getContentPane(), "Sending message failed!", "Error", JOptionPane.OK_OPTION);
-					blnSent = false; 
-					break;// Added by Erick 2023-03-16
+					if(!strResponse.equals("sent")) {
+						strResponse = "failed";
+						System.out.println("The response is "+strResponse);
+						addLog("Sending Msg " + intMsgID + " is failed...");
+						JOptionPane.showMessageDialog(getContentPane(), "Sending message failed!", "Error", JOptionPane.OK_OPTION);
+						blnSent = false; 
+						break;// Added by Erick 2023-03-16
+					}
 				}
-				
+					
 				Integer intRetry = 0; 
 				while (!strResponse.equals("sent")) {
 					

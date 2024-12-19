@@ -201,9 +201,10 @@ public class UploadAUBPayments extends _JInternalFrame implements _GUI, ActionLi
 										if (data != null) {
 											String batch_no = (String) data[0];
 
-											previewWithoutSequence();
+											
 											displayForIssuanceBatch(batch_no);
 											previewForIssuance();
+											previewWithoutSequence();
 											
 										}
 									}
@@ -417,7 +418,7 @@ public class UploadAUBPayments extends _JInternalFrame implements _GUI, ActionLi
 	}
 	
 	private void previewWithoutSequence() {
-		String criteria = "List of AUB Bills Payment for issuance";		
+		String criteria = "List of AUB Bills Without Issuance";		
 		String reportTitle = String.format("%s (%s)", title.replace(" Report", ""), criteria.toUpperCase());	
 
 		Map<String, Object> mapParameters = new HashMap<String, Object>();
@@ -449,6 +450,7 @@ public class UploadAUBPayments extends _JInternalFrame implements _GUI, ActionLi
 				}
 				row++;
 			}
+			
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
